@@ -5,16 +5,16 @@ import "../../styles/index.css";
 // import { HSBAActions } from "../../redux/slices/HSBA.slice";
 // import { Save } from "@mui/icons-material";
 
-const FChanDoanBanDau = () => {
+const FHuongDieuTri = () => {
     const HSBA = useSelector((state) => state.HSBA);
     // const dispatch = useDispatch();
 
-    const [chanDoanBanDau, setChanDoanBanDau] = useState(HSBA.chanDoanBanDau);
+    const [huongDieuTri, setHuongDieuTri] = useState(HSBA.huongDieuTri);
   
     // const handleSave = () => {
     //     dispatch(HSBAActions.updateBacSiSection({
-    //         section: 'chanDoanBanDau',
-    //         data: chanDoanBanDau
+    //         section: 'huongDieuTri',
+    //         data: huongDieuTri
     //     }))
     //     setEdit(false);
     // }
@@ -24,8 +24,8 @@ const FChanDoanBanDau = () => {
             <TextField 
                 multiline
                 fullWidth
-                value={chanDoanBanDau}
-                onChange={(event) => setChanDoanBanDau(event.target.value)}
+                value={huongDieuTri}
+                onChange={(event) => setHuongDieuTri(event.target.value)}
             />
 
             {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
@@ -51,4 +51,4 @@ const FChanDoanBanDau = () => {
     )
 }
 
-export default FChanDoanBanDau;
+export default FHuongDieuTri;

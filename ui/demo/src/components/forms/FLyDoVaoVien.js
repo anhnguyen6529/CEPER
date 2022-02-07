@@ -1,16 +1,16 @@
-import { Box, Typography, Button, TextField, Grid, Divider, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import "../../styles/index.css";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Save } from "@mui/icons-material";
+// import { HSBAActions } from "../../redux/slices/HSBA.slice";
+// import { Save } from "@mui/icons-material";
 
-const FLyDoVaoVien = ({ setEdit }) => {
+const FLyDoVaoVien = () => {
     const { lyDoVaoVien } = useSelector((state) => state.HSBA);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [lyDo, setLyDo] = useState(lyDoVaoVien.lyDo);
     const [ngayVaoVien, setNgayVaoVien] = useState(lyDoVaoVien.ngayVaoVien);
@@ -18,23 +18,23 @@ const FLyDoVaoVien = ({ setEdit }) => {
     const [chanDoanNoiGioiThieu, setChanDoanNoiGioiThieu] = useState(lyDoVaoVien.chanDoanNoiGioiThieu);
     const [noiGioiThieu, setNoiGioiThieu] = useState(lyDoVaoVien.noiGioiThieu);
   
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'lyDoVaoVien',
-            data: {
-                lyDo,
-                ngayVaoVien,
-                vaoNgayThu,
-                chanDoanNoiGioiThieu,
-                noiGioiThieu
-            }
-        }))
-        setEdit(false);
-    }
+    // const handleSave = () => {
+    //     dispatch(HSBAActions.updateBacSiSection({
+    //         section: 'lyDoVaoVien',
+    //         data: {
+    //             lyDo,
+    //             ngayVaoVien,
+    //             vaoNgayThu,
+    //             chanDoanNoiGioiThieu,
+    //             noiGioiThieu
+    //         }
+    //     }))
+    //     setEdit(false);
+    // }
 
     return (
         <Box component="form" noValidate>
-            <Grid container sx={{ mt: 2 }}>
+            <Grid container>
                 <Grid item xs={9}>
                     <TextField 
                         multiline
@@ -73,9 +73,9 @@ const FLyDoVaoVien = ({ setEdit }) => {
                     </LocalizationProvider>
                 </Grid>
             </Grid>
-            <Grid container sx={{ mt: 2 }} alignItems="center">
+            <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={3}>
-                    <Typography fontWeight="bold">Chẩn đoán của nơi giới thiệu</Typography>
+                    <Typography fontWeight="bold" sx={{ mt: '12px' }}>Chẩn đoán của nơi giới thiệu</Typography>
                 </Grid>
                 <Grid item xs={7}>
                     <TextField 
@@ -94,7 +94,7 @@ const FLyDoVaoVien = ({ setEdit }) => {
                 </Grid>
             </Grid>
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
+            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
                 <Button 
                     sx={{ 
                         width: 150,
@@ -112,7 +112,7 @@ const FLyDoVaoVien = ({ setEdit }) => {
                 >
                     Lưu
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

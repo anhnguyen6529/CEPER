@@ -15,6 +15,14 @@
         "Phiếu TD dị ứng thuốc", 
         "Phiếu công khai thuốc"
     ],
+    "attached": [
+        "Tờ điều trị",  
+        "Phiếu chăm sóc",
+        "Phiếu TD truyền dịch",
+        "Phiếu TD chức năng sống", 
+        "Phiếu TD dị ứng thuốc", 
+        "Phiếu công khai thuốc"
+    ],
     "canEdit": {
         "BN": [0],
         "BS": [1, 2, 3, 4, 5, 6, 7, 8, 12],

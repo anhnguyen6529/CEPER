@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 import { 
     Drawer as MuiDrawer, IconButton, Box, List, 
-    ListItem, ListItemIcon, ListItemText, Divider,
-    Typography, Grid, Avatar
+    ListItem, ListItemIcon, ListItemText, Typography, Grid, Avatar
 } from "@mui/material";
 import logo from "../../images/logo.png";
 import { faFileMedicalAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { styled } from "@mui/styles";
+import { makeStyles, styled } from "@mui/styles";
 import { ChevronLeft } from "@mui/icons-material";
 import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
@@ -23,9 +22,22 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
 }));
 
+const useStyles = makeStyles((theme) => ({
+    listItem: {
+        border: '1px solid #DDD',
+        borderRadius: 2,
+        marginTop: 8,
+        marginBottom: 8,
+        paddingTop: 4,
+        paddingBottom: 4,
+        boxShadow: theme.shadows[1]
+    }
+}))
+
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
-    const { appearSec, setAppearSec, openSec, setOpenSec, selectedSec, setSelectedSec } = useContext(UserContext);
+    const classes = useStyles();
+    const { tabs, setTabs, setSelectedTab } = useContext(UserContext);
 
     return (
         <MuiDrawer 
@@ -91,41 +103,48 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                 <Divider color="#48B0F7"/> */}
             
                 {/* <Collapse in={openMD} timeout="auto" unmountOnExit sx={{ overflowY: 'auto' }}> */}
-                <Divider/>
-                    <List sx={{ pt: 0, pb: 0, overflowY: 'auto' }}>
-                        {mdSections["order"].map((section, id) => (
+                {/* <Divider/> */}
+                    <List sx={{ pt: 0, pb: 0, px: 1, overflowY: 'auto' }}>
+                        {mdSections["attached"].map((section, id) => (
                             <div key={id}>
                                 <ListItem 
-                                    button 
-                                    sx={{ py: 0.5 }}
+                                    // button 
+                                    className={classes.listItem}
+                                    sx={{ cursor: tabs.findIndex(element => element.label === section) === -1 ? 'pointer' : 'default' }}
                                     onClick={() => {
-                                        var temp = [...appearSec], idx = temp.indexOf(id), tmp = [...openSec];
-                                        if (idx === -1) {
-                                            temp.unshift(id);
-                                            tmp[id] = true;
-                                        } else {
-                                            temp.splice(idx, 1);
-                                            tmp[id] = false;
-                                            if (idx === selectedSec) {
-                                                setSelectedSec(-1);
-                                            }
+                                        var tTabs = [...tabs];
+                                        if (tTabs.findIndex(element => element.label === section) === -1) {
+                                            tTabs.push({ label: section, showIcon: true, icon: null })
+                                            setTabs(tTabs);
+                                            setSelectedTab(tTabs.length - 1);
                                         }
-                                        setOpenSec(tmp);
-                                        setAppearSec(temp);
                                     }}
+                                    // onClick={() => {
+                                    //     var temp = [...appearSec], idx = temp.indexOf(id), tmp = [...openSec];
+                                    //     if (idx === -1) {
+                                    //         temp.unshift(id);
+                                    //         tmp[id] = true;
+                                    //     } else {
+                                    //         temp.splice(idx, 1);
+                                    //         tmp[id] = false;
+                                    //         if (idx === selectedSec) {
+                                    //             setSelectedSec(-1);
+                                    //         }
+                                    //     }
+                                    //     setOpenSec(tmp);
+                                    //     setAppearSec(temp);
+                                    // }}
                                 >
                                     <ListItemIcon sx={{ minWidth: 32 }}>
                                         <FontAwesomeIcon color='#48B0F7' icon={faFileMedicalAlt} />
                                     </ListItemIcon>
-                                    <ListItemText sx={{ color: appearSec.indexOf(id) === -1 ? 'black' : '#009ABB' }}>
+                                    <ListItemText sx={{ color: tabs.findIndex(element => element.label === section) === -1 ? 'black' : '#009ABB' }}>
                                         {section}
                                     </ListItemText>
                                 </ListItem>
-                                <Divider/>
                             </div>
                         ))}
                     </List>
-                <Divider/>
                 {/* </Collapse> */}
             </> 
             : null

@@ -28,7 +28,11 @@ const useStyles = makeStyles(() => ({
     },
     loginForm: {
         marginTop: 30,
-        width: '80%'
+        width: '80%',
+        '& .MuiOutlinedInput-root': {
+            paddingTop: '16.5px',
+            paddingBottom: '16.5px'
+        }
     }
 }))
 

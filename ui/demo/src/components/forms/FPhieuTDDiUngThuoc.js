@@ -1,31 +1,31 @@
-import { Box, Typography, Button, TextField } from "@mui/material";
+import { Box, Typography, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Save } from "@mui/icons-material";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { useSelector } from "react-redux";
+// import { Save } from "@mui/icons-material";
+// import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
-const FPhieuTDDiUngThuoc = ({ setEdit }) => {
+const FPhieuTDDiUngThuoc = () => {
     const { phieuTDDiUngThuoc } = useSelector((state) => state.HSBA);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const [thuocDiUng, setThuocDiUng] = useState(phieuTDDiUngThuoc.thuocDiUng);
     const [kieuDiUng, setKieuDiUng] = useState(phieuTDDiUngThuoc.kieuDiUng);
     const [benhKemTheo, setBenhKemTheo] = useState(phieuTDDiUngThuoc.benhKemTheo);
     
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'phieuTDDiUngThuoc',
-            data: {
-                thuocDiUng,
-                kieuDiUng,
-                benhKemTheo
-            }
-        }))
-        setEdit(false);
-    }
+    // const handleSave = () => {
+    //     dispatch(HSBAActions.updateBacSiSection({
+    //         section: 'phieuTDDiUngThuoc',
+    //         data: {
+    //             thuocDiUng,
+    //             kieuDiUng,
+    //             benhKemTheo
+    //         }
+    //     }))
+    //     setEdit(false);
+    // }
 
     return (
         <Box component="form" noValidate>
-            <Typography fontWeight="bold" sx={{ mt: 2 }}>Dị ứng với các thuốc và các dị nguyên khác</Typography>
+            <Typography fontWeight="bold">Dị ứng với các thuốc và các dị nguyên khác</Typography>
             <TextField 
                 margin="normal"
                 multiline
@@ -53,7 +53,7 @@ const FPhieuTDDiUngThuoc = ({ setEdit }) => {
             />
 
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
+            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
                 <Button 
                     sx={{ 
                         width: 150,
@@ -71,7 +71,7 @@ const FPhieuTDDiUngThuoc = ({ setEdit }) => {
                 >
                     Lưu
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

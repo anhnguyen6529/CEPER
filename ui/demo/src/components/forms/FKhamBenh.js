@@ -1,13 +1,13 @@
-import { Box, Typography, Button, TextField, Grid } from "@mui/material";
+import { Box, Typography, TextField, Grid } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import "../../styles/index.css";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Save } from "@mui/icons-material";
+// import { HSBAActions } from "../../redux/slices/HSBA.slice";
+// import { Save } from "@mui/icons-material";
 
-const FKhamBenh = ({ setEdit }) => {
+const FKhamBenh = () => {
     const { khamBenh } = useSelector((state) => state.HSBA);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [khamToanThan, setKhamToanThan] = useState(khamBenh.khamToanThan);
     const [tuanHoan, setTuanHoan] = useState(khamBenh.tuanHoan);
@@ -21,29 +21,29 @@ const FKhamBenh = ({ setEdit }) => {
     const [mat, setMat] = useState(khamBenh.mat);
     const [noiTiet, setNoiTiet] = useState(khamBenh.noiTiet);
   
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'khamBenh',
-            data: {
-                khamToanThan,
-                tuanHoan,
-                hoHap,
-                tieuHoa,
-                than,
-                thanKinh,
-                coXuongKhop,
-                taiMuiHong,
-                rangHamMat,
-                mat,
-                noiTiet
-            }
-        }))
-        setEdit(false);
-    }
+    // const handleSave = () => {
+    //     dispatch(HSBAActions.updateBacSiSection({
+    //         section: 'khamBenh',
+    //         data: {
+    //             khamToanThan,
+    //             tuanHoan,
+    //             hoHap,
+    //             tieuHoa,
+    //             than,
+    //             thanKinh,
+    //             coXuongKhop,
+    //             taiMuiHong,
+    //             rangHamMat,
+    //             mat,
+    //             noiTiet
+    //         }
+    //     }))
+    //     setEdit(false);
+    // }
 
     return (
-        <Box component="form" noValidate>
-            <Grid container sx={{ mt: 2 }}>
+        <Box component="form" noValidate sx={{ '.MuiTypography-root': { mt: '12px' } }}>
+            <Grid container>
                 <Grid item xs={2}>
                     <Typography fontWeight="bold">Khám toàn thân</Typography>
                 </Grid>
@@ -187,7 +187,7 @@ const FKhamBenh = ({ setEdit }) => {
                 </Grid>
             </Grid>
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
+            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
                 <Button 
                     sx={{ 
                         width: 150,
@@ -205,7 +205,7 @@ const FKhamBenh = ({ setEdit }) => {
                 >
                     Lưu
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

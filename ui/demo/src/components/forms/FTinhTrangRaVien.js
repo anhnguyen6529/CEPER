@@ -5,27 +5,27 @@ import "../../styles/index.css";
 // import { HSBAActions } from "../../redux/slices/HSBA.slice";
 // import { Save } from "@mui/icons-material";
 
-const FChanDoanBanDau = () => {
+const FTinhTrangRaVien = () => {
     const HSBA = useSelector((state) => state.HSBA);
     // const dispatch = useDispatch();
 
-    const [chanDoanBanDau, setChanDoanBanDau] = useState(HSBA.chanDoanBanDau);
+    const [tinhTrangRaVien, setTinhTrangRaVien] = useState(HSBA.tinhTrangRaVien);
   
     // const handleSave = () => {
     //     dispatch(HSBAActions.updateBacSiSection({
-    //         section: 'chanDoanBanDau',
-    //         data: chanDoanBanDau
+    //         section: 'tinhTrangRaVien',
+    //         data: tinhTrangRaVien
     //     }))
     //     setEdit(false);
     // }
 
     return (
-        <Box component="form" noValidate>       
+        <Box component="form" noValidate>
             <TextField 
                 multiline
                 fullWidth
-                value={chanDoanBanDau}
-                onChange={(event) => setChanDoanBanDau(event.target.value)}
+                value={tinhTrangRaVien}
+                onChange={(event) => setTinhTrangRaVien(event.target.value)}
             />
 
             {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
@@ -51,4 +51,4 @@ const FChanDoanBanDau = () => {
     )
 }
 
-export default FChanDoanBanDau;
+export default FTinhTrangRaVien;

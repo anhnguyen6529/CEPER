@@ -62,13 +62,15 @@ const datas = [
             mat: '',
             noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
         },
+        tomTatBenhAn: '',
         chanDoanBanDau: 'Sốt nhiễm siêu vi ngày 4 / TD Bệnh Sởi - Rối loạn tiêu hoá',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: '',
             ngayRaVien: '',
-        },
-        tomTatBenhAn: '',
+        },   
+        tinhTrangRaVien: '',
+        huongDieuTri: '',
         phieuTDChucNangSong: {
             data: [
                 { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
@@ -150,13 +152,15 @@ const datas = [
             mat: '',
             noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
         },
+        tomTatBenhAn: '',
         chanDoanBanDau: 'Rối loạn tiêu hoá',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: '',
             ngayRaVien: '',
-        },
-        tomTatBenhAn: '',
+        },  
+        tinhTrangRaVien: '',
+        huongDieuTri: '',
         phieuTDChucNangSong: {
             data: [
                 { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
@@ -238,13 +242,16 @@ const datas = [
             mat: '',
             noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
         },
+        tomTatBenhAn: '',
         chanDoanBanDau: 'Đau tim',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: '',
             ngayRaVien: '',
         },
-        tomTatBenhAn: '',
+        
+        tinhTrangRaVien: '',
+        huongDieuTri: '',
         phieuTDChucNangSong: {
             data: [
                 { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
@@ -326,13 +333,15 @@ const datas = [
             mat: '',
             noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
         },
+        tomTatBenhAn: '',
         chanDoanBanDau: 'Suy hô hấp',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: '',
             ngayRaVien: '',
         },
-        tomTatBenhAn: '',
+        tinhTrangRaVien: '',
+        huongDieuTri: '',
         phieuTDChucNangSong: {
             data: [
                 { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
@@ -414,13 +423,16 @@ const datas = [
             mat: '',
             noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
         },
+        tomTatBenhAn: '',
         chanDoanBanDau: 'Sốt siêu vi',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: 'Sốt siêu vi',
             ngayRaVien: '2021-06-18',
         },
-        tomTatBenhAn: '',
+        
+        tinhTrangRaVien: 'Đỡ, giảm',
+        huongDieuTri: '',
         phieuTDChucNangSong: {
             data: [
                 { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
@@ -502,13 +514,15 @@ const datas = [
             mat: '',
             noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
         },
+        tomTatBenhAn: '',
         chanDoanBanDau: 'Viêm dạ dày',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: 'Viêm dạ dày ruột',
             ngayRaVien: '2021-06-15',
         },
-        tomTatBenhAn: '',
+        tinhTrangRaVien: 'Khỏi',
+        huongDieuTri: '',
         phieuTDChucNangSong: {
             data: [
                 { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },

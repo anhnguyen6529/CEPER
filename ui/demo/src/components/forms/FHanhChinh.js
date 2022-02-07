@@ -7,9 +7,20 @@ import DatePicker from '@mui/lab/DatePicker';
 import CLocal from "../../constants/local.json";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { Save } from "@mui/icons-material";
+import { makeStyles } from "@mui/styles";
+import "../../styles/index.css";
+
+const useStyles = makeStyles(() => ({
+    select: {
+        width: '90%',
+        marginTop: 8
+    },
+}))
 
 const FHanhChinh = ({ setEdit }) => {
+    const classes = useStyles();
     const benhNhan = useSelector((state) => state.HSBA);
+    const { role } = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const [hoTen, setHoTen] = useState(benhNhan.hanhChinh.hoTen);
     const [ngaySinh, setNgaySinh] = useState(benhNhan.hanhChinh.ngaySinh);
@@ -58,22 +69,21 @@ const FHanhChinh = ({ setEdit }) => {
             { name: 'giaTriDen', value: giaTriDen.toString() },
             { name: 'nguoiNha', value: { hoTen: hoTenNguoiNha, quanHeVoiBenhNhan: quanHeVoiBenhNhan, diaChi: diaChiNguoiNha, dienThoai: dienThoaiNguoiNha } },
         ]))
-        setEdit(false);
+        // setEdit(false);
     }
 
     return (
-        <Box component="form" noValidate>
-            <Grid container sx={{ mt: 2 }}>
+        <Box component="form" noValidate sx={{ '.MuiTextField-root': { width: '90%' } }}>
+            <Grid container>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Họ và tên</Typography>
                     <TextField 
-                        margin="normal"
-                        multiline
+                        margin="dense"
                         value={hoTen}
                         onChange={(event) => setHoTen(event.target.value)}
-                        sx={{ width: '90%' }}
                         error={!hoTen}
                         helperText={!hoTen ? "Vui lòng nhập họ tên" : ""}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -82,7 +92,7 @@ const FHanhChinh = ({ setEdit }) => {
                         <DatePicker
                             value={ngaySinh}
                             onChange={(newValue) => setNgaySinh(newValue)}
-                            renderInput={(params) => <TextField {...params} sx={{ width: '90%', mt: 2 }}/>}
+                            renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select}/>}
                             inputFormat="dd/MM/yyyy"
                         />
                     </LocalizationProvider>
@@ -92,7 +102,8 @@ const FHanhChinh = ({ setEdit }) => {
                     <Select
                         value={gioiTinh}
                         onChange={(event) => setGioiTinh(event.target.value)}
-                        sx={{ width: '90%', mt: 2 }}
+                        className={classes.select}
+                        disabled={role !== "BN"}
                     >
                         <MenuItem value="Nam">Nam</MenuItem>
                         <MenuItem value="Nữ">Nữ</MenuItem>
@@ -101,13 +112,13 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Nghề nghiệp</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={ngheNghiep}
                         onChange={(event) => setNgheNghiep(event.target.value)}
-                        sx={{ width: '90%' }}
                         error={!ngheNghiep}
                         helperText={!ngheNghiep ? "Vui lòng nhập nghề nghiệp" : ""}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
             </Grid>
@@ -115,24 +126,23 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Dân tộc</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={danToc}
                         onChange={(event) => setDanToc(event.target.value)}
-                        sx={{ width: '90%' }}
                         error={!danToc}
                         helperText={!danToc ? "Vui lòng nhập dân tộc" : ""}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Quốc tịch</Typography>
                     <Select
-                        multiline
                         value={quocTich}
                         onChange={(event) => setQuocTich(event.target.value)}
-                        sx={{ width: '90%', mt: 2 }}
+                        className={classes.select}
+                        disabled={role !== "BN"}
                     >
-
                         <MenuItem value="Việt Nam">Việt Nam</MenuItem>
                         <MenuItem value="Hoa Kỳ">Hoa Kỳ</MenuItem>
                     </Select>
@@ -140,25 +150,25 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Số CMND/CCCD/SSN</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={soCCCD}
                         onChange={(event) => setSoCCCD(event.target.value)}
-                        sx={{ width: '90%' }}
                         error={!soCCCD}
                         helperText={!soCCCD ? "Vui lòng nhập số CMND/CCCD/SSN" : ""}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Điện thoại</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={dienThoai}
                         onChange={(event) => setDienThoai(event.target.value)}
-                        sx={{ width: '90%' }}
                         error={!dienThoai}
                         helperText={!dienThoai ? "Vui lòng nhập điện thoại" : ""}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
             </Grid>
@@ -166,20 +176,20 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Nơi làm việc</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={noiLamViec}
                         onChange={(event) => setNoiLamViec(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Đối tượng</Typography>
                     <Select
-                        multiline
                         value={doiTuong}
                         onChange={(event) => setDoiTuong(event.target.value)}
-                        sx={{ width: '90%', mt: 2 }}
+                        className={classes.select}
+                        disabled={role !== "BN"}
                     >   
                         <MenuItem value="BHYT">BHYT</MenuItem>
                         <MenuItem value="Thu phí">Thu phí</MenuItem>
@@ -190,21 +200,21 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Số nhà</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={soNha}
                         onChange={(event) => setSoNha(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Thôn/Phố</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={thonPho}
                         onChange={(event) => setThonPho(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
             </Grid>
@@ -213,13 +223,13 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Tỉnh/Thành phố</Typography>
                     <Select
                         value={tinhTP}
-                        multiline
                         onChange={(event) => {
                             setTinhTP(event.target.value);
                             setQuanHuyen("-- Quận/Huyện --");
                             setPhuongXa("-- Phường/Xã --");
                         }}
-                        sx={{ width: '90%', mt: 2 }}
+                        className={classes.select}
+                        disabled={role !== "BN"}
                     >
                         {CLocal.map((province, id) => (
                             <MenuItem value={province.name} key={id}>{province.name}</MenuItem>
@@ -229,13 +239,13 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Quận/Huyện</Typography>
                     <Select
-                        multiline
                         value={quanHuyen}
                         onChange={(event) => {
                             setQuanHuyen(event.target.value);
                             setPhuongXa("-- Phường/Xã --");
                         }}
-                        sx={{ width: '90%', mt: 2 }}
+                        className={classes.select}
+                        disabled={role !== "BN"}
                     >
                         <MenuItem value="-- Quận/Huyện --">-- Quận/Huyện --</MenuItem>
                         {CLocal.find((element) => element.name === tinhTP).districts.map((district, id) => (
@@ -246,10 +256,10 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Phường/Xã</Typography>
                     <Select
-                        multiline
                         value={phuongXa}
                         onChange={(event) => setPhuongXa(event.target.value)}
-                        sx={{ width: '90%', mt: 2 }}
+                        className={classes.select}
+                        disabled={role !== "BN"}
                     >
                         <MenuItem value="-- Phường/Xã --">-- Phường/Xã --</MenuItem>
                         {quanHuyen !== "-- Quận/Huyện --" &&
@@ -268,21 +278,21 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Số thẻ BHYT</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={soTheBHYT}
                         onChange={(event) => setSoTheBHYT(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Nơi đăng ký KCB ban đầu</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={noiDangKyKCBBanDau}
                         onChange={(event) => setNoiDangKyKCBBanDau(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -291,7 +301,7 @@ const FHanhChinh = ({ setEdit }) => {
                         <DatePicker
                             value={giaTriTu}
                             onChange={(newValue) => setGiaTriTu(newValue)}
-                            renderInput={(params) => <TextField {...params} sx={{ width: '90%', mt: 2 }} />}
+                            renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
                             inputFormat="dd/MM/yyyy"
                         />
                     </LocalizationProvider>
@@ -302,7 +312,7 @@ const FHanhChinh = ({ setEdit }) => {
                         <DatePicker
                             value={giaTriDen}
                             onChange={(newValue) => setGiaTriDen(newValue)}
-                            renderInput={(params) => <TextField {...params} sx={{ width: '90%', mt: 2 }} />}
+                            renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
                             inputFormat="dd/MM/yyyy"
                         />
                     </LocalizationProvider>
@@ -315,41 +325,41 @@ const FHanhChinh = ({ setEdit }) => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Họ tên</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={hoTenNguoiNha}
                         onChange={(event) => setHoTenNguoiNha(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Quan hệ với bệnh nhân</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={quanHeVoiBenhNhan}
                         onChange={(event) => setQuanHeVoiBenhNhan(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Điện thoại</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={dienThoaiNguoiNha}
                         onChange={(event) => setDienThoaiNguoiNha(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Địa chỉ</Typography>
                     <TextField 
-                        margin="normal"
+                        margin="dense"
                         multiline
                         value={diaChiNguoiNha}
                         onChange={(event) => setDiaChiNguoiNha(event.target.value)}
-                        sx={{ width: '90%' }}
+                        disabled={role !== "BN"}
                     />
                 </Grid>
             </Grid>

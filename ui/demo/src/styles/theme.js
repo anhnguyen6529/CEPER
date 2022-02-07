@@ -19,21 +19,44 @@ const theme = createTheme({
         'serif'
       ].join(','),
     },
-    override: {
+    components: {
       MuiButton: {
-        root: {
-          textTransform: 'none',
+        styleOverrides: {
+          root: {
+            textTransform: 'none'
+          }
+        }
+      },
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            textTransform: 'none',
+            color: 'black',
+            fontSize: 16
+          }
+        }
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            paddingTop: '12px',
+            paddingBottom: '12px'
+          },
+          input: {
+            paddingTop: 0,
+            paddingBottom: 0
+          }
+        }
+      },
+      MuiTooltip: {
+        styleOverrides: {
+          tooltip: {
+            fontSize: '13px',
+            maxWidth: 320
+          }
         }
       }
     }
 })
-
-theme.props = {
-  MuiButton: {
-    root: {
-      textTransform: 'none',
-    }
-  }
-}
 
 export default theme;

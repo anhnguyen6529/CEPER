@@ -1,23 +1,23 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import "../../styles/index.css";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Save } from "@mui/icons-material";
+// import { HSBAActions } from "../../redux/slices/HSBA.slice";
+// import { Save } from "@mui/icons-material";
 
-const FPhuongPhapDieuTri = ({ setEdit }) => {
+const FPhuongPhapDieuTri = () => {
     const HSBA = useSelector((state) => state.HSBA);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [phuongPhapDieuTri, setPhuongPhapDieuTri] = useState(HSBA.phuongPhapDieuTri);
   
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'phuongPhapDieuTri',
-            data: phuongPhapDieuTri
-        }))
-        setEdit(false);
-    }
+    // const handleSave = () => {
+    //     dispatch(HSBAActions.updateBacSiSection({
+    //         section: 'phuongPhapDieuTri',
+    //         data: phuongPhapDieuTri
+    //     }))
+    //     setEdit(false);
+    // }
 
     return (
         <Box component="form" noValidate>       
@@ -26,10 +26,9 @@ const FPhuongPhapDieuTri = ({ setEdit }) => {
                 fullWidth
                 value={phuongPhapDieuTri}
                 onChange={(event) => setPhuongPhapDieuTri(event.target.value)}
-                sx={{ mt: 2 }}
             />
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
+            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
                 <Button 
                     sx={{ 
                         width: 150,
@@ -47,7 +46,7 @@ const FPhuongPhapDieuTri = ({ setEdit }) => {
                 >
                     Lưu
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

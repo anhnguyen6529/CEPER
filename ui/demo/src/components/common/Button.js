@@ -17,7 +17,6 @@ const Button = ({ variant, text, icon, onClick }) => {
                     width: 120,
                     height: 36,
                     background: '#009ABB', 
-                    textTransform: 'none', 
                     fontWeight: 'bold',
                     color: 'white',
                     '&:hover': {
@@ -36,7 +35,6 @@ const Button = ({ variant, text, icon, onClick }) => {
                     width: 120,
                     height: 36,
                     background: '#D9EFFE', 
-                    textTransform: 'none', 
                     fontWeight: 'bold',
                     color: '#009ABB',
                     '&:hover': {
@@ -55,7 +53,6 @@ const Button = ({ variant, text, icon, onClick }) => {
                     width: 120,
                     height: 36,
                     background: 'white', 
-                    textTransform: 'none', 
                     fontWeight: 'bold',
                     color: '#009ABB',
                     border: '2px solid #009ABB',

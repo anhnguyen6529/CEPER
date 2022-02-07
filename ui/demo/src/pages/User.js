@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, CssBaseline, Toolbar, Typography, Divider, Breadcrumbs, Link, Container } from "@mui/material";
-import { NavigateNext } from "@mui/icons-material";
+import { Box, CssBaseline, Toolbar, Typography, Divider, Breadcrumbs, Link, Container, Tooltip } from "@mui/material";
+import { NavigateNext, InfoOutlined } from "@mui/icons-material";
 import '../styles/index.css';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
@@ -23,6 +23,18 @@ const User = () => {
     const [appearSec, setAppearSec] = useState([]);
     const [openSec, setOpenSec] = useState([false, false, false, false, false, false, false, false, false, false, false, false]);
     const [today, setToday] = useState(new Date());
+    const [tabs, setTabs] = useState([
+        { label: "Hành chính", showIcon: false, icon: null },
+        { label: "Bệnh án", showIcon: true, icon: 
+        <Tooltip placement="top" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
+            <InfoOutlined />
+        </Tooltip> },
+        { label: "Tổng kết bệnh án", showIcon: true, icon: 
+        <Tooltip placement="top" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện và kết quả điều trị" >
+            <InfoOutlined />
+        </Tooltip> }
+    ]);
+    const [selectedTab, setSelectedTab] = useState(0);
 
     const { user } = useSelector(state => state.auth);
     const selectedHSBA = useSelector(state => state.HSBA);
@@ -57,7 +69,11 @@ const User = () => {
             setAppearSec,
             openSec, 
             setOpenSec,
-            today
+            today,
+            tabs, 
+            setTabs,
+            selectedTab,
+            setSelectedTab
         }}>
             <Box sx={{ display: 'flex'}}>
                 <CssBaseline />

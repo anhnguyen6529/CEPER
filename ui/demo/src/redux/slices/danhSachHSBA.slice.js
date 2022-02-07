@@ -61,7 +61,7 @@ const initialState = {
             ngayVaoVien: '2021-08-04',
             ngayRaVien: '2021-06-18',
             chanDoanKhiRaVien: 'Sốt siêu vi',
-            ketQuaDieuTri: 'Đỡ, giảm'
+            tinhTrangRaVien: 'Đỡ, giảm'
         },
         {
             pid: '132456', 
@@ -72,7 +72,7 @@ const initialState = {
             ngayVaoVien: '2021-06-12',
             ngayRaVien: '2021-06-15',
             chanDoanKhiRaVien: 'Viêm dạ dày ruột',
-            ketQuaDieuTri: 'Khỏi'
+            tinhTrangRaVien: 'Khỏi'
         },
     ]
 }

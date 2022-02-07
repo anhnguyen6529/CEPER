@@ -64,13 +64,15 @@ const initialState = {
         mat: '',
         noiTiet: '',
     },
+    tomTatBenhAn: '',
     chanDoanBanDau: '',
     phuongPhapDieuTri: '',
     chanDoanKhiRaVien: {
         chanDoan: '',
         ngayRaVien: '',
     },
-    tomTatBenhAn: '',
+    tinhTrangRaVien: '',
+    huongDieuTri: '',
     phieuTDChucNangSong: {
         data: [],
     },

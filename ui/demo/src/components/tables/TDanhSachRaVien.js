@@ -19,7 +19,7 @@ const headCells = [
     { id: 'ngayVaoVien', label: 'Ngày vào viện', minWidth: 160 },
     { id: 'ngayRaVien', label: 'Ngày ra viện', minWidth: 160 },
     { id: 'chanDoanKhiRaVien', label: 'Chẩn đoán khi ra viện', minWidth: 220 },
-    { id: 'ketQuaDieuTri', label: 'Kết quả điều trị', minWidth: 180 }
+    { id: 'tinhTrangRaVien', label: 'Tình trạng ra viện', minWidth: 190 }
 ];
 
 const TDanhSachRaVien = ({ data }) => {
@@ -126,7 +126,7 @@ const TDanhSachRaVien = ({ data }) => {
                                     <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell>{format(new Date(row.ngayRaVien), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell>{row.chanDoanKhiRaVien}</TableCell>
-                                    <TableCell>{row.ketQuaDieuTri}</TableCell>
+                                    <TableCell>{row.tinhTrangRaVien}</TableCell>
                                 </TableRow>
                             );
                     })}

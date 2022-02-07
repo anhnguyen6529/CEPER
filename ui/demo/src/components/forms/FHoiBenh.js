@@ -1,31 +1,31 @@
-import { Box, Typography, Button, TextField, Grid } from "@mui/material";
+import { Box, Typography, TextField, Grid } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import "../../styles/index.css";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Save } from "@mui/icons-material";
+// import { HSBAActions } from "../../redux/slices/HSBA.slice";
+// import { Save } from "@mui/icons-material";
 
-const FHoiBenh = ({ setEdit }) => {
+const FHoiBenh = () => {
     const { hoiBenh } = useSelector((state) => state.HSBA);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [tienSu, setTienSu] = useState(hoiBenh.tienSu);
     const [benhSu, setBenhSu] = useState(hoiBenh.benhSu);
   
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'hoiBenh',
-            data: {
-                tienSu, 
-                benhSu
-            }
-        }))
-        setEdit(false);
-    }
+    // const handleSave = () => {
+    //     dispatch(HSBAActions.updateBacSiSection({
+    //         section: 'hoiBenh',
+    //         data: {
+    //             tienSu, 
+    //             benhSu
+    //         }
+    //     }))
+    //     setEdit(false);
+    // }
 
     return (
-        <Box component="form" noValidate>
-            <Grid container sx={{ mt: 2 }}>
+        <Box component="form" noValidate sx={{ '.MuiTypography-root': { mt: '12px' } }}>
+            <Grid container>
                 <Grid item xs={1}>
                     <Typography fontWeight="bold">Bệnh sử</Typography>
                 </Grid>
@@ -52,7 +52,7 @@ const FHoiBenh = ({ setEdit }) => {
                 </Grid>
             </Grid>
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
+            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
                 <Button 
                     sx={{ 
                         width: 150,
@@ -70,7 +70,7 @@ const FHoiBenh = ({ setEdit }) => {
                 >
                     Lưu
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

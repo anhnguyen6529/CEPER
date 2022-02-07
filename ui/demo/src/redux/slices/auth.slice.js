@@ -5,7 +5,7 @@ const initialState = {
         username: 'user01',
         avatar: '',
         role: 'BS',
-        name: 'Nguyễn Văn A'        
+        name: 'Trần Quốc A'        
     },
     login: {
         username: '',

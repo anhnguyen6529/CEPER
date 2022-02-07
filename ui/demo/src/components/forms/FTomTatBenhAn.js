@@ -1,23 +1,23 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import "../../styles/index.css";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Save } from "@mui/icons-material";
+// import { HSBAActions } from "../../redux/slices/HSBA.slice";
+// import { Save } from "@mui/icons-material";
 
-const FTomTatBenhAn = ({ setEdit }) => {
+const FTomTatBenhAn = () => {
     const HSBA = useSelector((state) => state.HSBA);
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [tomTatBenhAn, setTomTatBenhAn] = useState(HSBA.tomTatBenhAn);
   
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'tomTatBenhAn',
-            data: tomTatBenhAn
-        }))
-        setEdit(false);
-    }
+    // const handleSave = () => {
+    //     dispatch(HSBAActions.updateBacSiSection({
+    //         section: 'tomTatBenhAn',
+    //         data: tomTatBenhAn
+    //     }))
+    //     setEdit(false);
+    // }
 
     return (
         <Box component="form" noValidate>       
@@ -26,10 +26,9 @@ const FTomTatBenhAn = ({ setEdit }) => {
                 fullWidth
                 value={tomTatBenhAn}
                 onChange={(event) => setTomTatBenhAn(event.target.value)}
-                sx={{ mt: 2 }}
             />
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
+            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
                 <Button 
                     sx={{ 
                         width: 150,
@@ -47,7 +46,7 @@ const FTomTatBenhAn = ({ setEdit }) => {
                 >
                     Lưu
                 </Button>
-            </Box>
+            </Box> */}
         </Box>
     )
 }

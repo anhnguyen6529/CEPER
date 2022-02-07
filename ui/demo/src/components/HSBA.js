@@ -6,41 +6,63 @@ import {
     Grid, 
     Container,
     Paper,
-    Tooltip,
+    CircularProgress
 } from "@mui/material";
-import { 
-    CloseFullscreen, 
-    OpenInFull, 
-    ArrowUpward, 
-    ArrowDownward, 
-    VisibilityOff
-} from "@mui/icons-material";
-import mdSections from "../constants/md_sections.json";
+// import { 
+//     CloseFullscreen, 
+//     OpenInFull, 
+//     ArrowUpward, 
+//     ArrowDownward, 
+//     VisibilityOff
+// } from "@mui/icons-material";
+// import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
-import { 
-    CLHanhChinh,
-    CLPhieuTDDiUngThuoc,
-    CLLyDoVaoVien,
-    CLHoiBenh,
-    CLKhamBenh,
-    CLChanDoanBanDau,
-    CLPhuongPhapDieuTri, 
-    CLChanDoanKhiRaVien,
-    CLTomTatBenhAn,
-    CLPhieuTDChucNangSong,
-    CLToDieuTri,
-    CLPhieuChamSoc
-} from "./collapse";
+// import { 
+//     CLHanhChinh,
+//     CLPhieuTDDiUngThuoc,
+//     CLLyDoVaoVien,
+//     CLHoiBenh,
+//     CLKhamBenh,
+//     CLChanDoanBanDau,
+//     CLPhuongPhapDieuTri, 
+//     CLChanDoanKhiRaVien,
+//     CLTomTatBenhAn,
+//     CLPhieuTDChucNangSong,
+//     CLToDieuTri,
+//     CLPhieuChamSoc
+// } from "./collapse";
 import { format } from "date-fns";
 import UserContext from "../contexts/UserContext";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
+import Tabs from "./common/Tabs";
+import TabPanel from "./common/TabPanel";
+import FHanhChinh from "./forms/FHanhChinh";
+import { TabBenhAn, TabTongKetBA } from "./tabs";
+import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong } from "./forms";
 
 const HSBA = () => {
-    const { appearSec, setAppearSec, openSec, setOpenSec, today } = useContext(UserContext);
+    const dispatch = useDispatch();
+    const { pid } = useParams();
+    useEffect(() => {
+        dispatch(HSBAThunk.getOneHSBAByPID(pid));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
+    const { today, tabs, selectedTab, setSelectedTab } = useContext(UserContext); //appearSec, setAppearSec, openSec, setOpenSec
     const benhNhan = useSelector(state => state.HSBA);
+    const { loading } = benhNhan;
+
+    if (loading) {
+        return (
+            <div className="df fdc aic jcc">
+                <CircularProgress sx={{ mt: 3, mb: 1 }} />
+                <Typography color="primary">Đang tải...</Typography>
+            </div>
+        )
+    }
+
     var dauHieuSinhTon = [...benhNhan.phieuTDChucNangSong.data];
     dauHieuSinhTon.sort(function(a, b) {
         var ngayGioA = new Date(a.ngayGio);
@@ -52,44 +74,57 @@ const HSBA = () => {
     const { mach, nhietDo, huyetAp, nhipTho, canNang } = dauHieuSinhTon.length > 0 
         ? dauHieuSinhTon[dauHieuSinhTon.length - 1]
         : { mach: '', nhietDo: '', huyetAp: '', nhipTho: '', canNang: '' };
-    const dispatch = useDispatch();
-    const { pid } = useParams();
-    useEffect(() => {
-        dispatch(HSBAThunk.getOneHSBAByPID(pid));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    
+    // function renderSwitch(param) {
+    //     switch (mdSections["order"][param]) {
+    //         case 'Hành chính':
+    //             return <CLHanhChinh open={openSec[param]} id={param}/>;
+    //         case 'Phiếu TD dị ứng thuốc':
+    //             return <CLPhieuTDDiUngThuoc open={openSec[param]} id={param}/>;
+    //         case 'Lý do vào viện': 
+    //             return <CLLyDoVaoVien open={openSec[param]} id={param} />;
+    //         case 'Hỏi bệnh': 
+    //             return <CLHoiBenh open={openSec[param]} id={param} />;
+    //         case 'Khám bệnh': 
+    //             return <CLKhamBenh open={openSec[param]} id={param} />;
+    //         case 'Chẩn đoán ban đầu': 
+    //             return <CLChanDoanBanDau open={openSec[param]} id={param} />;
+    //         case 'Phương pháp điều trị':
+    //             return <CLPhuongPhapDieuTri open={openSec[param]} id={param} />;
+    //         case 'Chẩn đoán khi ra viện': 
+    //             return <CLChanDoanKhiRaVien open={openSec[param]} id={param} />;
+    //         case 'Tóm tắt bệnh án': 
+    //             return <CLTomTatBenhAn open={openSec[param]} id={param} />;
+    //         case 'Phiếu TD chức năng sống':
+    //             return <CLPhieuTDChucNangSong open={openSec[param]} id={param} />;
+    //         case 'Tờ điều trị':
+    //             return <CLToDieuTri open={openSec[param]} id={param} />;
+    //         case 'Phiếu chăm sóc':
+    //             return <CLPhieuChamSoc open={openSec[param]} id={param} />;
+    //         default:
+    //             return <></>;
+    //     }
+    // }
 
-    function renderSwitch(param) {
-        switch (mdSections["order"][param]) {
-            case 'Hành chính':
-                return <CLHanhChinh open={openSec[param]} id={param}/>;
-            case 'Phiếu TD dị ứng thuốc':
-                return <CLPhieuTDDiUngThuoc open={openSec[param]} id={param}/>;
-            case 'Lý do vào viện': 
-                return <CLLyDoVaoVien open={openSec[param]} id={param} />;
-            case 'Hỏi bệnh': 
-                return <CLHoiBenh open={openSec[param]} id={param} />;
-            case 'Khám bệnh': 
-                return <CLKhamBenh open={openSec[param]} id={param} />;
-            case 'Chẩn đoán ban đầu': 
-                return <CLChanDoanBanDau open={openSec[param]} id={param} />;
-            case 'Phương pháp điều trị':
-                return <CLPhuongPhapDieuTri open={openSec[param]} id={param} />;
-            case 'Chẩn đoán khi ra viện': 
-                return <CLChanDoanKhiRaVien open={openSec[param]} id={param} />;
-            case 'Tóm tắt bệnh án': 
-                return <CLTomTatBenhAn open={openSec[param]} id={param} />;
-            case 'Phiếu TD chức năng sống':
-                return <CLPhieuTDChucNangSong open={openSec[param]} id={param} />;
-            case 'Tờ điều trị':
-                return <CLToDieuTri open={openSec[param]} id={param} />;
-            case 'Phiếu chăm sóc':
-                return <CLPhieuChamSoc open={openSec[param]} id={param} />;
-            default:
-                return <></>;
+    const switchTab = (label) => {
+        switch (label) {
+            case "Tờ điều trị":
+                return <FToDieuTri />
+            case "Phiếu chăm sóc":
+                return <FPhieuChamSoc />
+            case "Phiếu TD truyền dịch": 
+                return <></>
+            case "Phiếu TD chức năng sống": 
+                return <FPhieuTDChucNangSong />
+            case "Phiếu TD dị ứng thuốc": 
+                return <FPhieuTDDiUngThuoc />
+            case "Phiếu công khai thuốc": 
+                return <></>
+            default: 
+                return <></>
         }
     }
-    
+
     return (
         <Container sx={{ mt: 3 }} maxWidth={false}>
             <Grid container spacing={5} sx={{ mb: 3 }}>
@@ -212,8 +247,45 @@ const HSBA = () => {
                 </Grid>
             </Grid>
 
+            <Tabs 
+                value={selectedTab}
+                setValue={setSelectedTab}
+                tabs={tabs}
+                sx={{
+                    '.MuiTabs-indicator': {
+                        background: 'none'
+                    }, 
+                    '.MuiTab-root': {
+                        minHeight: 36,
+                        pb: 1,
+                        bgcolor: '#E0E0E0',
+                        mr: 0.5,
+                        borderRadius: '4px 4px 0px 0px',
+                        boxShadow: "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
+                    },
+                    '.Mui-selected': {
+                        bgcolor: 'white',
+                        cursor: 'default',  
+                    },
+                    minHeight: 36
+                }}
+            />
+            <TabPanel value={selectedTab} index={0} className="TabPanel">
+                <FHanhChinh />
+            </TabPanel>
+            <TabPanel value={selectedTab} index={1} className="TabPanel">
+                <TabBenhAn />
+            </TabPanel>
+            <TabPanel value={selectedTab} index={2} className="TabPanel">
+                <TabTongKetBA />
+            </TabPanel>
+            {tabs.slice(3).map((tab, id) => (
+                <TabPanel key={id} value={selectedTab} index={id + 3} className="TabPanel">
+                    {switchTab(tab.label)}
+                </TabPanel>
+            ))}
             
-            {appearSec.map((sectionId, id) => (
+            {/* {appearSec.map((sectionId, id) => (
                 <Paper 
                     key={id}
                     id={`section-${appearSec[id]}`}
@@ -299,34 +371,34 @@ const HSBA = () => {
                 
                     {renderSwitch(sectionId)}
                 </Paper>
-            ))}  
+            ))}   */}
 
-                    {/* <Grid item xs={11.5}>
-                        <Container>
-                        { mdSections.canEdit[user.role].some((element) => appearSec.indexOf(element) !== -1) &&
-                            <Box sx={{ width: '100%', textAlign: 'right' }}>
-                                <Button 
-                                    sx={{ 
-                                        width: 120,
-                                        height: 36,
-                                        background: '#009ABB', 
-                                        textTransform: 'none', 
-                                        fontWeight: 'bold',
-                                        color: 'white',
-                                        '&:hover': {
-                                            background: '#009ABB', 
-                                        },
-                                        mt: 4,
-                                    
-                                    }} 
-                                    onClick={() => {}}
-                                >
-                                    Cập nhật
-                                </Button>
-                            </Box>
-                        }
-                        </Container>
-                    </Grid> */}                              
+            {/* <Grid item xs={11.5}>
+                <Container>
+                { mdSections.canEdit[user.role].some((element) => appearSec.indexOf(element) !== -1) &&
+                    <Box sx={{ width: '100%', textAlign: 'right' }}>
+                        <Button 
+                            sx={{ 
+                                width: 120,
+                                height: 36,
+                                background: '#009ABB', 
+                                textTransform: 'none', 
+                                fontWeight: 'bold',
+                                color: 'white',
+                                '&:hover': {
+                                    background: '#009ABB', 
+                                },
+                                mt: 4,
+                            
+                            }} 
+                            onClick={() => {}}
+                        >
+                            Cập nhật
+                        </Button>
+                    </Box>
+                }
+                </Container>
+            </Grid> */}                              
         </Container>
     )
 }
