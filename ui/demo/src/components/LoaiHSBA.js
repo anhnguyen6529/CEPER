@@ -5,7 +5,7 @@ import { makeStyles } from '@mui/styles';
 import bloodTests from "../images/blood_tests.png";
 import medicalKit from "../images/medical_kit.png";
 import stethoscope from "../images/stethoscope.png";
-import BorderLinearProgress from "./common/BorderLinearProgress";
+import { BorderLinearProgress } from "./common";
 import UserContext from "../contexts/UserContext";
 import DanhSachHSBA from "./DanhSachHSBA";
 import HSBA from "./HSBA";

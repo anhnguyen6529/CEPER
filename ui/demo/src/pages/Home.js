@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Container, Grid, Typography, Link, Box } from '@mui/material';
-import NavBar from '../components/common/NavBar';
+import { NavBar, Button, Footer } from '../components/common';
 import { makeStyles } from '@mui/styles';
-import Button from '../components/common/Button';
 import landingImg from '../images/landing_01.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileMedical, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
-import Footer from '../components/common/Footer';
 
 const useStyles = makeStyles(() => ({
     root: {

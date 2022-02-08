@@ -4,9 +4,7 @@ import { NavigateNext, InfoOutlined } from "@mui/icons-material";
 import '../styles/index.css';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import Drawer from "../components/common/Drawer";
-import ToolBar from "../components/common/ToolBar";
-import Main from "../components/common/Main";
+import { Drawer, ToolBar, Main } from "../components/common";
 import { UserProvider } from "../contexts/UserContext";
 import { DanhSachHSBA, HSBA } from "../components";
 

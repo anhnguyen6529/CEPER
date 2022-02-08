@@ -4,8 +4,7 @@ import '../styles/index.css';
 import { useSelector } from "react-redux";
 import TDanhSachHienTai from "./tables/TDanhSachHienTai";
 import TDanhSachRaVien from "./tables/TDanhSachRaVien";
-import TabPanel from "../components/common/TabPanel";
-import Tabs from "./common/Tabs";
+import { TabPanel, Tabs } from "./common";
 
 const DanhSachHSBA = () => {
 

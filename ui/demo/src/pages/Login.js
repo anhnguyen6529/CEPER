@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from '@mui/styles';
 import { Container, Grid, Typography, Button, Box, TextField, Link, FormHelperText, CircularProgress } from "@mui/material";
-import NavBar from "../components/common/NavBar";
+import { NavBar } from "../components/common";
 import loginImg from "../images/login.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserInjured, faUserMd, faUserNurse } from "@fortawesome/free-solid-svg-icons";
