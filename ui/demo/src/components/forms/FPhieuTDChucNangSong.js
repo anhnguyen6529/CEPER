@@ -8,8 +8,7 @@ import {
     TableHead,
     TableCell,
     TableSortLabel,
-    Paper,
-    TablePagination
+    Paper
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import React from "react";
@@ -18,6 +17,8 @@ import UtilsTable from "../../utils/table";
 // import mdSections from "../../constants/md_sections.json";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
+import "../../styles/index.css";
+import { TablePagination } from "../common";
 
 const headCells = [
     { id: 'ngayGio', numeric: false, label: 'Ngày giờ', unit: '', width: '18%' },
@@ -45,29 +46,20 @@ const FPhieuTDChucNangSong = () => {
         setOrderBy(property);
     };
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-    
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value === 'Tất cả' ? rows.length : event.target.value, 10));
-        setPage(0);
-    };
-
     return (
         <>
             <Paper>
                 <TableContainer>
                     <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
-                        <TableHead>
-                            <TableRow sx={{ bgcolor: '#D9EFFE'}}>
+                        <TableHead sx={{ '.MuiTableCell-root': { fontWeight: 'bold' }, '.MuiTableRow-root': { bgcolor: '#D9EFFE' } }}>
+                            <TableRow>
                             {headCells.map((headCell, id) => (
                                 <TableCell
                                     key={id}
                                     align='left'
                                     sortDirection={orderBy === headCell.id ? order : false}
                                     width={headCell.width}
-                                    sx={{ fontWeight: 'bold' }}
+                                    className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""} 
                                 >
                                     <TableSortLabel
                                         active={orderBy === headCell.id}
@@ -91,12 +83,12 @@ const FPhieuTDChucNangSong = () => {
                             .map((row, index) => {
                                 return (
                                     <TableRow hover key={index}>
-                                        <TableCell>{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
-                                        <TableCell>{row.mach}</TableCell>
-                                        <TableCell>{row.nhietDo}</TableCell>
-                                        <TableCell>{row.huyetAp}</TableCell>
-                                        <TableCell>{row.nhipTho}</TableCell>
-                                        <TableCell>{row.canNang}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.mach}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.nhietDo}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.huyetAp}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.nhipTho}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.canNang}</TableCell>
                                         <TableCell>{row.dieuDuongGhi}</TableCell>
                                     </TableRow>
                                 );
@@ -105,22 +97,12 @@ const FPhieuTDChucNangSong = () => {
                     </Table>
                 </TableContainer>
 
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 50, 'Tất cả']}
-                    SelectProps={{ renderValue: value => (value === rows.length ? 'Tất cả' : value) }}
-                    component="div"
-                    count={rows.length}
+                <TablePagination 
+                    length={rows.length}
                     rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                     page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    labelRowsPerPage='Hiển thị tối đa cho mỗi trang:'
-                    labelDisplayedRows={({ from, to, count }) => {
-                        return `${from}–${to} trong số ${count}`;
-                    }}
-                    sx={{ color: '#666666', '& p': { fontSize: '16px' } }}
-                    showFirstButton
-                    showLastButton
+                    setPage={setPage}
                 />
             </Paper>
 

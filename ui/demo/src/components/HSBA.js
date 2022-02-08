@@ -40,7 +40,7 @@ import Tabs from "./common/Tabs";
 import TabPanel from "./common/TabPanel";
 import FHanhChinh from "./forms/FHanhChinh";
 import { TabBenhAn, TabTongKetBA } from "./tabs";
-import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong } from "./forms";
+import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -113,13 +113,13 @@ const HSBA = () => {
             case "Phiếu chăm sóc":
                 return <FPhieuChamSoc />
             case "Phiếu TD truyền dịch": 
-                return <></>
+                return <FPhieuTDTruyenDich />
             case "Phiếu TD chức năng sống": 
                 return <FPhieuTDChucNangSong />
             case "Phiếu TD dị ứng thuốc": 
                 return <FPhieuTDDiUngThuoc />
             case "Phiếu công khai thuốc": 
-                return <></>
+                return <FPhieuCongKhaiThuoc />
             default: 
                 return <></>
         }
@@ -251,6 +251,9 @@ const HSBA = () => {
                 value={selectedTab}
                 setValue={setSelectedTab}
                 tabs={tabs}
+                variant="scrollable"
+                scrollButtons
+                allowScrollButtonsMobile
                 sx={{
                     '.MuiTabs-indicator': {
                         background: 'none'

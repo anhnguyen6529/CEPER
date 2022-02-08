@@ -1,15 +1,6 @@
 import { 
-    Box, 
-    Button,
-    Table,
-    TableRow,
-    TableContainer,
-    TableBody,
-    TableHead,
-    TableCell,
-    TableSortLabel,
-    Paper,
-    TablePagination
+    Box, Button, Table, TableRow, TableContainer, TableBody,
+    TableHead, TableCell, TableSortLabel, Paper
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import React from "react";
@@ -18,13 +9,15 @@ import UtilsTable from "../../utils/table";
 // import mdSections from "../../constants/md_sections.json";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
+import "../../styles/index.css";
+import { TablePagination } from "../common";
 
 const headCells = [
-    { id: 'ngay', numeric: false, label: 'Ngày', unit: '', width: '10%' },
-    { id: 'gio', numeric: false, label: 'Giờ', unit: '', width: '10%' },
-    { id: 'theoDoiDienBien', numeric: true, label: 'Theo dõi diễn biến', unit: '', width: '35%' },
-    { id: 'thucHienYLenh', numeric: true, label: 'Thực hiện y lệnh', unit: '', width: '25%' },
-    { id: 'dieuDuongGhi', numeric: true, label: 'Điều dưỡng ghi', unit: '', width: '20%' }
+    { id: 'ngay', numeric: false, label: 'Ngày', width: '10%' },
+    { id: 'gio', numeric: false, label: 'Giờ', width: '10%' },
+    { id: 'theoDoiDienBien', numeric: true, label: 'Theo dõi diễn biến', width: '35%' },
+    { id: 'thucHienYLenh', numeric: true, label: 'Thực hiện y lệnh', width: '25%' },
+    { id: 'dieuDuongGhi', numeric: true, label: 'Điều dưỡng ghi', width: '20%' }
 ];
 
 const FPhieuChamSoc = () => {
@@ -42,38 +35,28 @@ const FPhieuChamSoc = () => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
     
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value === 'Tất cả' ? rows.length : event.target.value, 10));
-        setPage(0);
-    };
-    
-
     return (
         <>
             <Paper>
                 <TableContainer>
                     <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
-                        <TableHead>
-                            <TableRow sx={{ bgcolor: '#D9EFFE'}}>
+                        <TableHead sx={{ '.MuiTableCell-root': { fontWeight: 'bold' }, '.MuiTableRow-root': { bgcolor: '#D9EFFE' } }}>
+                            <TableRow>
                             {headCells.map((headCell, id) => (
                                 <TableCell
                                     key={id}
                                     align='left'
                                     sortDirection={orderBy === headCell.id ? order : false}
                                     width={headCell.width}
-                                    sx={{ fontWeight: 'bold' }}
+                                    className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""} 
                                 >
                                     <TableSortLabel
                                         active={orderBy === headCell.id}
                                         direction={orderBy === headCell.id ? order : 'asc'}
                                         onClick={createSortHandler(headCell.id)}
                                     >
-                                        {headCell.label}<br />{headCell.unit}
+                                        {headCell.label}
                                         {orderBy === headCell.id ? (
                                             <Box component="span" sx={visuallyHidden}>
                                                 {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -90,10 +73,10 @@ const FPhieuChamSoc = () => {
                             .map((row, index) => {
                                 return (
                                     <TableRow hover key={index}>
-                                        <TableCell>{format(new Date(row.ngay), 'dd/MM/yyyy')}</TableCell>
-                                        <TableCell>{row.gio}</TableCell>
-                                        <TableCell>{row.theoDoiDienBien}</TableCell>
-                                        <TableCell>{row.thucHienYLenh}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngay), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.gio}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.thucHienYLenh}</TableCell>
                                         <TableCell>{row.dieuDuongGhi}</TableCell>
                                     </TableRow>
                                 );
@@ -102,22 +85,12 @@ const FPhieuChamSoc = () => {
                     </Table>
                 </TableContainer>
 
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 50, 'Tất cả']}
-                    SelectProps={{ renderValue: value => (value === rows.length ? 'Tất cả' : value) }}
-                    component="div"
-                    count={rows.length}
+                <TablePagination 
+                    length={rows.length}
                     rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
                     page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    labelRowsPerPage='Hiển thị tối đa cho mỗi trang:'
-                    labelDisplayedRows={({ from, to, count }) => {
-                        return `${from}–${to} trong số ${count}`;
-                    }}
-                    sx={{ color: '#666666', '& p': { fontSize: '16px' } }}
-                    showFirstButton
-                    showLastButton
+                    setPage={setPage}
                 />
             </Paper>
 

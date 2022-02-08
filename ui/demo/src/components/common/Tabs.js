@@ -14,9 +14,6 @@ const Tabs = (props) => {
         <MuiTabs 
             value={value} 
             onChange={(event, newValue) => setValue(newValue)}
-            variant="scrollable"
-            scrollButtons
-            allowScrollButtonsMobile
             {...other}
         >
             {tabs.map((tab, index) => (

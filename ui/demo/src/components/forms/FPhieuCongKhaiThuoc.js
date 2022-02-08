@@ -1,29 +1,41 @@
+import React from "react";
 import { 
-    Box, Button, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, TableSortLabel, Paper
+    Box, 
+    Button,
+    Table,
+    TableRow,
+    TableContainer,
+    TableBody,
+    TableHead,
+    TableCell,
+    TableSortLabel,
+    Paper
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import React from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 // import mdSections from "../../constants/md_sections.json";
 import { useSelector } from "react-redux";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination } from "../common";
 
 const headCells = [
-    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '15%' },
-    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '40%' },
-    { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '25%' },
-    { id: 'bacSiGhi', numeric: false, label: 'Bác sĩ ghi', width: '20%' },
+    { id: 'stt', numeric: false, label: 'STT', width: '5%' },
+    { id: 'tenThuoc', numeric: false, label: 'Tên thuốc, hàm lượng', width: '25%' },
+    { id: 'donVi', numeric: false, label: 'Đơn vị', width: '5%' },
+    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '25%' },
+    { id: 'tongSo', numeric: true, label: 'Tổng số', width: '10%' },
+    { id: 'donGia', numeric: true, label: 'Đơn giá', width: '10%' },
+    { id: 'thanhTien', numeric: true, label: 'Thành tiền', width: '10%' },
+    { id: 'ghiChu', numeric: false, label: 'Ghi chú', width: '10%' }
 ];
 
-const FToDieuTri = () => {
-    const content = useSelector((state) => state.HSBA.toDieuTri);
+const FPhieuCongKhaiThuoc = () => {
+    const content = useSelector((state) => state.HSBA.phieuCongKhaiThuoc);
     // const { role } = useSelector(state => state.auth.user);
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('ngayGio');
+    const [orderBy, setOrderBy] = React.useState('stt');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -33,29 +45,30 @@ const FToDieuTri = () => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
-    };   
+    };
 
     return (
         <>
             <Paper>
                 <TableContainer>
-                    <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
+                    <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' }, }}> 
                         <TableHead sx={{ '.MuiTableCell-root': { fontWeight: 'bold' }, '.MuiTableRow-root': { bgcolor: '#D9EFFE' } }}>
                             <TableRow>
                             {headCells.map((headCell, id) => (
                                 <TableCell
-                                    key={id}
-                                    align='left'
+                                    key={`${headCell.id}Head`}
+                                    align="center"
                                     sortDirection={orderBy === headCell.id ? order : false}
                                     width={headCell.width}
-                                    className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""}
+                                    className={id < headCells.length - 1 ? "tableHeadBorderRight" : "" }
+                                    colSpan={headCell.id === 'ngayThang' ? 5 : 0}
                                 >
                                     <TableSortLabel
                                         active={orderBy === headCell.id}
                                         direction={orderBy === headCell.id ? order : 'asc'}
                                         onClick={createSortHandler(headCell.id)}
                                     >
-                                        {headCell.label}
+                                        {headCell.label}<br />{headCell.unit}
                                         {orderBy === headCell.id ? (
                                             <Box component="span" sx={visuallyHidden}>
                                                 {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -72,10 +85,18 @@ const FToDieuTri = () => {
                             .map((row, index) => {
                                 return (
                                     <TableRow hover key={index}>
-                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.dienBienBenh}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.yLenh}</TableCell>
-                                        <TableCell>{row.bacSiGhi}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{index + 1}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.donVi}</TableCell>
+                                        {Array.from(Array(5)).map((value, idx) => (
+                                            <TableCell width="5%" key={`ngayThang${idx}`} className="tableBodyBorderRight">
+                                                {idx < row.ngayThang.length ? row.ngayThang[idx] : ''}
+                                            </TableCell>
+                                        ))}
+                                        <TableCell className="tableBodyBorderRight">{row.tongSo}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.donGia}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.thanhTien}</TableCell>
+                                        <TableCell>{row.ghiChu}</TableCell>
                                     </TableRow>
                                 );
                         })}
@@ -109,7 +130,7 @@ const FToDieuTri = () => {
                     startIcon={<Add fontSize="small"/>}
                     onClick={() => {}}
                 >
-                    Thêm diễn biến
+                    Thêm mới
                 </Button>
             </Box>
             {/* } */}
@@ -117,4 +138,4 @@ const FToDieuTri = () => {
     )
 }
 
-export default FToDieuTri;
+export default FPhieuCongKhaiThuoc;

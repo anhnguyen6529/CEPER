@@ -81,6 +81,12 @@ const initialState = {
     },
     phieuChamSoc: {
         data: [],
+    },
+    phieuTDTruyenDich: {
+        data: [],
+    },
+    phieuCongKhaiThuoc: {
+        data: [],
     }
 }
 

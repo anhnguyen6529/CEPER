@@ -12,3 +12,5 @@ export { default as FPhieuChamSoc } from './FPhieuChamSoc';
 export { default as FPhieuTDChucNangSong } from './FPhieuTDChucNangSong';
 export { default as FTinhTrangRaVien } from './FTinhTrangRaVien';
 export { default as FHuongDieuTri } from './FHuongDieuTri';
+export { default as FPhieuTDTruyenDich } from './FPhieuTDTruyenDich';
+export { default as FPhieuCongKhaiThuoc } from './FPhieuCongKhaiThuoc';
