@@ -158,7 +158,7 @@ const Login = () => {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ textTransform: 'none', height: 42, fontWeight: 'bold', mt: 2 }}
+                                sx={{ height: 42, fontWeight: 'bold', mt: 2 }}
                                 onClick={onSubmit}
                                 disabled={!!login.success}
                             >

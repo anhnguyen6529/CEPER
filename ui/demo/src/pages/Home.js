@@ -78,7 +78,7 @@ const Home = () => {
         <div className={classes.root}>
             <NavBar>
                 <Link href="/login" underline="none">
-                    <Button variant="outlined" text="Đăng nhập"/>
+                    <Button variant="outlined">Đăng nhập</Button>
                 </Link>
             </NavBar>
 
@@ -99,7 +99,7 @@ const Home = () => {
                         </Typography>
 
                         <Link href="/login" underline="none">
-                            <Button variant="primary" text="Sử dụng ngay" />
+                            <Button variant="primary">Sử dụng ngay</Button>
                         </Link>
                     </Grid>
                     
