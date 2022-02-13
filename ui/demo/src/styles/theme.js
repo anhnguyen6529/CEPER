@@ -55,6 +55,20 @@ const theme = createTheme({
             maxWidth: 320
           }
         }
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: {
+            borderBottom: 'none'
+          }
+        }
+      },
+      MuiTableRow: {
+        styleOverrides: {
+          root: {
+            borderBottom: '0.5px solid rgba(224, 224, 224, 1)'
+          }
+        }
       }
     }
 })

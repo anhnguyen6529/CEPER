@@ -20,6 +20,8 @@ export { default as NavBar } from './NavBar';
 
 export { default as TablePagination } from './TablePagination';
 
+export { default as TableToolBar } from './TableToolBar';
+
 export { default as TabPanel } from './TabPanel';
 
 export { default as Tabs } from './Tabs';

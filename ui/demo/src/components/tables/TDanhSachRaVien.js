@@ -1,50 +1,57 @@
 import React, { useState } from "react";
 import { 
     Box, Avatar, TableContainer, TableCell, TableRow, TableSortLabel, TableBody, 
-    TablePagination, Table, TableHead, Link, TextField, InputAdornment
+    Table, TableHead, Link, TextField, InputAdornment
 } from "@mui/material";
 import "../../styles/index.css";
 import { Search } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { format } from "date-fns";
+import { TablePagination, TableToolBar } from "../common";
 
 const headCells = [
-    { id: 'avatar', label: '', minWidth: 88 },
-    { id: 'pid', label: 'Mã BN', minWidth: 120 },
-    { id: 'hoTen', label: 'Họ tên', minWidth: 180 },
-    { id: 'ngaySinh', label: 'Ngày sinh', minWidth: 140 },
-    { id: 'gioiTinh', label: 'Giới tính', minWidth: 120 },
-    { id: 'khoa', label: 'Khoa', minWidth: 120 },
-    { id: 'ngayVaoVien', label: 'Ngày vào viện', minWidth: 160 },
-    { id: 'ngayRaVien', label: 'Ngày ra viện', minWidth: 160 },
-    { id: 'chanDoanKhiRaVien', label: 'Chẩn đoán khi ra viện', minWidth: 220 },
-    { id: 'tinhTrangRaVien', label: 'Tình trạng ra viện', minWidth: 190 }
+    { id: 'avatar', label: 'Ảnh đại diện', width: 88 },
+    { id: 'pid', label: 'Mã BN', width: 120 },
+    { id: 'hoTen', label: 'Họ tên', width: 180 },
+    { id: 'ngaySinh', label: 'Ngày sinh', width: 140 },
+    { id: 'gioiTinh', label: 'Giới tính', width: 120 },
+    { id: 'khoa', label: 'Khoa', width: 120 },
+    { id: 'ngayVaoVien', label: 'Ngày vào viện', width: 160 },
+    { id: 'ngayRaVien', label: 'Ngày ra viện', width: 160 },
+    { id: 'chanDoanKhiRaVien', label: 'Chẩn đoán khi ra viện', width: 220 },
+    { id: 'tinhTrangRaVien', label: 'Tình trạng ra viện', width: 190 }
 ];
 
 const TDanhSachRaVien = ({ data }) => {
-    const [searchKeys, setSearchKeys] = useState(new Array(13).fill(''));
+    const [searchKeys, setSearchKeys] = useState(headCells.map(headCell => {
+        let rHeadCell = { id: headCell.id, search: '' };
+        return rHeadCell;
+    }));
+    const [colsChecked, setColsChecked] = useState(new Array(headCells.length).fill(true));
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('pid');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rows, setRows] = useState(data);
 
-    const requestSearch = (searchKey, index) => {
+    const requestSearch = (searchKey, cellId) => {
+        let fIndex = searchKeys.findIndex(element => element.id === cellId);
         const filteredRows = data.filter((row) => {
             var checkAll = true, keys = Object.keys(row);
-            for (var i = 0; i < keys.length; i++) {
-                if (i + 1 === index) {
-                    checkAll = checkAll && row[keys[i]].toLowerCase().includes(searchKey.toLowerCase());
+            keys.forEach(key => {
+                if (key === cellId) {
+                    checkAll = checkAll && row[key].toLowerCase().includes(searchKey.toLowerCase());
                 } else {
-                    checkAll = checkAll && row[keys[i]].toLowerCase().includes(searchKeys[i + 1].toLowerCase());
+                    var fKey = searchKeys.find(element => element.id === key);
+                    checkAll = checkAll & row[key].toLowerCase().includes(fKey.search.toLowerCase());
                 }
-            }
+            })
             return checkAll;
         });
         setRows(filteredRows);
         var tmp = [...searchKeys];
-        tmp[index] = searchKey;
+        tmp[fIndex].search = searchKey;
         setSearchKeys(tmp);
     }
 
@@ -54,27 +61,32 @@ const TDanhSachRaVien = ({ data }) => {
         setOrderBy(property);
     };
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-    
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value === 'Tất cả' ? rows.length : event.target.value, 10));
-        setPage(0);
-    };
-    
     return (
         <>
+            <TableToolBar
+                columns={headCells.map(headCell => {
+                    let rHeadCell = { id: headCell.id, label: headCell.label };
+                    return rHeadCell;
+                })} 
+                colsChecked={colsChecked}
+                setColsChecked={setColsChecked}
+            />
+
             <TableContainer>
                 <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
                     <TableHead>
-                        <TableRow> 
+                        <TableRow sx={{ height: 135.5 }}> 
+                        {colsChecked.every((element) => element === false) && 
+                            <TableCell width="100%"></TableCell>
+                        }
+
                         {headCells.map((headCell, id) => (
+                            colsChecked[id] &&
                             <TableCell
                                 key={id}
                                 align='left'
                                 sortDirection={orderBy === headCell.id ? order : false}
-                                sx={{ fontWeight: 'bold', minWidth: headCell.minWidth }}
+                                sx={{ fontWeight: 'bold', width: headCell.width, minWidth: headCell.width }}
                             >
                                 <TableSortLabel
                                     active={orderBy === headCell.id}
@@ -82,7 +94,7 @@ const TDanhSachRaVien = ({ data }) => {
                                     onClick={createSortHandler(headCell.id)}
                                     sx={{ height: 56 }}
                                 >
-                                    {headCell.label}
+                                    {headCell.id !== "avatar" ? headCell.label : ""}
                                     {orderBy === headCell.id ? (
                                         <Box component="span" sx={visuallyHidden}>
                                             {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -91,8 +103,8 @@ const TDanhSachRaVien = ({ data }) => {
                                 </TableSortLabel>
                                 {id > 0 &&
                                     <TextField 
-                                        value={searchKeys[id]}
-                                        onChange={(event) => requestSearch(event.target.value, id)}
+                                        value={searchKeys[id].search}
+                                        onChange={(event) => requestSearch(event.target.value, headCell.id)}
                                         fullWidth
                                         size="small"
                                         InputProps={{
@@ -112,21 +124,25 @@ const TDanhSachRaVien = ({ data }) => {
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row, index) => {
                             return (
-                                <TableRow hover key={index}>
-                                    <TableCell>
-                                        <Avatar src="/images/avatar_default.png" sx={{ width: 56, height: 56 }} />
-                                    </TableCell>
-                                    <TableCell>{row.pid}</TableCell>
-                                    <TableCell>
-                                        <Link underline="none" href={`/user/HSBA/${row.pid}`}>{row.hoTen}</Link>
-                                    </TableCell>
-                                    <TableCell>{format(new Date(row.ngaySinh), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell>{row.gioiTinh}</TableCell>
-                                    <TableCell>{row.khoa}</TableCell>
-                                    <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell>{format(new Date(row.ngayRaVien), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell>{row.chanDoanKhiRaVien}</TableCell>
-                                    <TableCell>{row.tinhTrangRaVien}</TableCell>
+                                <TableRow hover key={index} sx={{ height: 90 }}>
+                                    {colsChecked[0] && 
+                                        <TableCell>
+                                            <Avatar src="/images/avatar_default.png" sx={{ width: 56, height: 56 }} />
+                                        </TableCell>
+                                    }
+                                    {colsChecked[1] && <TableCell>{row.pid}</TableCell>}
+                                    {colsChecked[2] && 
+                                        <TableCell>
+                                            <Link underline="none" href={`/user/HSBA/${row.pid}`}>{row.hoTen}</Link>
+                                        </TableCell>
+                                    }  
+                                    {colsChecked[3] && <TableCell>{format(new Date(row.ngaySinh), 'dd/MM/yyyy')}</TableCell>}
+                                    {colsChecked[4] && <TableCell>{row.gioiTinh}</TableCell>}
+                                    {colsChecked[5] && <TableCell>{row.khoa}</TableCell>}
+                                    {colsChecked[6] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
+                                    {colsChecked[7] && <TableCell>{format(new Date(row.ngayRaVien), 'dd/MM/yyyy')}</TableCell>}
+                                    {colsChecked[8] && <TableCell>{row.chanDoanKhiRaVien}</TableCell>}
+                                    {colsChecked[9] && <TableCell>{row.tinhTrangRaVien}</TableCell>}
                                 </TableRow>
                             );
                     })}
@@ -134,22 +150,12 @@ const TDanhSachRaVien = ({ data }) => {
                 </Table>
             </TableContainer>
 
-            <TablePagination
-                rowsPerPageOptions={[10, 25, 50, 'Tất cả']}
-                SelectProps={{ renderValue: value => (value === rows.length ? 'Tất cả' : value) }}
-                component="div"
-                count={rows.length}
+            <TablePagination 
+                length={rows.length}
                 rowsPerPage={rowsPerPage}
+                setRowsPerPage={setRowsPerPage}
                 page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                labelRowsPerPage='Hiển thị tối đa cho mỗi trang:'
-                labelDisplayedRows={({ from, to, count }) => {
-                    return `${from}–${to} trong số ${count}`;
-                }}
-                sx={{ color: '#666666', '& p': { fontSize: '16px' } }}
-                showFirstButton
-                showLastButton
+                setPage={setPage}
             />
         </>
     )

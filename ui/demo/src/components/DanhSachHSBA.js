@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Box, Container } from "@mui/material";
 import '../styles/index.css';
 import { useSelector } from "react-redux";
-import TDanhSachHienTai from "./tables/TDanhSachHienTai";
-import TDanhSachRaVien from "./tables/TDanhSachRaVien";
+import { TDanhSachHienTai, TDanhSachRaVien } from "./tables";
 import { TabPanel, Tabs } from "./common";
 
 const DanhSachHSBA = () => {
