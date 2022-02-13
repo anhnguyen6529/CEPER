@@ -2,9 +2,7 @@ import { Box, Typography, TextField, Grid, Divider } from "@mui/material";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import "../../styles/index.css";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import DateTimePicker from '@mui/lab/DateTimePicker';
 // import { HSBAActions } from "../../redux/slices/HSBA.slice";
 // import { Save } from "@mui/icons-material";
 
@@ -41,14 +39,15 @@ const FChanDoanKhiRaVien = () => {
                     <Typography fontWeight="bold">Ngày ra viện</Typography>
                 </Grid>
                 <Grid item xs={10.5}>
-                    <LocalizationProvider dateAdapter={AdapterDateFns} >
-                        <DatePicker
-                            value={!ngayRaVien ? null : ngayRaVien}
-                            onChange={(newValue) => setNgayRaVien(newValue)}
-                            renderInput={(params) => <TextField {...params}/>}
-                            inputFormat="dd/MM/yyyy"
-                        />
-                    </LocalizationProvider>
+                    <DateTimePicker
+                        value={!ngayRaVien ? null : ngayRaVien}
+                        onChange={(newValue) => setNgayRaVien(newValue)}
+                        renderInput={(params) => <TextField {...params}/>}
+                        inputFormat="DD/MM/yyyy HH:ss"
+                        ampm={false}
+                        leftArrowButtonText=""
+                        rightArrowButtonText=""
+                    />
                 </Grid>
             </Grid>
 

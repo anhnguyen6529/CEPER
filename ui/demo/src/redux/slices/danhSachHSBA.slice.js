@@ -12,7 +12,7 @@ const initialState = {
             giuong: '08',
             benhDieuTri: 'Sốt nhiễm siêu vi ngày 4',
             tinhTrangHienTai: 'Giảm đau đầu, hạ sốt',
-            ngayVaoVien: '2021-11-08'
+            ngayVaoVien: '2021-11-08 14:00'
         },
         { 
             pid: '102345', 
@@ -24,7 +24,7 @@ const initialState = {
             giuong: '02',
             benhDieuTri: 'Rối loạn tiêu hoá',
             tinhTrangHienTai: 'Đỡ',
-            ngayVaoVien: '2021-06-07'
+            ngayVaoVien: '2021-06-07 08:30'
         },
         { 
             pid: '200001', 
@@ -36,7 +36,7 @@ const initialState = {
             giuong: '04',
             benhDieuTri: 'Đau tim',
             tinhTrangHienTai: 'Không thay đổi',
-            ngayVaoVien: '2021-10-20'
+            ngayVaoVien: '2021-10-20 09:20'
         },
         { 
             pid: '165423', 
@@ -48,7 +48,7 @@ const initialState = {
             giuong: '06',
             benhDieuTri: 'Suy hô hấp',
             tinhTrangHienTai: 'Diễn biến nặng hơn',
-            ngayVaoVien: '2021-12-12',
+            ngayVaoVien: '2021-12-12 15:40',
         }
     ],
     raVien: [
@@ -58,8 +58,8 @@ const initialState = {
             hoTen: 'Trần Văn A',
             ngaySinh: '1994-04-16',
             gioiTinh: 'Nam',
-            ngayVaoVien: '2021-08-04',
-            ngayRaVien: '2021-06-18',
+            ngayVaoVien: '2021-08-04 18:50',
+            ngayRaVien: '2021-06-18 18:50',
             chanDoanKhiRaVien: 'Sốt siêu vi',
             tinhTrangRaVien: 'Đỡ, giảm'
         },
@@ -69,8 +69,8 @@ const initialState = {
             hoTen: 'Nguyễn Thị B',
             ngaySinh: '2012-03-15',
             gioiTinh: 'Nữ',
-            ngayVaoVien: '2021-06-12',
-            ngayRaVien: '2021-06-15',
+            ngayVaoVien: '2021-06-12 10:10',
+            ngayRaVien: '2021-06-15 10:10',
             chanDoanKhiRaVien: 'Viêm dạ dày ruột',
             tinhTrangRaVien: 'Khỏi'
         },

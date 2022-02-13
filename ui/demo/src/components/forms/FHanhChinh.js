@@ -1,8 +1,6 @@
 import { Box, Grid, Typography, Button, Divider, TextField, Select, MenuItem } from "@mui/material";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import CLocal from "../../constants/local.json";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
@@ -88,14 +86,12 @@ const FHanhChinh = ({ setEdit }) => {
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Ngày sinh</Typography>
-                    <LocalizationProvider dateAdapter={AdapterDateFns} >
-                        <DatePicker
-                            value={ngaySinh}
-                            onChange={(newValue) => setNgaySinh(newValue)}
-                            renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select}/>}
-                            inputFormat="dd/MM/yyyy"
-                        />
-                    </LocalizationProvider>
+                    <DatePicker
+                        value={ngaySinh}
+                        onChange={(newValue) => setNgaySinh(newValue)}
+                        renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select}/>}
+                        inputFormat="DD/MM/yyyy"
+                    />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Giới tính</Typography>
@@ -297,25 +293,21 @@ const FHanhChinh = ({ setEdit }) => {
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Giá trị từ</Typography>
-                    <LocalizationProvider dateAdapter={AdapterDateFns} >
-                        <DatePicker
-                            value={giaTriTu}
-                            onChange={(newValue) => setGiaTriTu(newValue)}
-                            renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
-                            inputFormat="dd/MM/yyyy"
-                        />
-                    </LocalizationProvider>
+                    <DatePicker
+                        value={giaTriTu}
+                        onChange={(newValue) => setGiaTriTu(newValue)}
+                        renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
+                        inputFormat="DD/MM/yyyy"
+                    />
                 </Grid>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Giá trị đến</Typography>
-                    <LocalizationProvider dateAdapter={AdapterDateFns} >
-                        <DatePicker
-                            value={giaTriDen}
-                            onChange={(newValue) => setGiaTriDen(newValue)}
-                            renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
-                            inputFormat="dd/MM/yyyy"
-                        />
-                    </LocalizationProvider>
+                    <DatePicker
+                        value={giaTriDen}
+                        onChange={(newValue) => setGiaTriDen(newValue)}
+                        renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
+                        inputFormat="DD/MM/yyyy"
+                    />
                 </Grid>
             </Grid>
             <Divider sx={{ mt: 2, mb: 2 }}/>

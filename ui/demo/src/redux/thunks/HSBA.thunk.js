@@ -91,7 +91,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-11-08',
+            ngayVaoVien: '2021-11-08 14:00',
             vaoNgayThu: 1,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -148,7 +148,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-06-07',
+            ngayVaoVien: '2021-06-07 08:30',
             vaoNgayThu: 1,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -205,7 +205,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-10-20',
+            ngayVaoVien: '2021-10-20 09:20',
             vaoNgayThu: 1,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -262,7 +262,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-12-12',
+            ngayVaoVien: '2021-12-12 15:40',
             vaoNgayThu: 1,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -319,7 +319,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-08-04',
+            ngayVaoVien: '2021-08-04 18:50',
             vaoNgayThu: 1,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -331,7 +331,7 @@ const datas = [
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: 'Sốt siêu vi',
-            ngayRaVien: '2021-06-18',
+            ngayRaVien: '2021-06-18 18:50',
         },
         tinhTrangRaVien: 'Đỡ, giảm',
         huongDieuTri: '',
@@ -376,7 +376,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-06-12',
+            ngayVaoVien: '2021-06-12 10:10',
             vaoNgayThu: 1,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -388,7 +388,7 @@ const datas = [
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: 'Viêm dạ dày ruột',
-            ngayRaVien: '2021-06-15',
+            ngayRaVien: '2021-06-15 10:10',
         },
         tinhTrangRaVien: 'Khỏi',
         huongDieuTri: '',

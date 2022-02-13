@@ -2,9 +2,7 @@ import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import "../../styles/index.css";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import DateTimePicker from '@mui/lab/DateTimePicker';
 // import { HSBAActions } from "../../redux/slices/HSBA.slice";
 // import { Save } from "@mui/icons-material";
 
@@ -31,6 +29,9 @@ const FLyDoVaoVien = () => {
     //     }))
     //     setEdit(false);
     // }
+
+    // const weekdays = [...Array(7).keys()].map((i) => vi.localize.day(i !== 6 ? i + 1 : 0, { width: 'wide' }));
+    // console.log(vi.localize.);
 
     return (
         <Box component="form" noValidate>
@@ -63,14 +64,15 @@ const FLyDoVaoVien = () => {
                     <Typography fontWeight="bold">Ngày vào viện</Typography>
                 </Grid>
                 <Grid item xs={9}>
-                    <LocalizationProvider dateAdapter={AdapterDateFns} >
-                        <DatePicker
-                            value={ngayVaoVien}
-                            onChange={(newValue) => setNgayVaoVien(newValue)}
-                            renderInput={(params) => <TextField {...params}/>}
-                            inputFormat="dd/MM/yyyy"
-                        />
-                    </LocalizationProvider>
+                    <DateTimePicker
+                        value={ngayVaoVien}
+                        onChange={(newValue) => setNgayVaoVien(newValue)}
+                        renderInput={(params) => <TextField {...params}/>}
+                        inputFormat="DD/MM/yyyy HH:ss"
+                        ampm={false}
+                        leftArrowButtonText=""
+                        rightArrowButtonText=""
+                    />
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>

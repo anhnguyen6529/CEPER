@@ -6,6 +6,8 @@ export { default as BorderLinearProgress } from './BorderLinearProgress';
 
 export { default as Button } from './Button';
 
+export { default as CustomAdapterMoment } from './CustomAdapterMoment';
+
 export { default as Drawer } from './Drawer';
 
 export { default as DropDownMenu } from './DropDownMenu';
