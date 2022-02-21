@@ -1,28 +1,49 @@
 import { Box, Typography, TextField, Grid, Divider } from "@mui/material";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import DateTimePicker from '@mui/lab/DateTimePicker';
-// import { HSBAActions } from "../../redux/slices/HSBA.slice";
-// import { Save } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { Autorenew, Save } from "@mui/icons-material";
+import { Button } from "../common";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien } = useSelector((state) => state.HSBA);
-    // const dispatch = useDispatch();
+    const { role } = useSelector((state) => state.auth.user);
+    const { tabTongKetBAState, setTabTongKetBAState } = useContext(HSBAContext);
+    const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
     const [ngayRaVien, setNgayRaVien] = useState(chanDoanKhiRaVien.ngayRaVien);
+    const [hasChanged, setHasChanged] = useState(false);
   
-    // const handleSave = () => {
-    //     dispatch(HSBAActions.updateBacSiSection({
-    //         section: 'chanDoanKhiRaVien',
-    //         data: {
-    //             chanDoan,
-    //             ngayRaVien
-    //         }
-    //     }))
-    //     setEdit(false);
-    // }
+    const handleSave = () => {
+        dispatch(HSBAActions.updateBacSiSection({
+            section: 'chanDoanKhiRaVien',
+            data: {
+                chanDoan,
+                ngayRaVien
+            }
+        }))
+        setHasChanged(false);
+        setTabTongKetBAState({
+            ...tabTongKetBAState, 
+            chanDoanKhiRaVien: { saved: true, date: new Date() }
+        });
+    }
+
+    const handleReset = () => {
+        setChanDoan(chanDoanKhiRaVien.chanDoan);
+        setNgayRaVien(chanDoanKhiRaVien.ngayRaVien);
+        setHasChanged(false);
+    }
+
+    const handleChange = () => {
+        if (!hasChanged) {
+            setHasChanged(true);
+        }
+    }
 
     return (
         <Box component="form" noValidate>
@@ -30,7 +51,11 @@ const FChanDoanKhiRaVien = () => {
                 multiline
                 fullWidth
                 value={chanDoan}
-                onChange={(event) => setChanDoan(event.target.value)}
+                onChange={(event) => {
+                    setChanDoan(event.target.value);
+                    handleChange();
+                }}
+                disabled={role !== "BS"}
             />
             <Divider sx={{ my: 2 }}/>
 
@@ -41,35 +66,31 @@ const FChanDoanKhiRaVien = () => {
                 <Grid item xs={10.5}>
                     <DateTimePicker
                         value={!ngayRaVien ? null : ngayRaVien}
-                        onChange={(newValue) => setNgayRaVien(newValue)}
+                        onChange={(newValue) => {
+                            setNgayRaVien(new Date(newValue).toISOString());
+                            handleChange();
+                        }}
                         renderInput={(params) => <TextField {...params}/>}
-                        inputFormat="DD/MM/yyyy HH:ss"
+                        inputFormat="DD/MM/yyyy HH:mm"
                         ampm={false}
                         leftArrowButtonText=""
                         rightArrowButtonText=""
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
 
-            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Save fontSize="small" />}
-                    onClick={handleSave}
-                >
-                    Lưu
-                </Button>
-            </Box> */}
+            {hasChanged &&
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
+                        Đặt lại
+                    </Button>
+
+                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                        Lưu tạm thời
+                    </Button>
+                </Box>
+            }
         </Box>
     )
 }

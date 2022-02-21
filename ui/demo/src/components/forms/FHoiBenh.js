@@ -1,27 +1,48 @@
 import { Box, Typography, TextField, Grid } from "@mui/material";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
-// import { HSBAActions } from "../../redux/slices/HSBA.slice";
-// import { Save } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { Autorenew, Save } from "@mui/icons-material";
+import { Button } from "../common";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const FHoiBenh = () => {
     const { hoiBenh } = useSelector((state) => state.HSBA);
-    // const dispatch = useDispatch();
+    const { role } = useSelector((state) => state.auth.user);
+    const { tabBenhAnState, setTabBenhAnState } = useContext(HSBAContext);
+    const dispatch = useDispatch();
 
     const [tienSu, setTienSu] = useState(hoiBenh.tienSu);
     const [benhSu, setBenhSu] = useState(hoiBenh.benhSu);
+    const [hasChanged, setHasChanged] = useState(false);
   
-    // const handleSave = () => {
-    //     dispatch(HSBAActions.updateBacSiSection({
-    //         section: 'hoiBenh',
-    //         data: {
-    //             tienSu, 
-    //             benhSu
-    //         }
-    //     }))
-    //     setEdit(false);
-    // }
+    const handleSave = () => {
+        dispatch(HSBAActions.updateBacSiSection({
+            section: 'hoiBenh',
+            data: {
+                tienSu, 
+                benhSu
+            }
+        }))
+        setHasChanged(false);
+        setTabBenhAnState({
+            ...tabBenhAnState, 
+            hoiBenh: { saved: true, date: new Date() }
+        });
+    }
+
+    const handleReset = () => {
+        setTienSu(hoiBenh.tienSu);
+        setBenhSu(hoiBenh.benhSu);
+        setHasChanged(false);
+    }
+
+    const handleChange = () => {
+        if (!hasChanged) {
+            setHasChanged(true);
+        }
+    }
 
     return (
         <Box component="form" noValidate sx={{ '.MuiTypography-root': { mt: '12px' } }}>
@@ -34,7 +55,11 @@ const FHoiBenh = () => {
                         multiline
                         fullWidth
                         value={benhSu}
-                        onChange={(event) => setBenhSu(event.target.value)}
+                        onChange={(event) => {
+                            setBenhSu(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -47,30 +72,26 @@ const FHoiBenh = () => {
                         multiline
                         fullWidth
                         value={tienSu}
-                        onChange={(event) => setTienSu(event.target.value)}
+                        onChange={(event) => {
+                            setTienSu(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
 
-            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Save fontSize="small" />}
-                    onClick={handleSave}
-                >
-                    Lưu
-                </Button>
-            </Box> */}
+            {hasChanged &&
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
+                        Đặt lại
+                    </Button>
+
+                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                        Lưu tạm thời
+                    </Button>
+                </Box>
+            }
         </Box>
     )
 }

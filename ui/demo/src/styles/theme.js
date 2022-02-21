@@ -10,6 +10,9 @@ const theme = createTheme({
         },
         secondary: {
           main: "#09425A"
+        },
+        text: {
+          disabled: "#999"
         }
     },
     typography: {
@@ -59,7 +62,12 @@ const theme = createTheme({
       MuiTableCell: {
         styleOverrides: {
           root: {
-            borderBottom: 'none'
+            borderBottom: '0.5px solid rgba(224, 224, 224, 1)',
+            fontSize: '16px'
+          },
+          head: {
+            borderBottom: '0.5px solid rgba(200, 200, 224, 1)',
+            fontWeight: 'bold'
           }
         }
       },
@@ -67,6 +75,9 @@ const theme = createTheme({
         styleOverrides: {
           root: {
             borderBottom: '0.5px solid rgba(224, 224, 224, 1)'
+          },
+          head: {
+            borderBottom: '0.5px solid rgba(200, 200, 224, 1)'
           }
         }
       }

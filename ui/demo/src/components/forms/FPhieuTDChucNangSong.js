@@ -1,16 +1,15 @@
 import { 
-    Box, Button, Table, TableRow, TableContainer, TableBody,
+    Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import React from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
-// import mdSections from "../../constants/md_sections.json";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
-import { TablePagination } from "../common";
+import { TablePagination, Button } from "../common";
 
 const headCells = [
     { id: 'ngayGio', numeric: false, label: 'Ngày giờ', unit: '', width: '18%' },
@@ -24,7 +23,7 @@ const headCells = [
 
 const FPhieuTDChucNangSong = () => {
     const content = useSelector((state) => state.HSBA.phieuTDChucNangSong);
-    // const { role } = useSelector(state => state.auth.user);
+    const { role } = useSelector(state => state.auth.user);
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('ngayGio');
     const [page, setPage] = React.useState(0);
@@ -98,27 +97,17 @@ const FPhieuTDChucNangSong = () => {
                 />
             </Paper>
 
-            {/* { mdSections.canEdit[role].includes(id) &&  */}
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Add fontSize="small"/>}
-                    onClick={() => {}}
-                >
-                    Thêm mới
-                </Button>
-            </Box>
-            {/* } */}
+            { role === "DD" && 
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button 
+                        sx={{ width: 150 }} 
+                        startIcon={<Add fontSize="small"/>}
+                        onClick={() => {}}
+                    >
+                        Thêm mới
+                    </Button>
+                </Box>
+                }
         </>
     )
 }

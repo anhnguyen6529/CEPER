@@ -1,10 +1,11 @@
-import { Box, Grid, Typography, Button, Divider, TextField, Select, MenuItem } from "@mui/material";
+import { Box, Grid, Typography, Divider, TextField, Select, MenuItem } from "@mui/material";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import DatePicker from '@mui/lab/DatePicker';
 import CLocal from "../../constants/local.json";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Save } from "@mui/icons-material";
+import { Autorenew, Save } from "@mui/icons-material";
+import { Button } from "../common";
 import { makeStyles } from "@mui/styles";
 import "../../styles/index.css";
 
@@ -15,7 +16,7 @@ const useStyles = makeStyles(() => ({
     },
 }))
 
-const FHanhChinh = ({ setEdit }) => {
+const FHanhChinh = () => {
     const classes = useStyles();
     const benhNhan = useSelector((state) => state.HSBA);
     const { role } = useSelector((state) => state.auth.user);
@@ -44,6 +45,8 @@ const FHanhChinh = ({ setEdit }) => {
     const [diaChiNguoiNha, setDiaChiNguoiNha] = useState(benhNhan.hanhChinh.nguoiNha.diaChi);
     const [dienThoaiNguoiNha, setDienThoaiNguoiNha] = useState(benhNhan.hanhChinh.nguoiNha.dienThoai);
 
+    const [hasChanged, setHasChanged] = useState(false);
+
     const handleSave = () => {
         dispatch(HSBAActions.updateBenhNhanSection([
             { name: 'hoTen', value: hoTen },
@@ -67,7 +70,17 @@ const FHanhChinh = ({ setEdit }) => {
             { name: 'giaTriDen', value: giaTriDen.toString() },
             { name: 'nguoiNha', value: { hoTen: hoTenNguoiNha, quanHeVoiBenhNhan: quanHeVoiBenhNhan, diaChi: diaChiNguoiNha, dienThoai: dienThoaiNguoiNha } },
         ]))
-        // setEdit(false);
+        setHasChanged(false);
+    }
+
+    const handleReset = () => {
+        setHasChanged(false);
+    }
+
+    const handleChange = () => {
+        if (!hasChanged) {
+            setHasChanged(true);
+        }
     }
 
     return (
@@ -78,7 +91,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <TextField 
                         margin="dense"
                         value={hoTen}
-                        onChange={(event) => setHoTen(event.target.value)}
+                        onChange={(event) => {
+                            setHoTen(event.target.value);
+                            handleChange();
+                        }}
                         error={!hoTen}
                         helperText={!hoTen ? "Vui lòng nhập họ tên" : ""}
                         disabled={role !== "BN"}
@@ -88,7 +104,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Ngày sinh</Typography>
                     <DatePicker
                         value={ngaySinh}
-                        onChange={(newValue) => setNgaySinh(newValue)}
+                        onChange={(newValue) => {
+                            setNgaySinh(newValue);
+                            handleChange();
+                        }}
                         renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select}/>}
                         inputFormat="DD/MM/yyyy"
                     />
@@ -97,7 +116,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Giới tính</Typography>
                     <Select
                         value={gioiTinh}
-                        onChange={(event) => setGioiTinh(event.target.value)}
+                        onChange={(event) => {
+                            setGioiTinh(event.target.value);
+                            handleChange();
+                        }}
                         className={classes.select}
                         disabled={role !== "BN"}
                     >
@@ -111,7 +133,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={ngheNghiep}
-                        onChange={(event) => setNgheNghiep(event.target.value)}
+                        onChange={(event) => {
+                            setNgheNghiep(event.target.value);
+                            handleChange();
+                        }}
                         error={!ngheNghiep}
                         helperText={!ngheNghiep ? "Vui lòng nhập nghề nghiệp" : ""}
                         disabled={role !== "BN"}
@@ -125,7 +150,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={danToc}
-                        onChange={(event) => setDanToc(event.target.value)}
+                        onChange={(event) => {
+                            setDanToc(event.target.value);
+                            handleChange();
+                        }}
                         error={!danToc}
                         helperText={!danToc ? "Vui lòng nhập dân tộc" : ""}
                         disabled={role !== "BN"}
@@ -135,7 +163,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Quốc tịch</Typography>
                     <Select
                         value={quocTich}
-                        onChange={(event) => setQuocTich(event.target.value)}
+                        onChange={(event) => {
+                            setQuocTich(event.target.value);
+                            handleChange();
+                        }}
                         className={classes.select}
                         disabled={role !== "BN"}
                     >
@@ -149,7 +180,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={soCCCD}
-                        onChange={(event) => setSoCCCD(event.target.value)}
+                        onChange={(event) => {
+                            setSoCCCD(event.target.value);
+                            handleChange();
+                        }}
                         error={!soCCCD}
                         helperText={!soCCCD ? "Vui lòng nhập số CMND/CCCD/SSN" : ""}
                         disabled={role !== "BN"}
@@ -161,7 +195,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={dienThoai}
-                        onChange={(event) => setDienThoai(event.target.value)}
+                        onChange={(event) => {
+                            setDienThoai(event.target.value);
+                            handleChange();
+                        }}
                         error={!dienThoai}
                         helperText={!dienThoai ? "Vui lòng nhập điện thoại" : ""}
                         disabled={role !== "BN"}
@@ -175,7 +212,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={noiLamViec}
-                        onChange={(event) => setNoiLamViec(event.target.value)}
+                        onChange={(event) => {
+                            setNoiLamViec(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -183,7 +223,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Đối tượng</Typography>
                     <Select
                         value={doiTuong}
-                        onChange={(event) => setDoiTuong(event.target.value)}
+                        onChange={(event) => {
+                            setDoiTuong(event.target.value);
+                            handleChange();
+                        }}
                         className={classes.select}
                         disabled={role !== "BN"}
                     >   
@@ -199,7 +242,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={soNha}
-                        onChange={(event) => setSoNha(event.target.value)}
+                        onChange={(event) => {
+                            setSoNha(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -209,7 +255,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={thonPho}
-                        onChange={(event) => setThonPho(event.target.value)}
+                        onChange={(event) => {
+                            setThonPho(event.target.value); 
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -223,6 +272,7 @@ const FHanhChinh = ({ setEdit }) => {
                             setTinhTP(event.target.value);
                             setQuanHuyen("-- Quận/Huyện --");
                             setPhuongXa("-- Phường/Xã --");
+                            handleChange();
                         }}
                         className={classes.select}
                         disabled={role !== "BN"}
@@ -239,6 +289,7 @@ const FHanhChinh = ({ setEdit }) => {
                         onChange={(event) => {
                             setQuanHuyen(event.target.value);
                             setPhuongXa("-- Phường/Xã --");
+                            handleChange();
                         }}
                         className={classes.select}
                         disabled={role !== "BN"}
@@ -253,7 +304,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Phường/Xã</Typography>
                     <Select
                         value={phuongXa}
-                        onChange={(event) => setPhuongXa(event.target.value)}
+                        onChange={(event) => {
+                            setPhuongXa(event.target.value);
+                            handleChange();
+                        }}
                         className={classes.select}
                         disabled={role !== "BN"}
                     >
@@ -277,7 +331,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={soTheBHYT}
-                        onChange={(event) => setSoTheBHYT(event.target.value)}
+                        onChange={(event) => {
+                            setSoTheBHYT(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -287,7 +344,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={noiDangKyKCBBanDau}
-                        onChange={(event) => setNoiDangKyKCBBanDau(event.target.value)}
+                        onChange={(event) => {
+                            setNoiDangKyKCBBanDau(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -295,7 +355,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Giá trị từ</Typography>
                     <DatePicker
                         value={giaTriTu}
-                        onChange={(newValue) => setGiaTriTu(newValue)}
+                        onChange={(newValue) => {
+                            setGiaTriTu(newValue);
+                            handleChange();
+                        }}
                         renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
                         inputFormat="DD/MM/yyyy"
                     />
@@ -304,7 +367,10 @@ const FHanhChinh = ({ setEdit }) => {
                     <Typography fontWeight="bold">Giá trị đến</Typography>
                     <DatePicker
                         value={giaTriDen}
-                        onChange={(newValue) => setGiaTriDen(newValue)}
+                        onChange={(newValue) => {
+                            setGiaTriDen(newValue);
+                            handleChange();
+                        }}
                         renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
                         inputFormat="DD/MM/yyyy"
                     />
@@ -320,7 +386,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={hoTenNguoiNha}
-                        onChange={(event) => setHoTenNguoiNha(event.target.value)}
+                        onChange={(event) => {
+                            setHoTenNguoiNha(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -330,7 +399,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={quanHeVoiBenhNhan}
-                        onChange={(event) => setQuanHeVoiBenhNhan(event.target.value)}
+                        onChange={(event) => {
+                            setQuanHeVoiBenhNhan(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -340,7 +412,10 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={dienThoaiNguoiNha}
-                        onChange={(event) => setDienThoaiNguoiNha(event.target.value)}
+                        onChange={(event) => {
+                            setDienThoaiNguoiNha(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
@@ -350,31 +425,26 @@ const FHanhChinh = ({ setEdit }) => {
                         margin="dense"
                         multiline
                         value={diaChiNguoiNha}
-                        onChange={(event) => setDiaChiNguoiNha(event.target.value)}
+                        onChange={(event) => {
+                            setDiaChiNguoiNha(event.target.value);
+                            handleChange();
+                        }}
                         disabled={role !== "BN"}
                     />
                 </Grid>
             </Grid>
 
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Save fontSize="small" />}
-                    onClick={handleSave}
-                >
-                    Lưu
-                </Button>
-            </Box>
+            {hasChanged &&
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
+                        Đặt lại
+                    </Button>
+
+                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                        Lưu tạm thời
+                    </Button>
+                </Box>
+            }
         </Box>
     )
 }

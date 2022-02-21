@@ -28,7 +28,7 @@ const User = () => {
             <InfoOutlined />
         </Tooltip> },
         { label: "Tổng kết bệnh án", showIcon: true, icon: 
-        <Tooltip placement="top" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện và kết quả điều trị" >
+        <Tooltip placement="top" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
             <InfoOutlined />
         </Tooltip> }
     ]);

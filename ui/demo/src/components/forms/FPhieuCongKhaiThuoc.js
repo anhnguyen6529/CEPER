@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
-    Box, Button, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, TableSortLabel, Paper
+    Box, Table, TableRow, TableContainer, TableBody,
+    TableHead, TableCell, TableSortLabel, Paper, IconButton, Grid
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
-// import mdSections from "../../constants/md_sections.json";
 import { useSelector } from "react-redux";
-// import { format } from "date-fns";
 import "../../styles/index.css";
-import { TablePagination } from "../common";
+import { TablePagination, Button } from "../common";
+import { format } from "date-fns";
 
 const headCells = [
     { id: 'stt', numeric: false, label: 'STT', width: '5%' },
@@ -25,11 +24,12 @@ const headCells = [
 
 const FPhieuCongKhaiThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuCongKhaiThuoc);
-    // const { role } = useSelector(state => state.auth.user);
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('stt');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const { role } = useSelector(state => state.auth.user);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('stt');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [dateGroup, setDateGroup] = useState(0);
 
     const rows = content.data;
 
@@ -39,6 +39,30 @@ const FPhieuCongKhaiThuoc = () => {
         setOrderBy(property);
     };
 
+    const calculateTotal = (id) => {
+        var total = 0;
+        rows.forEach((row) => {
+            if (id < row.ngayThang.length) {
+                total = total + row.ngayThang[id];
+            }    
+        });
+        return total === 0 ? '' : total;
+    };
+
+    const handleNextDateGroup = () => {
+        if (dateGroup === 0) {
+            setDateGroup(1);
+        }
+    }
+
+    const handlePreviousDateGroup = () => {
+        if (dateGroup === 1) {
+            setDateGroup(0);
+        }
+    }
+
+    const singleDateGroup = [...content.ngayThang].reverse().findIndex((element) => element !== '') >= 5;
+
     return (
         <>
             <Paper>
@@ -47,51 +71,107 @@ const FPhieuCongKhaiThuoc = () => {
                         <TableHead sx={{ '.MuiTableCell-root': { fontWeight: 'bold' }, '.MuiTableRow-root': { bgcolor: '#D9EFFE' } }}>
                             <TableRow>
                             {headCells.map((headCell, id) => (
-                                <TableCell
-                                    key={`${headCell.id}Head`}
-                                    align="center"
-                                    sortDirection={orderBy === headCell.id ? order : false}
-                                    width={headCell.width}
-                                    className={id < headCells.length - 1 ? "tableHeadBorderRight" : "" }
-                                    colSpan={headCell.id === 'ngayThang' ? 5 : 0}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === headCell.id}
-                                        direction={orderBy === headCell.id ? order : 'asc'}
-                                        onClick={createSortHandler(headCell.id)}
-                                    >
-                                        {headCell.label}<br />{headCell.unit}
-                                        {orderBy === headCell.id ? (
-                                            <Box component="span" sx={visuallyHidden}>
-                                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                            </Box>
-                                        ) : null}
-                                    </TableSortLabel>
-                                </TableCell>
+                                headCell.id !== 'ngayThang'
+                                    ? (
+                                        <TableCell
+                                            key={`${headCell.id}Head`}
+                                            align="center"
+                                            sortDirection={orderBy === headCell.id ? order : false}
+                                            width={headCell.width}
+                                            rowSpan={2}
+                                            className={id < headCells.length - 1 ? "tableHeadBorderRight" : "" }
+                                        >
+                                            <TableSortLabel
+                                                active={orderBy === headCell.id}
+                                                direction={orderBy === headCell.id ? order : 'asc'}
+                                                onClick={createSortHandler(headCell.id)}
+                                            >
+                                                {headCell.label}
+                                                {orderBy === headCell.id ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
+                                        </TableCell>
+                                    )
+                                    : (
+                                        <TableCell 
+                                            key={`${headCell.id}Head`} 
+                                            align="center" 
+                                            colSpan={5}
+                                            className="tableHeadBorderRight"
+                                            sx={{ px: 1 }}
+                                        >
+                                            <Grid container sx={{ justifyContent: 'center' }}>
+                                                <Grid item xs={3} align="left">
+                                                    <IconButton size="small" disabled={dateGroup === 0} onClick={handlePreviousDateGroup}>
+                                                        <KeyboardArrowLeft />
+                                                    </IconButton>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Box className="df aic jcc" sx={{ height: '100%' }}>{headCell.label}</Box>
+                                                    
+                                                </Grid>
+                                                <Grid item xs={3} align="right">
+                                                    <IconButton size="small" disabled={dateGroup === 1 || singleDateGroup} onClick={handleNextDateGroup}>
+                                                        <KeyboardArrowRight/>
+                                                    </IconButton>
+                                                </Grid>
+                                            </Grid>
+                                        </TableCell>
+                                    ) 
                             ))}
+                            </TableRow>
+                            <TableRow>
+                                {content.ngayThang.slice(dateGroup * 5, dateGroup * 5 + 5).map((nth, index) => (
+                                    <TableCell 
+                                        key={`ngayThang${index}`}
+                                        align="center"
+                                        className="tableHeadBorderRight"
+                                        width="6%"
+                                        sx={{ p: '6px 10px', height: 40 }}
+                                    >
+                                        {!!nth ? format(new Date(nth), 'dd/MM') : "__/__"}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                        {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                                return (
-                                    <TableRow hover key={index}>
-                                        <TableCell className="tableBodyBorderRight">{index + 1}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.donVi}</TableCell>
-                                        {Array.from(Array(5)).map((value, idx) => (
-                                            <TableCell width="5%" key={`ngayThang${idx}`} className="tableBodyBorderRight">
-                                                {idx < row.ngayThang.length ? row.ngayThang[idx] : ''}
-                                            </TableCell>
-                                        ))}
-                                        <TableCell className="tableBodyBorderRight">{row.tongSo}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.donGia}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.thanhTien}</TableCell>
-                                        <TableCell>{row.ghiChu}</TableCell>
-                                    </TableRow>
-                                );
-                        })}
+                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    return (
+                                        <TableRow hover key={index}>
+                                            <TableCell className="tableBodyBorderRight">{index + 1}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.donVi}</TableCell>
+                                            {row.ngayThang.slice(dateGroup * 5, dateGroup * 5 + 5).map((nth, idx) => (
+                                                <TableCell width="6%" key={`nth${idx}`} className="tableBodyBorderRight">
+                                                    {nth !== 0 ? nth : ""}
+                                                </TableCell>
+                                            ))}
+                                            <TableCell className="tableBodyBorderRight">{row.tongSo}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.donGia}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.thanhTien}</TableCell>
+                                            <TableCell>{row.ghiChu}</TableCell>
+                                        </TableRow>
+                                    );
+                            })}
+
+                            <TableRow hover>
+                                <TableCell className="tableBodyBorderRight" colSpan={2}>Tổng số khoản thuốc dùng</TableCell>
+                                <TableCell className="tableBodyBorderRight"/>
+                                {Array.from(Array(5)).map((value, idx) => (
+                                    <TableCell width="6%" key={`tongSo${idx}`} className="tableBodyBorderRight">
+                                        {calculateTotal(dateGroup * 5 + idx)}
+                                    </TableCell>
+                                ))}
+                                <TableCell className="tableBodyBorderRight"/>
+                                <TableCell className="tableBodyBorderRight"/>
+                                <TableCell className="tableBodyBorderRight"/>
+                                <TableCell />
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -105,27 +185,17 @@ const FPhieuCongKhaiThuoc = () => {
                 />
             </Paper>
 
-            {/* { mdSections.canEdit[role].includes(id) &&  */}
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Add fontSize="small"/>}
-                    onClick={() => {}}
-                >
-                    Thêm mới
-                </Button>
-            </Box>
-            {/* } */}
+            { role === "BS" && 
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button 
+                        sx={{ width: 150 }} 
+                        startIcon={<Add fontSize="small"/>}
+                        onClick={() => {}}
+                    >
+                        Thêm mới
+                    </Button>
+                </Box>
+            }
         </>
     )
 }

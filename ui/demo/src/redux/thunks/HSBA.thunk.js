@@ -39,19 +39,20 @@ const TODIEUTRI = {
 };
 const PHIEUTDTRUYENDICH = {
     data: [
-        { ngayThang: '2011-11-08', values: [
+        { ngayThang: '2021-11-08', values: [
             { tenDichTruyen: 'Ringer lactat', soLuong: 500, loSanXuat: '19803', tocDo: 100, thoiGianBatDau: '19:00', thoiGianKetThuc: '20:30', BSChiDinh: 'Trần Quốc A', DDThucHien: 'Nguyễn Ngọc A' },
             { tenDichTruyen: 'Glucose 5%', soLuong: 500, loSanXuat: '18904', tocDo: 100, thoiGianBatDau: '21:00', thoiGianKetThuc: '01:00', BSChiDinh: 'Trần Quốc A', DDThucHien: 'Nguyễn Ngọc A' },
         ]},
-        { ngayThang: '2011-11-09', values: [
+        { ngayThang: '2021-11-09', values: [
             { tenDichTruyen: 'Infulgan 1g', soLuong: 100, loSanXuat: '182', tocDo: 100, thoiGianBatDau: '08:00', thoiGianKetThuc: '08:40', BSChiDinh: 'Trần Quốc A', DDThucHien: 'Nguyễn Ngọc A' },
         ]}
     ]
 };
 const PHIEUCONGKHAITHUOC = {
+    ngayThang: ['2021-11-20', '2021-11-21', '2021-11-22', '2021-11-23', '', '', '', '', '', ''],
     data: [
-        { tenThuoc: 'Natri Clorid 0.9%', donVi: 'chai', ngayThang: [2, 2, 1, 1], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' },
-        { tenThuoc: 'Seduxen 5mg', donVi: 'viên', ngayThang: [2, 2, 2, 2], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }
+        { tenThuoc: 'Natri Clorid 0.9%', donVi: 'chai', ngayThang: [2, 0, 1, 1, 0, 0, 0, 0, 0, 0], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' },
+        { tenThuoc: 'Seduxen 5mg', donVi: 'viên', ngayThang: [2, 2, 2, 2, 0, 0, 0, 0, 0, 0], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }
     ]
 };
 

@@ -33,6 +33,22 @@ const Button = ({ children, variant, sx, ...other }) => {
                 {children}
             </MuiButton>
         }
+        {variant === "primary-dark" &&
+            <MuiButton
+                sx={{ 
+                    ...ROOT,
+                    background: '#09425A', 
+                    color: 'white',
+                    '&:hover': {
+                        background: '#276078', 
+                    },
+                    ...sx
+                }} 
+                {...other}
+            >
+                {children}
+            </MuiButton>
+        }
         {variant === "secondary" &&
             <MuiButton
                 sx={{ 

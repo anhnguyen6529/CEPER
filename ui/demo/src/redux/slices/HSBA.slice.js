@@ -86,6 +86,7 @@ const initialState = {
         data: [],
     },
     phieuCongKhaiThuoc: {
+        ngayThang: [],
         data: [],
     }
 }
@@ -103,6 +104,16 @@ const HSBASlice = createSlice({
             return {
                 ...state,
                 [action.payload.section]: action.payload.data
+            }
+        },
+        updateDinhKemSection: (state, action) => {
+            return {
+                ...state,
+                [action.payload.section]: {
+                    ...state[action.payload.section],
+                    ...action.payload.value,
+                    ...(!!action.payload.newData && { data: [...state[action.payload.section].data, action.payload.newData] } )
+                }
             }
         }
     },

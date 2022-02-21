@@ -1,13 +1,17 @@
 import { Box, Typography, TextField, Grid } from "@mui/material";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
-// import { HSBAActions } from "../../redux/slices/HSBA.slice";
-// import { Save } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { Autorenew, Save } from "@mui/icons-material";
+import { Button } from "../common";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const FKhamBenh = () => {
     const { khamBenh } = useSelector((state) => state.HSBA);
-    // const dispatch = useDispatch();
+    const { role } = useSelector((state) => state.auth.user);
+    const { tabBenhAnState, setTabBenhAnState } = useContext(HSBAContext);
+    const dispatch = useDispatch();
 
     const [khamToanThan, setKhamToanThan] = useState(khamBenh.khamToanThan);
     const [tuanHoan, setTuanHoan] = useState(khamBenh.tuanHoan);
@@ -20,26 +24,42 @@ const FKhamBenh = () => {
     const [rangHamMat, setRangHamMat] = useState(khamBenh.rangHamMat);
     const [mat, setMat] = useState(khamBenh.mat);
     const [noiTiet, setNoiTiet] = useState(khamBenh.noiTiet);
+    const [hasChanged, setHasChanged] = useState(false);
   
-    // const handleSave = () => {
-    //     dispatch(HSBAActions.updateBacSiSection({
-    //         section: 'khamBenh',
-    //         data: {
-    //             khamToanThan,
-    //             tuanHoan,
-    //             hoHap,
-    //             tieuHoa,
-    //             than,
-    //             thanKinh,
-    //             coXuongKhop,
-    //             taiMuiHong,
-    //             rangHamMat,
-    //             mat,
-    //             noiTiet
-    //         }
-    //     }))
-    //     setEdit(false);
-    // }
+    const handleSave = () => {
+        dispatch(HSBAActions.updateBacSiSection({
+            section: 'khamBenh',
+            data: {
+                khamToanThan, tuanHoan, hoHap, tieuHoa, than, thanKinh, coXuongKhop, taiMuiHong, rangHamMat, mat, noiTiet
+            }
+        }))
+        setHasChanged(false);
+        setTabBenhAnState({
+            ...tabBenhAnState, 
+            khamBenh: { saved: true, date: new Date() }
+        });
+    }
+
+    const handleReset = () => {
+        setKhamToanThan(khamBenh.khamToanThan);
+        setTuanHoan(khamBenh.tuanHoan);
+        setHoHap(khamBenh.hoHap);
+        setTieuHoa(khamBenh.tieuHoa);
+        setThan(khamBenh.than);
+        setThanKinh(khamBenh.thanKinh);
+        setCoXuongKhop(khamBenh.coXuongKhop);
+        setTaiMuiHong(khamBenh.taiMuiHong);
+        setRangHamMat(khamBenh.rangHamMat);
+        setMat(khamBenh.mat);
+        setNoiTiet(khamBenh.noiTiet);
+        setHasChanged(false);
+    }
+
+    const handleChange = () => {
+        if (!hasChanged) {
+            setHasChanged(true);
+        }
+    }
 
     return (
         <Box component="form" noValidate sx={{ '.MuiTypography-root': { mt: '12px' } }}>
@@ -52,7 +72,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={khamToanThan}
-                        onChange={(event) => setKhamToanThan(event.target.value)}
+                        onChange={(event) => {
+                            setKhamToanThan(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -65,7 +89,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={tuanHoan}
-                        onChange={(event) => setTuanHoan(event.target.value)}
+                        onChange={(event) => {
+                            setTuanHoan(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -78,7 +106,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={hoHap}
-                        onChange={(event) => setHoHap(event.target.value)}
+                        onChange={(event) => {
+                            setHoHap(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -91,7 +123,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={tieuHoa}
-                        onChange={(event) => setTieuHoa(event.target.value)}
+                        onChange={(event) => {
+                            setTieuHoa(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -104,7 +140,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={than}
-                        onChange={(event) => setThan(event.target.value)}
+                        onChange={(event) => {
+                            setThan(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -117,7 +157,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={thanKinh}
-                        onChange={(event) => setThanKinh(event.target.value)}
+                        onChange={(event) => {
+                            setThanKinh(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -130,7 +174,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={coXuongKhop}
-                        onChange={(event) => setCoXuongKhop(event.target.value)}
+                        onChange={(event) => {
+                            setCoXuongKhop(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -143,7 +191,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={taiMuiHong}
-                        onChange={(event) => setTaiMuiHong(event.target.value)}
+                        onChange={(event) => {
+                            setTaiMuiHong(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -156,7 +208,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={rangHamMat}
-                        onChange={(event) => setRangHamMat(event.target.value)}
+                        onChange={(event) => {
+                            setRangHamMat(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -169,7 +225,11 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={mat}
-                        onChange={(event) => setMat(event.target.value)}
+                        onChange={(event) => {
+                            setMat(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -182,30 +242,27 @@ const FKhamBenh = () => {
                         multiline
                         fullWidth
                         value={noiTiet}
-                        onChange={(event) => setNoiTiet(event.target.value)}
+                        onChange={(event) => {
+                            setNoiTiet(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
 
-            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Save fontSize="small" />}
-                    onClick={handleSave}
-                >
-                    Lưu
-                </Button>
-            </Box> */}
+
+            {hasChanged &&
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
+                        Đặt lại
+                    </Button>
+
+                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                        Lưu tạm thời
+                    </Button>
+                </Box>
+            }
         </Box>
     )
 }

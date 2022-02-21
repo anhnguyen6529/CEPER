@@ -1,37 +1,58 @@
 import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useContext, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import DateTimePicker from '@mui/lab/DateTimePicker';
-// import { HSBAActions } from "../../redux/slices/HSBA.slice";
-// import { Save } from "@mui/icons-material";
+import { Button } from "../common";
+import { Autorenew, Save } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const FLyDoVaoVien = () => {
     const { lyDoVaoVien } = useSelector((state) => state.HSBA);
-    // const dispatch = useDispatch();
+    const { role } = useSelector((state) => state.auth.user);
+    const { tabBenhAnState, setTabBenhAnState } = useContext(HSBAContext);
+    const dispatch = useDispatch();
 
     const [lyDo, setLyDo] = useState(lyDoVaoVien.lyDo);
     const [ngayVaoVien, setNgayVaoVien] = useState(lyDoVaoVien.ngayVaoVien);
     const [vaoNgayThu, setVaoNgayThu] = useState(lyDoVaoVien.vaoNgayThu);
     const [chanDoanNoiGioiThieu, setChanDoanNoiGioiThieu] = useState(lyDoVaoVien.chanDoanNoiGioiThieu);
     const [noiGioiThieu, setNoiGioiThieu] = useState(lyDoVaoVien.noiGioiThieu);
+    const [hasChanged, setHasChanged] = useState(false);
   
-    // const handleSave = () => {
-    //     dispatch(HSBAActions.updateBacSiSection({
-    //         section: 'lyDoVaoVien',
-    //         data: {
-    //             lyDo,
-    //             ngayVaoVien,
-    //             vaoNgayThu,
-    //             chanDoanNoiGioiThieu,
-    //             noiGioiThieu
-    //         }
-    //     }))
-    //     setEdit(false);
-    // }
+    const handleSave = () => {
+        dispatch(HSBAActions.updateBacSiSection({
+            section: 'lyDoVaoVien',
+            data: {
+                lyDo,
+                ngayVaoVien,
+                vaoNgayThu,
+                chanDoanNoiGioiThieu,
+                noiGioiThieu
+            }
+        }));
+        setHasChanged(false);
+        setTabBenhAnState({
+            ...tabBenhAnState, 
+            lyDoVaoVien: { saved: true, date: new Date() }
+        });
+    }
 
-    // const weekdays = [...Array(7).keys()].map((i) => vi.localize.day(i !== 6 ? i + 1 : 0, { width: 'wide' }));
-    // console.log(vi.localize.);
+    const handleReset = () => {
+        setLyDo(lyDoVaoVien.lyDo);
+        setNgayVaoVien(lyDoVaoVien.ngayVaoVien);
+        setVaoNgayThu(lyDoVaoVien.vaoNgayThu);
+        setChanDoanNoiGioiThieu(lyDoVaoVien.chanDoanNoiGioiThieu);
+        setNoiGioiThieu(lyDoVaoVien.noiGioiThieu);
+        setHasChanged(false);
+    }
+
+    const handleChange = () => {
+        if (!hasChanged) {
+            setHasChanged(true);
+        }
+    }
 
     return (
         <Box component="form" noValidate>
@@ -41,7 +62,11 @@ const FLyDoVaoVien = () => {
                         multiline
                         fullWidth
                         value={lyDo}
-                        onChange={(event) => setLyDo(event.target.value)}
+                        onChange={(event) => {
+                            setLyDo(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -51,7 +76,11 @@ const FLyDoVaoVien = () => {
                             type="number"
                             sx={{ width: 60, mx: 1 }}
                             value={vaoNgayThu}
-                            onChange={(event) => setVaoNgayThu(event.target.value)}
+                            onChange={(event) => {
+                                setVaoNgayThu(event.target.value);
+                                handleChange();
+                            }}
+                            disabled={role !== "BS"}
                         />
                         <Typography>của bệnh</Typography>
                     </Box>           
@@ -66,12 +95,16 @@ const FLyDoVaoVien = () => {
                 <Grid item xs={9}>
                     <DateTimePicker
                         value={ngayVaoVien}
-                        onChange={(newValue) => setNgayVaoVien(newValue)}
+                        onChange={(newValue) => {
+                            setNgayVaoVien(newValue);
+                            handleChange();
+                        }}
                         renderInput={(params) => <TextField {...params}/>}
-                        inputFormat="DD/MM/yyyy HH:ss"
+                        inputFormat="DD/MM/yyyy HH:mm"
                         ampm={false}
                         leftArrowButtonText=""
                         rightArrowButtonText=""
+                        disabled={role !== "BS"}
                     />
                 </Grid>
             </Grid>
@@ -85,36 +118,39 @@ const FLyDoVaoVien = () => {
                         fullWidth
                         sx={{ width: '90%' }}
                         value={chanDoanNoiGioiThieu}
-                        onChange={(event) => setChanDoanNoiGioiThieu(event.target.value)}
+                        onChange={(event) => {
+                            setChanDoanNoiGioiThieu(event.target.value);
+                            handleChange();
+                        }}
+                        disabled={role !== "BS"}
                     />
                 </Grid>
                 <Grid item xs={2} >
-                    <RadioGroup row value={noiGioiThieu} onChange={(event) => setNoiGioiThieu(event.target.value)}>
-                        <FormControlLabel value="Y tế" control={<Radio />} label="Y tế" />
-                        <FormControlLabel value="Tự đến" control={<Radio />} label="Tự đến" />
+                    <RadioGroup 
+                        row 
+                        value={noiGioiThieu}
+                        onChange={(event) => {
+                            setNoiGioiThieu(event.target.value); 
+                            handleChange();
+                        }}
+                    >
+                        <FormControlLabel disabled={role !== "BS"} value="Y tế" control={<Radio />} label="Y tế" />
+                        <FormControlLabel disabled={role !== "BS"} value="Tự đến" control={<Radio />} label="Tự đến" />
                     </RadioGroup>
                 </Grid>
             </Grid>
 
-            {/* <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
-                        }
-                    }} 
-                    startIcon={<Save fontSize="small" />}
-                    onClick={handleSave}
-                >
-                    Lưu
-                </Button>
-            </Box> */}
+            {hasChanged &&
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
+                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
+                        Đặt lại
+                    </Button>
+
+                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                        Lưu tạm thời
+                    </Button>
+                </Box>
+            }
         </Box>
     )
 }

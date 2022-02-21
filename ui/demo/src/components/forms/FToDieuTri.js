@@ -1,31 +1,42 @@
 import { 
-    Box, Button, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, TableSortLabel, Paper
+    Box, Table, TableRow, TableContainer, TableBody,
+    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import React from "react";
+import { Add, Close, Save } from "@mui/icons-material";
+import React, { useState, useContext } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
-// import mdSections from "../../constants/md_sections.json";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
-import { TablePagination } from "../common";
+import { TablePagination, Button } from "../common";
+import DateTimePicker from "@mui/lab/DateTimePicker";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const headCells = [
-    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '15%' },
-    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '40%' },
+    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '20%' },
+    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '35%' },
     { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '25%' },
     { id: 'bacSiGhi', numeric: false, label: 'Bác sĩ ghi', width: '20%' },
 ];
 
 const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
-    // const { role } = useSelector(state => state.auth.user);
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('ngayGio');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const { role, name } = useSelector(state => state.auth.user);
+    const { tabsDinhKemState, setTabsDinhKemState } = useContext(HSBAContext);
+    const dispatch = useDispatch();
+
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('ngayGio');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    const [addNew, setAddNew] = useState(false);
+    const [newNgayGio, setNewNgayGio] = useState(null);
+    const [newDienBienBenh, setNewDienBienBenh] = useState('');
+    const [newYLenh, setNewYLenh] = useState('');
+    const [errors, setErrors] = useState([]);
 
     const rows = content.data;
 
@@ -35,12 +46,53 @@ const FToDieuTri = () => {
         setOrderBy(property);
     };   
 
+    const clearData = () => {
+        setNewNgayGio(null);
+        setNewDienBienBenh('');
+        setNewYLenh('');
+        setAddNew(false);
+        setErrors([]);
+    }
+
+    const handleCancel = () => {
+        clearData();
+    };
+
+    const handleSave = () => {
+        if (!!newNgayGio && !!newDienBienBenh && !!newYLenh) {
+            dispatch(HSBAActions.updateDinhKemSection({
+                section: 'toDieuTri',
+                value: {},
+                newData: { ngayGio: newNgayGio.toISOString(), dienBienBenh: newDienBienBenh, yLenh: newYLenh, bacSiGhi: name }
+            }));
+            setTabsDinhKemState({
+                ...tabsDinhKemState, 
+                toDieuTri: { saved: true, date: new Date() }
+            });
+            clearData();
+        } else {
+            let errs = [];
+            if (!newNgayGio) errs.push('ngày giờ');
+            if (!newDienBienBenh) errs.push('diễn biến bệnh');
+            if (!newYLenh) errs.push('y lệnh');
+            setErrors(errs);
+        }
+    };
+
     return (
         <>
+            {tabsDinhKemState.toDieuTri.saved && 
+                <Box sx={{ width: '100%', textAlign: 'right', mb: 1 }}>
+                    <Typography color="primary">
+                        <i>Đã chỉnh sửa: {format(new Date(tabsDinhKemState.toDieuTri.date), 'dd/MM/yyyy HH:mm:ss')}</i>
+                    </Typography>
+                </Box>
+            }
+
             <Paper>
-                <TableContainer>
-                    <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
-                        <TableHead sx={{ '.MuiTableCell-root': { fontWeight: 'bold' }, '.MuiTableRow-root': { bgcolor: '#D9EFFE' } }}>
+                <TableContainer sx={{ maxHeight: 500 }}>
+                    <Table stickyHeader> 
+                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: '#D9EFFE' } }}>
                             <TableRow>
                             {headCells.map((headCell, id) => (
                                 <TableCell
@@ -67,18 +119,51 @@ const FToDieuTri = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                        {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                                return (
-                                    <TableRow hover key={index}>
-                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.dienBienBenh}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{row.yLenh}</TableCell>
-                                        <TableCell>{row.bacSiGhi}</TableCell>
-                                    </TableRow>
-                                );
-                        })}
+                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row, index) => {
+                                    return (
+                                        <TableRow hover key={index}>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.dienBienBenh}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.yLenh}</TableCell>
+                                            <TableCell>{row.bacSiGhi}</TableCell>
+                                        </TableRow>
+                                    );
+                            })}
+
+                            {addNew && 
+                                <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
+                                    <TableCell className="tableBodyBorderRight">
+                                        <DateTimePicker
+                                            value={newNgayGio}
+                                            onChange={(newValue) => setNewNgayGio(newValue)}
+                                            renderInput={(params) => <TextField {...params}/>}
+                                            inputFormat="DD/MM/yyyy HH:mm"
+                                            ampm={false}
+                                            leftArrowButtonText=""
+                                            rightArrowButtonText=""
+                                        />
+                                    </TableCell>
+                                    <TableCell className="tableBodyBorderRight">
+                                        <TextField
+                                            multiline
+                                            fullWidth
+                                            value={newDienBienBenh}
+                                            onChange={(event) => setNewDienBienBenh(event.target.value)}
+                                        />
+                                    </TableCell>
+                                    <TableCell className="tableBodyBorderRight">
+                                        <TextField
+                                            multiline
+                                            fullWidth
+                                            value={newYLenh}
+                                            onChange={(event) => setNewYLenh(event.target.value)}
+                                        />
+                                    </TableCell>
+                                    <TableCell>{name}</TableCell>
+                                </TableRow>
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -92,27 +177,39 @@ const FToDieuTri = () => {
                 />
             </Paper>
 
-            {/* { mdSections.canEdit[role].includes(id) &&  */}
-            <Box sx={{ width: '100%', textAlign: 'right', mt: 3 }}>
-                <Button 
-                    sx={{ 
-                        width: 150,
-                        height: 36,
-                        background: '#48B0F7', 
-                        textTransform: 'none', 
-                        fontWeight: 'bold',
-                        color: 'white',
-                        '&:hover': {
-                            background: '#48B0F7', 
+            { role === "BS" && 
+                <Grid container sx={{ mt: 2 }}>
+                    <Grid item xs={6}>
+                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
+                    </Grid>
+                    <Grid item xs={6} align="right">
+                        {!addNew
+                        ? (
+                            <Button 
+                                sx={{ width: 150 }} 
+                                startIcon={<Add fontSize="small"/>}
+                                onClick={() => {
+                                    setNewNgayGio(new Date());
+                                    setAddNew(true);
+                                }}
+                            >
+                                Thêm diễn biến
+                            </Button>
+                        ) : (
+                            <>
+                                <Button variant="outlined" startIcon={<Close />} sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
+                                    Hủy
+                                </Button>
+
+                                <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                                    Lưu tạm thời
+                                </Button>
+                            </>
+                        )
                         }
-                    }} 
-                    startIcon={<Add fontSize="small"/>}
-                    onClick={() => {}}
-                >
-                    Thêm diễn biến
-                </Button>
-            </Box>
-            {/* } */}
+                    </Grid>
+                </Grid>
+            }
         </>
     )
 }
