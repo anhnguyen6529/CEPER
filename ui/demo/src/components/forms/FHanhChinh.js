@@ -4,14 +4,12 @@ import { useSelector, useDispatch } from "react-redux";
 import DatePicker from '@mui/lab/DatePicker';
 import CLocal from "../../constants/local.json";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Autorenew, Save } from "@mui/icons-material";
 import { Button } from "../common";
 import { makeStyles } from "@mui/styles";
 import "../../styles/index.css";
 
 const useStyles = makeStyles(() => ({
     select: {
-        width: '90%',
         marginTop: 8
     },
 }))
@@ -84,11 +82,12 @@ const FHanhChinh = () => {
     }
 
     return (
-        <Box component="form" noValidate sx={{ '.MuiTextField-root': { width: '90%' } }}>
-            <Grid container>
-                <Grid item xs={3}>
+        <Box component="form" noValidate>
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Họ và tên</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         value={hoTen}
                         onChange={(event) => {
@@ -100,7 +99,7 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Ngày sinh</Typography>
                     <DatePicker
                         value={ngaySinh}
@@ -108,13 +107,15 @@ const FHanhChinh = () => {
                             setNgaySinh(newValue);
                             handleChange();
                         }}
-                        renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select}/>}
+                        renderInput={(params) => <TextField fullWidth {...params} className={classes.select}/>}
                         inputFormat="DD/MM/yyyy"
+                        disabled={role !== "BN"} 
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Giới tính</Typography>
                     <Select
+                        fullWidth
                         value={gioiTinh}
                         onChange={(event) => {
                             setGioiTinh(event.target.value);
@@ -127,9 +128,10 @@ const FHanhChinh = () => {
                         <MenuItem value="Nữ">Nữ</MenuItem>
                     </Select>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Nghề nghiệp</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={ngheNghiep}
@@ -143,10 +145,11 @@ const FHanhChinh = () => {
                     />
                 </Grid>
             </Grid>
-            <Grid container sx={{ mt: 1 }}>
-                <Grid item xs={3}>
+            <Grid container sx={{ pt: 1 }} spacing={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Dân tộc</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={danToc}
@@ -159,9 +162,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Quốc tịch</Typography>
                     <Select
+                        fullWidth
                         value={quocTich}
                         onChange={(event) => {
                             setQuocTich(event.target.value);
@@ -174,9 +178,10 @@ const FHanhChinh = () => {
                         <MenuItem value="Hoa Kỳ">Hoa Kỳ</MenuItem>
                     </Select>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Số CMND/CCCD/SSN</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={soCCCD}
@@ -189,9 +194,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Điện thoại</Typography>
-                    <TextField 
+                    <TextField  
+                        fullWidth
                         margin="dense"
                         multiline
                         value={dienThoai}
@@ -205,10 +211,11 @@ const FHanhChinh = () => {
                     />
                 </Grid>
             </Grid>
-            <Grid container sx={{ mt: 1 }}>
-                <Grid item xs={3}>
+            <Grid container sx={{ pt: 1 }} spacing={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Nơi làm việc</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={noiLamViec}
@@ -219,9 +226,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Đối tượng</Typography>
                     <Select
+                        fullWidth
                         value={doiTuong}
                         onChange={(event) => {
                             setDoiTuong(event.target.value);
@@ -236,9 +244,10 @@ const FHanhChinh = () => {
                         <MenuItem value="Khác">Khác</MenuItem>
                     </Select>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Số nhà</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={soNha}
@@ -249,9 +258,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Thôn/Phố</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={thonPho}
@@ -263,10 +273,11 @@ const FHanhChinh = () => {
                     />
                 </Grid>
             </Grid>
-            <Grid container sx={{ mt: 1 }}>
-                <Grid item xs={3}>
+            <Grid container sx={{ pt: 1 }} spacing={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Tỉnh/Thành phố</Typography>
                     <Select
+                        fullWidth
                         value={tinhTP}
                         onChange={(event) => {
                             setTinhTP(event.target.value);
@@ -282,9 +293,10 @@ const FHanhChinh = () => {
                         ))}
                     </Select>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Quận/Huyện</Typography>
                     <Select
+                        fullWidth
                         value={quanHuyen}
                         onChange={(event) => {
                             setQuanHuyen(event.target.value);
@@ -300,9 +312,10 @@ const FHanhChinh = () => {
                         ))}
                     </Select>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Phường/Xã</Typography>
                     <Select
+                        fullWidth
                         value={phuongXa}
                         onChange={(event) => {
                             setPhuongXa(event.target.value);
@@ -324,10 +337,11 @@ const FHanhChinh = () => {
             <Divider sx={{ mt: 2, mb: 2 }}/>
 
             <Typography color="#999"><i>Thông tin BHYT</i></Typography>
-            <Grid container sx={{ mt: 1 }}>
-                <Grid item xs={3}>
+            <Grid container sx={{ pt: 1 }} spacing={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Số thẻ BHYT</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={soTheBHYT}
@@ -338,9 +352,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Nơi đăng ký KCB ban đầu</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={noiDangKyKCBBanDau}
@@ -351,7 +366,7 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Giá trị từ</Typography>
                     <DatePicker
                         value={giaTriTu}
@@ -359,11 +374,12 @@ const FHanhChinh = () => {
                             setGiaTriTu(newValue);
                             handleChange();
                         }}
-                        renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
+                        renderInput={(params) => <TextField {...params} fullWidth className={classes.select} />}
                         inputFormat="DD/MM/yyyy"
+                        disabled={role !== "BN"} 
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Giá trị đến</Typography>
                     <DatePicker
                         value={giaTriDen}
@@ -371,18 +387,20 @@ const FHanhChinh = () => {
                             setGiaTriDen(newValue);
                             handleChange();
                         }}
-                        renderInput={(params) => <TextField {...params} disabled={role !== "BN"} className={classes.select} />}
+                        renderInput={(params) => <TextField {...params} fullWidth className={classes.select} />}
                         inputFormat="DD/MM/yyyy"
+                        disabled={role !== "BN"} 
                     />
                 </Grid>
             </Grid>
             <Divider sx={{ mt: 2, mb: 2 }}/>
 
             <Typography color="#999"><i>Thông tin người nhà bệnh nhân (khi cần báo tin)</i></Typography>
-            <Grid container sx={{ mt: 1 }}>
-                <Grid item xs={3}>
+            <Grid container sx={{ pt: 1 }} spacing={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Họ tên</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={hoTenNguoiNha}
@@ -393,9 +411,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Quan hệ với bệnh nhân</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={quanHeVoiBenhNhan}
@@ -406,9 +425,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Điện thoại</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={dienThoaiNguoiNha}
@@ -419,9 +439,10 @@ const FHanhChinh = () => {
                         disabled={role !== "BN"}
                     />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Địa chỉ</Typography>
                     <TextField 
+                        fullWidth
                         margin="dense"
                         multiline
                         value={diaChiNguoiNha}
@@ -436,11 +457,11 @@ const FHanhChinh = () => {
 
             {hasChanged &&
                 <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
-                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
-                        Đặt lại
+                    <Button variant="outlined" sx={{ mr: 2 }} onClick={handleReset}>
+                        Hủy
                     </Button>
 
-                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                    <Button variant="primary" onClick={handleSave}>
                         Lưu tạm thời
                     </Button>
                 </Box>

@@ -1,39 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { 
     Box, Avatar, TableContainer, TableCell, TableRow, TableSortLabel, TableBody, 
-    Table, TableHead, TextField, InputAdornment, Link
+    Table, TableHead, TextField, InputAdornment
 } from "@mui/material";
 import "../../styles/index.css";
 import { Search } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
-import UtilsTable from "../../utils/table";
+import { UtilsTable } from "../../utils";
 import { format } from "date-fns";
-import { TablePagination, TableToolBar } from "../common";
+import { TablePagination, StyledTableRow } from "../common";
+import UserContext from "../../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const headCells = [
-    { id: 'avatar', label: 'Ảnh đại diện', width: 88 },
-    { id: 'pid', label: 'Mã BN', width: 120 },
-    { id: 'hoTen', label: 'Họ tên', width: 180 },
-    { id: 'ngaySinh', label: 'Ngày sinh', width: 140 },
-    { id: 'gioiTinh', label: 'Giới tính', width: 120 },
-    { id: 'khoa', label: 'Khoa', width: 120 },
-    { id: 'phong', label: 'Phòng', width: 120 },
-    { id: 'giuong', label: 'Giường', width: 120 },
-    { id: 'benhDieuTri', label: 'Bệnh điều trị', width: 200 },
-    { id: 'tinhTrangHienTai', label: 'Tình trạng hiện tại', width: 200 },
-    { id: 'ngayVaoVien', label: 'Ngày vào viện', width: 160 }
+    { id: 'avatar', label: 'Ảnh đại diện', width: 88, show: true },
+    { id: 'pid', label: 'Mã BN', width: 120, show: true },
+    { id: 'hoTen', label: 'Họ tên', width: 180, show: true },
+    { id: 'tuoi', label: 'Tuổi', width: 140, show: false },
+    { id: 'gioiTinh', label: 'Giới tính', width: 120, show: false },
+    { id: 'ngayVaoVien', label: 'Ngày vào viện', width: 160, show: true },
+    { id: 'khoa', label: 'Khoa', width: 120, show: true },
+    { id: 'phong', label: 'Phòng', width: 120, show: true },
+    { id: 'giuong', label: 'Giường', width: 120, show: false },
+    { id: 'benhDieuTri', label: 'Bệnh điều trị', width: 200, show: true },
+    { id: 'tinhTrangHienTai', label: 'Tình trạng hiện tại', width: 200, show: true }
 ];
 
 const TDanhSachHienTai = ({ data }) => {
+    const navigate = useNavigate();
+    const { danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    useEffect(() => {
+        setDanhSachHSBATab({
+            ...danhSachHSBATab,
+            hienTaiCols: headCells.map(hc => hc.label),
+            hienTaiColsChecked: headCells.map(hc => hc.show)
+        })
+        // eslint-disable-next-line
+    }, []);
+
     const [searchKeys, setSearchKeys] = useState(headCells.map(headCell => {
         let rHeadCell = { id: headCell.id, search: '' };
         return rHeadCell;
     }));
-    const [colsChecked, setColsChecked] = useState(new Array(headCells.length).fill(true));
-    const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('pid');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('pid');
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rows, setRows] = useState(data);
     
     const requestSearch = (searchKey, cellId) => {
@@ -42,10 +54,10 @@ const TDanhSachHienTai = ({ data }) => {
             var checkAll = true, keys = Object.keys(row);
             keys.forEach(key => {
                 if (key === cellId) {
-                    checkAll = checkAll && row[key].toLowerCase().includes(searchKey.toLowerCase());
+                    checkAll = checkAll && String(row[key]).toLowerCase().includes(searchKey.toLowerCase());
                 } else {
                     var fKey = searchKeys.find(element => element.id === key);
-                    checkAll = checkAll & row[key].toLowerCase().includes(fKey.search.toLowerCase());
+                    checkAll = checkAll & String(row[key]).toLowerCase().includes(fKey.search.toLowerCase());
                 }
             })
             return checkAll;
@@ -64,60 +76,53 @@ const TDanhSachHienTai = ({ data }) => {
 
     return (
         <>
-            <TableToolBar 
-                columns={headCells.map(headCell => {
-                    let rHeadCell = { id: headCell.id, label: headCell.label };
-                    return rHeadCell;
-                })} 
-                colsChecked={colsChecked}
-                setColsChecked={setColsChecked}
-            />
-
             <TableContainer>
                 <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
                     <TableHead>
-                        <TableRow sx={{ height: 135.5 }}> 
-                        {colsChecked.every((element) => element === false) && 
-                            <TableCell width="100%"></TableCell>
-                        }
+                        <TableRow sx={{ height: 120, '& .MuiTableCell-root': { pt: 0 } }}> 
+                            {danhSachHSBATab.hienTaiColsChecked.every((element) => element === false) && 
+                                <TableCell width="100%"></TableCell>
+                            }
 
-                        {headCells.map((headCell, id) => (
-                            colsChecked[id] &&
-                            <TableCell
-                                key={id}
-                                align='left'
-                                sortDirection={orderBy === headCell.id ? order : false}
-                                sx={{ fontWeight: 'bold', minWidth: headCell.width, width: headCell.width }}
-                            >
-                                <TableSortLabel
-                                    active={orderBy === headCell.id}
-                                    direction={orderBy === headCell.id ? order : 'asc'}
-                                    onClick={createSortHandler(headCell.id)}
-                                    sx={{ height: 56 }}
+                            {headCells.map((headCell, id) => (
+                                danhSachHSBATab.hienTaiColsChecked[id] &&
+                                <TableCell
+                                    key={id}
+                                    align='left'
+                                    sortDirection={orderBy === headCell.id ? order : false}
+                                    sx={{ fontWeight: 'bold', minWidth: headCell.width, width: headCell.width }}
                                 >
-                                    {headCell.id !== "avatar" ? headCell.label : ""}
-                                    {orderBy === headCell.id ? (
-                                        <Box component="span" sx={visuallyHidden}>
-                                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                        </Box>
-                                    ) : null}
-                                </TableSortLabel>
-                                {id > 0 &&
-                                    <TextField 
-                                        value={searchKeys[id].search}
-                                        onChange={(event) => requestSearch(event.target.value, headCell.id)}
-                                        fullWidth
-                                        size="small"
-                                        InputProps={{
-                                            startAdornment: <InputAdornment position="start">
-                                                <Search fontSize="small"/>
-                                            </InputAdornment>,
-                                            sx: { pl: 1, '& .MuiInputBase-input': { pr: 1 } }
-                                        }}
-                                    />
-                                }
-                            </TableCell>
-                        ))}
+                                    {headCell.id !== "avatar" &&
+                                        <TableSortLabel
+                                            active={orderBy === headCell.id}
+                                            direction={orderBy === headCell.id ? order : 'asc'}
+                                            onClick={createSortHandler(headCell.id)}
+                                            sx={{ pb: 1 }}
+                                        >
+                                            {headCell.label}
+                                            {orderBy === headCell.id ? (
+                                                <Box component="span" sx={visuallyHidden}>
+                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                </Box>
+                                            ) : null}
+                                        </TableSortLabel>
+                                    }
+                                    {id > 0 &&
+                                        <TextField 
+                                            value={searchKeys[id].search}
+                                            onChange={(event) => requestSearch(event.target.value, headCell.id)}
+                                            fullWidth
+                                            size="small"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">
+                                                    <Search fontSize="small"/>
+                                                </InputAdornment>,
+                                                sx: { pl: 1, '& .MuiInputBase-input': { pr: 1 } }
+                                            }}
+                                        />
+                                    }
+                                </TableCell>
+                            ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -125,27 +130,23 @@ const TDanhSachHienTai = ({ data }) => {
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((row, index) => {
                             return (
-                                <TableRow hover key={index} sx={{ height: 90 }}>
-                                    {colsChecked[0] && 
+                                <StyledTableRow hover key={index} sx={{ height: 90, cursor: 'pointer' }} onClick={() => navigate(`/user/HSBA/${row.pid}`)}>
+                                    {danhSachHSBATab.hienTaiColsChecked[0] && 
                                         <TableCell>
                                             <Avatar src="/images/avatar_default.png" sx={{ width: 56, height: 56 }} />
                                         </TableCell>
                                     }
-                                    {colsChecked[1] && <TableCell>{row.pid}</TableCell>}
-                                    {colsChecked[2] && 
-                                        <TableCell>
-                                            <Link underline="none" href={`/user/HSBA/${row.pid}`}>{row.hoTen}</Link>
-                                        </TableCell>
-                                    }
-                                    {colsChecked[3] && <TableCell>{format(new Date(row.ngaySinh), 'dd/MM/yyyy')}</TableCell>}
-                                    {colsChecked[4] && <TableCell>{row.gioiTinh}</TableCell>}
-                                    {colsChecked[5] && <TableCell>{row.khoa}</TableCell>}
-                                    {colsChecked[6] && <TableCell>{row.phong}</TableCell>}
-                                    {colsChecked[7] && <TableCell>{row.giuong}</TableCell>}
-                                    {colsChecked[8] && <TableCell>{row.benhDieuTri}</TableCell>}
-                                    {colsChecked[9] && <TableCell>{row.tinhTrangHienTai}</TableCell>}
-                                    {colsChecked[10] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
-                                </TableRow>
+                                    {danhSachHSBATab.hienTaiColsChecked[1] && <TableCell>{row.pid}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[2] && <TableCell>{row.hoTen}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[3] && <TableCell>{row.tuoi}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[4] && <TableCell>{row.gioiTinh}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[5] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[6] && <TableCell>{row.khoa}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[7] && <TableCell>{row.phong}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[8] && <TableCell>{row.giuong}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[9] && <TableCell>{row.benhDieuTri}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[10] && <TableCell>{row.tinhTrangHienTai}</TableCell>}
+                                </StyledTableRow>
                             );
                     })}
                     </TableBody>

@@ -9,7 +9,7 @@ import UtilsTable from "../../utils/table";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
-import { TablePagination, Button } from "../common";
+import { TablePagination, Button, StyledTableRow } from "../common";
 
 const headCells = [
     { id: 'ngayGio', numeric: false, label: 'Ngày giờ', unit: '', width: '18%' },
@@ -73,7 +73,7 @@ const FPhieuTDChucNangSong = () => {
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
                                 return (
-                                    <TableRow hover key={index}>
+                                    <StyledTableRow hover key={index}>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.mach}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.nhietDo}</TableCell>
@@ -81,7 +81,7 @@ const FPhieuTDChucNangSong = () => {
                                         <TableCell className="tableBodyBorderRight">{row.nhipTho}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.canNang}</TableCell>
                                         <TableCell>{row.dieuDuongGhi}</TableCell>
-                                    </TableRow>
+                                    </StyledTableRow>
                                 );
                         })}
                         </TableBody>

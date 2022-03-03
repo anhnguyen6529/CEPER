@@ -2,8 +2,19 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 const PHIEUTDDIUNGTHUOC = { thuocDiUng: '', kieuDiUng: '', benhKemTheo: '' };
 const HOIBENH = {
-    tienSu: '',
-    benhSu: 'cháu sốt cao 3 ngày nay, ở nhà uống hạ sốt không giảm, từ sáng đến giờ cháu sốt cao, ói, ăn uống không được',
+    quaTrinhBenhLy: 'cháu sốt cao 3 ngày nay, ở nhà uống hạ sốt không giảm, từ sáng đến giờ cháu sốt cao, ói, ăn uống không được',
+    tienSu: {
+        banThan: '',
+        dacDiemLienQuanBenh: [
+            { tt: '01', benh: 'Dị ứng', kyHieu: false, thoiGian: '' },
+            { tt: '02', benh: 'Ma túy', kyHieu: false, thoiGian: '' },
+            { tt: '03', benh: 'Rượu bia', kyHieu: false, thoiGian: '' },
+            { tt: '04', benh: 'Thuốc lá', kyHieu: false, thoiGian: '' },
+            { tt: '05', benh: 'Thuốc lào', kyHieu: false, thoiGian: '' },
+            { tt: '06', benh: 'Khác', kyHieu: false, thoiGian: '' }
+        ],
+        giaDinh: ''
+    }
 };
 const KHAMBENH = {
     khamToanThan: 'tỉnh, sốt cao, da niêm hồng',

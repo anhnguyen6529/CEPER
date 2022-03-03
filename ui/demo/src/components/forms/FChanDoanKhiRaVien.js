@@ -4,20 +4,23 @@ import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import { Autorenew, Save } from "@mui/icons-material";
 import { Button } from "../common";
 import HSBAContext from "../../contexts/HSBAContext";
+import mdSections from "../../constants/md_sections.json";
 
 const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien } = useSelector((state) => state.HSBA);
     const { role } = useSelector((state) => state.auth.user);
-    const { tabTongKetBAState, setTabTongKetBAState } = useContext(HSBAContext);
+    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
     const [ngayRaVien, setNgayRaVien] = useState(chanDoanKhiRaVien.ngayRaVien);
     const [hasChanged, setHasChanged] = useState(false);
   
+    const tongKetBAId = mdSections["order"].indexOf("Tổng kết bệnh án");
+    const sectionId = mdSections["Tổng kết bệnh án"].indexOf("Chẩn đoán khi ra viện");
+
     const handleSave = () => {
         dispatch(HSBAActions.updateBacSiSection({
             section: 'chanDoanKhiRaVien',
@@ -27,10 +30,9 @@ const FChanDoanKhiRaVien = () => {
             }
         }))
         setHasChanged(false);
-        setTabTongKetBAState({
-            ...tabTongKetBAState, 
-            chanDoanKhiRaVien: { saved: true, date: new Date() }
-        });
+        let tSaveSec = [...saveSec];
+        tSaveSec[tongKetBAId][sectionId] = new Date();
+        setSaveSec(tSaveSec);
     }
 
     const handleReset = () => {
@@ -82,11 +84,11 @@ const FChanDoanKhiRaVien = () => {
 
             {hasChanged &&
                 <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
-                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
-                        Đặt lại
+                    <Button variant="outlined" sx={{ mr: 2 }} onClick={handleReset}>
+                        Hủy
                     </Button>
 
-                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                    <Button variant="primary" onClick={handleSave}>
                         Lưu tạm thời
                     </Button>
                 </Box>

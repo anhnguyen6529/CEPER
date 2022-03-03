@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, CssBaseline, Toolbar, Typography, Divider, Breadcrumbs, Link, Container, Tooltip } from "@mui/material";
-import { NavigateNext, InfoOutlined } from "@mui/icons-material";
+import { Box, CssBaseline, Toolbar, Typography, Divider, Breadcrumbs, Link, Container } from "@mui/material";
+import { NavigateNext } from "@mui/icons-material";
 import '../styles/index.css';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { Drawer, ToolBar, Main } from "../components/common";
 import { UserProvider } from "../contexts/UserContext";
 import { DanhSachHSBA, HSBA } from "../components";
+import mdSections from "../constants/md_sections.json";
 
 const User = () => {
     const navigate = useNavigate();
@@ -17,25 +18,30 @@ const User = () => {
         }
     });
 
-    const [open, setOpen] = useState(true);
-    const [appearSec, setAppearSec] = useState([]);
-    const [openSec, setOpenSec] = useState([false, false, false, false, false, false, false, false, false, false, false, false]);
-    const [today, setToday] = useState(new Date());
-    const [tabs, setTabs] = useState([
-        { label: "Hành chính", showIcon: false, icon: null },
-        { label: "Bệnh án", showIcon: true, icon: 
-        <Tooltip placement="top" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
-            <InfoOutlined />
-        </Tooltip> },
-        { label: "Tổng kết bệnh án", showIcon: true, icon: 
-        <Tooltip placement="top" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
-            <InfoOutlined />
-        </Tooltip> }
-    ]);
-    const [selectedTab, setSelectedTab] = useState(0);
-
     const { user } = useSelector(state => state.auth);
     const selectedHSBA = useSelector(state => state.HSBA);
+
+    const [open, setOpen] = useState(true);
+    const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => { return mdSections["order"].indexOf(sec) }));
+    const [openSec, setOpenSec] = useState(new Array(mdSections["order"].length).fill(true));
+    const [today, setToday] = useState(new Date());
+    const [danhSachHSBATab, setDanhSachHSBATab] = useState({
+        value: 0,
+        hienTaiCols: [], hienTaiColsChecked: [],
+        raVienCols: [], raVienColsChecked: []
+    });
+    // const [tabs, setTabs] = useState([
+    //     { label: "Hành chính", showIcon: false, icon: null },
+    //     { label: "Bệnh án", showIcon: true, icon: 
+    //     <Tooltip placement="top" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
+    //         <InfoOutlined />
+    //     </Tooltip> },
+    //     { label: "Tổng kết bệnh án", showIcon: true, icon: 
+    //     <Tooltip placement="top" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
+    //         <InfoOutlined />
+    //     </Tooltip> }
+    // ]);
+    // const [selectedTab, setSelectedTab] = useState(0);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -68,10 +74,8 @@ const User = () => {
             openSec, 
             setOpenSec,
             today,
-            tabs, 
-            setTabs,
-            selectedTab,
-            setSelectedTab
+            danhSachHSBATab,
+            setDanhSachHSBATab
         }}>
             <Box sx={{ display: 'flex'}}>
                 <CssBaseline />

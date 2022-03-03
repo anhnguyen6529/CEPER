@@ -5,7 +5,7 @@ const initialState = {
         { 
             pid: '123456', 
             hoTen: 'Nguyễn Văn A',
-            ngaySinh: '1997-01-02',
+            tuoi: 25,
             gioiTinh: 'Nam',
             khoa: 'Cấp cứu',
             phong: '302',
@@ -17,7 +17,7 @@ const initialState = {
         { 
             pid: '102345', 
             hoTen: 'Nguyễn Thị B',
-            ngaySinh: '2000-01-20',
+            tuoi: 22,
             gioiTinh: 'Nữ',
             khoa: 'Khám bệnh',
             phong: '201',
@@ -29,7 +29,7 @@ const initialState = {
         { 
             pid: '200001', 
             hoTen: 'Phạm Quang C',
-            ngaySinh: '1990-12-24',
+            tuoi: 31,
             gioiTinh: 'Nam',
             khoa: 'Cấp cứu',
             phong: '302',
@@ -41,7 +41,7 @@ const initialState = {
         { 
             pid: '165423', 
             hoTen: 'Lê Thị D',
-            ngaySinh: '1992-04-06',
+            tuoi: 29,
             gioiTinh: 'Nữ',
             khoa: 'Hô hấp',
             phong: '102',
@@ -56,7 +56,7 @@ const initialState = {
             pid: '143256', 
             khoa: 'Cấp cứu',
             hoTen: 'Trần Văn A',
-            ngaySinh: '1994-04-16',
+            tuoi: 27,
             gioiTinh: 'Nam',
             ngayVaoVien: '2021-08-04 18:50',
             ngayRaVien: '2021-06-18 18:50',
@@ -67,7 +67,7 @@ const initialState = {
             pid: '132456', 
             khoa: 'Nhi',
             hoTen: 'Nguyễn Thị B',
-            ngaySinh: '2012-03-15',
+            tuoi: 9,
             gioiTinh: 'Nữ',
             ngayVaoVien: '2021-06-12 10:10',
             ngayRaVien: '2021-06-15 10:10',

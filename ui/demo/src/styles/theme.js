@@ -12,7 +12,7 @@ const theme = createTheme({
           main: "#09425A"
         },
         text: {
-          disabled: "#999"
+          disabled: "#000"
         }
     },
     typography: {
@@ -63,7 +63,8 @@ const theme = createTheme({
         styleOverrides: {
           root: {
             borderBottom: '0.5px solid rgba(224, 224, 224, 1)',
-            fontSize: '16px'
+            fontSize: '16px',
+            whiteSpace: 'pre-line'
           },
           head: {
             borderBottom: '0.5px solid rgba(200, 200, 224, 1)',
@@ -74,10 +75,20 @@ const theme = createTheme({
       MuiTableRow: {
         styleOverrides: {
           root: {
-            borderBottom: '0.5px solid rgba(224, 224, 224, 1)'
+            borderBottom: '0.5px solid rgba(224, 224, 224, 1)',
+            '&.MuiTableRow-hover:hover': { 
+              backgroundColor: 'rgba(0, 0, 0, 0.08)'
+            },
           },
           head: {
-            borderBottom: '0.5px solid rgba(200, 200, 224, 1)'
+            borderBottom: '0.5px solid rgba(200, 200, 224, 1)',
+          },
+        }
+      },
+      MuiListSubheader: {
+        styleOverrides: {
+          root: {
+            fontWeight: 'bold'
           }
         }
       }

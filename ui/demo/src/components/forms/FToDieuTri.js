@@ -2,29 +2,43 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
-import { Add, Close, Save } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import React, { useState, useContext } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useDispatch, useSelector } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
-import { TablePagination, Button } from "../common";
-import DateTimePicker from "@mui/lab/DateTimePicker";
+import { TablePagination, Button, StyledTableRow } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import HSBAContext from "../../contexts/HSBAContext";
+import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
-    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '20%' },
-    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '35%' },
-    { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '25%' },
-    { id: 'bacSiGhi', numeric: false, label: 'Bác sĩ ghi', width: '20%' },
+    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '20%', minWidth: 120 },
+    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '30%', minWidth: 200 },
+    { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '30%', minWidth: 200 },
+    { id: 'bacSiGhi', numeric: false, label: 'Bác sĩ ghi', width: '20%', minWidth: 120 },
 ];
+
+const removeHashAndSpaces = (arrStr) => {
+    let rArr = [];
+    arrStr.forEach((str) => {
+        let idx = 0;
+        while (str[idx] === ' ' || str[idx] === '-') {
+            idx++;
+        }
+        if (str.slice(idx) !== "") {
+            rArr.push(str.slice(idx));
+        }
+    })
+    return rArr;
+}
 
 const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { role, name } = useSelector(state => state.auth.user);
-    const { tabsDinhKemState, setTabsDinhKemState } = useContext(HSBAContext);
+    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -39,6 +53,7 @@ const FToDieuTri = () => {
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
+    const sectionId = mdSections["order"].indexOf("Tờ điều trị");
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -63,12 +78,16 @@ const FToDieuTri = () => {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'toDieuTri',
                 value: {},
-                newData: { ngayGio: newNgayGio.toISOString(), dienBienBenh: newDienBienBenh, yLenh: newYLenh, bacSiGhi: name }
+                newData: { 
+                    ngayGio: newNgayGio.toISOString(), 
+                    dienBienBenh: newDienBienBenh, 
+                    yLenh: removeHashAndSpaces(newYLenh.trim().split('\n')), 
+                    bacSiGhi: name 
+                }
             }));
-            setTabsDinhKemState({
-                ...tabsDinhKemState, 
-                toDieuTri: { saved: true, date: new Date() }
-            });
+            let tSaveSec = [...saveSec];
+            tSaveSec[sectionId] = new Date();
+            setSaveSec(tSaveSec);
             clearData();
         } else {
             let errs = [];
@@ -81,41 +100,34 @@ const FToDieuTri = () => {
 
     return (
         <>
-            {tabsDinhKemState.toDieuTri.saved && 
-                <Box sx={{ width: '100%', textAlign: 'right', mb: 1 }}>
-                    <Typography color="primary">
-                        <i>Đã chỉnh sửa: {format(new Date(tabsDinhKemState.toDieuTri.date), 'dd/MM/yyyy HH:mm:ss')}</i>
-                    </Typography>
-                </Box>
-            }
-
             <Paper>
                 <TableContainer sx={{ maxHeight: 500 }}>
                     <Table stickyHeader> 
                         <TableHead sx={{ '.MuiTableCell-root': { bgcolor: '#D9EFFE' } }}>
                             <TableRow>
-                            {headCells.map((headCell, id) => (
-                                <TableCell
-                                    key={id}
-                                    align='left'
-                                    sortDirection={orderBy === headCell.id ? order : false}
-                                    width={headCell.width}
-                                    className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""}
-                                >
-                                    <TableSortLabel
-                                        active={orderBy === headCell.id}
-                                        direction={orderBy === headCell.id ? order : 'asc'}
-                                        onClick={createSortHandler(headCell.id)}
+                                {headCells.map((headCell, id) => (
+                                    <TableCell
+                                        key={id}
+                                        align='left'
+                                        sortDirection={orderBy === headCell.id ? order : false}
+                                        width={headCell.width}
+                                        sx={{ minWidth: headCell.minWidth }}
+                                        className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""}
                                     >
-                                        {headCell.label}
-                                        {orderBy === headCell.id ? (
-                                            <Box component="span" sx={visuallyHidden}>
-                                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                            </Box>
-                                        ) : null}
-                                    </TableSortLabel>
-                                </TableCell>
-                            ))}
+                                        <TableSortLabel
+                                            active={orderBy === headCell.id}
+                                            direction={orderBy === headCell.id ? order : 'asc'}
+                                            onClick={createSortHandler(headCell.id)}
+                                        >
+                                            {headCell.label}
+                                            {orderBy === headCell.id ? (
+                                                <Box component="span" sx={visuallyHidden}>
+                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                </Box>
+                                            ) : null}
+                                        </TableSortLabel>
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -123,28 +135,23 @@ const FToDieuTri = () => {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     return (
-                                        <TableRow hover key={index}>
+                                        <StyledTableRow hover key={index}>
                                             <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.dienBienBenh}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.yLenh}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">
+                                                {(Array.isArray(row.yLenh) && row.yLenh.length > 1) 
+                                                    ? row.yLenh.map(yl => '- ' + yl).join('\n') 
+                                                    : row.yLenh
+                                                }
+                                            </TableCell>
                                             <TableCell>{row.bacSiGhi}</TableCell>
-                                        </TableRow>
+                                        </StyledTableRow>
                                     );
                             })}
 
                             {addNew && 
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                    <TableCell className="tableBodyBorderRight">
-                                        <DateTimePicker
-                                            value={newNgayGio}
-                                            onChange={(newValue) => setNewNgayGio(newValue)}
-                                            renderInput={(params) => <TextField {...params}/>}
-                                            inputFormat="DD/MM/yyyy HH:mm"
-                                            ampm={false}
-                                            leftArrowButtonText=""
-                                            rightArrowButtonText=""
-                                        />
-                                    </TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             multiline
@@ -197,11 +204,11 @@ const FToDieuTri = () => {
                             </Button>
                         ) : (
                             <>
-                                <Button variant="outlined" startIcon={<Close />} sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
+                                <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                                <Button variant="primary" onClick={handleSave}>
                                     Lưu tạm thời
                                 </Button>
                             </>

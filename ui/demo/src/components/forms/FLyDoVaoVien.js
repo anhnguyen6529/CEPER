@@ -4,14 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import { Button } from "../common";
-import { Autorenew, Save } from "@mui/icons-material";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import HSBAContext from "../../contexts/HSBAContext";
+import mdSections from "../../constants/md_sections.json";
 
 const FLyDoVaoVien = () => {
     const { lyDoVaoVien } = useSelector((state) => state.HSBA);
     const { role } = useSelector((state) => state.auth.user);
-    const { tabBenhAnState, setTabBenhAnState } = useContext(HSBAContext);
+    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [lyDo, setLyDo] = useState(lyDoVaoVien.lyDo);
@@ -20,6 +20,9 @@ const FLyDoVaoVien = () => {
     const [chanDoanNoiGioiThieu, setChanDoanNoiGioiThieu] = useState(lyDoVaoVien.chanDoanNoiGioiThieu);
     const [noiGioiThieu, setNoiGioiThieu] = useState(lyDoVaoVien.noiGioiThieu);
     const [hasChanged, setHasChanged] = useState(false);
+
+    const benhAnId = mdSections["order"].indexOf("Bệnh án");
+    const sectionId = mdSections["Bệnh án"].indexOf("Lý do vào viện");
   
     const handleSave = () => {
         dispatch(HSBAActions.updateBacSiSection({
@@ -33,10 +36,9 @@ const FLyDoVaoVien = () => {
             }
         }));
         setHasChanged(false);
-        setTabBenhAnState({
-            ...tabBenhAnState, 
-            lyDoVaoVien: { saved: true, date: new Date() }
-        });
+        let tSaveSec = [...saveSec];
+        tSaveSec[benhAnId][sectionId] = new Date();
+        setSaveSec(tSaveSec);
     }
 
     const handleReset = () => {
@@ -55,7 +57,7 @@ const FLyDoVaoVien = () => {
     }
 
     return (
-        <Box component="form" noValidate>
+        <Box component="form" noValidate sx={{ '.MuiGrid-container': { alignItems: 'center' } }}>
             <Grid container>
                 <Grid item xs={9}>
                     <TextField 
@@ -88,7 +90,7 @@ const FLyDoVaoVien = () => {
             </Grid>
             <Divider sx={{ my: 2 }}/>
 
-            <Grid container sx={{ mt: 1 }} alignItems="center">
+            <Grid container sx={{ mt: 1 }}>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Ngày vào viện</Typography>
                 </Grid>
@@ -142,11 +144,11 @@ const FLyDoVaoVien = () => {
 
             {hasChanged &&
                 <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
-                    <Button variant="outlined" startIcon={<Autorenew />} sx={{ width: 150, mr: 2 }} onClick={handleReset}>
-                        Đặt lại
+                    <Button variant="outlined" sx={{ mr: 2 }} onClick={handleReset}>
+                        Hủy
                     </Button>
 
-                    <Button variant="primary" startIcon={<Save />} sx={{ width: 150 }} onClick={handleSave}>
+                    <Button variant="primary" onClick={handleSave}>
                         Lưu tạm thời
                     </Button>
                 </Box>

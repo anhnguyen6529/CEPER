@@ -103,13 +103,13 @@ const FPhieuTDTruyenDich = () => {
                             .map((row, index) => {
                                 return (
                                     <Fragment key={index}>
-                                    <TableRow hover>
-                                        <TableCell className="tableBodyBorderRight" rowSpan={row.values.length + 1}>
-                                            {format(new Date(row.ngayThang), 'dd/MM')}
-                                        </TableCell>
-                                    </TableRow>
+                                        <TableRow hover sx={{ bgcolor: index % 2 === 0 && 'rgba(0, 0, 0, 0.04)' }}>
+                                            <TableCell className="tableBodyBorderRight" rowSpan={row.values.length + 1}>
+                                                {format(new Date(row.ngayThang), 'dd/MM')}
+                                            </TableCell>
+                                        </TableRow>
                                         {row.values.map((value, idx) => (
-                                            <TableRow hover key={idx}>
+                                            <TableRow hover key={idx} sx={{ bgcolor: index % 2 === 0 && 'rgba(0, 0, 0, 0.04)' }}>
                                                 {headCells.slice(1).map((headCell, id) => (
                                                     <TableCell className={id < headCells.length -2 ? "tableBodyBorderRight" : ""} key={headCell.id}>
                                                         {value[headCell.id]}

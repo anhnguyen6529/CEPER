@@ -1,19 +1,27 @@
 {
     "order": [
         "Hành chính",
-        "Lý do vào viện",
-        "Hỏi bệnh",
-        "Khám bệnh",
-        "Tóm tắt bệnh án",
-        "Chẩn đoán ban đầu",
-        "Phương pháp điều trị",
-        "Chẩn đoán khi ra viện",     
+        "Bệnh án",
+        "Tổng kết bệnh án",
         "Tờ điều trị",  
         "Phiếu chăm sóc",
         "Phiếu TD truyền dịch",
         "Phiếu TD chức năng sống", 
         "Phiếu TD dị ứng thuốc", 
         "Phiếu công khai thuốc"
+    ],
+    "Bệnh án": [
+        "Lý do vào viện",
+        "Hỏi bệnh",
+        "Khám bệnh",
+        "Tóm tắt bệnh án",
+        "Chẩn đoán ban đầu"
+    ],
+    "Tổng kết bệnh án": [
+        "Phương pháp điều trị",
+        "Chẩn đoán khi ra viện",
+        "Tình trạng người bệnh ra viện",
+        "Hướng điều trị và các chế độ tiếp theo"
     ],
     "attached": [
         "Tờ điều trị",  
@@ -27,5 +35,10 @@
         "BN": [0],
         "BS": [1, 2, 3, 4, 5, 6, 7, 8, 12],
         "DD": [9, 10, 11, 13]
+    },
+    "appearFirst": {
+        "BN": ["Hành chính"],
+        "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
+        "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"]
     }
 }

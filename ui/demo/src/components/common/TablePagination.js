@@ -20,7 +20,7 @@ const TablePagination = ({ length, page, setPage, rowsPerPage, setRowsPerPage })
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            labelRowsPerPage='Hiển thị tối đa cho mỗi trang:'
+            labelRowsPerPage='Hiển thị tối đa mỗi trang:'
             labelDisplayedRows={({ from, to, count }) => {
                 return `${from}–${to} trong số ${count}`;
             }}

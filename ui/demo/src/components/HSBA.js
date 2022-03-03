@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { 
-    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Box
+    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box
 } from "@mui/material";
+import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
 import { format } from "date-fns";
 import UserContext from "../contexts/UserContext";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
-import { Tabs, TabPanel, Button } from "./common";
-import FHanhChinh from "./forms/FHanhChinh";
-import { TabBenhAn, TabTongKetBA } from "./tabs";
-import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
+import { Button } from "./common";
+import { FHanhChinh, FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
 import { HSBAProvider } from "../contexts/HSBAContext";
+import ToolBarSection from "./ToolBarSection";
+import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -22,31 +23,17 @@ const HSBA = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { today, tabs, selectedTab, setSelectedTab } = useContext(UserContext); 
+    const { today, appearSec, openSec } = useContext(UserContext); 
     const benhNhan = useSelector(state => state.HSBA);
     const { loading } = benhNhan;
-    const [tabHanhChinhState, setTabHanhChinhState] = useState({ saved: false, date: null });
-    const [tabBenhAnState, setTabBenhAnState] = useState({
-        lyDoVaoVien: { saved: false, date: null },
-        hoiBenh: { saved: false, date: null },
-        khamBenh: { saved: false, date: null },
-        tomTatBenhAn: { saved: false, date: null },
-        chanDoanBanDau: { saved: false, date: null }
-    });
-    const [tabTongKetBAState, setTabTongKetBAState] = useState({
-        phuongPhapDieuTri: { saved: false, date: null },
-        chanDoanKhiRaVien: { saved: false, date: null },
-        tinhTrangRaVien: { saved: false, date: null },
-        huongDieuTri: { saved: false, date: null }
-    })
-    const [tabsDinhKemState, setTabsDinhKemState] = useState({
-        toDieuTri: { saved: false, date: null },
-        phieuChamSoc: { saved: false, date: null },
-        phieuTDTruyenDich: { saved: false, date: null },
-        phieuTDChucNangSong: { saved: false, date: null },
-        phieuTDDiUngThuoc: { saved: false, date: null },
-        phieuCongKhaiThuoc: { saved: false, date: null }
-    })
+    const [saveSec, setSaveSec] = useState(mdSections["order"].map((sec) => {
+        if (sec === "Bệnh án") {
+            return new Array(mdSections["Bệnh án"].length).fill(null);
+        } else if (sec === "Tổng kết bệnh án") {
+            return new Array(mdSections["Tổng kết bệnh án"].length).fill(null);
+        }
+        return null;
+    }));
 
     if (loading) {
         return (
@@ -68,9 +55,15 @@ const HSBA = () => {
     const { mach, nhietDo, huyetAp, nhipTho, canNang } = dauHieuSinhTon.length > 0 
         ? dauHieuSinhTon[dauHieuSinhTon.length - 1]
         : { mach: '', nhietDo: '', huyetAp: '', nhipTho: '', canNang: '' };
-    
-    const switchTab = (label) => {
-        switch (label) {
+        
+    const renderSwitch = (sectionId) => {
+        switch (mdSections["order"][sectionId]) {
+            case "Hành chính": 
+                return <FHanhChinh />
+            case "Bệnh án": 
+                return <GroupBenhAn />
+            case "Tổng kết bệnh án": 
+                return <GroupTongKetBA />
             case "Tờ điều trị":
                 return <FToDieuTri />
             case "Phiếu chăm sóc":
@@ -89,18 +82,7 @@ const HSBA = () => {
     }
 
     return (
-        <HSBAProvider
-            value={{
-                tabHanhChinhState,
-                setTabHanhChinhState,
-                tabBenhAnState,
-                setTabBenhAnState,
-                tabTongKetBAState,
-                setTabTongKetBAState,
-                tabsDinhKemState,
-                setTabsDinhKemState
-            }}
-        >
+        <HSBAProvider value={{ saveSec, setSaveSec }}>
             <Container sx={{ mt: 3 }} maxWidth={false}>
                 <Grid container spacing={5} sx={{ mb: 3 }}>
                     <Grid item xs={9}>
@@ -222,52 +204,42 @@ const HSBA = () => {
                     </Grid>
                 </Grid>
 
-                <Tabs 
-                    value={selectedTab}
-                    setValue={setSelectedTab}
-                    tabs={tabs}
-                    variant="scrollable"
-                    scrollButtons
-                    allowScrollButtonsMobile
-                    sx={{
-                        '.MuiTabs-indicator': {
-                            background: 'none'
-                        }, 
-                        '.MuiTab-root': {
-                            minHeight: 36,
-                            pb: 1,
-                            bgcolor: '#E0E0E0',
-                            mr: 0.5,
-                            borderRadius: '4px 4px 0px 0px',
-                            boxShadow: "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)"
-                        },
-                        '.Mui-selected': {
-                            bgcolor: 'white',
-                            cursor: 'default',  
-                        },
-                        minHeight: 36
-                    }}
-                />
-                <TabPanel value={selectedTab} index={0} className="TabPanel">
-                    <FHanhChinh />
-                </TabPanel>
-                <TabPanel value={selectedTab} index={1} className="TabPanel">
-                    <TabBenhAn />
-                </TabPanel>
-                <TabPanel value={selectedTab} index={2} className="TabPanel">
-                    <TabTongKetBA />
-                </TabPanel>
-                {tabs.slice(3).map((tab, id) => (
-                    <TabPanel key={id} value={selectedTab} index={id + 3} className="TabPanel">
-                        {switchTab(tab.label)}
-                    </TabPanel>
-                ))}
-                
-                {(Object.values(tabBenhAnState).some(section => !!section.saved) 
-                    || Object.values(tabTongKetBAState).some(section => !!section.saved)
-                    || Object.values(tabsDinhKemState).some(section => !!section.saved)
-                    || !!tabHanhChinhState.saved
-                ) &&
+                {appearSec.map((sectionId, id) => (
+                    <Paper 
+                        key={id}
+                        id={`section-${appearSec[id]}`}
+                        sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1 }} 
+                    >  
+                        <Grid container>
+                            <Grid item xs={9}> 
+                                <Typography fontWeight="bold" color={openSec[sectionId] ? "primary" : "inherit"} >
+                                    {mdSections["order"][sectionId]}
+                                    {(saveSec[sectionId] !== null && !Array.isArray(saveSec[sectionId])) && (
+                                        <Typography component="span">
+                                            <Typography component="span" sx={{ mx: 1.5 }}>|</Typography>
+                                            <i>Đã chỉnh sửa: {format(new Date(saveSec[sectionId]), 'dd/MM/yyyy HH:mm:ss')}</i>
+                                        </Typography>
+                                    )}
+                                    {(Array.isArray(saveSec[sectionId]) && saveSec[sectionId].every(element => !!element)) && (
+                                        <Typography component="span">
+                                            <Typography component="span" sx={{ mx: 1.5 }}>|</Typography>
+                                            <i>Đã chỉnh sửa: {format(new Date(Math.max.apply(null, saveSec[sectionId])), 'dd/MM/yyyy HH:mm:ss')}</i>
+                                        </Typography>
+                                    )}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={3} align="right">
+                                <ToolBarSection id={id} sectionId={sectionId} />
+                            </Grid>
+                        </Grid>
+                    
+                        <Collapse in={openSec[sectionId]} timeout="auto" unmountOnExit sx={{ py: 2 }}>
+                            {renderSwitch(sectionId)}
+                        </Collapse>
+                    </Paper>
+                ))} 
+
+                {(saveSec.some(element => !!element) && openSec.some(element => !!element)) &&
                     <Box sx={{ width: '100%', textAlign: 'right', mt: 3, pr: 3 }}>
                         <Button sx={{ width: 150 }} variant="primary-dark">
                             CẬP NHẬT

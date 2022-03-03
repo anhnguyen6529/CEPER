@@ -44,11 +44,6 @@ const roles = [
 
 const Login = () => {
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!!localStorage.getItem('user')) {
-            navigate('/user/HSBA');
-        }
-    });
 
     const classes = useStyles();
     const [clickedId, setClickedId] = useState(-1);
@@ -62,13 +57,33 @@ const Login = () => {
     }
 
     useEffect(() => {
+        if (!!localStorage.getItem('user')) {
+            if (login.role === "BN") {
+                // get user pid => api
+                const pid = '123456';
+                navigate(`/user/HSBA/${pid}`);
+            } else {
+                navigate('/user/HSBA');
+            } 
+        }
+        // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
         if (login.success) {
             setTimeout(() => {
-                navigate('/user');
+                if (login.role === "BN") {
+                    // get user pid => api
+                    const pid = '123456';
+                    navigate(`/user/HSBA/${pid}`);
+                } else {
+                    navigate('/user/HSBA');
+                }  
                 localStorage.setItem('user', login.username);
             }, 1000);
         }
-    });
+        // eslint-disable-next-line
+    }, [login.success]);
 
     return (
         <div className={classes.root}>

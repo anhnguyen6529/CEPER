@@ -2,10 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     user: {
-        username: 'user01',
+        username: '',
         avatar: '',
         role: 'BS',
-        name: 'Trần Quốc A'        
+        name: 'Trần Quốc A'     
     },
     login: {
         username: '',
@@ -30,7 +30,11 @@ const authSlice = createSlice({
             }
         },
         login: (state, action) => {
-            if (action.payload.username === 'user01' && action.payload.password === '123456') {
+            if ((action.payload.username === 'user01' && action.payload.password === '123456' && action.payload.role === 'BS')
+            || (action.payload.username === 'user02' && action.payload.password === '123456' && action.payload.role === 'DD')
+            || (action.payload.username === 'user03' && action.payload.password === '123456' && action.payload.role === 'BN')
+            ) 
+            {
                 state.login.error = '';
                 state.login.success = true;
                 state.user.username = action.payload.username;
