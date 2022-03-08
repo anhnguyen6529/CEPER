@@ -39,6 +39,14 @@ const authSlice = createSlice({
                 state.login.success = true;
                 state.user.username = action.payload.username;
                 state.user.role = action.payload.role;
+
+                if (action.payload.username === 'user02') {
+                    state.user.name = 'Nguyễn Ngọc A'
+                }
+
+                if (action.payload.username === 'user03') {
+                    state.user.name = 'Nguyễn Văn A'
+                }
             } else {
                 state.login.success = false;
                 if (action.payload.username === '' || action.payload.password === '' || action.payload.role === '') {
