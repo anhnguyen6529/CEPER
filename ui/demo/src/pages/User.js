@@ -30,28 +30,20 @@ const User = () => {
         hienTaiCols: [], hienTaiColsChecked: [],
         raVienCols: [], raVienColsChecked: []
     });
-    // const [tabs, setTabs] = useState([
-    //     { label: "Hành chính", showIcon: false, icon: null },
-    //     { label: "Bệnh án", showIcon: true, icon: 
-    //     <Tooltip placement="top" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
-    //         <InfoOutlined />
-    //     </Tooltip> },
-    //     { label: "Tổng kết bệnh án", showIcon: true, icon: 
-    //     <Tooltip placement="top" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
-    //         <InfoOutlined />
-    //     </Tooltip> }
-    // ]);
-    // const [selectedTab, setSelectedTab] = useState(0);
 
     const toggleDrawer = () => {
         setOpen(!open);
     };
 
     const getUserContent = (role) => {
+        
         switch (role) {
             case "BN":
                 return <HSBA />;
+            // eslint-disable-next-line
             case "BS":
+                return typeof(pid) === 'undefined' ? <DanhSachHSBA /> : <HSBA />;
+            case "DD": 
                 return typeof(pid) === 'undefined' ? <DanhSachHSBA /> : <HSBA />;
             default: 
                 return <></>;

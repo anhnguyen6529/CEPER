@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
 const FHanhChinh = () => {
     const classes = useStyles();
     const benhNhan = useSelector((state) => state.HSBA);
-    const { role } = useSelector((state) => state.auth.user);
+    // const { role } = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const [hoTen, setHoTen] = useState(benhNhan.hanhChinh.hoTen);
     const [ngaySinh, setNgaySinh] = useState(benhNhan.hanhChinh.ngaySinh);
@@ -96,7 +96,7 @@ const FHanhChinh = () => {
                         }}
                         error={!hoTen}
                         helperText={!hoTen ? "Vui lòng nhập họ tên" : ""}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -109,7 +109,7 @@ const FHanhChinh = () => {
                         }}
                         renderInput={(params) => <TextField fullWidth {...params} className={classes.select}/>}
                         inputFormat="DD/MM/yyyy"
-                        disabled={role !== "BN"} 
+                        disabled 
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -122,7 +122,7 @@ const FHanhChinh = () => {
                             handleChange();
                         }}
                         className={classes.select}
-                        disabled={role !== "BN"}
+                        disabled
                     >
                         <MenuItem value="Nam">Nam</MenuItem>
                         <MenuItem value="Nữ">Nữ</MenuItem>
@@ -141,7 +141,7 @@ const FHanhChinh = () => {
                         }}
                         error={!ngheNghiep}
                         helperText={!ngheNghiep ? "Vui lòng nhập nghề nghiệp" : ""}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
             </Grid>
@@ -159,7 +159,7 @@ const FHanhChinh = () => {
                         }}
                         error={!danToc}
                         helperText={!danToc ? "Vui lòng nhập dân tộc" : ""}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -172,7 +172,7 @@ const FHanhChinh = () => {
                             handleChange();
                         }}
                         className={classes.select}
-                        disabled={role !== "BN"}
+                        disabled
                     >
                         <MenuItem value="Việt Nam">Việt Nam</MenuItem>
                         <MenuItem value="Hoa Kỳ">Hoa Kỳ</MenuItem>
@@ -191,7 +191,7 @@ const FHanhChinh = () => {
                         }}
                         error={!soCCCD}
                         helperText={!soCCCD ? "Vui lòng nhập số CMND/CCCD/SSN" : ""}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -207,7 +207,7 @@ const FHanhChinh = () => {
                         }}
                         error={!dienThoai}
                         helperText={!dienThoai ? "Vui lòng nhập điện thoại" : ""}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
             </Grid>
@@ -223,7 +223,7 @@ const FHanhChinh = () => {
                             setNoiLamViec(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -236,7 +236,7 @@ const FHanhChinh = () => {
                             handleChange();
                         }}
                         className={classes.select}
-                        disabled={role !== "BN"}
+                        disabled
                     >   
                         <MenuItem value="BHYT">BHYT</MenuItem>
                         <MenuItem value="Thu phí">Thu phí</MenuItem>
@@ -255,7 +255,7 @@ const FHanhChinh = () => {
                             setSoNha(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -269,7 +269,7 @@ const FHanhChinh = () => {
                             setThonPho(event.target.value); 
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
             </Grid>
@@ -286,7 +286,7 @@ const FHanhChinh = () => {
                             handleChange();
                         }}
                         className={classes.select}
-                        disabled={role !== "BN"}
+                        disabled
                     >
                         {CLocal.map((province, id) => (
                             <MenuItem value={province.name} key={id}>{province.name}</MenuItem>
@@ -304,7 +304,7 @@ const FHanhChinh = () => {
                             handleChange();
                         }}
                         className={classes.select}
-                        disabled={role !== "BN"}
+                        disabled
                     >
                         <MenuItem value="-- Quận/Huyện --">-- Quận/Huyện --</MenuItem>
                         {CLocal.find((element) => element.name === tinhTP).districts.map((district, id) => (
@@ -322,7 +322,7 @@ const FHanhChinh = () => {
                             handleChange();
                         }}
                         className={classes.select}
-                        disabled={role !== "BN"}
+                        disabled
                     >
                         <MenuItem value="-- Phường/Xã --">-- Phường/Xã --</MenuItem>
                         {quanHuyen !== "-- Quận/Huyện --" &&
@@ -349,7 +349,7 @@ const FHanhChinh = () => {
                             setSoTheBHYT(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -363,7 +363,7 @@ const FHanhChinh = () => {
                             setNoiDangKyKCBBanDau(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -376,7 +376,7 @@ const FHanhChinh = () => {
                         }}
                         renderInput={(params) => <TextField {...params} fullWidth className={classes.select} />}
                         inputFormat="DD/MM/yyyy"
-                        disabled={role !== "BN"} 
+                        disabled 
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -389,7 +389,7 @@ const FHanhChinh = () => {
                         }}
                         renderInput={(params) => <TextField {...params} fullWidth className={classes.select} />}
                         inputFormat="DD/MM/yyyy"
-                        disabled={role !== "BN"} 
+                        disabled 
                     />
                 </Grid>
             </Grid>
@@ -408,7 +408,7 @@ const FHanhChinh = () => {
                             setHoTenNguoiNha(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -422,7 +422,7 @@ const FHanhChinh = () => {
                             setQuanHeVoiBenhNhan(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -436,7 +436,7 @@ const FHanhChinh = () => {
                             setDienThoaiNguoiNha(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={3}>
@@ -450,7 +450,7 @@ const FHanhChinh = () => {
                             setDiaChiNguoiNha(event.target.value);
                             handleChange();
                         }}
-                        disabled={role !== "BN"}
+                        disabled
                     />
                 </Grid>
             </Grid>

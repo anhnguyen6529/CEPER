@@ -37,7 +37,7 @@
         "DD": [9, 10, 11, 13]
     },
     "appearFirst": {
-        "BN": ["Hành chính"],
+        "BN": ["Hành chính", "Bệnh án", "Tổng kết bệnh án"],
         "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
         "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"]
     }

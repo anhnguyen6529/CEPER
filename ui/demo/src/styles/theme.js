@@ -26,8 +26,13 @@ const theme = createTheme({
       MuiButton: {
         styleOverrides: {
           root: {
-            textTransform: 'none'
-          }
+            textTransform: 'none',
+            '&.Mui-disabled': {
+              color: 'rgba(0, 0, 0, 0.38)',
+              backgroundColor: 'rgba(0, 0, 0, 0.26)',
+              border: 'none'
+            }
+          },
         }
       },
       MuiTab: {
@@ -89,6 +94,16 @@ const theme = createTheme({
         styleOverrides: {
           root: {
             fontWeight: 'bold'
+          }
+        }
+      },
+      MuiDialogTitle: {
+        styleOverrides: {
+          root: {
+            fontWeight: 'bold',
+            fontSize: 18,
+            paddingTop: 8,
+            paddingBottom: 8
           }
         }
       }
