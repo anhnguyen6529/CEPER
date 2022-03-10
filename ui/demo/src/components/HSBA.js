@@ -10,10 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
 import { Button } from "./common";
-import { FHanhChinh, FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
+import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
 import { HSBAProvider } from "../contexts/HSBAContext";
 import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
+import DialogXuLyChinhTa from "./dialogs/DialogXuLyChinhTa";
+import { BoxHanhChinh } from "./boxes";
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -34,6 +36,17 @@ const HSBA = () => {
         }
         return null;
     }));
+    const [openDialog, setOpenDialog] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    useEffect(() => {
+        if (processing) {
+            setTimeout(() => {
+                setProcessing(false);
+                setOpenDialog(true);
+            }, 1000);
+        }
+        // eslint-disable-next-line
+    }, [processing]);
 
     if (loading) {
         return (
@@ -59,7 +72,7 @@ const HSBA = () => {
     const renderSwitch = (sectionId) => {
         switch (mdSections["order"][sectionId]) {
             case "Hành chính": 
-                return <FHanhChinh />
+                return <BoxHanhChinh />
             case "Bệnh án": 
                 return <GroupBenhAn />
             case "Tổng kết bệnh án": 
@@ -239,12 +252,19 @@ const HSBA = () => {
                     </Paper>
                 ))} 
 
-                {(saveSec.some(element => !!element) && openSec.some(element => !!element)) &&
-                    <Box sx={{ width: '100%', textAlign: 'right', mt: 3, pr: 3 }}>
-                        <Button sx={{ width: 150 }} variant="primary-dark">
-                            CẬP NHẬT
-                        </Button>
-                    </Box>
+                {(saveSec.some(element => (Array.isArray(element) && element.some(ele => !!ele)) || (!Array.isArray(element) && !!element)) 
+                && openSec.some(element => !!element)) &&
+                    <>
+                        <Box className="df aic jcfe" sx={{ mt: 3, pr: 3 }}>
+                            {processing && <CircularProgress color="secondary" size={36} />}
+
+                            <Button sx={{ width: 150, ml: 3 }} variant="primary-dark" onClick={() => setProcessing(true)} disabled={processing}>
+                                CẬP NHẬT
+                            </Button>
+                        </Box>
+
+                        <DialogXuLyChinhTa open={openDialog} setOpen={setOpenDialog} />
+                    </>
                 }
             </Container>
         </HSBAProvider>
