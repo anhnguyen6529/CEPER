@@ -36,9 +36,11 @@ const initialState = {
         }
     },
     phieuTDDiUngThuoc: {
-        thuocDiUng: '',
-        kieuDiUng: '',
-        benhKemTheo: '',
+        data: []
+    },
+    benhAn: {
+        thoiGian: '',
+        bacSiLamBenhAn: '',
     },
     lyDoVaoVien: {
         lyDo: '',
@@ -77,6 +79,10 @@ const initialState = {
     },
     tomTatBenhAn: '',
     chanDoanBanDau: '',
+    tongKetBenhAn: {
+        thoiGian: '',
+        bacSiDieuTri: ''
+    },
     phuongPhapDieuTri: '',
     chanDoanKhiRaVien: {
         chanDoan: '',
@@ -84,6 +90,8 @@ const initialState = {
     },
     tinhTrangRaVien: '',
     huongDieuTri: '',
+    nguoiGiaoHoSo: '',
+    nguoiNhanHoSo: '',
     phieuTDChucNangSong: {
         data: [],
     },
@@ -99,7 +107,8 @@ const initialState = {
     phieuCongKhaiThuoc: {
         ngayThang: [],
         data: [],
-    }
+    },
+    edited: {}
 }
 
 const HSBASlice = createSlice({
@@ -123,7 +132,7 @@ const HSBASlice = createSlice({
                 [action.payload.section]: {
                     ...state[action.payload.section],
                     ...action.payload.value,
-                    ...(!!action.payload.newData && { data: [...state[action.payload.section].data, action.payload.newData] } )
+                    ...(!!action.payload.newData && { data: [...state[action.payload.section].data, action.payload.newData] } ),
                 }
             }
         }

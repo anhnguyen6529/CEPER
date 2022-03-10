@@ -4,6 +4,7 @@
         "ten_thuong_mai": "Paracetamol G.E.S 10mg/ml",
         "nong_do_ham_luong": "10mg/ml",
         "duong_dung": "Dung dịch tiêm truyền",
+        "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Altan Pharmaceuticals, S.A",
         "nuoc_san_xuat": "Tây Ban Nha"
     },
@@ -12,6 +13,7 @@
         "ten_thuong_mai": "Paracetamol 500",
         "nong_do_ham_luong": "500mg",
         "duong_dung": "Viên nén sủi bọt",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm SaVi",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -20,6 +22,7 @@
         "ten_thuong_mai": "PANALGAN® Effer 150",
         "nong_do_ham_luong": "150mg",
         "duong_dung": "Thuốc cốm sủi bọt",
+        "don_vi_tinh_nho_nhat": "gói",
         "co_so_san_xuat": "Công ty Cổ Phần Dược Phẩm Cửu Long",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -28,6 +31,7 @@
         "ten_thuong_mai": "Pallas 250mg",
         "nong_do_ham_luong": "250mg/5ml",
         "duong_dung": "Viên nén sủi bọt",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty Cổ phần Dược phẩm An Thiên",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -36,6 +40,7 @@
         "ten_thuong_mai": "Antarene",
         "nong_do_ham_luong": "200mg",
         "duong_dung": "Viên nén bao phim",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Sophartex",
         "nuoc_san_xuat": "Pháp"
     },
@@ -44,6 +49,7 @@
         "ten_thuong_mai": "Goldprofen",
         "nong_do_ham_luong": "400mg",
         "duong_dung": "Viên",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Farmalabor Produtos Farmacêuticos, S.A (Fab.)",
         "nuoc_san_xuat": "Portugal"
     },
@@ -52,14 +58,16 @@
         "ten_thuong_mai": "Mobimed 15",
         "nong_do_ham_luong": "15mg",
         "duong_dung": "Viên",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Pymepharco",
         "nuoc_san_xuat": "Việt Nam"
     },
     {
         "ten_hoat_chat": "Meloxicam",
         "ten_thuong_mai": "Atimecox 15 inj",
-        "nong_do_ham_luong": "15mg/1,5ml",
+        "nong_do_ham_luong": "15mg/1.5ml",
         "duong_dung": "Dung dịch tiêm",
+        "don_vi_tinh_nho_nhat": "ống",
         "co_so_san_xuat": "Công ty Cổ phần Dược phẩm An Thiên",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -68,6 +76,7 @@
         "ten_thuong_mai": "Golcoxib",
         "nong_do_ham_luong": "200mg",
         "duong_dung": "Viên nang cứng",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty CPDP Me Di Sun",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -76,6 +85,7 @@
         "ten_thuong_mai": "Fenidel",
         "nong_do_ham_luong": "40mg/2ml",
         "duong_dung": "Dung dịch tiêm",
+        "don_vi_tinh_nho_nhat": "ống",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm Vĩnh Phúc",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -84,6 +94,7 @@
         "ten_thuong_mai": "Medsoly 4mg",
         "nong_do_ham_luong": "4mg",
         "duong_dung": "Viên nén",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm Quảng Bình",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -92,22 +103,25 @@
         "ten_thuong_mai": "Terpincold",
         "nong_do_ham_luong": "15mg + 100mg",
         "duong_dung": "Viên",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty cổ phần Dược phẩm Hà Tây",
         "nuoc_san_xuat": "Việt Nam"
     },
     {
         "ten_hoat_chat": "Natri clorid",
-        "ten_thuong_mai": "Natri Clorid 0,9%",
-        "nong_do_ham_luong": "0,9%; 500ml",
+        "ten_thuong_mai": "Natri Clorid 0.9%",
+        "nong_do_ham_luong": "0.9%; 500ml",
         "duong_dung": "Dung dịch tiêm truyền",
+        "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần Fresenius Kabi Việt Nam",
         "nuoc_san_xuat": "Việt Nam"
     },
     {
         "ten_hoat_chat": "Natri clorid",
-        "ten_thuong_mai": "Natri Clorid 0,9%",
-        "nong_do_ham_luong": "0,9%/10ml",
+        "ten_thuong_mai": "Natri Clorid 0.9%",
+        "nong_do_ham_luong": "0.9%/10ml",
         "duong_dung": "Dung dịch thuốc nhỏ mắt, mũi",
+        "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần dược vật tư y tế Hải Dương",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -116,6 +130,7 @@
         "ten_thuong_mai": "Naptogast 20",
         "nong_do_ham_luong": "20mg",
         "duong_dung": "Viên nang",
+        "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty TNHH BRV Healthcare",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -124,6 +139,7 @@
         "ten_thuong_mai": "Tetracyclin 1%",
         "nong_do_ham_luong": "1%; 5g",
         "duong_dung": "Thuốc tra mắt",
+        "don_vi_tinh_nho_nhat": "tuýp",
         "co_so_san_xuat": "Công ty cổ phần dược Medipharco",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -132,6 +148,7 @@
         "ten_thuong_mai": "Ringer Lactate",
         "nong_do_ham_luong": "500ml",
         "duong_dung": "Dung dịch tiêm truyền",
+        "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần Fresenius Kabi Việt Nam",
         "nuoc_san_xuat": "Việt Nam"
     },
@@ -140,6 +157,7 @@
         "ten_thuong_mai": "Glucose 5%",
         "nong_do_ham_luong": "5%; 500ml",
         "duong_dung": "Thuốc tiêm truyền",
+        "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm Otsuka Việt Nam",
         "nuoc_san_xuat": "Việt Nam"
     }

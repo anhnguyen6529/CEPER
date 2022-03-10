@@ -1,9 +1,12 @@
 import { TableRow } from "@mui/material";
 import { styled } from "@mui/styles";
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(() => ({
     '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
+        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    },
+    '&:nth-of-type(even)': {
+        backgroundColor: 'rgba(0, 0, 0, 0.04)',
     },
 }));
 

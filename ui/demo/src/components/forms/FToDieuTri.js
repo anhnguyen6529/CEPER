@@ -80,7 +80,7 @@ const FToDieuTri = () => {
                 value: {},
                 newData: { 
                     ngayGio: newNgayGio.toISOString(), 
-                    dienBienBenh: newDienBienBenh, 
+                    dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
                     yLenh: removeHashAndSpaces(newYLenh.trim().split('\n')), 
                     bacSiGhi: name 
                 }
@@ -101,14 +101,14 @@ const FToDieuTri = () => {
     return (
         <>
             <Paper>
-                <TableContainer sx={{ maxHeight: 500 }}>
+                <TableContainer>
                     <Table stickyHeader> 
                         <TableHead sx={{ '.MuiTableCell-root': { bgcolor: '#D9EFFE' } }}>
                             <TableRow>
                                 {headCells.map((headCell, id) => (
                                     <TableCell
                                         key={id}
-                                        align='left'
+                                        align="left"
                                         sortDirection={orderBy === headCell.id ? order : false}
                                         width={headCell.width}
                                         sx={{ minWidth: headCell.minWidth }}
@@ -137,7 +137,12 @@ const FToDieuTri = () => {
                                     return (
                                         <StyledTableRow hover key={index}>
                                             <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.dienBienBenh}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">
+                                                {(Array.isArray(row.dienBienBenh) && row.dienBienBenh.length > 1) 
+                                                    ? row.dienBienBenh.map(dbb => '- ' + dbb).join('\n') 
+                                                    : row.dienBienBenh
+                                                }
+                                            </TableCell>
                                             <TableCell className="tableBodyBorderRight">
                                                 {(Array.isArray(row.yLenh) && row.yLenh.length > 1) 
                                                     ? row.yLenh.map(yl => '- ' + yl).join('\n') 
@@ -186,10 +191,10 @@ const FToDieuTri = () => {
 
             { role === "BS" && 
                 <Grid container sx={{ mt: 2 }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
-                    <Grid item xs={6} align="right">
+                    <Grid item xs={3} align="right">
                         {!addNew
                         ? (
                             <Button 

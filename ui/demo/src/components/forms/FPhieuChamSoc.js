@@ -30,6 +30,20 @@ const sortYLenhFn = (a, b) => {
     return ngayGioA - ngayGioB;
 }
 
+const removeHashAndSpaces = (arrStr) => {
+    let rArr = [];
+    arrStr.forEach((str) => {
+        let idx = 0;
+        while (str[idx] === ' ' || str[idx] === '-') {
+            idx++;
+        }
+        if (str.slice(idx) !== "") {
+            rArr.push(str.slice(idx));
+        }
+    })
+    return rArr;
+}
+
 const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
     const { role, name } = useSelector(state => state.auth.user);
@@ -39,7 +53,7 @@ const FPhieuChamSoc = () => {
     let danhSachYLenh = [];
     dieuTri.data.forEach((dtr) => {
         if (Array.isArray(dtr.yLenh)) {
-            dtr.yLenh.forEach((d) => danhSachYLenh.push(format(new Date(dtr.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + d + ' - BS: ' + dtr.bacSiGhi));
+            danhSachYLenh.push(format(new Date(dtr.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + dtr.yLenh.join(';') + ' - BS: ' + dtr.bacSiGhi);
         } else {
             danhSachYLenh.push(format(new Date(dtr.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + dtr.yLenh + ' - BS: ' + dtr.bacSiGhi);
         }
@@ -87,7 +101,7 @@ const FPhieuChamSoc = () => {
                 newData: { 
                     ngay: newNgay, 
                     gio: newGio, 
-                    theoDoiDienBien: newTheoDoiDienBien, 
+                    theoDoiDienBien: removeHashAndSpaces(newTheoDoiDienBien.trim().split('\n')), 
                     thucHienYLenh: newThucHienYLenh.sort(sortYLenhFn),
                     dieuDuongGhi: name 
                 }
@@ -112,13 +126,13 @@ const FPhieuChamSoc = () => {
         <>
             <Paper>
                 <TableContainer>
-                    <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
-                        <TableHead sx={{ '.MuiTableCell-root': { fontWeight: 'bold' }, '.MuiTableRow-root': { bgcolor: '#D9EFFE' } }}>
+                    <Table stickyHeader> 
+                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: '#D9EFFE' } }}>
                             <TableRow>
                                 {headCells.map((headCell, id) => (
                                     <TableCell
                                         key={id}
-                                        align='left'
+                                        align="left"
                                         sortDirection={orderBy === headCell.id ? order : false}
                                         width={headCell.width}
                                         className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""} 
@@ -147,7 +161,12 @@ const FPhieuChamSoc = () => {
                                         <StyledTableRow hover key={index}>
                                             <TableCell className="tableBodyBorderRight">{format(new Date(row.ngay), 'dd/MM/yyyy')}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.gio}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">
+                                                {(Array.isArray(row.theoDoiDienBien) && row.theoDoiDienBien.length > 1) 
+                                                    ? row.theoDoiDienBien.map(td => '- ' + td).join('\n') 
+                                                    : row.theoDoiDienBien
+                                                }
+                                            </TableCell>
                                             <TableCell className="tableBodyBorderRight">
                                                 {(Array.isArray(row.thucHienYLenh) && row.thucHienYLenh.length > 1) 
                                                     ? row.thucHienYLenh.map(thyl => '- ' + thyl).join('\n') 
@@ -209,10 +228,10 @@ const FPhieuChamSoc = () => {
             {/* { role === "DD" && */}
             { role === "BS" &&
                 <Grid container sx={{ mt: 2 }}>
-                    <Grid item xs={6}>
+                    <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
-                    <Grid item xs={6} align="right">
+                    <Grid item xs={3} align="right">
                         {!addNew
                         ? (
                             <Button 

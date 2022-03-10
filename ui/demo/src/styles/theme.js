@@ -35,6 +35,15 @@ const theme = createTheme({
           },
         }
       },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            '&.Mui-disabled': {
+              backgroundColor: 'rgba(0, 0, 0, 0.06)'
+            }
+          }
+        }
+      },
       MuiTab: {
         styleOverrides: {
           root: {

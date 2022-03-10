@@ -20,6 +20,8 @@ export { default as Main } from './Main';
 
 export { default as NavBar } from './NavBar';
 
+export { default as SelectThuoc } from './SelectThuoc';
+
 export { default as StyledTableRow } from './StyledTableRow';
 
 export { default as TablePagination } from './TablePagination';
