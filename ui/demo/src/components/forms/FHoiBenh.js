@@ -19,24 +19,25 @@ const FHoiBenh = () => {
     const [banThan, setBanThan] = useState(hoiBenh.tienSu.banThan);
     const [dacDiemLienQuan, setDacDiemLienQuan] = useState(hoiBenh.tienSu.dacDiemLienQuanBenh);
     const [giaDinh, setGiaDinh] = useState(hoiBenh.tienSu.giaDinh);
-    const [hasChanged, setHasChanged] = useState(false);
+    const [hasChanged, setHasChanged] = useState(new Array(4).fill(false));
 
     const benhAnId = mdSections["order"].indexOf("Bệnh án");
     const sectionId = mdSections["Bệnh án"].indexOf("Hỏi bệnh");
   
     const handleSave = () => {
+        let changedData = {};
+        if (hasChanged[0]) changedData = { ...changedData, quaTrinhBenhLy };
+        if (hasChanged[1] || hasChanged[2] || hasChanged[3]) {
+            changedData = { ...changedData, tienSu: {} };
+            if (hasChanged[1]) changedData = { ...changedData, tienSu: { ...changedData.tienSu, banThan } };
+            if (hasChanged[2]) changedData = { ...changedData, tienSu: { ...changedData.tienSu, dacDiemLienQuanBenh: dacDiemLienQuan } };
+            if (hasChanged[3]) changedData = { ...changedData, tienSu: { ...changedData.tienSu, giaDinh } };
+        }
         dispatch(HSBAActions.updateBacSiSection({
             section: 'hoiBenh',
-            data: {
-                quaTrinhBenhLy,
-                tienSu: {
-                    banThan,
-                    dacDiemLienQuanBenh: dacDiemLienQuan,
-                    giaDinh
-                }
-            }
+            data: changedData
         }))
-        setHasChanged(false);
+        setHasChanged(new Array(4).fill(false));
         let tSaveSec = [...saveSec];
         tSaveSec[benhAnId][sectionId] = new Date();
         setSaveSec(tSaveSec);
@@ -47,12 +48,14 @@ const FHoiBenh = () => {
         setBanThan(hoiBenh.tienSu.banThan);
         setDacDiemLienQuan(hoiBenh.tienSu.dacDiemLienQuanBenh);
         setGiaDinh(hoiBenh.tienSu.giaDinh);
-        setHasChanged(false);
+        setHasChanged(new Array(4).fill(false));
     }
 
-    const handleChange = () => {
-        if (!hasChanged) {
-            setHasChanged(true);
+    const handleChange = (pos) => {
+        if (!hasChanged[pos]) {
+            let tHasChanged = [...hasChanged];
+            tHasChanged[pos] = true;
+            setHasChanged(tHasChanged);
         }
     }
 
@@ -69,7 +72,7 @@ const FHoiBenh = () => {
                         value={quaTrinhBenhLy}
                         onChange={(event) => {
                             setQuaTrinhBenhLy(event.target.value);
-                            handleChange();
+                            handleChange(0);
                         }}
                         disabled={role !== "BS"}
                     />
@@ -95,7 +98,7 @@ const FHoiBenh = () => {
                                         value={banThan}
                                         onChange={(event) => {
                                             setBanThan(event.target.value);
-                                            handleChange();
+                                            handleChange(1);
                                         }}
                                         disabled={role !== "BS"}
                                     />
@@ -113,7 +116,7 @@ const FHoiBenh = () => {
                         </ListItemText>
                     </ListItem>
                     <Box sx={{ ml: 5 }}>
-                        <TDacDiemLienQuanBenh dacDiemLienQuan={dacDiemLienQuan} setDacDiemLienQuan={setDacDiemLienQuan} handleChange={handleChange} /> 
+                        <TDacDiemLienQuanBenh dacDiemLienQuan={dacDiemLienQuan} setDacDiemLienQuan={setDacDiemLienQuan} handleChange={() => handleChange(2)} /> 
                     </Box>
                     
                     <ListItem sx={{ mt: 1 }}>
@@ -132,7 +135,7 @@ const FHoiBenh = () => {
                                         value={giaDinh}
                                         onChange={(event) => {
                                             setGiaDinh(event.target.value);
-                                            handleChange();
+                                            handleChange(3);
                                         }}
                                         disabled={role !== "BS"}
                                     />
@@ -143,7 +146,7 @@ const FHoiBenh = () => {
                 </List>
             </Box>
 
-            {hasChanged &&
+            {hasChanged.some(element => !!element) &&
                 <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
                     <Button variant="outlined" sx={{ mr: 2 }} onClick={handleReset}>
                         Hủy
