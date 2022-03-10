@@ -209,19 +209,6 @@ const FPhieuCongKhaiThuoc = () => {
                                 <TableCell className="tableBodyBorderRight"/>
                                 <TableCell />
                             </TableRow>
-
-                            {/* <TableRow hover>
-                                <TableCell className="tableBodyBorderRight" colSpan={2}>Người bệnh/<br />Người nhà ký tên</TableCell>
-                                <TableCell className="tableBodyBorderRight"/>
-                                {Array.from(Array(7)).map((_, idx) => (
-                                    <TableCell key={`kyTen${idx}`} className="tableBodyBorderRight">
-                                        {idx < content.nguoiBenhKyTen.slice(dateGroup * 7, dateGroup * 7 + 7).length 
-                                            ? content.nguoiBenhKyTen[idx] : ""}
-                                    </TableCell>
-                                ))}
-                                <TableCell className="tableBodyBorderRight"/>
-                                <TableCell />
-                            </TableRow> */}
                         </TableBody> 
                     </Table>
                 </TableContainer>

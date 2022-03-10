@@ -106,6 +106,12 @@ const FPhieuTDTruyenDich = () => {
         setNewValues([...newValues, EMPTY_NEW_VALUE]);
     }
 
+    const handleDelete = (id) => {
+        const tNewValues = [...newValues];
+        tNewValues.splice(id, 1);
+        setNewValues(tNewValues);
+    }
+
     const CustomTableCell = ({ headCell, ...other }) => {    
         return (
             <TableCell
@@ -326,12 +332,17 @@ const FPhieuTDTruyenDich = () => {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Điều dưỡng thực hiện</Typography>
-                                        <TextField
-                                            fullWidth
-                                            margin="dense"
-                                            value={name}
-                                            disabled
-                                        />
+                                        <Box className="df aic">
+                                            <TextField
+                                                fullWidth
+                                                margin="dense"
+                                                value={name}
+                                                disabled
+                                            />
+                                            <Typography sx={{ cursor: "pointer", ml: 2 }} color="primary" onClick={() => handleDelete(idx)}>
+                                                Xóa
+                                            </Typography>
+                                        </Box> 
                                     </Grid>
                                 </Grid>
 

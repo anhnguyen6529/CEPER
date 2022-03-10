@@ -100,6 +100,12 @@ const FPhieuTDDiUngThuoc = () => {
         setNewDiNguyen([...newDiNguyen, null]);
     }
 
+    const handleDelete = (id) => {
+        const tNewDiNguyen = [...newDiNguyen];
+        tNewDiNguyen.splice(id, 1);
+        setNewDiNguyen(tNewDiNguyen);
+    }
+
     return (
         <>
             <Paper>
@@ -163,7 +169,6 @@ const FPhieuTDDiUngThuoc = () => {
                                         {newDiNguyen.map((diNguyen, id) => (
                                             <Box className="df aic" sx={{ mb: 1.5 }}>
                                                 <SelectThuoc 
-                                                    fullWidth
                                                     hamLuong={false}
                                                     value={diNguyen}
                                                     onChange={(_, value) => {
@@ -172,11 +177,16 @@ const FPhieuTDDiUngThuoc = () => {
                                                         setNewDiNguyen(tDiNguyen);
                                                     }}
                                                     existValue={newDiNguyen}
+                                                    sx={{ width: "85%" }}
                                                 />
 
                                                 {id === newDiNguyen.length - 1 
                                                     ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
-                                                : null}
+                                                    : (
+                                                        <Typography sx={{ cursor: "pointer", ml: 1 }} color="primary" onClick={() => handleDelete(id)}>
+                                                            Xóa
+                                                        </Typography>
+                                                    )}
                                             </Box>
                                         ))}
                                     </TableCell>

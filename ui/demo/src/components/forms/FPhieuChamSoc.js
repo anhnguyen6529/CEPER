@@ -225,8 +225,7 @@ const FPhieuChamSoc = () => {
                 />
             </Paper>
 
-            {/* { role === "DD" && */}
-            { role === "BS" &&
+            { role === "DD" &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
