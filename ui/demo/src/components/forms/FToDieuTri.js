@@ -75,16 +75,32 @@ const FToDieuTri = () => {
 
     const handleSave = () => {
         if (!!newNgayGio && !!newDienBienBenh && !!newYLenh) {
+            const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n'));
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'toDieuTri',
                 value: {},
                 newData: { 
                     ngayGio: newNgayGio.toISOString(), 
                     dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
-                    yLenh: removeHashAndSpaces(newYLenh.trim().split('\n')), 
+                    yLenh: tYLenh,
                     bacSiGhi: name 
                 }
             }));
+
+            let danhSachYLenh = [];
+            if (Array.isArray(tYLenh)) {
+                danhSachYLenh.push({
+                    yLenh: format(new Date(newNgayGio), 'dd/MM/yyyy HH:mm') + ' - ' + tYLenh.join(';') + ' - BS: ' + name,
+                    xacNhan: 'Chưa thực hiện'
+                });
+            } else {
+                danhSachYLenh.push({
+                    yLenh: format(new Date(newNgayGio), 'dd/MM/yyyy HH:mm') + ' - ' + tYLenh + ' - BS: ' + name,
+                    xacNhan: 'Chưa thực hiện'
+                });
+            }
+            dispatch(HSBAActions.addDanhSachYLenh(danhSachYLenh));
+
             let tSaveSec = [...saveSec];
             tSaveSec[sectionId] = new Date();
             setSaveSec(tSaveSec);

@@ -1,30 +1,31 @@
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem, Checkbox
+    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import React, { useContext, useState } from "react";
+import { Add, DoneAll, Loop } from "@mui/icons-material";
+import React, { Fragment, useContext, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useSelector , useDispatch } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
-import { TablePagination, Button, StyledTableRow } from "../common";
+import { TablePagination, Button, SelectYLenh } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import HSBAContext from "../../contexts/HSBAContext";
 import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
     { id: 'ngay', numeric: false, label: 'Ngày', width: '10%' },
-    { id: 'gio', numeric: false, label: 'Giờ', width: '10%' },
-    { id: 'theoDoiDienBien', numeric: true, label: 'Theo dõi diễn biến', width: '30%' },
+    { id: 'gio', numeric: false, label: 'Giờ', width: '5%' },
+    { id: 'theoDoiDienBien', numeric: true, label: 'Theo dõi diễn biến', width: '25%' },
     { id: 'thucHienYLenh', numeric: true, label: 'Thực hiện y lệnh', width: '30%' },
-    { id: 'dieuDuongGhi', numeric: true, label: 'Điều dưỡng ghi', width: '20%' }
+    { id: 'xacNhan', numeric: false, label: 'Xác nhận', width: '15%' },
+    { id: 'dieuDuongGhi', numeric: true, label: 'Điều dưỡng ghi', width: '15%' }
 ];
 
 const sortYLenhFn = (a, b) => {
-    const dA = a.split('-')[0].split(' ')[0].split('/'), dB = b.split('-')[0].split(' ')[0].split('/');
-    const tA = a.split('-')[0].split(' ')[1].split(':'), tB = a.split('-')[0].split(' ')[1].split(':');
+    const dA = a.yLenh.split('-')[0].split(' ')[0].split('/'), dB = b.yLenh.split('-')[0].split(' ')[0].split('/');
+    const tA = a.yLenh.split('-')[0].split(' ')[1].split(':'), tB = a.yLenh.split('-')[0].split(' ')[1].split(':');
     const ngayGioA = new Date(dA[dA.length - 1], dA[dA.length - 2], dA[0], tA[0], tA[1]);
     const ngayGioB = new Date(dB[dB.length - 1], dB[dB.length - 2], dB[0], tB[0], tB[1]);
     return ngayGioA - ngayGioB;
@@ -49,15 +50,7 @@ const FPhieuChamSoc = () => {
     const { role, name } = useSelector(state => state.auth.user);
     const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
-    const dieuTri = useSelector((state) => state.HSBA.toDieuTri);
-    let danhSachYLenh = [];
-    dieuTri.data.forEach((dtr) => {
-        if (Array.isArray(dtr.yLenh)) {
-            danhSachYLenh.push(format(new Date(dtr.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + dtr.yLenh.join(';') + ' - BS: ' + dtr.bacSiGhi);
-        } else {
-            danhSachYLenh.push(format(new Date(dtr.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + dtr.yLenh + ' - BS: ' + dtr.bacSiGhi);
-        }
-    })
+    const { danhSachYLenh } = useSelector((state) => state.HSBA);
 
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('ngay');
@@ -68,7 +61,7 @@ const FPhieuChamSoc = () => {
     const [newNgay, setNewNgay] = useState(null);
     const [newGio, setNewGio] = useState(null);
     const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState('');
-    const [newThucHienYLenh, setNewThucHienYLenh] = useState([]);
+    const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ yLenh: '', xacNhan: '' }]);
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
@@ -84,7 +77,7 @@ const FPhieuChamSoc = () => {
         setNewNgay(null);
         setNewGio(null);
         setNewTheoDoiDienBien('');
-        setNewThucHienYLenh([]);
+        setNewThucHienYLenh([{ yLenh: '', xacNhan: '' }]);
         setAddNew(false);
         setErrors([]);
     }
@@ -94,7 +87,7 @@ const FPhieuChamSoc = () => {
     };
 
     const handleSave = () => {
-        if (!!newNgay && !!newGio && !!newTheoDoiDienBien && !!newThucHienYLenh) {
+        if (!!newNgay && !!newGio && !!newTheoDoiDienBien && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuChamSoc',
                 value: {},
@@ -102,10 +95,20 @@ const FPhieuChamSoc = () => {
                     ngay: newNgay, 
                     gio: newGio, 
                     theoDoiDienBien: removeHashAndSpaces(newTheoDoiDienBien.trim().split('\n')), 
-                    thucHienYLenh: newThucHienYLenh.sort(sortYLenhFn),
+                    thucHienYLenh: newThucHienYLenh.sort(sortYLenhFn).map(thyl => thyl.yLenh),
+                    xacNhan: newThucHienYLenh.map(thyl => thyl.xacNhan),
                     dieuDuongGhi: name 
                 }
             }));
+            newThucHienYLenh.forEach((thyl) => {
+                const findIdx = danhSachYLenh.findIndex(dsyl => dsyl.yLenh === thyl.yLenh);
+                if (findIdx !== -1) {
+                    dispatch(HSBAActions.updateDanhSachYLenh({
+                        index: findIdx,
+                        value: { xacNhan: thyl.xacNhan }
+                    }));
+                }
+            })
             let tSaveSec = [...saveSec];
             tSaveSec[sectionId] = new Date();
             setSaveSec(tSaveSec);
@@ -113,13 +116,14 @@ const FPhieuChamSoc = () => {
         } else {
             let errs = [];
             if (!newTheoDoiDienBien) errs.push('theo dõi diễn biến');
-            if (newThucHienYLenh.length === 0) errs.push('thực hiện y lệnh');
+            if (!newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan) 
+                && errs.findIndex(err => err === 'thực hiện y lệnh') === -1) errs.push('thực hiện y lệnh');
             setErrors(errs);
         }
     };
 
-    const handleChageYLenh = (event) => {
-        setNewThucHienYLenh(event.target.value);
+    const handleAddClick = () => {
+        setNewThucHienYLenh([...newThucHienYLenh, { yLenh: '', xacNhan: '' }]);
     }
     
     return (
@@ -158,59 +162,97 @@ const FPhieuChamSoc = () => {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     return (
-                                        <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngay), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.gio}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">
-                                                {(Array.isArray(row.theoDoiDienBien) && row.theoDoiDienBien.length > 1) 
-                                                    ? row.theoDoiDienBien.map(td => '- ' + td).join('\n') 
-                                                    : row.theoDoiDienBien
-                                                }
-                                            </TableCell>
-                                            <TableCell className="tableBodyBorderRight">
-                                                {(Array.isArray(row.thucHienYLenh) && row.thucHienYLenh.length > 1) 
-                                                    ? row.thucHienYLenh.map(thyl => '- ' + thyl).join('\n') 
-                                                    : row.thucHienYLenh
-                                                }
-                                            </TableCell>
-                                            <TableCell>{row.dieuDuongGhi}</TableCell>
-                                        </StyledTableRow>
+                                        <Fragment key={index}>
+                                            <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
+                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
+                                                    {format(new Date(row.ngay), 'dd/MM/yyyy')}
+                                                </TableCell>
+                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
+                                                    {row.gio}
+                                                </TableCell>
+                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
+                                                    {(Array.isArray(row.theoDoiDienBien) && row.theoDoiDienBien.length > 1) 
+                                                        ? row.theoDoiDienBien.map(td => '- ' + td).join('\n') 
+                                                        : row.theoDoiDienBien
+                                                    }
+                                                </TableCell>
+                                            </TableRow>
+                                            {row.thucHienYLenh.map((thucHienYLenh, idx) => (
+                                                <TableRow key={idx} hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
+                                                    <TableCell className="tableBodyBorderRight">
+                                                        {thucHienYLenh}
+                                                    </TableCell> 
+                                                    <TableCell className="tableBodyBorderRight">
+                                                        <Box className="df aic">
+                                                            {row.xacNhan[idx] === "Đang thực hiện" 
+                                                                ? <Loop fontSize="small" sx={{ mr: 0.5 }} color="warning" /> 
+                                                                : <DoneAll fontSize="small" sx={{ mr: 0.5 }} color="success" />
+                                                            }
+                                                            {row.xacNhan[idx]}
+                                                        </Box>
+                                                    </TableCell>
+                                                    {idx === 0 && <TableCell rowSpan={row.thucHienYLenh.length + 1}>{row.dieuDuongGhi}</TableCell>}
+                                                </TableRow>
+                                            ))}
+                                        </Fragment>
                                     );
                             })}
 
                             {addNew && 
-                                <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgay), 'dd/MM/yyyy')}</TableCell>
-                                    <TableCell className="tableBodyBorderRight">{newGio}</TableCell>
-                                    <TableCell className="tableBodyBorderRight">
-                                        <TextField
-                                            multiline
-                                            fullWidth
-                                            value={newTheoDoiDienBien}
-                                            onChange={(event) => setNewTheoDoiDienBien(event.target.value)}
-                                        />
-                                    </TableCell>
-                                    <TableCell className="tableBodyBorderRight">
-                                        <Select
-                                            fullWidth
-                                            multiple
-                                            displayEmpty
-                                            value={newThucHienYLenh}
-                                            onChange={handleChageYLenh}
-                                            renderValue={(selected) => selected.length === 0 ? '-- Chọn y lệnh --' : selected.map(sl => ' - ' + sl).join('\n')}
-                                            SelectDisplayProps={{ style: { whiteSpace: 'unset' } }}
-                                        >
-                                            {/* <MenuItem disabled value="">-- Chọn y lệnh --</MenuItem> */}
-                                            {danhSachYLenh.map((yLenh, id) => (
-                                                <MenuItem key={`yl-${id}`} value={yLenh} sx={{ maxWidth: 350, whiteSpace: 'unset' }}>
-                                                    <Checkbox checked={newThucHienYLenh.findIndex(newYLenh => newYLenh === yLenh) >= 0}/>
-                                                    {yLenh}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell>{name}</TableCell>
-                                </TableRow>
+                                <Fragment>
+                                    <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgay), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{newGio}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>
+                                            <TextField
+                                                multiline
+                                                fullWidth
+                                                value={newTheoDoiDienBien}
+                                                onChange={(event) => setNewTheoDoiDienBien(event.target.value)}
+                                            />
+                                        </TableCell>
+                                    </TableRow>
+
+                                    {newThucHienYLenh.map((thucHienYLenh, idx) => (
+                                        <TableRow key={idx}>
+                                            <TableCell className="tableBodyBorderRight">
+                                                <Box className="df aic">
+                                                    <SelectYLenh 
+                                                        fullWidth
+                                                        value={thucHienYLenh.yLenh}
+                                                        onChange={(event) => {
+                                                            const tThucHienYLenh = [...newThucHienYLenh];
+                                                            tThucHienYLenh[idx].yLenh = event.target.value;
+                                                            tThucHienYLenh[idx].xacNhan = "Đang thực hiện";
+                                                            setNewThucHienYLenh(tThucHienYLenh);
+                                                        }}
+                                                        existValue={newThucHienYLenh}
+                                                    />
+
+                                                    {idx === newThucHienYLenh.length - 1 
+                                                        && danhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                        ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
+                                                        : null}
+                                                </Box>         
+                                            </TableCell>
+                                            <TableCell className="tableBodyBorderRight">
+                                                <Select 
+                                                    fullWidth 
+                                                    value={thucHienYLenh.xacNhan}
+                                                    onChange={(event) => {
+                                                        const tThucHienYLenh = [...newThucHienYLenh];
+                                                        tThucHienYLenh[idx].xacNhan = event.target.value;
+                                                        setNewThucHienYLenh(tThucHienYLenh);
+                                                    }}
+                                                >
+                                                    <MenuItem value="Đang thực hiện">Đang thực hiện</MenuItem>
+                                                    <MenuItem value="Thực hiện xong">Thực hiện xong</MenuItem>
+                                                </Select>
+                                            </TableCell>
+                                            {idx === 0 && <TableCell rowSpan={newThucHienYLenh.length + 1}>{name}</TableCell>}
+                                        </TableRow>
+                                    ))}
+                                </Fragment>
                             }
                         </TableBody>
                     </Table>
@@ -225,7 +267,7 @@ const FPhieuChamSoc = () => {
                 />
             </Paper>
 
-            { role === "DD" &&
+            { role === "BS" &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}

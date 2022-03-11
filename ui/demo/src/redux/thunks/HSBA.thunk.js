@@ -43,8 +43,8 @@ const PHIEUTDCHUCNANGSONG = {
 };
 const PHIEUCHAMSOC = {
     data: [
-        { ngay: '2021-11-06', gio: '17:30', theoDoiDienBien: 'hạ sốt, còn đau đầu', thucHienYLenh: 'theo dõi sốt huyết não', dieuDuongGhi: 'Nguyễn Ngọc A' },
-        { ngay: '2021-11-07', gio: '18:30', theoDoiDienBien: 'hết sốt, đau bụng nhẹ', thucHienYLenh: 'Tylenol cách 3 tiếng/ngày', dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngay: '2021-11-06', gio: '17:30', theoDoiDienBien: 'hạ sốt, còn đau đầu', thucHienYLenh: ['theo dõi sốt huyết não'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngay: '2021-11-07', gio: '18:30', theoDoiDienBien: 'hết sốt, đau bụng nhẹ', thucHienYLenh: ['Tylenol cách 3 tiếng/ngày'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
     ],
 };
 const TODIEUTRI = {
@@ -72,6 +72,10 @@ const PHIEUCONGKHAITHUOC = {
         { tenThuoc: 'Seduxen 5mg', donVi: 'viên', ngayThang: [2, 2, 2, 2], tongSo: 8, ghiChu: '' }
     ]
 };
+const DANHSACHYLENH = [
+    { yLenh: '06/11/2021 09:30 - theo dõi sốt huyết não - BS: Trần Quốc A', xacNhan: 'Đang thực hiện' },
+    { yLenh: '07/11/2021 14:05 - Tylenol cách 3 tiếng/ngày - BS: Trần Quốc A', xacNhan: 'Đang thực hiện' }
+]
 
 const datas = [
     {
@@ -129,7 +133,8 @@ const datas = [
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
-        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC
+        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
+        danhSachYLenh: DANHSACHYLENH
     },
     {
         pid: '102345',
@@ -190,7 +195,8 @@ const datas = [
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
-        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC
+        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
+        danhSachYLenh: DANHSACHYLENH
     },
     {
         pid: '200001',
@@ -247,7 +253,8 @@ const datas = [
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
-        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC
+        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
+        danhSachYLenh: DANHSACHYLENH
     },
     {
         pid: '165423',
@@ -304,7 +311,8 @@ const datas = [
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
-        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC
+        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
+        danhSachYLenh: DANHSACHYLENH
     },
     {
         pid: '143256',
@@ -361,7 +369,8 @@ const datas = [
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
-        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC
+        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
+        danhSachYLenh: DANHSACHYLENH
     },
     {
         pid: '132456',
@@ -418,7 +427,8 @@ const datas = [
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
-        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC
+        phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
+        danhSachYLenh: DANHSACHYLENH
     }
 ]
 

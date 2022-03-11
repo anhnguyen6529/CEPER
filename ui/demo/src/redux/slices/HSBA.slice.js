@@ -108,6 +108,7 @@ const initialState = {
         ngayThang: [],
         data: [],
     },
+    danhSachYLenh: [],
     edited: {}
 }
 
@@ -135,6 +136,15 @@ const HSBASlice = createSlice({
                     ...(!!action.payload.newData && { data: [...state[action.payload.section].data, action.payload.newData] } ),
                 }
             }
+        },
+        addDanhSachYLenh: (state, action) => {
+            return {
+                ...state, 
+                danhSachYLenh: [...state.danhSachYLenh, ...action.payload]
+            }
+        },
+        updateDanhSachYLenh: (state, action) => {
+            state.danhSachYLenh[action.payload.index] = { ...state.danhSachYLenh[action.payload.index], ...action.payload.value }
         }
     },
     extraReducers: (builder) => {
