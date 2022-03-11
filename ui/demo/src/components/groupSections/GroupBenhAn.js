@@ -11,21 +11,22 @@ import { BoxLyDoVaoVien, BoxHoiBenh, BoxKhamBenh } from "../boxes";
 
 const GroupBenhAn = () => {
     const { benhAn, tomTatBenhAn, chanDoanBanDau } = useSelector(state => state.HSBA);
+    const { role } = useSelector(state => state.auth.user);
     const { saveSec } = useContext(HSBAContext);
     const benhAnId = mdSections["order"].indexOf("Bệnh án");
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Bệnh án"][sectionId]) {
             case "Lý do vào viện": 
-                return !benhAn.thoiGian ? <FLyDoVaoVien /> : <BoxLyDoVaoVien />
+                return !benhAn.thoiGian && role !== "BN" ? <FLyDoVaoVien /> : <BoxLyDoVaoVien />
             case "Hỏi bệnh":
-                return !benhAn.thoiGian ? <FHoiBenh /> : <BoxHoiBenh />
+                return !benhAn.thoiGian && role !== "BN" ? <FHoiBenh /> : <BoxHoiBenh />
             case "Khám bệnh":
-                return !benhAn.thoiGian ? <FKhamBenh /> : <BoxKhamBenh />
+                return !benhAn.thoiGian && role !== "BN" ? <FKhamBenh /> : <BoxKhamBenh />
             case "Tóm tắt bệnh án":
-                return !benhAn.thoiGian ? <FTomTatBenhAn /> : <Typography>{!!tomTatBenhAn ? tomTatBenhAn : <i>(trống)</i>}</Typography>
+                return !benhAn.thoiGian && role !== "BN" ? <FTomTatBenhAn /> : <Typography>{!!tomTatBenhAn ? tomTatBenhAn : <i>(trống)</i>}</Typography>
             case "Chẩn đoán ban đầu":
-                return !benhAn.thoiGian ? <FChanDoanBanDau /> : <Typography>{!!chanDoanBanDau ? chanDoanBanDau : <i>(trống)</i>}</Typography>
+                return !benhAn.thoiGian && role !== "BN" ? <FChanDoanBanDau /> : <Typography>{!!chanDoanBanDau ? chanDoanBanDau : <i>(trống)</i>}</Typography>
             default: 
                 return <></>
         }
@@ -65,7 +66,7 @@ const GroupBenhAn = () => {
                         </Typography>
                         <Typography fontWeight="bold">
                             Bác sĩ làm bệnh án:{' '}
-                            <Typography component="span">Trần Quốc A</Typography>
+                            <Typography component="span">{benhAn.bacSiLamBenhAn}</Typography>
                         </Typography>
                     </Box>
                 </>

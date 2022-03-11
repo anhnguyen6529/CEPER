@@ -1,3 +1,5 @@
+export { default as BoxChanDoanKhiRaVien } from './BoxChanDoanKhiRaVien';
+
 export { default as BoxHanhChinh } from './BoxHanhChinh';
 
 export { default as BoxHoiBenh } from './BoxHoiBenh';
