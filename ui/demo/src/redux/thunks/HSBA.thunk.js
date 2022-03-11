@@ -11,12 +11,12 @@ const HOIBENH = {
     tienSu: {
         banThan: '',
         dacDiemLienQuanBenh: [
-            { tt: '01', benh: 'Dị ứng', kyHieu: false, thoiGian: '' },
-            { tt: '02', benh: 'Ma túy', kyHieu: false, thoiGian: '' },
-            { tt: '03', benh: 'Rượu bia', kyHieu: false, thoiGian: '' },
-            { tt: '04', benh: 'Thuốc lá', kyHieu: false, thoiGian: '' },
-            { tt: '05', benh: 'Thuốc lào', kyHieu: false, thoiGian: '' },
-            { tt: '06', benh: 'Khác', kyHieu: false, thoiGian: '' }
+            { tt: '01', benh: 'Dị ứng', kyHieu: false, diNguyen: [''], thoiGian: [0] },
+            { tt: '02', benh: 'Ma túy', kyHieu: false, thoiGian: 0 },
+            { tt: '03', benh: 'Rượu bia', kyHieu: false, thoiGian: 0 },
+            { tt: '04', benh: 'Thuốc lá', kyHieu: false, thoiGian: 0 },
+            { tt: '05', benh: 'Thuốc lào', kyHieu: false, thoiGian: 0 },
+            { tt: '06', benh: [''], kyHieu: false, thoiGian: [0] }
         ],
         giaDinh: ''
     }

@@ -30,6 +30,7 @@ const SelectThuoc = ({ existValue, value, onChange, hamLuong, inputProps, ...oth
                 />}
             options={drugs}
             noOptionsText="(trống)"
+            disableClearable
             PopperComponent={(params) => <Popper {...params} placement="bottom-start" />}
             {...otherProps}
         />

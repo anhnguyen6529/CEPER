@@ -3,6 +3,7 @@ import { Box, Grid, Typography, List, ListItem, ListItemIcon, ListItemText } fro
 import { Circle } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import "../../styles/index.css";
+import BoxDacDiemLienQuanBenh from "./BoxDacDiemLienQuanBenh";
 
 const BoxHoiBenh = () => {
     const { hoiBenh } = useSelector(state => state.HSBA);
@@ -46,7 +47,7 @@ const BoxHoiBenh = () => {
                         </ListItemText>
                     </ListItem>
                     <Box sx={{ ml: 5 }}>
-                        {/* <TDacDiemLienQuanBenh dacDiemLienQuan={dacDiemLienQuan} setDacDiemLienQuan={setDacDiemLienQuan} handleChange={() => handleChange(2)} />  */}
+                        <BoxDacDiemLienQuanBenh dacDiemLienQuan={hoiBenh.tienSu.dacDiemLienQuanBenh} />
                     </Box>
                     
                     <ListItem sx={{ mt: 1 }}>

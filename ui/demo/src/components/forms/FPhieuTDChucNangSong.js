@@ -204,12 +204,12 @@ const FPhieuTDChucNangSong = () => {
 
             { role === "DD" && 
                 <Grid container sx={{ mt: 2 }}>
-                    <Grid item xs={8}>
+                    <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={3} align="right">
                         {!addNew
-                        ? (
+                        ?
                             <Button 
                                 sx={{ width: 150 }} 
                                 startIcon={<Add fontSize="small"/>}
@@ -218,9 +218,9 @@ const FPhieuTDChucNangSong = () => {
                                     setAddNew(true);
                                 }}
                             >
-                                Thêm diễn biến
+                                Thêm mới
                             </Button>
-                        ) : (
+                        : (
                             <>
                                 <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                     Hủy
