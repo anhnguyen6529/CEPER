@@ -26,6 +26,7 @@ const headCells = [
 
 const FPhieuTDDiUngThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuTDDiUngThuoc);
+    const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name } = useSelector((state) => state.auth.user);
     const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
@@ -228,7 +229,7 @@ const FPhieuTDDiUngThuoc = () => {
                 />
             </Paper>
 
-            { role === "BS" && 
+            { (role === "BS" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}

@@ -34,6 +34,19 @@ const KHAMBENH = {
     mat: '',
     noiTiet: 'họng đỏ, xung huyết mũi, mắt đỏ',
 };
+const KHAMBENH_EMPTY = {
+    khamToanThan: '',
+    tuanHoan: '',
+    hoHap: '',
+    tieuHoa: '',
+    than: '',
+    thanKinh: '',
+    coXuongKhop: '',
+    taiMuiHong: '',
+    rangHamMat: '',
+    mat: '',
+    noiTiet: '',
+};
 const PHIEUTDCHUCNANGSONG = {
     data: [
         { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
@@ -43,8 +56,8 @@ const PHIEUTDCHUCNANGSONG = {
 };
 const PHIEUCHAMSOC = {
     data: [
-        { ngay: '2021-11-06', gio: '17:30', theoDoiDienBien: 'hạ sốt, còn đau đầu', thucHienYLenh: ['theo dõi sốt huyết não'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
-        { ngay: '2021-11-07', gio: '18:30', theoDoiDienBien: 'hết sốt, đau bụng nhẹ', thucHienYLenh: ['Tylenol cách 3 tiếng/ngày'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngay: '2021-11-06', gio: '17:30', theoDoiDienBien: ['hạ sốt, còn đau đầu'], thucHienYLenh: ['theo dõi sốt huyết não'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngay: '2021-11-07', gio: '18:30', theoDoiDienBien: ['hết sốt, đau bụng nhẹ'], thucHienYLenh: ['Tylenol cách 3 tiếng/ngày'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
     ],
 };
 const TODIEUTRI = {
@@ -119,7 +132,7 @@ const datas = [
             noiGioiThieu: ''
         },
         hoiBenh: HOIBENH,
-        khamBenh: KHAMBENH,
+        khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Sốt nhiễm siêu vi ngày 4 / TD Bệnh Sởi - Rối loạn tiêu hoá',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
@@ -232,17 +245,17 @@ const datas = [
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         lyDoVaoVien: {
-            lyDo: 'sốt cao, ói',
-            ngayVaoVien: '2021-10-20 09:20',
-            vaoNgayThu: 1,
+            lyDo: '',
+            ngayVaoVien: '',
+            vaoNgayThu: 0,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
         },
         hoiBenh: HOIBENH,
-        khamBenh: KHAMBENH,
+        khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
-        chanDoanBanDau: 'Đau tim',
-        phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
+        chanDoanBanDau: '',
+        phuongPhapDieuTri: '',
         chanDoanKhiRaVien: {
             chanDoan: '',
             ngayRaVien: '',
@@ -297,7 +310,7 @@ const datas = [
             noiGioiThieu: ''
         },
         hoiBenh: HOIBENH,
-        khamBenh: KHAMBENH,
+        khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Suy hô hấp',
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
@@ -347,6 +360,10 @@ const datas = [
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
+        benhAn: {
+            thoiGian: '2021-08-04 10:50',
+            bacSiLamBenhAn: 'Trần Quốc A'
+        },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
             ngayVaoVien: '2021-08-04 18:50',
@@ -355,9 +372,13 @@ const datas = [
             noiGioiThieu: ''
         },
         hoiBenh: HOIBENH,
-        khamBenh: KHAMBENH,
+        khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Sốt siêu vi',
+        tongKetBenhAn: {
+            thoiGian: '2021-06-18 18:50',
+            bacSiDieuTri: 'Trần Quốc A'
+        },
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: 'Sốt siêu vi',
@@ -405,6 +426,10 @@ const datas = [
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
+        benhAn: {
+            thoiGian: '2021-06-13 10:10',
+            bacSiLamBenhAn: 'Trần Quốc A'
+        },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
             ngayVaoVien: '2021-06-12 10:10',
@@ -413,9 +438,13 @@ const datas = [
             noiGioiThieu: ''
         },
         hoiBenh: HOIBENH,
-        khamBenh: KHAMBENH,
+        khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Viêm dạ dày',
+        tongKetBenhAn: {
+            thoiGian: '2021-06-15 10:10',
+            bacSiDieuTri: 'Trần Quốc A'
+        },
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: 'Viêm dạ dày ruột',

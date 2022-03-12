@@ -29,6 +29,7 @@ const headCells = [
 
 const FPhieuTDTruyenDich = () => {
     const content = useSelector((state) => state.HSBA.phieuTDTruyenDich);
+    const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name } = useSelector(state => state.auth.user);
     const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
@@ -362,7 +363,7 @@ const FPhieuTDTruyenDich = () => {
                 </Paper>
             ) : null}
 
-            { role === "DD" && 
+            { (role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 ? errors.map((error, id) => 

@@ -23,30 +23,9 @@ const headCells = [
     { id: 'dieuDuongGhi', numeric: true, label: 'Điều dưỡng ghi', width: '15%' }
 ];
 
-const sortYLenhFn = (a, b) => {
-    const dA = a.yLenh.split('-')[0].split(' ')[0].split('/'), dB = b.yLenh.split('-')[0].split(' ')[0].split('/');
-    const tA = a.yLenh.split('-')[0].split(' ')[1].split(':'), tB = a.yLenh.split('-')[0].split(' ')[1].split(':');
-    const ngayGioA = new Date(dA[dA.length - 1], dA[dA.length - 2], dA[0], tA[0], tA[1]);
-    const ngayGioB = new Date(dB[dB.length - 1], dB[dB.length - 2], dB[0], tB[0], tB[1]);
-    return ngayGioA - ngayGioB;
-}
-
-const removeHashAndSpaces = (arrStr) => {
-    let rArr = [];
-    arrStr.forEach((str) => {
-        let idx = 0;
-        while (str[idx] === ' ' || str[idx] === '-') {
-            idx++;
-        }
-        if (str.slice(idx) !== "") {
-            rArr.push(str.slice(idx));
-        }
-    })
-    return rArr;
-}
-
 const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
+    const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name } = useSelector(state => state.auth.user);
     const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
@@ -60,7 +39,7 @@ const FPhieuChamSoc = () => {
     const [addNew, setAddNew] = useState(false);
     const [newNgay, setNewNgay] = useState(null);
     const [newGio, setNewGio] = useState(null);
-    const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState('');
+    const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState(['']);
     const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ yLenh: '', xacNhan: '' }]);
     const [errors, setErrors] = useState([]);
 
@@ -76,7 +55,7 @@ const FPhieuChamSoc = () => {
     const clearData = () => {
         setNewNgay(null);
         setNewGio(null);
-        setNewTheoDoiDienBien('');
+        setNewTheoDoiDienBien(['']);
         setNewThucHienYLenh([{ yLenh: '', xacNhan: '' }]);
         setAddNew(false);
         setErrors([]);
@@ -87,15 +66,15 @@ const FPhieuChamSoc = () => {
     };
 
     const handleSave = () => {
-        if (!!newNgay && !!newGio && !!newTheoDoiDienBien && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
+        if (!!newNgay && !!newGio && newTheoDoiDienBien.every(tddb => !! tddb) && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuChamSoc',
                 value: {},
                 newData: { 
                     ngay: newNgay, 
                     gio: newGio, 
-                    theoDoiDienBien: removeHashAndSpaces(newTheoDoiDienBien.trim().split('\n')), 
-                    thucHienYLenh: newThucHienYLenh.sort(sortYLenhFn).map(thyl => thyl.yLenh),
+                    theoDoiDienBien: newTheoDoiDienBien, 
+                    thucHienYLenh: newThucHienYLenh.map(thyl => thyl.yLenh),
                     xacNhan: newThucHienYLenh.map(thyl => thyl.xacNhan),
                     dieuDuongGhi: name 
                 }
@@ -115,7 +94,7 @@ const FPhieuChamSoc = () => {
             clearData();
         } else {
             let errs = [];
-            if (!newTheoDoiDienBien) errs.push('theo dõi diễn biến');
+            if (!newTheoDoiDienBien.every(tddb => !!tddb)) errs.push('theo dõi diễn biến');
             if (!newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan) 
                 && errs.findIndex(err => err === 'thực hiện y lệnh') === -1) errs.push('thực hiện y lệnh');
             setErrors(errs);
@@ -123,6 +102,7 @@ const FPhieuChamSoc = () => {
     };
 
     const handleAddClick = () => {
+        setNewTheoDoiDienBien([...newTheoDoiDienBien, '']);
         setNewThucHienYLenh([...newThucHienYLenh, { yLenh: '', xacNhan: '' }]);
     }
     
@@ -170,15 +150,10 @@ const FPhieuChamSoc = () => {
                                                 <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
                                                     {row.gio}
                                                 </TableCell>
-                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
-                                                    {(Array.isArray(row.theoDoiDienBien) && row.theoDoiDienBien.length > 1) 
-                                                        ? row.theoDoiDienBien.map(td => '- ' + td).join('\n') 
-                                                        : row.theoDoiDienBien
-                                                    }
-                                                </TableCell>
                                             </TableRow>
                                             {row.thucHienYLenh.map((thucHienYLenh, idx) => (
                                                 <TableRow key={idx} hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
+                                                    <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[idx]}</TableCell>
                                                     <TableCell className="tableBodyBorderRight">
                                                         {thucHienYLenh}
                                                     </TableCell> 
@@ -203,18 +178,22 @@ const FPhieuChamSoc = () => {
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgay), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{newGio}</TableCell>
-                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>
-                                            <TextField
-                                                multiline
-                                                fullWidth
-                                                value={newTheoDoiDienBien}
-                                                onChange={(event) => setNewTheoDoiDienBien(event.target.value)}
-                                            />
-                                        </TableCell>
                                     </TableRow>
 
                                     {newThucHienYLenh.map((thucHienYLenh, idx) => (
                                         <TableRow key={idx}>
+                                            <TableCell className="tableBodyBorderRight">
+                                                <TextField
+                                                    multiline
+                                                    fullWidth
+                                                    value={newTheoDoiDienBien[idx]}
+                                                    onChange={(event) => {
+                                                        const tTheoDoiDienBien = [...newTheoDoiDienBien];
+                                                        tTheoDoiDienBien[idx] = event.target.value;
+                                                        setNewTheoDoiDienBien(tTheoDoiDienBien);
+                                                    }}
+                                                />
+                                            </TableCell>
                                             <TableCell className="tableBodyBorderRight">
                                                 <Box className="df aic">
                                                     <SelectYLenh 
@@ -267,7 +246,7 @@ const FPhieuChamSoc = () => {
                 />
             </Paper>
 
-            { role === "DD" &&
+            { (role === "DD" && !ngayRaVien) &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
