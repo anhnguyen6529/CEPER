@@ -1,8 +1,8 @@
 import React from "react";
-import { Autocomplete, Popper, TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import drugList from "../../constants/drug_list.json";
 
-const SelectThuoc = ({ existValue, value, onChange, hamLuong, inputProps, ...otherProps }) => {
+const SelectThuoc = ({ existValue, value, onChange, placeholder, hamLuong, inputProps, ...otherProps }) => {
     const mappedDrugs = drugList.map((drug) => {
         if (hamLuong) {
             return drug.ten_hoat_chat + ' ' + drug.nong_do_ham_luong; 
@@ -12,8 +12,9 @@ const SelectThuoc = ({ existValue, value, onChange, hamLuong, inputProps, ...oth
     });
     const drugs = [];
     mappedDrugs.forEach((mappedDrug) => {
-        if (drugs.findIndex((drug) => drug === mappedDrug) === -1 
-            && existValue.findIndex((eVal) => eVal === mappedDrug) === -1) drugs.push(mappedDrug);
+        if (drugs.findIndex((drug) => drug === mappedDrug) === -1) {
+            drugs.push(mappedDrug);
+        }
     })
 
     return (
@@ -23,15 +24,14 @@ const SelectThuoc = ({ existValue, value, onChange, hamLuong, inputProps, ...oth
             renderInput={(params) => 
                 <TextField 
                     {...params} 
-                    placeholder="-- Chọn --" 
+                    placeholder={placeholder}
                     inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }}
-                    sx={{ '.MuiAutocomplete-input': { '&::placeholder': { opacity: 1 } }}}
                     {...inputProps}
                 />}
             options={drugs}
-            noOptionsText="(trống)"
             disableClearable
-            PopperComponent={(params) => <Popper {...params} placement="bottom-start" />}
+            // PopperComponent={(params) => <Popper {...params} placement="bottom-start" />}
+            getOptionDisabled={(option) => existValue.findIndex((eVal) => eVal === option) !== -1}
             {...otherProps}
         />
     )

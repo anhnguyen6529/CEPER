@@ -4,12 +4,13 @@ import { TableContainer, Table, TableHead, TableBody, TableRow,
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import "../../styles/index.css";
+import { Add } from "@mui/icons-material";
 
 const headCells = [
     { id: 'tt', label: 'TT', width: '5%' },
-    { id: 'benh', label: '', width: '10%' },
+    { id: 'benh', label: '', width: '16%' },
     { id: 'kyHieu', label: '', width: '5%' },
-    { id: 'thoiGian', label: 'Thời gian (tính theo tháng)', width: '20%' }
+    { id: 'thoiGian', label: 'Thời gian (tính theo tháng)', width: '24%' }
 ]
 headCells.push(...headCells);
 
@@ -79,10 +80,11 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                 <TableBody>
                     {Array.from(Array(data.length * 0.5)).map((_, idx) => (
                         <TableRow key={`rowDacDiemLienQuanBenh${idx}`}>
-                            <TableCell className="tableBodyBorderRight">{data[idx].tt}</TableCell>
+                            <TableCell className="tableBodyBorderRight" align="center">{data[idx].tt}</TableCell>
                             <TableCell>{data[idx].benh}</TableCell>
-                            <TableCell className="tableBodyBorderRight">
+                            <TableCell className="tableBodyBorderRight" align="center" sx={{ pl: 0 }}>
                                 <Checkbox 
+                                    sx={{ p: 0 }}
                                     checked={data[idx].kyHieu} 
                                     onChange={(event) => handleChangeCheckbox(event, idx)} 
                                     disabled={role !== "BS"} 
@@ -90,71 +92,64 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                             </TableCell>
                             <TableCell className="tableBodyBorderRight">
                                 {data[idx].benh === "Dị ứng" ? 
-                                    <Box>
-                                        {data[idx].diNguyen.map((diNguyen, id) => (
-                                            <Box className="df aic" key={id}>
-                                                <TextField 
-                                                    multiline
-                                                    fullWidth
-                                                    margin="dense"
-                                                    value={diNguyen}
-                                                    onChange={(event) => {
-                                                        const tData = [...data], tDiNguyen = [...tData[idx].diNguyen];
-                                                        tDiNguyen[id] = event.target.value;
-                                                        tData[idx] = { ...tData[idx], diNguyen: tDiNguyen };
-                                                        setDacDiemLienQuan(tData);
-                                                        handleChange();
-                                                    }}
-                                                    disabled={role !== "BS" || !data[idx].kyHieu}
-                                                    placeholder="Dị nguyên"
-                                                /> 
-                                                <Typography sx={{ mx: 1 }}>-</Typography>
-                                                <TextField 
-                                                    type="number"
-                                                    sx={{ width: 150 }}
-                                                    margin="dense"
-                                                    InputProps={{ inputProps: { min: 0 } }}
-                                                    value={data[idx].thoiGian[id]}
-                                                    onChange={(event) => {
-                                                        const tData = [...data], tThoiGian = [...tData[idx].thoiGian];
-                                                        tThoiGian[id] = event.target.value;
-                                                        tData[idx] = { ...tData[idx], thoiGian: tThoiGian };
-                                                        setDacDiemLienQuan(tData);
-                                                        handleChange();
-                                                    }}
-                                                    disabled={role !== "BS" || !data[idx].kyHieu}
-                                                />  
-                                                <Typography sx={{ ml: 1 }}>tháng</Typography>
-                                            </Box>
-                                        ))}
-                                        {data[idx].kyHieu ? 
-                                            <Typography sx={{ cursor: "pointer" }} color="primary" onClick={() => handleAddDiNguyenClick(idx)}>
-                                                <i>Thêm</i>
-                                            </Typography> 
-                                        : null}
-                                    </Box>
+                                    data[idx].diNguyen.map((diNguyen, id) => (
+                                        <Box className="df aic" key={id}>
+                                            <TextField 
+                                                multiline
+                                                margin="dense"
+                                                value={diNguyen}
+                                                onChange={(event) => {
+                                                    const tData = [...data], tDiNguyen = [...tData[idx].diNguyen];
+                                                    tDiNguyen[id] = event.target.value;
+                                                    tData[idx] = { ...tData[idx], diNguyen: tDiNguyen };
+                                                    setDacDiemLienQuan(tData);
+                                                    handleChange();
+                                                }}
+                                                sx={{ width: "65%" }}
+                                                disabled={role !== "BS" || !data[idx].kyHieu}
+                                                placeholder="Dị nguyên"
+                                            /> 
+                                            <Typography sx={{ mx: 1 }}>-</Typography>
+                                            <TextField 
+                                                type="number"
+                                                sx={{ width: "35%" }}
+                                                margin="dense"
+                                                InputProps={{ inputProps: { min: 0 } }}
+                                                value={data[idx].thoiGian[id]}
+                                                onChange={(event) => {
+                                                    const tData = [...data], tThoiGian = [...tData[idx].thoiGian];
+                                                    tThoiGian[id] = event.target.value;
+                                                    tData[idx] = { ...tData[idx], thoiGian: tThoiGian };
+                                                    setDacDiemLienQuan(tData);
+                                                    handleChange();
+                                                }}
+                                                disabled={role !== "BS" || !data[idx].kyHieu}
+                                            />  
+                                            
+                                            {id === data[idx].diNguyen.length - 1 && data[idx].kyHieu ? 
+                                                <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={() => handleAddDiNguyenClick(idx)} />
+                                            : null}
+                                        </Box>
+                                    ))
                                 : (
-                                    <Box className="df aic">
-                                        <TextField 
-                                            type="number"
-                                            fullWidth
-                                            margin="dense"
-                                            InputProps={{ inputProps: { min: 0 } }}
-                                            value={data[idx].thoiGian}
-                                            onChange={(event) => handleChangeTextField(event, idx)}
-                                            disabled={role !== "BS" || !data[idx].kyHieu}
-                                        /> 
-                                        <Typography sx={{ ml: 1 }}>tháng</Typography>
-                                    </Box>
+                                    <TextField 
+                                        type="number"
+                                        fullWidth
+                                        margin="dense"
+                                        InputProps={{ inputProps: { min: 0 } }}
+                                        value={data[idx].thoiGian}
+                                        onChange={(event) => handleChangeTextField(event, idx)}
+                                        disabled={role !== "BS" || !data[idx].kyHieu}
+                                    /> 
                                 )}
                             </TableCell>
 
-                            <TableCell className="tableBodyBorderRight">{data[idx + 3].tt}</TableCell>
-                            <TableCell>
+                            <TableCell className="tableBodyBorderRight" align="center">{data[idx + 3].tt}</TableCell>
+                            <TableCell sx={{ pr: 0 }}>
                                 {data[idx + 3].tt === "06" ? (
                                     data[idx + 3].kyHieu ? (
-                                        <Box>
-                                            {data[idx + 3].benh.map((benh, id) => (
+                                        data[idx + 3].benh.map((benh, id) => (
+                                            <Box className="df aic" key={id}>
                                                 <TextField 
                                                     key={id}
                                                     fullWidth
@@ -167,57 +162,54 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                         setDacDiemLienQuan(tData);
                                                         handleChange();
                                                     }}
+                                                    placeholder="Khác"
                                                 />
-                                            ))}
-                                            <Typography sx={{ cursor: "pointer" }} color="primary" onClick={() => handleAddBenhClick(idx + 3)}>
-                                                <i>Thêm</i>
-                                            </Typography> 
-                                        </Box>
+                                                {id === data[idx + 3].benh.length - 1 ? 
+                                                    <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={() => handleAddBenhClick(idx + 3)} />
+                                                : null}
+                                            </Box>
+                                        ))
                                     ) : "Khác"
                                 ) : data[idx + 3].benh}
                             </TableCell>
-                            <TableCell className="tableBodyBorderRight">
+                            <TableCell className="tableBodyBorderRight" align="center">
                                 <Checkbox 
+                                    sx={{ p: 0 }}
                                     checked={data[idx + 3].kyHieu} 
                                     onChange={(event) => handleChangeCheckbox(event, idx + 3)} 
                                     disabled={role !== "BS"} 
                                 />
                             </TableCell>
-                            <TableCell className="tableBodyBorderRight" sx={{ verticalAlign: "top" }}>
+                            <TableCell className="tableBodyBorderRight" sx={{ verticalAlign: data[idx + 3].tt === "06" ? "top" : "middle" }}>
                                 {data[idx + 3].tt === "06" ? 
                                     data[idx + 3].thoiGian.map((thoiGian, id) => (
-                                        <Box className="df aic" key={id}>
-                                            <TextField 
-                                                type="number"
-                                                fullWidth
-                                                margin="dense"
-                                                InputProps={{ inputProps: { min: 0 } }}
-                                                value={thoiGian}
-                                                onChange={(event) => {
-                                                    const tData = [...data], tThoiGian = [...tData[idx + 3].thoiGian];
-                                                    tThoiGian[id] = event.target.value;
-                                                    tData[idx + 3] = { ...tData[idx + 3], thoiGian: tThoiGian };
-                                                    setDacDiemLienQuan(tData);
-                                                    handleChange();
-                                                }}
-                                                disabled={role !== "BS" || !data[idx + 3].kyHieu}
-                                            /> 
-                                            <Typography sx={{ ml: 1 }}>tháng</Typography>
-                                        </Box>
-                                    ))
-                                 : (
-                                    <Box className="df aic">
                                         <TextField 
+                                            key={id}
                                             type="number"
                                             fullWidth
                                             margin="dense"
                                             InputProps={{ inputProps: { min: 0 } }}
-                                            value={data[idx + 3].thoiGian}
-                                            onChange={(event) => handleChangeTextField(event, idx + 3)}
+                                            value={thoiGian}
+                                            onChange={(event) => {
+                                                const tData = [...data], tThoiGian = [...tData[idx + 3].thoiGian];
+                                                tThoiGian[id] = event.target.value;
+                                                tData[idx + 3] = { ...tData[idx + 3], thoiGian: tThoiGian };
+                                                setDacDiemLienQuan(tData);
+                                                handleChange();
+                                            }}
                                             disabled={role !== "BS" || !data[idx + 3].kyHieu}
                                         /> 
-                                        <Typography sx={{ ml: 1 }}>tháng</Typography>
-                                    </Box>
+                                    ))
+                                 : (
+                                    <TextField 
+                                        type="number"
+                                        fullWidth
+                                        margin="dense"
+                                        InputProps={{ inputProps: { min: 0 } }}
+                                        value={data[idx + 3].thoiGian}
+                                        onChange={(event) => handleChangeTextField(event, idx + 3)}
+                                        disabled={role !== "BS" || !data[idx + 3].kyHieu}
+                                    /> 
                                 )}
                             </TableCell>
                         </TableRow>

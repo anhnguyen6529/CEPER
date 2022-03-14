@@ -1,14 +1,13 @@
 import { 
     Box, Paper, TableContainer, TableHead, TableBody, TableRow, 
-    TableCell, Table, TableSortLabel, Grid, Typography, Checkbox, TextField
+    TableCell, Table, TableSortLabel, Grid, Typography, TextField, Radio
 } from "@mui/material";
 import React, { useState, useContext } from "react";
-import { Add } from "@mui/icons-material";
+import { Add, RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { visuallyHidden } from "@mui/utils";
 import { format } from "date-fns";
 import { UtilsTable } from "../../utils";
-import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { TablePagination, StyledTableRow, Button, SelectThuoc } from "../common";
 import HSBAContext from "../../contexts/HSBAContext";
@@ -16,12 +15,12 @@ import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
     { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày giờ\ndùng thuốc', width: '15%' },
-    { id: 'diNguyen', align: 'left', label: 'Dị nguyên/thuốc', width: '25%' },
+    { id: 'thuocDiUng', align: 'left', label: 'Thuốc dị ứng', width: '25%' },
     { id: 'nghiNgo', align: 'center', label: 'Nghi ngờ', width: '5%' },
     { id: 'chacChan', align: 'center', label: 'Chắc chắn', width: '5%' },
     { id: 'bieuHienLamSang', align: 'left', label: 'Biểu hiện lâm sàng', width: '20%' },
     { id: 'bacSiXacNhan', align: 'left', label: 'Bác sĩ xác nhận chẩn đoán', width: '15%' },
-    { id: 'ketQua', align: 'left', label: 'Kết quả', width: '15%' }
+    { id: 'ghiChu', align: 'left', label: 'Ghi chú', width: '15%' }
 ];
 
 const FPhieuTDDiUngThuoc = () => {
@@ -38,11 +37,10 @@ const FPhieuTDDiUngThuoc = () => {
 
     const [addNew, setAddNew] = useState(false);
     const [newNgayGioDungThuoc, setNewNgayGioDungThuoc] = useState(null);
-    const [newDiNguyen, setNewDiNguyen] = useState([null]);
-    const [newNghiNgo, setNewNghiNgo] = useState(false);
-    const [newChacChan, setNewChacChan] = useState(false);
+    const [newThuocDiUng, setNewThuocDiUng] = useState([null]);
+    const [newKieuDiUng, setNewKieuDiUng] = useState('Nghi ngờ');
     const [newBieuHienLamSang, setNewBieuHienLamSang] = useState('');
-    const [newKetQua, setNewKetQua] = useState('');
+    const [newGhiChu, setNewGhiChu] = useState('');
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
@@ -56,11 +54,10 @@ const FPhieuTDDiUngThuoc = () => {
 
     const clearData = () => {
         setNewNgayGioDungThuoc(null);
-        setNewDiNguyen([null]);
-        setNewNghiNgo(false);
-        setNewChacChan(false);
+        setNewThuocDiUng([null]);
+        setNewKieuDiUng('Nghi ngờ');
         setNewBieuHienLamSang('');
-        setNewKetQua('');
+        setNewGhiChu('');
         setAddNew(false);
         setErrors([]);
     }
@@ -70,18 +67,17 @@ const FPhieuTDDiUngThuoc = () => {
     };
     
     const handleSave = () => {
-        if (!!newNgayGioDungThuoc && newDiNguyen.every(dn => !!dn) && !!newBieuHienLamSang && !!newKetQua) {
+        if (!!newNgayGioDungThuoc && newThuocDiUng.every(dn => !!dn) && !!newBieuHienLamSang) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuTDDiUngThuoc',
                 value: {},
                 newData: {
                     ngayGioDungThuoc: newNgayGioDungThuoc,
-                    diNguyen: newDiNguyen,
-                    nghiNgo: newNghiNgo,
-                    chacChan: newChacChan,
+                    thuocDiUng: newThuocDiUng,
+                    kieuDiUng: newKieuDiUng,
                     bieuHienLamSang: newBieuHienLamSang,
                     bacSiXacNhan: name,
-                    ketQua: newKetQua
+                    ghiChu: newGhiChu
                 }
             }));
             let tSaveSec = [...saveSec];
@@ -90,21 +86,20 @@ const FPhieuTDDiUngThuoc = () => {
             clearData();
         } else {
             let errs = [];
-            if (newDiNguyen.some(dn => !dn)) errs.push('dị nguyên');
+            if (newThuocDiUng.some(dn => !dn)) errs.push('thuốc');
             if (!newBieuHienLamSang) errs.push('biểu hiện lâm sàng');
-            if (!newKetQua) errs.push('kết quả');
             setErrors(errs);
         }
     }
 
     const handleAddClick = () => {
-        setNewDiNguyen([...newDiNguyen, null]);
+        setNewThuocDiUng([...newThuocDiUng, null]);
     }
 
     const handleDelete = (id) => {
-        const tNewDiNguyen = [...newDiNguyen];
-        tNewDiNguyen.splice(id, 1);
-        setNewDiNguyen(tNewDiNguyen);
+        const tNewThuocDiUng = [...newThuocDiUng];
+        tNewThuocDiUng.splice(id, 1);
+        setNewThuocDiUng(tNewThuocDiUng);
     }
 
     return (
@@ -149,16 +144,16 @@ const FPhieuTDDiUngThuoc = () => {
                                     return (
                                         <StyledTableRow hover key={index}>
                                             <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'dd/MM/yyyy, HH:mm')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.diNguyen.join('\n')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.thuocDiUng.join('\n')}</TableCell>
                                             <TableCell className="tableBodyBorderRight" align="center">
-                                                {row.nghiNgo ? <CheckBox /> : <CheckBoxOutlineBlank />}
+                                                {row.kieuDiUng === "Nghi ngờ" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
                                             </TableCell>
                                             <TableCell className="tableBodyBorderRight" align="center">
-                                                {row.chacChan ? <CheckBox /> : <CheckBoxOutlineBlank />}
+                                                {row.kieuDiUng === "Chắc chắn" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
                                             </TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.bieuHienLamSang}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.bacSiXacNhan}</TableCell>
-                                            <TableCell>{row.ketQua}</TableCell>
+                                            <TableCell>{row.ghiChu}</TableCell>
                                         </StyledTableRow>
                                     );
                             })}
@@ -167,21 +162,22 @@ const FPhieuTDDiUngThuoc = () => {
                                 <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'dd/MM/yyyy, HH:mm')}</TableCell>
                                     <TableCell className="tableBodyBorderRight" sx={{ pb: 0.5 }}>
-                                        {newDiNguyen.map((diNguyen, id) => (
-                                            <Box className="df aic" sx={{ mb: 1.5 }}>
+                                        {newThuocDiUng.map((thuocDiUng, id) => (
+                                            <Box className="df aic" sx={{ mb: 1.5 }} key={id}>
                                                 <SelectThuoc 
                                                     hamLuong={false}
-                                                    value={diNguyen}
+                                                    placeholder="Thuốc dị ứng"
+                                                    value={thuocDiUng}
                                                     onChange={(_, value) => {
-                                                        const tDiNguyen = [...newDiNguyen];
-                                                        tDiNguyen[id] = value;
-                                                        setNewDiNguyen(tDiNguyen);
+                                                        const tThuocDiUng = [...newThuocDiUng];
+                                                        tThuocDiUng[id] = value;
+                                                        setNewThuocDiUng(tThuocDiUng);
                                                     }}
-                                                    existValue={newDiNguyen}
+                                                    existValue={newThuocDiUng}
                                                     sx={{ width: "85%" }}
                                                 />
 
-                                                {id === newDiNguyen.length - 1 
+                                                {id === newThuocDiUng.length - 1 
                                                     ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
                                                     : (
                                                         <Typography sx={{ cursor: "pointer", ml: 1 }} color="primary" onClick={() => handleDelete(id)}>
@@ -192,10 +188,10 @@ const FPhieuTDDiUngThuoc = () => {
                                         ))}
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight" align="center">
-                                        <Checkbox sx={{ p: 0 }} value={newNghiNgo} onChange={(event) => setNewNghiNgo(event.target.checked)}/>
+                                        <Radio sx={{ p: 0 }} checked={newKieuDiUng === "Nghi ngờ"} onChange={() => setNewKieuDiUng("Nghi ngờ")}/>
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight" align="center">
-                                        <Checkbox sx={{ p: 0 }} value={newChacChan} onChange={(event) => setNewChacChan(event.target.checked)}/>
+                                        <Radio sx={{ p: 0 }} checked={newKieuDiUng === "Chắc chắn"} onChange={() => setNewKieuDiUng("Chắc chắn")} />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
@@ -210,8 +206,8 @@ const FPhieuTDDiUngThuoc = () => {
                                         <TextField
                                             multiline
                                             fullWidth
-                                            value={newKetQua}
-                                            onChange={(event) => setNewKetQua(event.target.value)}
+                                            value={newGhiChu}
+                                            onChange={(event) => setNewGhiChu(event.target.value)}
                                         />
                                     </TableCell>
                                 </TableRow>
