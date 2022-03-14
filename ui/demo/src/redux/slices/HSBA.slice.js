@@ -3,6 +3,8 @@ import HSBAThunk from "../thunks/HSBA.thunk";
 
 const initialState = {
     loading: true,
+    update: false,
+    save: false,
     error: '',
     pid: '',
     khoa: '',
@@ -34,9 +36,6 @@ const initialState = {
             dienThoai: '',
             quanHeVoiBenhNhan: '',
         }
-    },
-    phieuTDDiUngThuoc: {
-        data: []
     },
     benhAn: {
         thoiGian: '',
@@ -91,22 +90,25 @@ const initialState = {
     tinhTrangRaVien: '',
     huongDieuTri: '',
     nguoiGiaoHoSo: '',
-    nguoiNhanHoSo: '',
-    phieuTDChucNangSong: {
-        data: [],
-    },
+    nguoiNhanHoSo: '',  
     toDieuTri: {
-        data: [],
+        data: [{ ngayGio: '', dienBienBenh: '', yLenh: '', bacSiGhi: '' }],
     },
     phieuChamSoc: {
-        data: [],
+        data: [{ ngay: '', gio: '', theoDoiDienBien: [], thucHienYLenh: [], xacNhan: [], dieuDuongGhi: '' }],
     },
     phieuTDTruyenDich: {
-        data: [],
+        data: [{ ngayThang: '', values: [{ tenDichTruyen: '', soLuong: 0, loSanXuat: '', tocDo: 0, thoiGianBatDau: '', thoiGianKetThuc: '', BSChiDinh: '', DDThucHien: '' }] }],
+    },
+    phieuTDChucNangSong: {
+        data: [{ ngayGio: '', mach: 0, nhietDo: 0, huyetAp: '', nhipTho: 0, canNang: 0, dieuDuongGhi: '' }],
+    },
+    phieuTDDiUngThuoc: {
+        data: [{ ngayGioDungThuoc: '', thuocDiUng: [], kieuDiUng: '', bieuHienLamSang: '', bacSiXacNhan: '', ghiChu: '' }]
     },
     phieuCongKhaiThuoc: {
         ngayThang: [],
-        data: [],
+        data: [{ tenThuoc: '', donVi: '', ngayThang: [], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }],
     },
     danhSachYLenh: [],
     edited: {}
@@ -137,6 +139,24 @@ const HSBASlice = createSlice({
                 }
             }
         },
+        updatePhieuCongKhaiThuoc: (state, action) => { 
+            state.phieuCongKhaiThuoc.ngayThang = action.payload.value.ngayThang;
+            action.payload.newData.forEach((data) => {
+                const index = state.phieuCongKhaiThuoc.data.map(d => d.tenThuoc).findIndex(d => d === data.tenThuoc);
+                if (index === -1) {
+                    state.phieuCongKhaiThuoc.data = [...state.phieuCongKhaiThuoc.data, data];
+                } else {
+                    state.phieuCongKhaiThuoc.data[index] = { 
+                        ...state.phieuCongKhaiThuoc.data[index],
+                        ngayThang: data.ngayThang.map((nth, id) => id < state.phieuCongKhaiThuoc.data[index].ngayThang.length
+                            ? nth + state.phieuCongKhaiThuoc.data[index].ngayThang[id] : nth),
+                        tongSo: data.tongSo + state.phieuCongKhaiThuoc.data[index].tongSo, 
+                        thanhTien: data.thanhTien + state.phieuCongKhaiThuoc.data[index].thanhTien,
+                        ghiChu: state.phieuCongKhaiThuoc.data[index].ghiChu.concat(`\n${data.ghiChu}`)
+                    };
+                }
+            });
+        },
         addDanhSachYLenh: (state, action) => {
             return {
                 ...state, 
@@ -145,6 +165,12 @@ const HSBASlice = createSlice({
         },
         updateDanhSachYLenh: (state, action) => {
             state.danhSachYLenh[action.payload.index] = { ...state.danhSachYLenh[action.payload.index], ...action.payload.value }
+        },
+        save: (state) => {
+            return {
+                ...state,
+                save: true
+            }
         }
     },
     extraReducers: (builder) => {
