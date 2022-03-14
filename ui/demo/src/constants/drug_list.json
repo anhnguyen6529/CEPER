@@ -6,7 +6,9 @@
         "duong_dung": "Dung dịch tiêm truyền",
         "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Altan Pharmaceuticals, S.A",
-        "nuoc_san_xuat": "Tây Ban Nha"
+        "nuoc_san_xuat": "Tây Ban Nha",
+        "lo_san_xuat": ["0159"],
+        "don_gia": 45000
     },
     {
         "ten_hoat_chat": "Paracetamol",
@@ -15,7 +17,9 @@
         "duong_dung": "Viên nén sủi bọt",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm SaVi",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["13498", "13499"],
+        "don_gia": 2540
     },
     {
         "ten_hoat_chat": "Paracetamol",
@@ -24,7 +28,9 @@
         "duong_dung": "Thuốc cốm sủi bọt",
         "don_vi_tinh_nho_nhat": "gói",
         "co_so_san_xuat": "Công ty Cổ Phần Dược Phẩm Cửu Long",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["31082", "31083", "31084"],
+        "don_gia": 1500
     },
     {
         "ten_hoat_chat": "Paracetamol",
@@ -33,7 +39,9 @@
         "duong_dung": "Viên nén sủi bọt",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty Cổ phần Dược phẩm An Thiên",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["AN1160"],
+        "don_gia": 1500
     },
     {
         "ten_hoat_chat": "Ibuprofen",
@@ -42,7 +50,9 @@
         "duong_dung": "Viên nén bao phim",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Sophartex",
-        "nuoc_san_xuat": "Pháp"
+        "nuoc_san_xuat": "Pháp",
+        "lo_san_xuat": ["4987", "4988", "4989"],
+        "don_gia": 430
     },
     {
         "ten_hoat_chat": "Ibuprofen",
@@ -51,7 +61,9 @@
         "duong_dung": "Viên",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Farmalabor Produtos Farmacêuticos, S.A (Fab.)",
-        "nuoc_san_xuat": "Portugal"
+        "nuoc_san_xuat": "Portugal",
+        "lo_san_xuat": ["27737", "27739"],
+        "don_gia": 900
     },
     {
         "ten_hoat_chat": "Meloxicam",
@@ -60,7 +72,9 @@
         "duong_dung": "Viên",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Pymepharco",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["19694"],
+        "don_gia": 1700
     },
     {
         "ten_hoat_chat": "Meloxicam",
@@ -69,7 +83,9 @@
         "duong_dung": "Dung dịch tiêm",
         "don_vi_tinh_nho_nhat": "ống",
         "co_so_san_xuat": "Công ty Cổ phần Dược phẩm An Thiên",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["28852", "28864", "28872"],
+        "don_gia": 17500
     },
     {
         "ten_hoat_chat": "Celecoxib",
@@ -78,7 +94,9 @@
         "duong_dung": "Viên nang cứng",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty CPDP Me Di Sun",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["17172", "17173", "17174", "17175"],
+        "don_gia": 2000
     },
     {
         "ten_hoat_chat": "Piroxicam",
@@ -87,7 +105,9 @@
         "duong_dung": "Dung dịch tiêm",
         "don_vi_tinh_nho_nhat": "ống",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm Vĩnh Phúc",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["28883", "28884"],
+        "don_gia": 1625
     },
     {
         "ten_hoat_chat": "Methyl prednisolon",
@@ -96,7 +116,9 @@
         "duong_dung": "Viên nén",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm Quảng Bình",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["94784"],
+        "don_gia": 1300
     },
     {
         "ten_hoat_chat": "Codein + terpin hydrat",
@@ -105,7 +127,9 @@
         "duong_dung": "Viên",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty cổ phần Dược phẩm Hà Tây",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["030318", "040318"],
+        "don_gia": 1500
     },
     {
         "ten_hoat_chat": "Natri clorid",
@@ -114,7 +138,9 @@
         "duong_dung": "Dung dịch tiêm truyền",
         "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần Fresenius Kabi Việt Nam",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["20377741"],
+        "don_gia": 15000
     },
     {
         "ten_hoat_chat": "Natri clorid",
@@ -123,7 +149,9 @@
         "duong_dung": "Dung dịch thuốc nhỏ mắt, mũi",
         "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần dược vật tư y tế Hải Dương",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["28927", "28930", "28932"],
+        "don_gia": 3000
     },
     {
         "ten_hoat_chat": "Pantoprazol",
@@ -132,7 +160,9 @@
         "duong_dung": "Viên nang",
         "don_vi_tinh_nho_nhat": "viên",
         "co_so_san_xuat": "Công ty TNHH BRV Healthcare",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["19534", "19547"],
+        "don_gia": 16000
     },
     {
         "ten_hoat_chat": "Tetracyclin hydroclorid",
@@ -141,7 +171,9 @@
         "duong_dung": "Thuốc tra mắt",
         "don_vi_tinh_nho_nhat": "tuýp",
         "co_so_san_xuat": "Công ty cổ phần dược Medipharco",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["2385", "2386", "2372"],
+        "don_gia": 6000
     },
     {
         "ten_hoat_chat": "Ringer lactat",
@@ -150,7 +182,9 @@
         "duong_dung": "Dung dịch tiêm truyền",
         "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần Fresenius Kabi Việt Nam",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["06060003"],
+        "don_gia": 13000
     },
     {
         "ten_hoat_chat": "Glucose",
@@ -159,6 +193,8 @@
         "duong_dung": "Thuốc tiêm truyền",
         "don_vi_tinh_nho_nhat": "chai",
         "co_so_san_xuat": "Công ty cổ phần dược phẩm Otsuka Việt Nam",
-        "nuoc_san_xuat": "Việt Nam"
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["2111003", "2211003"],
+        "don_gia": 12500
     }
 ]
