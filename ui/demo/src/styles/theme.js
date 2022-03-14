@@ -115,11 +115,6 @@ const theme = createTheme({
             paddingBottom: 8
           }
         }
-      },
-      MuiAutocomplete: {
-        defaultProps: {
-          noOptionsText: '(trống)'
-        }
       }
     }
 })

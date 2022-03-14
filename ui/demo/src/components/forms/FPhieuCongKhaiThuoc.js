@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, Paper, IconButton, Grid, Typography, TextField, Divider
+    TableHead, TableCell, Paper, IconButton, Grid, Typography, TextField
 } from "@mui/material";
 import { Add, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { UtilsTable } from "../../utils";
@@ -13,17 +13,14 @@ import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import HSBAContext from "../../contexts/HSBAContext";
 import mdSections from "../../constants/md_sections.json";
 import drugList from "../../constants/drug_list.json";
-import { DatePicker } from "@mui/lab";
 
 const headCells = [
     { id: 'stt', numeric: false, label: 'STT', width: '5%' },
     { id: 'tenThuoc', numeric: false, label: 'Tên thuốc, hàm lượng', width: '25%' },
     { id: 'donVi', numeric: false, label: 'Đơn vị', width: '5%' },
-    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '25%' },
-    { id: 'tongSo', numeric: true, label: 'Tổng số', width: '7%' },
-    { id: 'donGia', numeric: true, label: 'Đơn giá', width: '9%' },
-    { id: 'thanhTien', numeric: true, label: 'Thành tiền', width: '12%' },
-    { id: 'ghiChu', numeric: false, label: 'Ghi chú', width: '12%' }
+    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '42%' },
+    { id: 'tongSo', numeric: true, label: 'Tổng số', width: '8%' },
+    { id: 'ghiChu', numeric: false, label: 'Ghi chú', width: '15%' }
 ];
 
 const FPhieuCongKhaiThuoc = () => {
@@ -41,13 +38,14 @@ const FPhieuCongKhaiThuoc = () => {
     const sectionId = mdSections["order"].indexOf("Phiếu công khai thuốc");
 
     const [addNew, setAddNew] = useState(false);
-    const [newNgay, setNewNgay] = useState(null);
-    const EMPTY_NEW_DATA = { tenThuoc: null, donVi: '', soLuong: 0, donGia: 0, ghiChu: '' };
-    const [newDataList, setNewDataList] = useState([EMPTY_NEW_DATA]);
+    const [newNgayThang, setNewNgayThang] = useState(content.ngayThang);
+    const EMPTY_NEW_DATA = { tenThuoc: null, donVi: '', ngayThang: new Array(newNgayThang.length).fill(0), tongSo: 0, ghiChu: '' };
+    const [newData, setNewData] = useState(EMPTY_NEW_DATA);
     const [errors, setErrors] = useState([]);
 
     const clearData = () => {
-        setNewDataList([EMPTY_NEW_DATA]);
+        setNewNgayThang(content.ngayThang);
+        setNewData(EMPTY_NEW_DATA);
         setAddNew(false);
         setErrors([]);
     }
@@ -57,22 +55,11 @@ const FPhieuCongKhaiThuoc = () => {
     };
 
     const handleSave = () => {
-        if (!!newNgay && newDataList.every(newData => !!newData.tenThuoc && newData.soLuong > 0)) {
-            const newNgayThang = format(newNgay, "yyyy-MM-dd") === content.ngayThang[content.ngayThang.length - 1]
-                ? [...content.ngayThang] : [...content.ngayThang, format(newNgay, "yyyy-MM-dd")];
-            dispatch(HSBAActions.updatePhieuCongKhaiThuoc({
+        if (newNgayThang.length > 0 && !!newData.tenThuoc && newData.ngayThang.some(nth => nth > 0)) {
+            dispatch(HSBAActions.updateDinhKemSection({
+                section: 'phieuCongKhaiThuoc',
                 value: { ngayThang: newNgayThang },
-                newData: newDataList.map(newData => {
-                    return {
-                        tenThuoc: newData.tenThuoc,
-                        donVi: newData.donVi,
-                        ngayThang: [...new Array(newNgayThang.length - 1).fill(0), parseInt(newData.soLuong)],
-                        tongSo: parseInt(newData.soLuong),
-                        donGia: parseInt(newData.donGia),
-                        thanhTien: parseInt(newData.donGia) * parseInt(newData.soLuong),
-                        ghiChu: newData.ghiChu
-                    }
-                })
+                newData: newData
             }));
             let tSaveSec = [...saveSec];
             tSaveSec[sectionId] = new Date();
@@ -80,13 +67,20 @@ const FPhieuCongKhaiThuoc = () => {
             clearData();
         } else {
             let errs = [];
-            newDataList.forEach((newData) => {
-                if (!newData.tenThuoc && errs.findIndex(err => err === 'tên thuốc') === -1) errs.push('tên thuốc');
-                if (newData.soLuong === 0 && errs.findIndex(err => err === 'số lượng') === -1) errs.push('số lượng');
-            })
+            if (!newData.tenThuoc && errs.findIndex(err => err === 'tên thuốc') === -1) errs.push('tên thuốc');
+            if (newData.ngayThang.every(nth => parseInt(nth) === 0) && errs.findIndex(err => err === 'lượng thuốc dùng từng ngày')) {
+                errs.push('lượng thuốc dùng từng ngày');
+            }
             setErrors(errs);
         }
     };
+
+    const handleAddNgayThangClick = () => {
+        const tData = {...newData}, dateValue = new Date(newNgayThang[newNgayThang.length - 1]);
+        tData.ngayThang.push(0);
+        setNewNgayThang([...newNgayThang, dateValue.setDate(dateValue.getDate() + 1)]);
+        setNewData(tData);
+    }
 
     const calculateTotalByDate = (id) => {
         var total = 0;
@@ -98,12 +92,12 @@ const FPhieuCongKhaiThuoc = () => {
         return total === 0 ? '' : total;
     };
 
-    const calculateTotalIntoMoney = () => {
+    const calculateTotal = (array) => {
         var total = 0;
-        rows.forEach((row) => {
-            total = total + row.thanhTien;
+        array.forEach((nth) => {
+            total = total + parseInt(nth);
         });
-        return total === 0 ? '' : total;
+        return total;
     };
 
     const handleNextDateGroup = () => {
@@ -116,16 +110,6 @@ const FPhieuCongKhaiThuoc = () => {
         if (dateGroup === 1) {
             setDateGroup(0);
         }
-    }
-
-    const handleAddClick = () => {
-        setNewDataList([...newDataList, EMPTY_NEW_DATA]);
-    }
-
-    const handleDelete = (id) => {
-        const tDataList = [...newDataList];
-        tDataList.splice(id, 1);
-        setNewDataList(tDataList);
     }
 
     return (
@@ -153,7 +137,7 @@ const FPhieuCongKhaiThuoc = () => {
                                             <TableCell 
                                                 key={`${headCell.id}Head`} 
                                                 align="center" 
-                                                colSpan={5}
+                                                colSpan={7}
                                                 className="tableHeadBorderRight"
                                                 sx={{ px: 1 }}
                                             >
@@ -168,7 +152,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                         
                                                     </Grid>
                                                     <Grid item xs={3} align="right">
-                                                        <IconButton size="small" disabled={dateGroup === 1 || content.ngayThang.length <= 5} onClick={handleNextDateGroup}>
+                                                        <IconButton size="small" disabled={dateGroup === 1 || content.ngayThang.length < 7} onClick={handleNextDateGroup}>
                                                             <KeyboardArrowRight/>
                                                         </IconButton>
                                                     </Grid>
@@ -178,15 +162,15 @@ const FPhieuCongKhaiThuoc = () => {
                                 ))}
                             </TableRow>
                             <TableRow>
-                                {Array.from(Array(5)).map((_, index) => (
+                                {Array.from(Array(7)).map((_, index) => (
                                     <TableCell 
                                         key={`ngayThang${index}`}
                                         align="center"
                                         className="tableHeadBorderRight"
-                                        width="5%"
+                                        width="6%"
                                         sx={{ p: '6px 10px', height: 40 }}
                                     >
-                                        {index < content.ngayThang.slice(dateGroup * 5, dateGroup * 5 + 5).length
+                                        {index < content.ngayThang.slice(dateGroup * 7, dateGroup * 7 + 7).length
                                             ? format(new Date(content.ngayThang[index]), "dd/MM")
                                             : "__/__"
                                         }
@@ -200,18 +184,16 @@ const FPhieuCongKhaiThuoc = () => {
                                 .map((row, index) => {
                                     return (
                                         <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight" align="center">{index + 1}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{index + 1}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
                                             <TableCell className="tableBodyBorderRight" align="center">{row.donVi}</TableCell>
-                                            {Array.from(Array(5)).map((_, idx) => (
+                                            {Array.from(Array(7)).map((_, idx) => (
                                                 <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
-                                                    {idx < row.ngayThang.slice(dateGroup * 5, dateGroup * 5 + 5).length && row.ngayThang[idx] !== 0
+                                                    {idx < row.ngayThang.slice(dateGroup * 7, dateGroup * 7 + 7).length && row.ngayThang[idx] !== 0
                                                         ? row.ngayThang[idx] : ""}
                                                 </TableCell>
                                             ))}
                                             <TableCell className="tableBodyBorderRight" align="center">{row.tongSo}</TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">{row.donGia.toLocaleString()}</TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">{row.thanhTien.toLocaleString()}</TableCell>
                                             <TableCell>{row.ghiChu}</TableCell>
                                         </StyledTableRow>
                                     );
@@ -220,16 +202,12 @@ const FPhieuCongKhaiThuoc = () => {
                             <TableRow hover>
                                 <TableCell className="tableBodyBorderRight" colSpan={2}>Tổng số khoản thuốc dùng</TableCell>
                                 <TableCell className="tableBodyBorderRight"/>
-                                {Array.from(Array(5)).map((_, idx) => (
+                                {Array.from(Array(7)).map((_, idx) => (
                                     <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
-                                        {calculateTotalByDate(dateGroup * 5 + idx)}
+                                        {calculateTotalByDate(dateGroup * 7 + idx)}
                                     </TableCell>
                                 ))}
                                 <TableCell className="tableBodyBorderRight"/>
-                                <TableCell className="tableBodyBorderRight"/>
-                                <TableCell className="tableBodyBorderRight" align="center">
-                                    {calculateTotalIntoMoney().toLocaleString()}
-                                </TableCell>
                                 <TableCell />
                             </TableRow>
                         </TableBody> 
@@ -254,109 +232,87 @@ const FPhieuCongKhaiThuoc = () => {
                     </Box>
 
                     <Box sx={{ p: 2 }}>
-                        <Box className="df aic jcc">
-                            <Typography fontWeight="bold" sx={{ mr: 1 }}>Ngày</Typography>
-                            <DatePicker
-                                value={newNgay}
-                                onChange={(newDate) => setNewNgay(newDate)}
-                                renderInput={(params) => <TextField {...params} margin="dense" />}
-                                disablePast
-                            />
-                        </Box>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <Typography fontWeight="bold">Tên thuốc, hàm lượng</Typography>
+                                <SelectThuoc
+                                    fullWidth
+                                    inputProps={{ margin: "dense" }}
+                                    value={newData.tenThuoc}
+                                    onChange={(_, value) => {
+                                        const findDonVi = drugList.find(drug => drug.ten_hoat_chat + ' ' + drug.nong_do_ham_luong === value);
+                                        setNewData({ 
+                                            ...newData, 
+                                            tenThuoc: value,
+                                            donVi: typeof findDonVi !== "undefined" ? findDonVi.don_vi_tinh_nho_nhat : ""
+                                        });
+                                    }}
+                                    existValue={[newData]}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Typography fontWeight="bold">Đơn vị</Typography>
+                                <TextField
+                                    fullWidth
+                                    margin="dense"
+                                    value={newData.donVi}
+                                    disabled
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Typography fontWeight="bold">Tổng số</Typography>
+                                <TextField
+                                    fullWidth
+                                    margin="dense"
+                                    value={newData.tongSo}
+                                    disabled
+                                />
+                            </Grid>
+                        </Grid>
 
-                        {newDataList.map((newData, idx) => (
-                            <Box key={idx}>
-                                <Grid container spacing={2} sx={{ py: 1 }}>
-                                    <Grid item xs={6}>
-                                        <Typography fontWeight="bold">Tên thuốc, hàm lượng</Typography>
-                                        <SelectThuoc
-                                            fullWidth
-                                            inputProps={{ margin: "dense" }}
-                                            placeholder="Tên thuốc, hàm lượng"
-                                            value={newData.tenThuoc}
-                                            onChange={(_, value) => {
-                                                const findDonVi = drugList.find(drug => drug.ten_hoat_chat + ' ' + drug.nong_do_ham_luong === value);
-                                                const tDataList = [...newDataList];
-                                                tDataList[idx] = { 
-                                                    ...tDataList[idx], 
-                                                    tenThuoc: value, 
-                                                    donVi: typeof findDonVi !== "undefined" ? findDonVi.don_vi_tinh_nho_nhat : "",
-                                                    donGia: typeof findDonVi !== "undefined" ? findDonVi.don_gia : ""
-                                                };
-                                                setNewDataList(tDataList);
-                                            }}
-                                            existValue={newDataList.map(data => data.tenThuoc)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <Typography fontWeight="bold">Đơn vị</Typography>
-                                        <TextField
-                                            fullWidth
-                                            margin="dense"
-                                            value={newData.donVi}
-                                            disabled
-                                        />
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <Typography fontWeight="bold">Số lượng</Typography>
-                                        <TextField
-                                            type="number"
-                                            fullWidth
-                                            margin="dense"
-                                            value={newData.soLuong}
-                                            onChange={(event) => {
-                                                const tDataList = [...newDataList];
-                                                tDataList[idx] = { ...tDataList[idx], soLuong: event.target.value };
-                                                setNewDataList(tDataList);
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={2}>
-                                        <Typography fontWeight="bold">Đơn giá</Typography>
-                                        <TextField
-                                            fullWidth
-                                            margin="dense"
-                                            value={newData.donGia.toLocaleString()}
-                                            disabled
-                                        />
-                                    </Grid>
-                                </Grid>
-
-                                <Typography fontWeight="bold">Ghi chú</Typography>
-                                <Box className="df aic">
-                                    <TextField
-                                        multiline
+                        <Grid container columnSpacing={2} rowSpacing={1} sx={{ py: 1 }}>
+                            {newNgayThang.map((ngayThang, id) => (
+                                <Grid item xs={1.5} key={id}>
+                                    <Typography fontWeight="bold">Ngày {format(new Date(ngayThang), "dd/MM")}</Typography>
+                                    <TextField 
+                                        type="number"
                                         fullWidth
                                         margin="dense"
-                                        value={newData.ghiChu}
+                                        InputProps={{ inputProps: { min: 0 } }}
+                                        value={newData.ngayThang[id]}
                                         onChange={(event) => {
-                                            const tDataList = [...newDataList];
-                                            tDataList[idx] = { ...tDataList[idx], ghiChu: event.target.value };
-                                            setNewDataList(tDataList);
+                                            const tNgayThang = newData.ngayThang;
+                                            tNgayThang[id] = event.target.value;
+                                            setNewData({ ...newData, ngayThang: tNgayThang, tongSo: calculateTotal(tNgayThang) });
                                         }}
-                                    />  
-                                    {newDataList.length > 1 && <Typography sx={{ cursor: "pointer", ml: 2 }} color="primary" onClick={() => handleDelete(idx)}>
-                                        Xóa
-                                    </Typography>}
-                                </Box> 
+                                    />
+                                </Grid>
+                            ))}
+                            <Grid item xs={1.5}>
+                                <IconButton 
+                                    size="small" 
+                                    sx={{ bgcolor: "#D9EFFE", mt: newData.ngayThang.length % 8 !== 0 ? 5 : 0 }} 
+                                    color="primary" 
+                                    onClick={() => handleAddNgayThangClick()}
+                                >
+                                    <Add />
+                                </IconButton>
+                            </Grid>
+                        </Grid>    
 
-                                {idx === newDataList.length - 1
-                                    ? (
-                                        <Box sx={{ width: "100%", textAlign: "center", mt: 1 }}>
-                                            <IconButton size="small" onClick={handleAddClick}>
-                                                <Add />
-                                            </IconButton>
-                                        </Box>
-                                    )
-                                    : <Divider sx={{ mt: 2, mb: 1 }} />
-                                }
-                            </Box>
-                        ))}   
+                        <Typography fontWeight="bold">Ghi chú</Typography>
+                        <TextField
+                            multiline
+                            fullWidth
+                            margin="dense"
+                            value={newData.ghiChu}
+                            onChange={(event) => setNewData({ ...newData, ghiChu: event.target.value })}
+                        />      
                     </Box>
                 </Paper>
             ) : null}
 
-            { (role === "DD" && !ngayRaVien) && 
+            { (role === "BS" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
@@ -368,7 +324,6 @@ const FPhieuCongKhaiThuoc = () => {
                                 sx={{ width: 150 }} 
                                 startIcon={<Add fontSize="small"/>}
                                 onClick={() => {
-                                    setNewNgay(new Date());
                                     setAddNew(true);
                                 }}
                             >

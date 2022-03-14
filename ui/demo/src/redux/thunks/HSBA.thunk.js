@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 const PHIEUTDDIUNGTHUOC = {
     data: [
-        { ngayGioDungThuoc: '2021-11-08 09:30', thuocDiUng: ['Bigentil', 'Ofloxacin'], kieuDiUng: 'Nghi ngờ', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: 'Trần Quốc A', ghiChu: '' },
-        { ngayGioDungThuoc: '2021-11-09 10:30', thuocDiUng: ['Cefuroxime'], kieuDiUng: 'Chắc chắn', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: 'Trần Quốc A', ghiChu: '' }
+        { ngayGioDungThuoc: '2021-11-08 09:30', diNguyen: ['Bigentil (Netilmicin)', 'Ofloxacin'], nghiNgo: true, chacChan: false, bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: 'Trần Quốc A', ketQua: '' },
+        { ngayGioDungThuoc: '2021-11-09 10:30', diNguyen: ['Cefuroxime'], nghiNgo: false, chacChan: false, bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: 'Trần Quốc A', ketQua: '' }
     ]
 };
 const HOIBENH = {
@@ -49,9 +49,9 @@ const KHAMBENH_EMPTY = {
 };
 const PHIEUTDCHUCNANGSONG = {
     data: [
-        { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: '105/70', nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
-        { ngayGio: '2021-11-07 14:05', mach: 80, nhietDo: 36.5, huyetAp: '110/70', nhipTho: 16, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A'},
-        { ngayGio: '2021-11-07 09:30', mach: 75, nhietDo: 36.4, huyetAp: '110/75', nhipTho: 17, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: 90, nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-07 14:05', mach: 80, nhietDo: 36.5, huyetAp: 90, nhipTho: 16, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A'},
+        { ngayGio: '2021-11-07 09:30', mach: 75, nhietDo: 36.4, huyetAp: 85, nhipTho: 17, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
     ],
 };
 const PHIEUCHAMSOC = {
@@ -81,8 +81,8 @@ const PHIEUCONGKHAITHUOC = {
     ngayThang: ['2021-11-20', '2021-11-21', '2021-11-22', '2021-11-23'],
     nguoiBenhKyTen: ['Nguyễn Văn A', 'Nguyễn Văn A', 'Nguyễn Văn A', 'Nguyễn Văn A'],
     data: [
-        { tenThuoc: 'Natri clorid 0.9%/10ml', donVi: 'chai', ngayThang: [2, 0, 1, 1], tongSo: 4, donGia: 3000, thanhTien: 12000, ghiChu: '' },
-        { tenThuoc: 'Seduxen 5mg', donVi: 'viên', ngayThang: [2, 2, 2, 2], tongSo: 8, donGia: 4000, thanhTien: 32000, ghiChu: '' }
+        { tenThuoc: 'Natri Clorid 0.9%/10ml', donVi: 'chai', ngayThang: [2, 0, 1, 1], tongSo: 4, ghiChu: '' },
+        { tenThuoc: 'Seduxen 5mg', donVi: 'viên', ngayThang: [2, 2, 2, 2], tongSo: 8, ghiChu: '' }
     ]
 };
 const DANHSACHYLENH = [

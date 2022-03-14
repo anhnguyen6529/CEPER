@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useContext } from "react";
-import {  
-    Box, Table, TableRow, TableContainer, TableBody, TextField, Select, MenuItem,
-    TableHead, TableCell, TableSortLabel, Paper, Grid, Typography, IconButton, Divider, Autocomplete
+import { 
+    Box, Table, TableRow, TableContainer, TableBody, TextField,
+    TableHead, TableCell, TableSortLabel, Paper, Grid, Typography, IconButton, Divider
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
@@ -13,18 +13,16 @@ import { TablePagination, Button, SelectThuoc } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import HSBAContext from "../../contexts/HSBAContext";
 import mdSections from "../../constants/md_sections.json";
-import doctorList from "../../constants/doctor_list.json";
-import drugList from "../../constants/drug_list.json";
-import { TimePicker } from "@mui/lab";
+import { DateTimePicker } from "@mui/lab";
 
 const headCells = [
-    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '10%' },
+    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '5%' },
     { id: 'tenDichTruyen', numeric: false, label: 'TÊN DỊCH TRUYỀN/HÀM LƯỢNG', width: '20%' },
     { id: 'soLuong', numeric: true, label: 'Số lượng (ml)', width: '6%' },
-    { id: 'loSanXuat', numeric: false, label: 'Lô/Số sản xuất', width: '8%' },
+    { id: 'loSanXuat', numeric: false, label: 'Lô/Số sản xuất', width: '9%' },
     { id: 'tocDo', numeric: true, label: 'Tốc độ giọt/ph', width: '6%' },
-    { id: 'thoiGianBatDau', numeric: false, label: 'Bắt đầu', width: '10%' },
-    { id: 'thoiGianKetThuc', numeric: false, label: 'Kết thúc', width: '10%' },
+    { id: 'thoiGianBatDau', numeric: false, label: 'Bắt đầu', width: '12%' },
+    { id: 'thoiGianKetThuc', numeric: false, label: 'Kết thúc', width: '12%' },
     { id: 'BSChiDinh', numeric: false, label: 'Bác sĩ chỉ định', width: '15%' },
     { id: 'DDThucHien', numeric: false, label: 'Điều dưỡng thực hiện', width: '15%' }
 ];
@@ -43,9 +41,8 @@ const FPhieuTDTruyenDich = () => {
 
     const [addNew, setAddNew] = useState(false);
     const [newNgayThang, setNewNgayThang] = useState(null);
-    const EMPTY_NEW_VALUE = { tenDichTruyen: null, soLuong: 0, loSanXuat: null, tocDo: 0, thoiGianBatDau: { ngay: '', gio: null }, thoiGianKetThuc: { ngay: '', gio: null }, BSChiDinh: null, DDThucHien: name };
+    const EMPTY_NEW_VALUE = { tenDichTruyen: null, soLuong: 0, loSanXuat: '', tocDo: 0, thoiGianBatDau: null, thoiGianKetThuc: null, BSChiDinh: '', DDThucHien: name };
     const [newValues, setNewValues] = useState([EMPTY_NEW_VALUE]);
-    const [BSChiDinhKhac, setBSChiDinhKhac] = useState('');
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
@@ -70,11 +67,7 @@ const FPhieuTDTruyenDich = () => {
 
     const handleSave = () => {
         if (!!newNgayThang && (newValues.length > 0 
-            && newValues.every(newValue => !!newValue.tenDichTruyen && !!newValue.loSanXuat
-                && ((newValue.BSChiDinh === "Khác" && !!BSChiDinhKhac) || (newValue.BSChiDinh !== "Khác" && !!newValue.BSChiDinh))
-                && ((!!newValue.thoiGianBatDau.ngay && !!newValue.thoiGianBatDau.gio) && (!!newValue.thoiGianKetThuc.ngay && !!newValue.thoiGianKetThuc.gio) 
-                    && new Date(newValue.thoiGianBatDau.ngay.concat(` ${newValue.thoiGianBatDau.gio.format("HH:mm")}`)) <
-                        new Date(newValue.thoiGianKetThuc.ngay.concat(` ${newValue.thoiGianKetThuc.gio.format("HH:mm")}`)))))
+            && newValues.every(newValue => Object.values(newValue).every(nv => (typeof nv === 'number' && nv > 0) || (typeof nv !== 'number' && !!nv))))
         ) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuTDTruyenDich',
@@ -82,12 +75,9 @@ const FPhieuTDTruyenDich = () => {
                 newData: { 
                     ngayThang: newNgayThang.toISOString(), 
                     values: newValues.map((newValue) => {
-                        return {
-                            ...newValue, 
-                            thoiGianBatDau: new Date(newValue.thoiGianBatDau.ngay.concat(` ${newValue.thoiGianBatDau.gio.format("HH:mm")}`)).toString(),
-                            thoiGianKetThuc: new Date(newValue.thoiGianKetThuc.ngay.concat(` ${newValue.thoiGianKetThuc.gio.format("HH:mm")}`)).toString(),
-                            BSChiDinh: newValue.BSChiDinh === "Khác" ? BSChiDinhKhac : newValue.BSChiDinh
-                        };
+                        newValue.thoiGianBatDau = newValue.thoiGianBatDau.toString();
+                        newValue.thoiGianKetThuc = newValue.thoiGianKetThuc.toString();
+                        return newValue;
                     })
                 }
             }));
@@ -99,13 +89,13 @@ const FPhieuTDTruyenDich = () => {
             let errs = [], emptyErrs = [], timeErr = false;
             newValues.forEach(newValue => {
                 if (!newValue.tenDichTruyen && emptyErrs.findIndex(err => err === 'tên dịch truyền') === -1) emptyErrs.push('tên dịch truyền');
+                if (newValue.soLuong <= 0 && emptyErrs.findIndex(err => err === 'số lượng') === -1) emptyErrs.push('số lượng');
                 if (!newValue.loSanXuat && emptyErrs.findIndex(err => err === 'lô sản xuất') === -1) emptyErrs.push('lô sản xuất');
-                if ((!newValue.thoiGianBatDau.ngay || !newValue.thoiGianBatDau.gio) && emptyErrs.findIndex(err => err === 'thời gian bắt đầu') === -1) emptyErrs.push('thời gian bắt đầu');
-                if ((!newValue.thoiGianKetThuc.ngay || !newValue.thoiGianKetThuc.gio) && emptyErrs.findIndex(err => err === 'thời gian kết thúc') === -1) emptyErrs.push('thời gian kết thúc');
-                if ((!newValue.BSChiDinh || (newValue.BSChiDinh === "Khác" && !BSChiDinhKhac)) && emptyErrs.findIndex(err => err === 'bác sĩ chỉ định') === -1) emptyErrs.push('bác sĩ chỉ định');
-                if ((!!newValue.thoiGianBatDau.ngay && !!newValue.thoiGianBatDau.gio) && (!!newValue.thoiGianKetThuc.ngay && !!newValue.thoiGianKetThuc.gio) 
-                    && new Date(newValue.thoiGianBatDau.ngay.concat(` ${newValue.thoiGianBatDau.gio.format("HH:mm")}`)) >=
-                        new Date(newValue.thoiGianKetThuc.ngay.concat(` ${newValue.thoiGianKetThuc.gio.format("HH:mm")}`))) timeErr = true;
+                if (!newValue.tocDo && emptyErrs.findIndex(err => err === 'tốc độ') === -1) emptyErrs.push('tốc độ');
+                if (!newValue.thoiGianBatDau && emptyErrs.findIndex(err => err === 'thời gian bắt đầu') === -1) emptyErrs.push('thời gian bắt đầu');
+                if (!newValue.thoiGianKetThuc && emptyErrs.findIndex(err => err === 'thời gian kết thúc') === -1) emptyErrs.push('thời gian kết thúc');
+                if (!newValue.BSChiDinh && emptyErrs.findIndex(err => err === 'bác sĩ chỉ định') === -1) emptyErrs.push('bác sĩ chỉ định');
+                if (!!newValue.thoiGianKetThuc && !!newValue.thoiGianBatDau && newValue.thoiGianBatDau >= newValue.thoiGianKetThuc) timeErr = true;
             })
             if (emptyErrs.length > 0) errs.push(["Vui lòng nhập đầy đủ thông tin:", emptyErrs.join(', ')]);
             if (timeErr) errs.push("Thời gian kết thúc phải sau thời gian bắt đầu (các ô viền đỏ)");
@@ -131,20 +121,18 @@ const FPhieuTDTruyenDich = () => {
                 width={headCell.width}
                 {...other}
             >
-                {headCell.id === 'ngayThang' ?
-                    <TableSortLabel
-                        active={orderBy === headCell.id}
-                        direction={orderBy === headCell.id ? order : 'asc'}
-                        onClick={createSortHandler(headCell.id)}
-                    >
-                        {headCell.label}
-                        {orderBy === headCell.id ? (
-                            <Box component="span" sx={visuallyHidden}>
-                                {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                            </Box>
-                        ) : null}
-                    </TableSortLabel>
-                : headCell.label}
+                <TableSortLabel
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}
+                >
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                        <Box component="span" sx={visuallyHidden}>
+                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                    ) : null}
+                </TableSortLabel>
             </TableCell>
         )
     }
@@ -191,15 +179,15 @@ const FPhieuTDTruyenDich = () => {
                                         <Fragment key={index}>
                                             <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
                                                 <TableCell className="tableBodyBorderRight" rowSpan={row.values.length + 1}>
-                                                    {format(new Date(row.ngayThang), "dd/MM/yyyy")}
+                                                    {format(new Date(row.ngayThang), 'dd/MM')}
                                                 </TableCell>
                                             </TableRow>
                                             {row.values.map((value, idx) => (
                                                 <TableRow hover key={idx} sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
                                                     <TableCell className="tableBodyBorderRight">{value.tenDichTruyen}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight">{value.soLuong > 0 ? value.soLuong : ""}</TableCell>
+                                                    <TableCell className="tableBodyBorderRight">{value.soLuong}</TableCell>
                                                     <TableCell className="tableBodyBorderRight">{value.loSanXuat}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight">{value.tocDo > 0 ? value.tocDo : ""}</TableCell>
+                                                    <TableCell className="tableBodyBorderRight">{value.tocDo}</TableCell>
                                                     <TableCell className="tableBodyBorderRight">{format(new Date(value.thoiGianBatDau), "dd/MM/yyyy HH:mm")}</TableCell>
                                                     <TableCell className="tableBodyBorderRight">{format(new Date(value.thoiGianKetThuc), "dd/MM/yyyy HH:mm")}</TableCell>
                                                     <TableCell className="tableBodyBorderRight">{value.BSChiDinh}</TableCell>
@@ -227,7 +215,7 @@ const FPhieuTDTruyenDich = () => {
                     <Box sx={{ px: 2, py: 1, bgcolor: "#D9EFFE", borderRadius: "4px 4px 0px 0px" }}>
                         <Typography>
                             Phiếu TD truyền dịch - <i><b>Thêm mới</b></i> - {' '}
-                            <Typography component="span"><b>Ngày tháng: </b>{format(new Date(newNgayThang), "dd/MM/yyyy")} - <b>Điều dưỡng thực hiện:</b> {name}</Typography>
+                            <Typography component="span"><b>Ngày tháng: </b>{format(new Date(newNgayThang), "dd/MM/yyyy")}</Typography>
                         </Typography>
                     </Box>
 
@@ -240,10 +228,9 @@ const FPhieuTDTruyenDich = () => {
                                         <SelectThuoc 
                                             fullWidth
                                             inputProps={{ margin: "dense" }}
-                                            placeholder="Tên dịch truyền/hàm lượng"
                                             value={newValue.tenDichTruyen}
                                             onChange={(_, value) => {
-                                                let tValues = [...newValues];
+                                                const tValues = [...newValues];
                                                 tValues[idx].tenDichTruyen = value;
                                                 setNewValues(tValues);
                                             }}
@@ -267,20 +254,16 @@ const FPhieuTDTruyenDich = () => {
                                     </Grid>
                                     <Grid item xs={2}>
                                         <Typography fontWeight="bold">Lô/số sản xuất</Typography>
-                                        <Autocomplete 
+                                        <TextField
+                                            multiline
+                                            fullWidth
+                                            margin="dense"
                                             value={newValue.loSanXuat}
-                                            onChange={(_, value) => {
+                                            onChange={(event) => {
                                                 const tValues = [...newValues];
-                                                tValues[idx] = { ...tValues[idx], loSanXuat: value };
+                                                tValues[idx].loSanXuat = event.target.value;
                                                 setNewValues(tValues);
                                             }}
-                                            renderInput={(params) => <TextField {...params} margin="dense" placeholder="Lô/số sản xuất" inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }} />}
-                                            options={!!newValue.tenDichTruyen 
-                                                ? drugList.find(drug => drug.ten_hoat_chat + ' ' + drug.nong_do_ham_luong === newValue.tenDichTruyen).lo_san_xuat
-                                                : []
-                                            }
-                                            disableClearable
-                                            disabled={!newValue.tenDichTruyen}
                                         />
                                     </Grid>
                                     <Grid item xs={2}>
@@ -303,123 +286,64 @@ const FPhieuTDTruyenDich = () => {
                                 <Grid container spacing={2} sx={{ pt: 0.5 }}>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Thời gian bắt đầu</Typography>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={6}>
-                                                <Select 
-                                                    fullWidth
-                                                    sx={{ mt: 1 }}
-                                                    value={newValue.thoiGianBatDau.ngay}
-                                                    onChange={(event) => {
-                                                        const tValues = [...newValues];
-                                                        tValues[idx] = { ...tValues[idx], thoiGianBatDau: { ...tValues[idx].thoiGianBatDau, ngay: event.target.value } };
-                                                        setNewValues(tValues);
-                                                    }}
-                                                    displayEmpty
-                                                    renderValue={(selected) => !selected ? "-- Chọn --" : format(new Date(selected), "dd/MM/yyyy")}
-                                                >
-                                                    <MenuItem value={format(new Date(newNgayThang).setDate(newNgayThang.getDate() - 1), "yyyy-MM-dd")}>
-                                                        {format(new Date(newNgayThang).setDate(newNgayThang.getDate() - 1), "dd/MM/yyyy")}
-                                                    </MenuItem>
-                                                    <MenuItem value={format(new Date(newNgayThang), "yyyy-MM-dd")}>{format(new Date(newNgayThang), "dd/MM/yyyy")}</MenuItem>
-                                                </Select>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <TimePicker 
-                                                    value={newValue.thoiGianBatDau.gio}
-                                                    onChange={(newTime) => {
-                                                        const tValues = [...newValues];
-                                                        tValues[idx] = { ...tValues[idx], thoiGianBatDau: { ...tValues[idx].thoiGianBatDau, gio: newTime } };
-                                                        setNewValues(tValues);
-                                                    }}
-                                                    OpenPickerButtonProps={{ size: "small", sx: { p: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
-                                                    renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
-                                                />
-                                            </Grid>
-                                        </Grid>
+                                        <DateTimePicker 
+                                            value={newValue.thoiGianBatDau}
+                                            onChange={(newTime) => {
+                                                const tValues = [...newValues];
+                                                tValues[idx].thoiGianBatDau = newTime;
+                                                setNewValues(tValues);
+                                            }}
+                                            OpenPickerButtonProps={{ size: "small", sx: { p: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
+                                            renderInput={(params) => <TextField {...params} fullWidth margin="dense" />}
+                                        />
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Thời gian kết thúc</Typography>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={6}>
-                                                <Select 
-                                                    fullWidth
-                                                    sx={{ mt: 1 }}
-                                                    value={newValue.thoiGianKetThuc.ngay}
-                                                    onChange={(event) => {
-                                                        const tValues = [...newValues];
-                                                        tValues[idx] = { ...tValues[idx], thoiGianKetThuc: { ...tValues[idx].thoiGianKetThuc, ngay: event.target.value } };
-                                                        setNewValues(tValues);
-                                                    }}
-                                                    displayEmpty
-                                                    renderValue={(selected) => !selected ? "-- Chọn --" : format(new Date(selected), "dd/MM/yyyy")}
-                                                >
-                                                    <MenuItem value={format(new Date(newNgayThang), "yyyy-MM-dd")}>{format(new Date(newNgayThang), "dd/MM/yyyy")}</MenuItem>
-                                                    <MenuItem value={format(new Date(newNgayThang).setDate(newNgayThang.getDate() + 1), "yyyy-MM-dd")}>
-                                                        {format(new Date(newNgayThang).setDate(newNgayThang.getDate() + 1), "dd/MM/yyyy")}
-                                                    </MenuItem>
-                                                </Select>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <TimePicker 
-                                                    value={newValue.thoiGianKetThuc.gio}
-                                                    onChange={(newTime) => {
-                                                        const tValues = [...newValues];
-                                                        tValues[idx] = { ...tValues[idx], thoiGianKetThuc: { ...tValues[idx].thoiGianKetThuc, gio: newTime } };
-                                                        setNewValues(tValues);
-                                                    }}
-                                                    OpenPickerButtonProps={{ size: "small", sx: { p: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
-                                                    renderInput={(params) => 
-                                                        <TextField 
-                                                            {...params} 
-                                                            fullWidth 
-                                                            margin="dense"
-                                                            error={(!!newValue.thoiGianBatDau.ngay && !!newValue.thoiGianBatDau.gio)
-                                                                && (!!newValue.thoiGianKetThuc.ngay && !!newValue.thoiGianKetThuc.gio) 
-                                                                && new Date(newValue.thoiGianBatDau.ngay.concat(` ${newValue.thoiGianBatDau.gio.format("HH:mm")}`)) 
-                                                                    >= new Date(newValue.thoiGianKetThuc.ngay.concat(` ${newValue.thoiGianKetThuc.gio.format("HH:mm")}`)) 
-                                                            }
-                                                        />
-                                                    }
+                                        <DateTimePicker 
+                                            value={newValue.thoiGianKetThuc}
+                                            onChange={(newTime) => {
+                                                const tValues = [...newValues];
+                                                tValues[idx].thoiGianKetThuc = newTime;
+                                                setNewValues(tValues);
+                                            }}
+                                            OpenPickerButtonProps={{ size: "small", sx: { p: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
+                                            renderInput={(params) => 
+                                                <TextField 
+                                                    {...params} 
+                                                    fullWidth 
+                                                    margin="dense"
+                                                    error={!!newValue.thoiGianKetThuc && !!newValue.thoiGianBatDau && newValue.thoiGianBatDau >= newValue.thoiGianKetThuc}
                                                 />
-                                            </Grid>
-                                        </Grid>
+                                            }
+                                        />
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={3}>
                                         <Typography fontWeight="bold">Bác sĩ chỉ định</Typography>
+                                        <TextField
+                                            multiline
+                                            fullWidth
+                                            margin="dense"
+                                            value={newValue.BSChiDinh}
+                                            onChange={(event) => {
+                                                const tValues = [...newValues];
+                                                tValues[idx].BSChiDinh = event.target.value;
+                                                setNewValues(tValues);
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <Typography fontWeight="bold">Điều dưỡng thực hiện</Typography>
                                         <Box className="df aic">
-                                            <Grid container spacing={2}>
-                                                <Grid item xs={newValue.BSChiDinh === "Khác" ? 6 : 12}>
-                                                    <Autocomplete 
-                                                        fullWidth
-                                                        value={newValue.BSChiDinh}
-                                                        onChange={(_, value) => {
-                                                            const tValues = [...newValues];
-                                                            tValues[idx] = { ...tValues[idx], BSChiDinh: value };
-                                                            setNewValues(tValues);
-                                                        }}
-                                                        renderInput={(params) => <TextField {...params} margin="dense" placeholder="Bác sĩ chỉ định" inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }} />}
-                                                        options={[...doctorList.map(doctor => doctor.id + " - " + doctor.ho_ten), "Khác"]}
-                                                        disableClearable
-                                                    />
-                                                </Grid>
-
-                                                {newValue.BSChiDinh === "Khác" ?
-                                                    <Grid item xs={6}>
-                                                        <TextField 
-                                                            fullWidth
-                                                            margin="dense"
-                                                            value={BSChiDinhKhac}
-                                                            onChange={(event) => setBSChiDinhKhac(event.target.value)}
-                                                            placeholder="Bác sĩ khác"
-                                                        />
-                                                    </Grid>
-                                                : null}
-                                            </Grid>
-
-                                            {newValues.length > 1 && <Typography sx={{ cursor: "pointer", ml: 2 }} color="primary" onClick={() => handleDelete(idx)}>
+                                            <TextField
+                                                fullWidth
+                                                margin="dense"
+                                                value={name}
+                                                disabled
+                                            />
+                                            <Typography sx={{ cursor: "pointer", ml: 2 }} color="primary" onClick={() => handleDelete(idx)}>
                                                 Xóa
-                                            </Typography>}
-                                        </Box>
+                                            </Typography>
+                                        </Box> 
                                     </Grid>
                                 </Grid>
 

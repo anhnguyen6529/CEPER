@@ -15,10 +15,10 @@ import HSBAContext from "../../contexts/HSBAContext";
 import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
-    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', unit: '', width: '16%' },
+    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', unit: '', width: '18%' },
     { id: 'mach', numeric: true, label: 'Mạch', unit: '(lần/phút)', width: '12%' },
-    { id: 'nhietDo', numeric: true, label: 'Nhiệt độ', unit: '(°C)', width: '10%' },
-    { id: 'huyetAp', numeric: true, label: 'Huyết áp', unit: '(mmHg)', width: '16%' },
+    { id: 'nhietDo', numeric: true, label: 'Nhiệt độ', unit: '(°C)', width: '12%' },
+    { id: 'huyetAp', numeric: true, label: 'Huyết áp', unit: '(mmHg)', width: '12%' },
     { id: 'nhipTho', numeric: true, label: 'Nhịp thở', unit: '(lần/phút)', width: '12%' },
     { id: 'canNang', numeric: true, label: 'Cân nặng', unit: '(kg)', width: '14%' },
     { id: 'dieuDuongGhi', numeric: false, label: 'Điều dưỡng ghi', unit: '', width: '20%' }
@@ -40,7 +40,7 @@ const FPhieuTDChucNangSong = () => {
     const [newNgayGio, setNewNgayGio] = useState(null);
     const [newMach, setNewMach] = useState(0);
     const [newNhietDo, setNewNhietDo] = useState(0);
-    const [newHuyetAp, setNewHuyetAp] = useState([0, 0]);
+    const [newHuyetAp, setNewHuyetAp] = useState(0);
     const [newNhipTho, setNewNhipTho] = useState(0);
     const [newCanNang, setNewCanNang] = useState(0);
     const [errors, setErrors] = useState([]);
@@ -56,7 +56,7 @@ const FPhieuTDChucNangSong = () => {
 
     const clearData = () => {
         setNewNgayGio(null);
-        setNewMach(0); setNewNhietDo(0); setNewHuyetAp([0, 0]); setNewNhipTho(0); setNewCanNang(0);
+        setNewMach(0); setNewNhietDo(0); setNewHuyetAp(0); setNewNhipTho(0); setNewCanNang(0);
         setAddNew(false);
         setErrors([]);
     }
@@ -66,15 +66,13 @@ const FPhieuTDChucNangSong = () => {
     };
 
     const handleSave = () => {
-        if (!!newNgayGio && newMach > 0 && newNhietDo > 0 && newHuyetAp[0] > 0 && newHuyetAp[1] > 0 && newNhipTho > 0 && newCanNang > 0) {
+        if (!!newNgayGio && newMach > 0 && newNhietDo > 0 && newHuyetAp > 0 && newNhipTho > 0 && newCanNang > 0) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuTDChucNangSong',
                 value: {},
                 newData: { 
                     ngayGio: newNgayGio.toISOString(), 
-                    mach: newMach, nhietDo: newNhietDo, 
-                    huyetAp: String(newHuyetAp[0]).concat('/').concat(String(newHuyetAp[1])), 
-                    nhipTho: newNhipTho, canNang: newCanNang,
+                    mach: newMach, nhietDo: newNhietDo, huyetAp: newHuyetAp, nhipTho: newNhipTho, canNang: newCanNang,
                     dieuDuongGhi: name 
                 }
             }));
@@ -84,11 +82,11 @@ const FPhieuTDChucNangSong = () => {
             clearData();
         } else {
             let errs = [];
-            if (newMach === 0) errs.push('mạch');
-            if (newNhietDo === 0) errs.push('nhiệt độ');
-            if (newHuyetAp[0] === 0 || newHuyetAp[1] === 0) errs.push('huyết áp');
-            if (newNhipTho === 0) errs.push('nhịp thở');
-            if (newCanNang === 0) errs.push('cân nặng');
+            if (newMach <= 0) errs.push('mạch');
+            if (newNhietDo <= 0) errs.push('nhiệt độ');
+            if (newHuyetAp <= 0) errs.push('huyết áp');
+            if (newNhipTho <= 0) errs.push('nhịp thở');
+            if (newCanNang <= 0) errs.push('cân nặng');
             setErrors(errs);
         }
     };
@@ -163,24 +161,13 @@ const FPhieuTDChucNangSong = () => {
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
-                                        <Box className="df aic">
-                                            <TextField
-                                                type="number"
-                                                InputProps={{ inputProps: { min: 0 } }}
-                                                fullWidth
-                                                value={newHuyetAp[0]}
-                                                onChange={(event) => setNewHuyetAp([event.target.value, newHuyetAp[1]])}
-                                            />
-                                            <Typography sx={{ mx: 1 }}>/</Typography>
-                                            <TextField
-                                                type="number"
-                                                InputProps={{ inputProps: { min: 0 } }}
-                                                fullWidth
-                                                value={newHuyetAp[1]}
-                                                onChange={(event) => setNewHuyetAp([newHuyetAp[0], event.target.value])}
-                                            />
-                                        </Box>
-                                        
+                                        <TextField
+                                            type="number"
+                                            InputProps={{ inputProps: { min: 0 } }}
+                                            fullWidth
+                                            value={newHuyetAp}
+                                            onChange={(event) => setNewHuyetAp(event.target.value)}
+                                        />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
@@ -216,7 +203,7 @@ const FPhieuTDChucNangSong = () => {
                 />
             </Paper>
 
-            { (role === "BS" && !ngayRaVien) && 
+            { (role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={9}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}

@@ -34,9 +34,9 @@ const BoxDacDiemLienQuanBenh = ({ dacDiemLienQuan }) => {
                 <TableBody>
                     {Array.from(Array(data.length * 0.5)).map((_, idx) => (
                         <TableRow key={`rowDacDiemLienQuanBenh${idx}`}>
-                            <TableCell className="tableBodyBorderRight" align="center">{data[idx].tt}</TableCell>
+                            <TableCell className="tableBodyBorderRight">{data[idx].tt}</TableCell>
                             <TableCell>{data[idx].benh}</TableCell>
-                            <TableCell className="tableBodyBorderRight" align="center">
+                            <TableCell className="tableBodyBorderRight">
                                 <Checkbox 
                                     checked={data[idx].kyHieu} 
                                     disabled
@@ -50,7 +50,7 @@ const BoxDacDiemLienQuanBenh = ({ dacDiemLienQuan }) => {
                                 : (data[idx].thoiGian > 0 && <Typography>{data[idx].thoiGian} tháng</Typography>)}
                             </TableCell>
 
-                            <TableCell className="tableBodyBorderRight" align="center">{data[idx + 3].tt}</TableCell>
+                            <TableCell className="tableBodyBorderRight">{data[idx + 3].tt}</TableCell>
                             <TableCell>
                                 {data[idx + 3].tt === "06" ? (
                                     data[idx + 3].kyHieu ? (
@@ -60,7 +60,7 @@ const BoxDacDiemLienQuanBenh = ({ dacDiemLienQuan }) => {
                                     ) : "Khác"
                                 ) : data[idx + 3].benh}
                             </TableCell>
-                            <TableCell className="tableBodyBorderRight" align="center">
+                            <TableCell className="tableBodyBorderRight">
                                 <Checkbox 
                                     checked={data[idx + 3].kyHieu} 
                                     disabled
