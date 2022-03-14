@@ -3,8 +3,6 @@ import { styled } from "@mui/styles";
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
     ({ theme, open }) => ({
       flexGrow: 1,
-      overflow: 'auto',
-      height: '100vh',
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen

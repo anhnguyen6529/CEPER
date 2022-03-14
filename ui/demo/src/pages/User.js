@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Box, CssBaseline, Toolbar, Typography, Divider, Breadcrumbs, Link, Container } from "@mui/material";
+import { Box, CssBaseline, Typography, Divider, Breadcrumbs, Link, Container } from "@mui/material";
 import { NavigateNext } from "@mui/icons-material";
 import '../styles/index.css';
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { Drawer, ToolBar, Main } from "../components/common";
+import { Drawer, ToolBar, Main, DrawerHeader, ScrollToTop } from "../components/common";
 import { UserProvider } from "../contexts/UserContext";
 import { DanhSachHSBA, HSBA } from "../components";
 import mdSections from "../constants/md_sections.json";
@@ -81,7 +81,9 @@ const User = () => {
                 />
 
                 <Main open={open}>
-                    <Toolbar />
+                    <ScrollToTop />
+
+                    <DrawerHeader />
                     <Divider color="#007C92" sx={{ mt: 3.5 }} />
 
                     <Container maxWidth={false}>

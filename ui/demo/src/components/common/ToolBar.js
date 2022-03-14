@@ -21,7 +21,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
     }
 
     return (
-        <AppBar position="absolute" open={open}>
+        <AppBar position="fixed" open={open}>
             <Toolbar sx={{ pr: 24, background: '#09425A'}}>
                 <IconButton 
                     edge="start"

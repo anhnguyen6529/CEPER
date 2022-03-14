@@ -10,6 +10,8 @@ export { default as CustomAdapterMoment } from './CustomAdapterMoment';
 
 export { default as Drawer } from './Drawer';
 
+export { default as DrawerHeader } from './DrawerHeader';
+
 export { default as DropDownMenu } from './DropDownMenu';
 
 export { default as Footer } from './Footer';
@@ -19,6 +21,8 @@ export { default as LeftSideBar } from './LeftSideBar';
 export { default as Main } from './Main';
 
 export { default as NavBar } from './NavBar';
+
+export { default as ScrollToTop } from './ScrollToTop';
 
 export { default as SelectThuoc } from './SelectThuoc';
 

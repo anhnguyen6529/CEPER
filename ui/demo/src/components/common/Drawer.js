@@ -6,7 +6,6 @@ import {
 import logo from "../../images/logo.png";
 import { faFileMedicalAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { styled } from "@mui/styles";
 import { ChevronLeft, InfoOutlined } from "@mui/icons-material";
 import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
@@ -14,14 +13,7 @@ import UserContext from "../../contexts/UserContext";
 import '../../styles/index.css';
 import { useParams } from "react-router";
 import { ListSwitchColumn } from "../lists";
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
-}));
+import DrawerHeader from "./DrawerHeader";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
