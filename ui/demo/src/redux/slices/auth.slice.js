@@ -1,11 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
+import authThunk from "../thunks/auth.thunk";
 
 const initialState = {
     user: {
+        getting: false,
+        error: '',
         username: '',
         avatar: '',
         role: 'BS',
-        name: 'Trần Quốc A'     
+        id: '',
+        name: 'Trần Quốc A',
+        dateOfBirth: '',
+        gender: '',
+        address: '',
+        phone: '',
+        email: '',
+        speciality: '',
+        position: 'Bác sĩ điều trị', // Trưởng khoa, Phó khoa, Bác sĩ điều trị, Điều dưỡng
+        medicalLicenseNo: '',
+        signature: ''
     },
     login: {
         username: '',
@@ -56,6 +69,38 @@ const authSlice = createSlice({
                 }
             }
         },
+    },
+    extraReducers: (builder) => {
+        builder
+        .addCase(authThunk.getUserInfo.fulfilled, (state, action) => {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    ...action.payload,
+                    getting: false,
+                }
+            }
+        })
+        .addCase(authThunk.getUserInfo.pending, (state) => {
+            return {
+                ...state, 
+                user: {
+                    ...state.user,
+                    getting: true
+                }
+            }
+        })
+        .addCase(authThunk.getUserInfo, (state, action) => {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    getting: false,
+                    error: action.payload
+                }
+            }
+        })
     }
 })
 

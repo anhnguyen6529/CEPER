@@ -10,6 +10,17 @@ const authThunk = {
                 return error.message;
             }
         }
+    ),
+    getUserInfo: createAsyncThunk(
+        'auth/getUserInfo',
+        async () => {
+            try {
+                const userInfo = {};
+                return userInfo;
+            } catch (error) {
+                return error.message;
+            }
+        }
     )
 }
 
