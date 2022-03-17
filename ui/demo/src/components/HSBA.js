@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { 
-    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, ListItem, List, ListItemIcon, ListItemText
+    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Snackbar, Alert, AlertTitle, Backdrop
 } from "@mui/material";
 import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
@@ -16,7 +16,6 @@ import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
-import { Circle } from "@mui/icons-material";
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -27,6 +26,7 @@ const HSBA = () => {
     }, []);
 
     const { today, appearSec, openSec, changeSec, refSec } = useContext(UserContext); 
+    const spellingError = useSelector((state) => state.spellingError);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating } = benhNhan;
     const [saveSec, setSaveSec] = useState(mdSections["order"].map((sec) => {
@@ -37,7 +37,24 @@ const HSBA = () => {
         }
         return null;
     }));
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [openBackdrop, setOpenBackdrop] = useState(false);
+
+    useEffect(() => {
+        if (updating) {
+            if (Object.keys(changeSec).every(key => !changeSec[key] || (!!changeSec[key] && !spellingError[key].loading))) {
+                setTimeout(() => {
+                    setOpenBackdrop(false);
+                    setOpenSnackbar(true);
+                    const firstKey = Object.keys(changeSec).find(key => !!changeSec[key]);
+                    refSec[firstKey].current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                }, 2000);
+            } else {
+                setOpenBackdrop(true);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [updating, spellingError]);
 
     if (loading) {
         return (
@@ -86,14 +103,7 @@ const HSBA = () => {
     }
 
     const handleUpdate = () => {
-        setOpenDialog(true);
         dispatch(HSBAActions.update());
-    }
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        const firstKey = Object.keys(changeSec).find(key => !!changeSec[key]);
-        refSec[firstKey].current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     }
 
     return (
@@ -264,26 +274,16 @@ const HSBA = () => {
                             : null}
                         </Box>
 
-                        <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth>
-                            <DialogTitle>Thông tin bệnh án đã được xử lý!</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText sx={{ color: "black" }}>
-                                    Vui lòng di chuyển đến các mục dưới đây <i>(sử dụng "Danh sách mục - Xác nhận" bên trái)</i> và xác nhận kết quả xử lý:
-                                </DialogContentText>
-                                <List disablePadding>
-                                    {Object.keys(changeSec).map((key, id) => (
-                                        !!changeSec[key] &&
-                                            <ListItem key={id} sx={{ pl: 0 }}>
-                                                <ListItemIcon sx={{ minWidth: 24 }}><Circle sx={{ width: 9, color: "black" }} /></ListItemIcon>
-                                                <ListItemText>{key}</ListItemText>
-                                            </ListItem>
-                                    ))}
-                                </List>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleCloseDialog}>Đóng</Button>
-                            </DialogActions>
-                        </Dialog>
+                        <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={() => setOpenSnackbar(false)}>
+                            <Alert elevation={6} variant="filled" severity="success">
+                                <AlertTitle>Thông tin bệnh án đã được xử lý!</AlertTitle>
+                                Vui lòng di chuyển đến các mục trong "<i>Danh sách mục - Xác nhận</i>" và xác nhận kết quả xử lý.
+                            </Alert>
+                        </Snackbar>
+
+                        <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                            <CircularProgress color="inherit" />
+                        </Backdrop>
                     </>
                 : null} 
             </Container>

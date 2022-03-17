@@ -13,6 +13,9 @@ const theme = createTheme({
         },
         text: {
           disabled: "#000"
+        },
+        success: {
+          main: "#388E3C"
         }
     },
     typography: {
