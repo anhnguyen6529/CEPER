@@ -111,8 +111,15 @@ const theme = createTheme({
           root: {
             fontWeight: 'bold',
             fontSize: 18,
-            paddingTop: 8,
-            paddingBottom: 8
+          }
+        }
+      },
+      MuiDialogActions: {
+        styleOverrides: {
+          root: {
+            paddingLeft: 24,
+            paddingRight: 24,
+            paddingBottom: 16
           }
         }
       },

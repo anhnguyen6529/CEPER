@@ -6,7 +6,7 @@ import {
 import logo from "../../images/logo.png";
 import { faFileMedicalAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ChevronLeft, InfoOutlined } from "@mui/icons-material";
+import { Check, ChevronLeft, EditLocationOutlined, InfoOutlined } from "@mui/icons-material";
 import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
 import UserContext from "../../contexts/UserContext";
@@ -14,10 +14,13 @@ import '../../styles/index.css';
 import { useParams } from "react-router";
 import { ListSwitchColumn } from "../lists";
 import DrawerHeader from "./DrawerHeader";
+import { useSelector } from "react-redux";
+import Button from "./Button";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
-    const { appearSec, setAppearSec, openSec, setOpenSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { appearSec, setAppearSec, openSec, setOpenSec, changeSec, refSec, confirmSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { updating } = useSelector(state => state.HSBA);
 
     return (
         <MuiDrawer 
@@ -57,12 +60,41 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             
             <Divider sx={{ mt: 2 }} />
             {(content.role === "BN" || typeof(pid) !== 'undefined') &&
-            <>            
-                {/* <Collapse in={openMD} timeout="auto" unmountOnExit sx={{ overflowY: 'auto' }}> */}
-                    <List 
-                        sx={{ overflowY: 'auto' }} 
-                        subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1 }} component="div">Danh sách mục</ListSubheader>}
-                    >
+                <Box sx={{ overflowY: 'auto' }}>     
+                    {updating ?
+                        <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
+                            {Object.keys(mdSections["clinicalText"]).map((key, id) =>
+                                !!changeSec[key] ?
+                                    <ListItem 
+                                        key={id}
+                                        sx={{ py: 0 }}
+                                        secondaryAction={
+                                            !confirmSec[key] ?
+                                                <Tooltip placement="right" title="Di chuyển đến">
+                                                    <IconButton size="small" onClick={() => refSec[key].current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })}>
+                                                        <EditLocationOutlined />
+                                                    </IconButton>
+                                                </Tooltip> 
+                                            : <Check color="success" />
+                                        }
+                                    >
+                                        <ListItemText 
+                                            primary={key}
+                                            secondary={mdSections["clinicalText"][key]}
+                                        />
+                                    </ListItem>
+                                : null
+                            )}
+                            <ListItem>
+                                <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}} disabled={Object.keys(changeSec).some(key => !!changeSec[key] && !confirmSec[key])}>
+                                    Xác nhận cập nhật
+                                </Button>
+                            </ListItem>
+                        </List>  
+                        : null}
+
+                    <Divider />
+                    <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Hồ sơ bệnh án</ListSubheader>}>
                         {mdSections["order"].map((section, id) => (
                             <div key={id}>
                                 <ListItem 
@@ -106,8 +138,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                             </div>
                         ))}
                     </List>
-                {/* </Collapse> */}
-            </> 
+                </Box> 
             }
 
             {typeof(pid) === 'undefined' && content.role !== 'BN' &&

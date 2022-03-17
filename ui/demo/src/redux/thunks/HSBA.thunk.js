@@ -197,7 +197,7 @@ const datas = [
         khamBenh: KHAMBENH,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Rối loạn tiêu hoá',
-        phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
+        phuongPhapDieuTri: 'kháng sinh, men vi snh, chốngg ói, hạ sốt',
         chanDoanKhiRaVien: {
             chanDoan: '',
             ngayRaVien: '',

@@ -3,8 +3,9 @@ import HSBAThunk from "../thunks/HSBA.thunk";
 
 const initialState = {
     loading: true,
-    update: false,
-    save: false,
+    updating: false,
+    confirmUpdate: false,
+    setting: false,
     error: '',
     pid: '',
     khoa: '',
@@ -166,10 +167,10 @@ const HSBASlice = createSlice({
         updateDanhSachYLenh: (state, action) => {
             state.danhSachYLenh[action.payload.index] = { ...state.danhSachYLenh[action.payload.index], ...action.payload.value }
         },
-        save: (state) => {
+        update: (state) => {
             return {
                 ...state,
-                save: true
+                updating: true
             }
         }
     },

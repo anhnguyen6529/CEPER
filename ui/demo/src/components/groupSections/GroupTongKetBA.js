@@ -11,14 +11,16 @@ import { BoxChanDoanKhiRaVien } from "../boxes";
 
 const GroupTongKetBA = () => {
     const { tongKetBenhAn, phuongPhapDieuTri, tinhTrangRaVien, huongDieuTri } = useSelector(state => state.HSBA);
-    const { role } = useSelector(state => state.auth.user);
+    const { role, position } = useSelector(state => state.auth.user);
     const { saveSec } = useContext(HSBAContext);
     const tongKetBAId = mdSections["order"].indexOf("Tổng kết bệnh án");
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Tổng kết bệnh án"][sectionId]) {
             case "Phương pháp điều trị": 
-                return !tongKetBenhAn.thoiGian && role !== "BN" ? <FPhuongPhapDieuTri /> : <Typography>{!!phuongPhapDieuTri ? phuongPhapDieuTri : <i>(trống)</i>}</Typography>
+                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" 
+                    ? <FPhuongPhapDieuTri />
+                    : <Typography>{!!phuongPhapDieuTri ? phuongPhapDieuTri : <i>(trống)</i>}</Typography>
             case "Chẩn đoán khi ra viện":
                 return !tongKetBenhAn.thoiGian && role !== "BN" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
             case "Tình trạng người bệnh ra viện":

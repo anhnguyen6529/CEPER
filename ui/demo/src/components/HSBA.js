@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { 
-    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box
+    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, ListItem, List, ListItemIcon, ListItemText
 } from "@mui/material";
 import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
@@ -14,8 +14,9 @@ import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FP
 import { HSBAProvider } from "../contexts/HSBAContext";
 import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
-import DialogXuLyChinhTa from "./dialogs/DialogXuLyChinhTa";
 import { BoxHanhChinh } from "./boxes";
+import { HSBAActions } from "../redux/slices/HSBA.slice";
+import { Circle } from "@mui/icons-material";
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -25,9 +26,9 @@ const HSBA = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { today, appearSec, openSec } = useContext(UserContext); 
+    const { today, appearSec, openSec, changeSec, refSec } = useContext(UserContext); 
     const benhNhan = useSelector(state => state.HSBA);
-    const { loading } = benhNhan;
+    const { loading, updating } = benhNhan;
     const [saveSec, setSaveSec] = useState(mdSections["order"].map((sec) => {
         if (sec === "Bệnh án") {
             return new Array(mdSections["Bệnh án"].length).fill(null);
@@ -37,16 +38,6 @@ const HSBA = () => {
         return null;
     }));
     const [openDialog, setOpenDialog] = useState(false);
-    const [processing, setProcessing] = useState(false);
-    useEffect(() => {
-        if (processing) {
-            setTimeout(() => {
-                setProcessing(false);
-                setOpenDialog(true);
-            }, 1000);
-        }
-        // eslint-disable-next-line
-    }, [processing]);
 
     if (loading) {
         return (
@@ -92,6 +83,17 @@ const HSBA = () => {
             default: 
                 return <></>
         }
+    }
+
+    const handleUpdate = () => {
+        setOpenDialog(true);
+        dispatch(HSBAActions.update());
+    }
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        const firstKey = Object.keys(changeSec).find(key => !!changeSec[key]);
+        refSec[firstKey].current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     }
 
     return (
@@ -252,20 +254,38 @@ const HSBA = () => {
                     </Paper>
                 ))} 
 
-                {(saveSec.some(element => (Array.isArray(element) && element.some(ele => !!ele)) || (!Array.isArray(element) && !!element)) 
-                && openSec.some(element => !!element)) &&
-                    <>
-                        <Box className="df aic jcfe" sx={{ mt: 3, pr: 3 }}>
-                            {processing && <CircularProgress color="secondary" size={36} />}
-
-                            <Button sx={{ width: 150, ml: 3 }} variant="primary-dark" onClick={() => setProcessing(true)} disabled={processing}>
-                                CẬP NHẬT
-                            </Button>
+                {Object.values(changeSec).some(value => !!value) ?
+                    <>  
+                        <Box className="df aic jcfe" sx={{ mt: 3 }}>
+                            {!updating ? 
+                                <Button sx={{ width: 150 }} variant="primary-dark" onClick={handleUpdate}>
+                                    Cập nhật
+                                </Button>
+                            : null}
                         </Box>
 
-                        <DialogXuLyChinhTa open={openDialog} setOpen={setOpenDialog} />
+                        <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth>
+                            <DialogTitle>Thông tin bệnh án đã được xử lý!</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText sx={{ color: "black" }}>
+                                    Vui lòng di chuyển đến các mục dưới đây <i>(sử dụng "Danh sách mục - Xác nhận" bên trái)</i> và xác nhận kết quả xử lý:
+                                </DialogContentText>
+                                <List disablePadding>
+                                    {Object.keys(changeSec).map((key, id) => (
+                                        !!changeSec[key] &&
+                                            <ListItem key={id} sx={{ pl: 0 }}>
+                                                <ListItemIcon sx={{ minWidth: 24 }}><Circle sx={{ width: 9, color: "black" }} /></ListItemIcon>
+                                                <ListItemText>{key}</ListItemText>
+                                            </ListItem>
+                                    ))}
+                                </List>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseDialog}>Đóng</Button>
+                            </DialogActions>
+                        </Dialog>
                     </>
-                }
+                : null} 
             </Container>
         </HSBAProvider>
     )

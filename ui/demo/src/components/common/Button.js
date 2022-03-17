@@ -1,13 +1,6 @@
 import React from "react";
 import { Button as MuiButton } from "@mui/material";
 
-// interface ButtonIProps {
-//     variant: "primary" | "secondary" | "outlined",
-//     text: string,
-//     icon?: any,
-//     onClick?: any
-// }
-
 const ROOT = {
     minWidth: 120,
     height: 36,
@@ -71,7 +64,7 @@ const Button = ({ children, variant, sx, ...other }) => {
                     ...ROOT,
                     background: 'white', 
                     color: '#009ABB',
-                    border: '2px solid #009ABB',
+                    border: '1px solid #009ABB',
                     '&:hover': {
                         background: '#F0F4F5', 
                     },

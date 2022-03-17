@@ -1,5 +1,5 @@
 import React from "react";
-import { List, ListSubheader, ListItem, ListItemIcon, ListItemText, Switch } from "@mui/material";
+import { List, ListSubheader, ListItem, ListItemText, Switch } from "@mui/material";
 import { Button } from "../common";
 
 const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll }) => {
@@ -12,22 +12,16 @@ const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll
                     sx={{ py: 0 }}
                     onClick={() => onClickItem(id)}
                 >
-                    <ListItemIcon>
-                        <Switch size="small" checked={columnsChecked[id]} />
-                    </ListItemIcon>
-                    <ListItemText>
-                        {columns[id]}
-                    </ListItemText>
+                    <ListItemText>{columns[id]}</ListItemText>
+                    <Switch edge="end" size="small" checked={columnsChecked[id]} />
                 </ListItem>
             ))}
 
-            {columnsChecked.some((element) => element === false) &&
-                <ListItem sx={{ mt: 1 }}>
-                    <Button sx={{ width: '100%' }} onClick={onClickShowAll} >
-                        Hiện tất cả cột
-                    </Button>   
-                </ListItem>
-            }
+            <ListItem sx={{ mt: 1 }}>
+                <Button sx={{ width: '100%' }} onClick={onClickShowAll} disabled={columnsChecked.every((element) => element === true)}>
+                    Hiện tất cả cột
+                </Button>   
+            </ListItem>
             
         </List>
     )

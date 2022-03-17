@@ -1,31 +1,44 @@
 import { createSlice } from "@reduxjs/toolkit";
+import mdSections from "../../constants/md_sections.json";
+import SpellingErrorThunk from "../thunks/spellingError.thunk";
 
-const initialState = {
-    loading: true,
+const EMPTY_SPELLING = {
+    loading: true, 
     error: '',
-    checked: {
-        khamBenh: {
-            khamToanThan: {
-                text: "tỉnh, sốt vừa, da nei 6m hồng. Hog5 sạch. Chi ấm, mạch rỏ. Phổi klho 6ng ran.",
-                detector: [[18, 20], [22, 23], [31, 34], [55, 56], [64, 67], [69, 71]],
-                detection: "tỉnh, sốt vừa, da <nei> <6m> hồng. <Hog5> sạch. Chi ấm, mạch <rỏ>. Phổi <klho> <6ng> ran.",
-                correction: [[], [], ["Họng", "Hong"], ["rõ", "rỏ"], [], []],
-                replaced: ["", "", "", "", "", ""],
-                ignored: [false, false, false, false, false, false]
-            }
-        }
-    }
+    detection: '',
+    correction: ''
 }
+
+const initialState = Object.keys(mdSections["clinicalText"]).reduce((prev, key) => ({ ...prev, [key]: EMPTY_SPELLING }), {});
 
 const SpellingErrorSlice = createSlice({
     name: 'SpellingErrorSlice',
     initialState,
-    reducers: {
-        updateKhamBenh: (state, action) => {
-            state.checked.khamBenh[action.payload.subSection] = { ...state.checked.khamBenh[action.payload.subSection], ...action.payload.data };
-        }
-    },
-    extraReducers: {}
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+        .addCase(SpellingErrorThunk.getProcessResult.fulfilled, (state, action) => {
+            return {
+                ...state,
+                [action.payload.section]: {
+                    ...state[action.payload.section],
+                    ...action.payload.result,
+                    loading: false,
+                    error: ''
+                }
+            }
+        })
+        .addCase(SpellingErrorThunk.getProcessResult.rejected, (state, action) => {
+            return {
+                ...state,
+                [action.payload.section]: {
+                    ...state[action.payload.section],
+                    loading: false,
+                    error: action.payload.error
+                }
+            }
+        })
+    }
 })
 
 export const SpellingErrorReducer = SpellingErrorSlice.reducer;

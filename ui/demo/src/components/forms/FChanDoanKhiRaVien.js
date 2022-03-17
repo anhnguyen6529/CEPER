@@ -9,7 +9,7 @@ import HSBAContext from "../../contexts/HSBAContext";
 import mdSections from "../../constants/md_sections.json";
 
 const FChanDoanKhiRaVien = () => {
-    const { chanDoanKhiRaVien } = useSelector((state) => state.HSBA);
+    const { chanDoanKhiRaVien, updating } = useSelector((state) => state.HSBA);
     const { role } = useSelector((state) => state.auth.user);
     const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
@@ -77,7 +77,7 @@ const FChanDoanKhiRaVien = () => {
                         ampm={false}
                         leftArrowButtonText=""
                         rightArrowButtonText=""
-                        disabled={role !== "BS"}
+                        disabled={updating}
                     />
                 </Grid>
             </Grid>

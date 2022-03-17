@@ -40,5 +40,29 @@
         "BN": ["Hành chính", "Bệnh án", "Tổng kết bệnh án"],
         "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
         "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"]
+    },
+    "clinicalText": {
+        "Lý do vào viện": "Bệnh án",
+        "Chẩn đoán nơi giới thiệu": "Bệnh án / Lý do vào viện",
+        "Quá trình bệnh lý": "Bệnh án / Hỏi bệnh",
+        "Bản thân": "Bệnh án / Hỏi bệnh / Tiền sử",
+        "Gia đình": "Bệnh án / Hỏi bệnh / Tiền sử",
+        "Khám toàn thân": "Bệnh án / Khám bệnh",
+        "Tuần hoàn": "Bệnh án / Khám bệnh",
+        "Hô hấp": "Bệnh án / Khám bệnh",
+        "Tiêu hóa": "Bệnh án / Khám bệnh",
+        "Thận - Tiết niệu - Sinh dục": "Bệnh án / Khám bệnh",
+        "Thần kinh": "Bệnh án / Khám bệnh",
+        "Cơ - Xương - Khớp": "Bệnh án / Khám bệnh",
+        "Tai - Mũi - Họng": "Bệnh án / Khám bệnh",
+        "Răng - Hàm - Mặt": "Bệnh án / Khám bệnh",
+        "Mắt": "Bệnh án / Khám bệnh",
+        "Nội tiết, dinh dưỡng và các bệnh lý khác": "Bệnh án / Khám bệnh",
+        "Tóm tắt bệnh án": "Bệnh án",
+        "Chẩn đoán ban đầu": "Bệnh án",
+        "Phương pháp điều trị": "Tổng kết bệnh án",
+        "Chẩn đoán khi ra viện": "Tổng kết bệnh án",
+        "Tình trạng người bệnh ra viện": "Tổng kết bệnh án",
+        "Hướng điều trị và các chế độ tiếp theo": "Tổng kết bệnh án"
     }
 }
