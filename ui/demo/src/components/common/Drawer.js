@@ -19,8 +19,9 @@ import Button from "./Button";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
-    const { appearSec, setAppearSec, openSec, setOpenSec, changeSec, refSec, confirmSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { appearSec, setAppearSec, openSec, setOpenSec, confirmSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
     const { updating } = useSelector(state => state.HSBA);
+    const { spellingError } = useSelector((state) => state);
 
     return (
         <MuiDrawer 
@@ -64,14 +65,14 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                     {updating ?
                         <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
                             {Object.keys(mdSections["clinicalText"]).map((key, id) =>
-                                !!changeSec[key] ?
+                                !!spellingError[key].changed ?
                                     <ListItem 
                                         key={id}
                                         sx={{ py: 0 }}
                                         secondaryAction={
                                             !confirmSec[key] ?
                                                 <Tooltip placement="right" title="Di chuyển đến">
-                                                    <IconButton size="small" onClick={() => refSec[key].current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })}>
+                                                    <IconButton size="small" onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })}>
                                                         <EditLocationOutlined />
                                                     </IconButton>
                                                 </Tooltip> 
@@ -86,7 +87,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                 : null
                             )}
                             <ListItem>
-                                <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}} disabled={Object.keys(changeSec).some(key => !!changeSec[key] && !confirmSec[key])}>
+                                <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}} disabled={Object.keys(confirmSec).some(key => !!spellingError[key].changed && !confirmSec[key])}>
                                     Xác nhận cập nhật
                                 </Button>
                             </ListItem>

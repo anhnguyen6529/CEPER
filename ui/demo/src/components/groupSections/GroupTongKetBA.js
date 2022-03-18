@@ -22,11 +22,15 @@ const GroupTongKetBA = () => {
                     ? <FPhuongPhapDieuTri />
                     : <Typography>{!!phuongPhapDieuTri ? phuongPhapDieuTri : <i>(trống)</i>}</Typography>
             case "Chẩn đoán khi ra viện":
-                return !tongKetBenhAn.thoiGian && role !== "BN" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
+                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
             case "Tình trạng người bệnh ra viện":
-                return !tongKetBenhAn.thoiGian && role !== "BN" ? <FTinhTrangRaVien /> : <Typography>{!!tinhTrangRaVien ? tinhTrangRaVien : <i>(trống)</i>}</Typography>
+                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" 
+                    ? <FTinhTrangRaVien /> 
+                    : <Typography>{!!tinhTrangRaVien ? tinhTrangRaVien : <i>(trống)</i>}</Typography>
             case "Hướng điều trị và các chế độ tiếp theo":
-                return !tongKetBenhAn.thoiGian && role !== "BN" ? <FHuongDieuTri /> : <Typography>{!!huongDieuTri ? huongDieuTri : <i>(trống)</i>}</Typography>
+                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" 
+                    ? <FHuongDieuTri /> 
+                    : <Typography>{!!huongDieuTri ? huongDieuTri : <i>(trống)</i>}</Typography>
             default: 
                 return <></>
         }

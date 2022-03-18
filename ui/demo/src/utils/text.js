@@ -36,4 +36,20 @@ UtilsText.mask = (str, pattern) => {
     return pattern.replace(/#/g, _ => str[i++]);
 }
 
+UtilsText.getOriginalWordList = (text, detection) => {
+    const original = text.split(' '), detected = detection.split(' '), txt = [];
+    detected.forEach((word, id) => {
+        if (word.includes("<mask>")) {
+            var start = 0, endWord = word.length, endOriginal = original[id].length;
+            while (word[start] === original[id][start]) start++;
+            while (word[endWord - 1] === original[id][endOriginal - 1]) {
+                endWord--;
+                endOriginal--;
+            }
+            txt.push(original[id].slice(start, endOriginal));
+        }
+    })
+    return txt;
+}
+
 export default UtilsText;

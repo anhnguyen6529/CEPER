@@ -13,6 +13,14 @@ const SpellingErrorThunk = {
                             correction: [["sinh", "khuẩn"], ["chống"]]
                         }
                     }
+                } else {
+                    return {
+                        section,
+                        result: {
+                            detection: "",
+                            correction: []
+                        }
+                    }
                 }
             } catch (error) {
                 return {

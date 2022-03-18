@@ -1,9 +1,11 @@
 import { Box, CircularProgress, TextField } from "@mui/material";
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserContext from "../../contexts/UserContext";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import "../../styles/index.css";
+import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 
@@ -12,20 +14,14 @@ const SECTION_NAME = "Phương pháp điều trị";
 const FPhuongPhapDieuTri = () => {
     const { updating, phuongPhapDieuTri } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { refSec, setRefSec, changeSec, setChangeSec, confirmSec, setConfirmSec } = useContext(UserContext);
+    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [newPhuongPhapDieuTri, setNewPhuongPhapDieuTri] = useState(phuongPhapDieuTri);
     const [result, setResult] = useState('');
     const [replaced, setReplaced] = useState([]);
     const [text, setText] = useState([]);
-    const ref = useRef(null);
     const [useResult, setUseResult] = useState(false);
-
-    useEffect(() => {
-        setRefSec({ ...refSec, [SECTION_NAME]: ref });
-        // eslint-disable-next-line
-    }, []);
 
     useEffect(() => {
         if (updating) {
@@ -41,19 +37,7 @@ const FPhuongPhapDieuTri = () => {
             setReplaced(spellingError.correction.map(res => {
                 return { type: "correct", repText: res[0] }
             }));
-            const original = newPhuongPhapDieuTri.split(' '), detected = spellingError.detection.split(' '), txt = [];
-            detected.forEach((word, id) => {
-                if (word.includes("<mask>")) {
-                    var start = 0, endWord = word.length, endOriginal = original[id].length;
-                    while (word[start] === original[id][start]) start++;
-                    while (word[endWord - 1] === original[id][endOriginal - 1]) {
-                        endWord--;
-                        endOriginal--;
-                    }
-                    txt.push(original[id].slice(start, endOriginal));
-                }
-            })
-            setText(txt);
+            setText(UtilsText.getOriginalWordList(newPhuongPhapDieuTri, spellingError.detection));
         }
         // eslint-disable-next-line
     }, [spellingError.loading]);
@@ -68,6 +52,7 @@ const FPhuongPhapDieuTri = () => {
 
     const handleReset = () => {
         setNewPhuongPhapDieuTri(phuongPhapDieuTri);
+        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: "" }));
     }
 
     const handleConfirm = () => {
@@ -85,14 +70,14 @@ const FPhuongPhapDieuTri = () => {
     }
 
     return (
-        <Box component="form" noValidate ref={ref}>       
+        <Box component="form" noValidate id={SECTION_NAME}>       
             <TextField 
                 multiline
                 fullWidth
                 value={newPhuongPhapDieuTri}
                 onChange={({ target: { value } }) => {
                     setNewPhuongPhapDieuTri(value);
-                    setChangeSec({ ...changeSec, [SECTION_NAME]: new Date() });
+                    dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: new Date().toISOString() }));
                 }}
                 disabled={useResult || confirmSec[SECTION_NAME]}
             />

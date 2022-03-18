@@ -25,8 +25,8 @@ const HSBA = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { today, appearSec, openSec, changeSec, refSec } = useContext(UserContext); 
-    const spellingError = useSelector((state) => state.spellingError);
+    const { today, appearSec, openSec } = useContext(UserContext); 
+    const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating } = benhNhan;
     const [saveSec, setSaveSec] = useState(mdSections["order"].map((sec) => {
@@ -42,19 +42,19 @@ const HSBA = () => {
 
     useEffect(() => {
         if (updating) {
-            if (Object.keys(changeSec).every(key => !changeSec[key] || (!!changeSec[key] && !spellingError[key].loading))) {
+            if (!spellingError.loading) {
                 setTimeout(() => {
                     setOpenBackdrop(false);
                     setOpenSnackbar(true);
-                    const firstKey = Object.keys(changeSec).find(key => !!changeSec[key]);
-                    refSec[firstKey].current.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                    const firstKey = Object.keys(mdSections["clinicalText"]).find(key => !!spellingError[key].changed);
+                    document.getElementById(firstKey).scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
                 }, 2000);
             } else {
                 setOpenBackdrop(true);
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updating, spellingError]);
+    }, [updating, spellingError.loading]);
 
     if (loading) {
         return (
@@ -264,7 +264,7 @@ const HSBA = () => {
                     </Paper>
                 ))} 
 
-                {Object.values(changeSec).some(value => !!value) ?
+                {Object.keys(mdSections["clinicalText"]).some(key => !!spellingError[key].changed) ?
                     <>  
                         <Box className="df aic jcfe" sx={{ mt: 3 }}>
                             {!updating ? 

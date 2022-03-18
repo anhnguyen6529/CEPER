@@ -24,8 +24,6 @@ const User = () => {
     const [open, setOpen] = useState(true);
     const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => { return mdSections["order"].indexOf(sec) }));
     const [openSec, setOpenSec] = useState(new Array(mdSections["order"].length).fill(true));
-    const [refSec, setRefSec] = useState(Object.keys(mdSections["clinicalText"]).reduce((prev, key) => ({ ...prev, [key]: null }), {}));
-    const [changeSec, setChangeSec] = useState(Object.keys(mdSections["clinicalText"]).reduce((prev, key) => ({ ...prev, [key]: null }), {}));
     const [confirmSec, setConfirmSec] = useState(Object.keys(mdSections["clinicalText"]).reduce((prev, key) => ({ ...prev, [key]: false }), {}));
     const [today, setToday] = useState(new Date());
     const [danhSachHSBATab, setDanhSachHSBATab] = useState({
@@ -67,10 +65,6 @@ const User = () => {
             setAppearSec,
             openSec, 
             setOpenSec,
-            refSec,
-            setRefSec,
-            changeSec, 
-            setChangeSec,
             confirmSec,
             setConfirmSec,
             today,

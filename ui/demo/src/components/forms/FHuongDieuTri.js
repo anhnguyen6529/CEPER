@@ -1,70 +1,106 @@
-import { Box, TextField } from "@mui/material";
-import React, { useState, useContext } from "react";
+import { Box, TextField, CircularProgress } from "@mui/material";
+import React, { useState, useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import UserContext from "../../contexts/UserContext";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import "../../styles/index.css";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { UtilsText } from "../../utils";
+import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
+
+const SECTION_NAME = "Hướng điều trị và các chế độ tiếp theo";
 
 const FHuongDieuTri = () => {
-    const HSBA = useSelector((state) => state.HSBA);
-    const { role } = useSelector((state) => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
+    const { updating, huongDieuTri } = useSelector((state) => state.HSBA);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
+    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
-    const [huongDieuTri, setHuongDieuTri] = useState(HSBA.huongDieuTri);
-    const [hasChanged, setHasChanged] = useState(false);
+    const [newHuongDieuTri, setNewHuongDieuTri] = useState(huongDieuTri);
+    const [result, setResult] = useState('');
+    const [replaced, setReplaced] = useState([]);
+    const [text, setText] = useState([]);
+    const [useResult, setUseResult] = useState(false);
 
-    const tongKetBAId = mdSections["order"].indexOf("Tổng kết bệnh án");
-    const sectionId = mdSections["Tổng kết bệnh án"].indexOf("Hướng điều trị và các chế độ tiếp theo");
-  
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'huongDieuTri',
-            data: huongDieuTri
-        }))
-        setHasChanged(false);
-        let tSaveSec = [...saveSec];
-        tSaveSec[tongKetBAId][sectionId] = new Date();
-        setSaveSec(tSaveSec);
+    useEffect(() => {
+        if (updating) {
+            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, text: newHuongDieuTri }));
+        }
+        // eslint-disable-next-line
+    }, [updating]);
+
+    useEffect(() => {
+        if (!spellingError.loading) {
+            setResult(spellingError);
+            setUseResult(true);
+            setReplaced(spellingError.correction.map(res => {
+                return { type: "correct", repText: res[0] }
+            }));
+            setText(UtilsText.getOriginalWordList(newHuongDieuTri, spellingError.detection));
+        }
+        // eslint-disable-next-line
+    }, [spellingError.loading]);
+
+    if (spellingError.loading && updating) {
+        return (
+            <Box className="df jcc">
+                <CircularProgress size={20} sx={{ mt: 2, color: "#999" }} />
+            </Box>
+        )
     }
 
     const handleReset = () => {
-        setHuongDieuTri(HSBA.huongDieuTri);
-        setHasChanged(false);
+        setNewHuongDieuTri(huongDieuTri);
+        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: "" }));
     }
 
-    const handleChange = () => {
-        if (!hasChanged) {
-            setHasChanged(true);
+    const handleConfirm = () => {
+        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
+        if (useResult) {
+            let confirmed = result.detection.split(" "), count = 0;
+            confirmed.forEach((word, id) => {
+                if (word.includes("<mask>")) {
+                    confirmed[id] = word.replace("<mask>", replaced[count].repText);
+                    count++;
+                }
+            })
+            setNewHuongDieuTri(confirmed.join(" "));
         }
     }
 
     return (
-        <Box component="form" noValidate>       
+        <Box component="form" noValidate id={SECTION_NAME}>       
             <TextField 
                 multiline
                 fullWidth
                 value={huongDieuTri}
-                onChange={(event) => {
-                    setHuongDieuTri(event.target.value);
-                    handleChange();
+                onChange={({ target: { value } }) => {
+                    setNewHuongDieuTri(value);
+                    dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: new Date().toISOString() }));
                 }}
-                disabled={role !== "BS"}
+                disabled={useResult || confirmSec[SECTION_NAME]}
             />
 
-            {hasChanged &&
-                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
-                    <Button variant="outlined" sx={{ mr: 2 }} onClick={handleReset}>
-                        Hủy
-                    </Button>
+            {!!result && !confirmSec[SECTION_NAME] ? 
+                <BoxLoiChinhTa
+                    text={text}
+                    result={result}
+                    replaced={replaced}
+                    setReplaced={setReplaced}
+                    useResult={useResult}
+                    setUseResult={setUseResult}
+                    setSection={() => setNewHuongDieuTri(huongDieuTri)}
+                />
+            : null}
 
-                    <Button variant="primary" onClick={handleSave}>
-                        Lưu tạm thời
-                    </Button>
-                </Box>
-            }
+            <Box sx={{ width: '100%', textAlign: 'right' }}>
+                {newHuongDieuTri !== huongDieuTri && !updating ?
+                    <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
+
+                {!confirmSec[SECTION_NAME] && updating ? 
+                    <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
+            </Box>
         </Box>
     )
 }
