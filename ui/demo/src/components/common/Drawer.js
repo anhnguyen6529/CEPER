@@ -62,7 +62,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             <Divider sx={{ mt: 2 }} />
             {(content.role === "BN" || typeof(pid) !== 'undefined') &&
                 <Box sx={{ overflowY: 'auto' }}>     
-                    {updating ?
+                    {updating && Object.keys(mdSections["clinicalText"]).some(key => !!spellingError[key].changed) ?
                         <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
                             {Object.keys(mdSections["clinicalText"]).map((key, id) =>
                                 !!spellingError[key].changed ?

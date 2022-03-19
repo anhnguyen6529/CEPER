@@ -4,7 +4,7 @@ import SpellingErrorThunk from "../thunks/spellingError.thunk";
 
 const EMPTY_SPELLING = {
     loading: true,
-    changed: '', 
+    changed: false, 
     error: '',
     detection: '',
     correction: ''
@@ -22,13 +22,7 @@ const SpellingErrorSlice = createSlice({
     initialState,
     reducers: {
         updateChanged: (state, action) => {
-            return {
-                ...state,
-                [action.payload.section]: {
-                    ...state[action.payload.section],
-                    changed: action.payload.changed
-                }
-            }
+            state[action.payload.section].changed = action.payload.changed;
         }
     },
     extraReducers: (builder) => {

@@ -15,13 +15,13 @@ const headCells = [
 headCells.push(...headCells);
 
 const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChange }) => {
-    const { role } = useSelector((state) => state.auth.user);
+    const { updating } = useSelector((state) => state.HSBA);
     const data = dacDiemLienQuan;
 
-    const handleChangeCheckbox = (event, id) => {
+    const handleChangeCheckbox = (checked, id) => {
         let tData = [...data];
-        tData[id] = { ...tData[id], kyHieu: event.target.checked };
-        if (!event.target.checked) {
+        tData[id] = { ...tData[id], kyHieu: checked };
+        if (!checked) {
             if (tData[id].benh === "Dị ứng") {
                 tData[id].diNguyen = [""];
                 tData[id].thoiGian = [0];
@@ -35,14 +35,14 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
             }
         }
         setDacDiemLienQuan(tData);
-        handleChange();
+        handleChange(tData);
     }
 
-    const handleChangeTextField = (event, id) => {
+    const handleChangeTextField = (value, id) => {
         var tData = [...data];
-        tData[id] = { ...tData[id], thoiGian: event.target.value };
+        tData[id] = { ...tData[id], thoiGian: value };
         setDacDiemLienQuan(tData);
-        handleChange();
+        handleChange(tData);
     }
 
     const handleAddDiNguyenClick = (diUngIndex) => {
@@ -50,7 +50,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
         tData[diUngIndex].diNguyen = [...tData[diUngIndex].diNguyen, ""];
         tData[diUngIndex].thoiGian = [...tData[diUngIndex].thoiGian, 0];
         setDacDiemLienQuan(tData);
-        handleChange();
+        handleChange(tData);
     }
 
     const handleAddBenhClick = (index) => {
@@ -58,7 +58,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
         tData[index].benh = [...tData[index].benh, ""];
         tData[index].thoiGian = [...tData[index].thoiGian, 0];
         setDacDiemLienQuan(tData);
-        handleChange();
+        handleChange(tData);
     }
     
     return (
@@ -86,8 +86,8 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                 <Checkbox 
                                     sx={{ p: 0 }}
                                     checked={data[idx].kyHieu} 
-                                    onChange={(event) => handleChangeCheckbox(event, idx)} 
-                                    disabled={role !== "BS"} 
+                                    onChange={({ target: { checked }}) => handleChangeCheckbox(checked, idx)} 
+                                    disabled={updating} 
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight">
@@ -98,15 +98,15 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                 multiline
                                                 margin="dense"
                                                 value={diNguyen}
-                                                onChange={(event) => {
+                                                onChange={({ target: { value } }) => {
                                                     const tData = [...data], tDiNguyen = [...tData[idx].diNguyen];
-                                                    tDiNguyen[id] = event.target.value;
+                                                    tDiNguyen[id] = value;
                                                     tData[idx] = { ...tData[idx], diNguyen: tDiNguyen };
                                                     setDacDiemLienQuan(tData);
-                                                    handleChange();
+                                                    handleChange(tData);
                                                 }}
                                                 sx={{ width: "65%" }}
-                                                disabled={role !== "BS" || !data[idx].kyHieu}
+                                                disabled={updating || (!updating && !data[idx].kyHieu)}
                                                 placeholder="Dị nguyên"
                                             /> 
                                             <Typography sx={{ mx: 1 }}>-</Typography>
@@ -116,14 +116,14 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                 margin="dense"
                                                 InputProps={{ inputProps: { min: 0 } }}
                                                 value={data[idx].thoiGian[id]}
-                                                onChange={(event) => {
+                                                onChange={({ target: { value } }) => {
                                                     const tData = [...data], tThoiGian = [...tData[idx].thoiGian];
-                                                    tThoiGian[id] = event.target.value;
+                                                    tThoiGian[id] = value;
                                                     tData[idx] = { ...tData[idx], thoiGian: tThoiGian };
                                                     setDacDiemLienQuan(tData);
-                                                    handleChange();
+                                                    handleChange(tData);
                                                 }}
-                                                disabled={role !== "BS" || !data[idx].kyHieu}
+                                                disabled={updating || (!updating && !data[idx].kyHieu)}
                                             />  
                                             
                                             {id === data[idx].diNguyen.length - 1 && data[idx].kyHieu ? 
@@ -138,8 +138,8 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                         margin="dense"
                                         InputProps={{ inputProps: { min: 0 } }}
                                         value={data[idx].thoiGian}
-                                        onChange={(event) => handleChangeTextField(event, idx)}
-                                        disabled={role !== "BS" || !data[idx].kyHieu}
+                                        onChange={({ target: { value } }) => handleChangeTextField(value, idx)}
+                                        disabled={updating || (!updating && !data[idx].kyHieu)}
                                     /> 
                                 )}
                             </TableCell>
@@ -155,12 +155,12 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                     fullWidth
                                                     margin="dense"
                                                     value={benh}
-                                                    onChange={(event) => {
+                                                    onChange={({ target: { value } }) => {
                                                         const tData = [...data], tBenh = [...tData[idx + 3].benh];
-                                                        tBenh[id] = event.target.value;
+                                                        tBenh[id] = value;
                                                         tData[idx + 3] = { ...tData[idx + 3], benh: tBenh }; 
                                                         setDacDiemLienQuan(tData);
-                                                        handleChange();
+                                                        handleChange(tData);
                                                     }}
                                                     placeholder="Khác"
                                                 />
@@ -176,8 +176,8 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                 <Checkbox 
                                     sx={{ p: 0 }}
                                     checked={data[idx + 3].kyHieu} 
-                                    onChange={(event) => handleChangeCheckbox(event, idx + 3)} 
-                                    disabled={role !== "BS"} 
+                                    onChange={({ target: { checked }}) => handleChangeCheckbox(checked, idx + 3)} 
+                                    disabled={updating} 
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight" sx={{ verticalAlign: data[idx + 3].tt === "06" ? "top" : "middle" }}>
@@ -190,14 +190,14 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                             margin="dense"
                                             InputProps={{ inputProps: { min: 0 } }}
                                             value={thoiGian}
-                                            onChange={(event) => {
+                                            onChange={({ target: { value } }) => {
                                                 const tData = [...data], tThoiGian = [...tData[idx + 3].thoiGian];
-                                                tThoiGian[id] = event.target.value;
+                                                tThoiGian[id] = value;
                                                 tData[idx + 3] = { ...tData[idx + 3], thoiGian: tThoiGian };
                                                 setDacDiemLienQuan(tData);
-                                                handleChange();
+                                                handleChange(tData);
                                             }}
-                                            disabled={role !== "BS" || !data[idx + 3].kyHieu}
+                                            disabled={updating || (!updating && !data[idx + 3].kyHieu)}
                                         /> 
                                     ))
                                  : (
@@ -207,8 +207,8 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                         margin="dense"
                                         InputProps={{ inputProps: { min: 0 } }}
                                         value={data[idx + 3].thoiGian}
-                                        onChange={(event) => handleChangeTextField(event, idx + 3)}
-                                        disabled={role !== "BS" || !data[idx + 3].kyHieu}
+                                        onChange={({ target: { value } }) => handleChangeTextField(value, idx + 3)}
+                                        disabled={updating || (!updating && !data[idx + 3].kyHieu)}
                                     /> 
                                 )}
                             </TableCell>

@@ -1,4 +1,4 @@
-import { Box, CircularProgress, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UserContext from "../../contexts/UserContext";
@@ -14,7 +14,7 @@ const SECTION_NAME = "Phương pháp điều trị";
 const FPhuongPhapDieuTri = () => {
     const { updating, phuongPhapDieuTri } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
+    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [newPhuongPhapDieuTri, setNewPhuongPhapDieuTri] = useState(phuongPhapDieuTri);
@@ -24,7 +24,7 @@ const FPhuongPhapDieuTri = () => {
     const [useResult, setUseResult] = useState(false);
 
     useEffect(() => {
-        if (updating) {
+        if (updating && newPhuongPhapDieuTri !== phuongPhapDieuTri) {
             dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, text: newPhuongPhapDieuTri }));
         }
         // eslint-disable-next-line
@@ -42,17 +42,10 @@ const FPhuongPhapDieuTri = () => {
         // eslint-disable-next-line
     }, [spellingError.loading]);
 
-    if (spellingError.loading && updating) {
-        return (
-            <Box className="df jcc">
-                <CircularProgress size={20} sx={{ mt: 2, color: "#999" }} />
-            </Box>
-        )
-    }
-
     const handleReset = () => {
         setNewPhuongPhapDieuTri(phuongPhapDieuTri);
-        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: "" }));
+        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
     }
 
     const handleConfirm = () => {
@@ -77,9 +70,21 @@ const FPhuongPhapDieuTri = () => {
                 value={newPhuongPhapDieuTri}
                 onChange={({ target: { value } }) => {
                     setNewPhuongPhapDieuTri(value);
-                    dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: new Date().toISOString() }));
+                    if (!updating) {
+                        if (value === phuongPhapDieuTri) {
+                            dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+                            setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                        } else {
+                            if (!spellingError.changed) {
+                                dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: true }));
+                            }
+                            if (!hasChanged[SECTION_NAME]) {
+                                setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                            }
+                        }
+                    }
                 }}
-                disabled={useResult || confirmSec[SECTION_NAME]}
+                disabled={updating && (useResult || confirmSec[SECTION_NAME] || !spellingError.changed)}
             />
 
             {!!result && !confirmSec[SECTION_NAME] ? 
@@ -95,10 +100,10 @@ const FPhuongPhapDieuTri = () => {
             : null}
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
-                {newPhuongPhapDieuTri !== phuongPhapDieuTri && !updating ?
+                {hasChanged[SECTION_NAME] && !updating ?
                     <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
-                {!confirmSec[SECTION_NAME] && updating ? 
+                {(spellingError.changed && !confirmSec[SECTION_NAME]) && updating ? 
                     <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
             </Box>
         </Box>

@@ -1,70 +1,111 @@
 import { Box, TextField } from "@mui/material";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import UserContext from "../../contexts/UserContext";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import "../../styles/index.css";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { UtilsText } from "../../utils";
+import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
+
+const SECTION_NAME = "Chẩn đoán ban đầu";
 
 const FChanDoanBanDau = () => {
-    const HSBA = useSelector((state) => state.HSBA);
-    const { role } = useSelector((state) => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
+    const { updating, chanDoanBanDau } = useSelector((state) => state.HSBA);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
+    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
     const dispatch = useDispatch();
 
-    const [chanDoanBanDau, setChanDoanBanDau] = useState(HSBA.chanDoanBanDau);
-    const [hasChanged, setHasChanged] = useState(false);
+    const [newChanDoanBanDau, setNewChanDoanBanDau] = useState(chanDoanBanDau);
+    const [result, setResult] = useState('');
+    const [replaced, setReplaced] = useState([]);
+    const [text, setText] = useState([]);
+    const [useResult, setUseResult] = useState(false);
 
-    const benhAnId = mdSections["order"].indexOf("Bệnh án");
-    const sectionId = mdSections["Bệnh án"].indexOf("Chẩn đoán ban đầu");
-  
-    const handleSave = () => {
-        dispatch(HSBAActions.updateBacSiSection({
-            section: 'chanDoanBanDau',
-            data: chanDoanBanDau
-        }))
-        setHasChanged(false);
-        let tSaveSec = [...saveSec];
-        tSaveSec[benhAnId][sectionId] = new Date();
-        setSaveSec(tSaveSec);
-    }
+    useEffect(() => {
+        if (updating && newChanDoanBanDau !== chanDoanBanDau) {
+            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, text: newChanDoanBanDau }));
+        }
+        // eslint-disable-next-line
+    }, [updating]);
+
+    useEffect(() => {
+        if (!spellingError.loading) {
+            setResult(spellingError);
+            setUseResult(true);
+            setReplaced(spellingError.correction.map(res => {
+                return { type: "correct", repText: res[0] }
+            }));
+            setText(UtilsText.getOriginalWordList(newChanDoanBanDau, spellingError.detection));
+        }
+        // eslint-disable-next-line
+    }, [spellingError.loading]);
 
     const handleReset = () => {
-        setChanDoanBanDau(HSBA.chanDoanBanDau);
-        setHasChanged(false);
+        setNewChanDoanBanDau(chanDoanBanDau);
+        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
     }
 
-    const handleChange = () => {
-        if (!hasChanged) {
-            setHasChanged(true);
+    const handleConfirm = () => {
+        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
+        if (useResult) {
+            let confirmed = result.detection.split(" "), count = 0;
+            confirmed.forEach((word, id) => {
+                if (word.includes("<mask>")) {
+                    confirmed[id] = word.replace("<mask>", replaced[count].repText);
+                    count++;
+                }
+            })
+            setNewChanDoanBanDau(confirmed.join(" "));
         }
     }
 
     return (
-        <Box component="form" noValidate>       
+        <Box component="form" noValidate id={SECTION_NAME}>       
             <TextField 
                 multiline
                 fullWidth
                 value={chanDoanBanDau}
-                onChange={(event) => {
-                    setChanDoanBanDau(event.target.value);
-                    handleChange();
+                onChange={({ target: { value } }) => {
+                    setNewChanDoanBanDau(value);
+                    if (!updating) {
+                        if (value === chanDoanBanDau) {
+                            dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+                            setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                        } else {
+                            if (!spellingError.changed) {
+                                dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: true }));
+                            }
+                            if (!hasChanged[SECTION_NAME]) {
+                                setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                            }
+                        }
+                    }
                 }}
-                disabled={role !== "BS"}
+                disabled={updating && (useResult || confirmSec[SECTION_NAME] || !spellingError.changed)}
             />
 
-            {hasChanged &&
-                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
-                    <Button variant="outlined" sx={{ mr: 2 }} onClick={handleReset}>
-                        Hủy
-                    </Button>
+            {!!result && !confirmSec[SECTION_NAME] ? 
+                <BoxLoiChinhTa
+                    text={text}
+                    result={result}
+                    replaced={replaced}
+                    setReplaced={setReplaced}
+                    useResult={useResult}
+                    setUseResult={setUseResult}
+                    setSection={() => setNewChanDoanBanDau(chanDoanBanDau)}
+                />
+            : null}
 
-                    <Button variant="primary" onClick={handleSave}>
-                        Lưu tạm thời
-                    </Button>
-                </Box>
-            }
+            <Box sx={{ width: '100%', textAlign: 'right' }}>
+                {hasChanged[SECTION_NAME] && !updating ?
+                    <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
+
+                {(spellingError.changed && !confirmSec[SECTION_NAME]) && updating ? 
+                    <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
+            </Box>
         </Box>
     )
 }

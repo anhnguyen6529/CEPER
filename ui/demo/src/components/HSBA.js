@@ -25,7 +25,7 @@ const HSBA = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { today, appearSec, openSec } = useContext(UserContext); 
+    const { today, appearSec, openSec, hasChanged } = useContext(UserContext); 
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating } = benhNhan;
@@ -41,7 +41,7 @@ const HSBA = () => {
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
     useEffect(() => {
-        if (updating) {
+        if (updating && Object.keys(mdSections["clinicalText"]).some(key => !!spellingError[key].changed)) {
             if (!spellingError.loading) {
                 setTimeout(() => {
                     setOpenBackdrop(false);
@@ -264,7 +264,7 @@ const HSBA = () => {
                     </Paper>
                 ))} 
 
-                {Object.keys(mdSections["clinicalText"]).some(key => !!spellingError[key].changed) ?
+                {Object.values(hasChanged).some(value => value) ?
                     <>  
                         <Box className="df aic jcfe" sx={{ mt: 3 }}>
                             {!updating ? 

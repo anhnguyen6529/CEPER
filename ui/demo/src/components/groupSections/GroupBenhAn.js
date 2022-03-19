@@ -18,15 +18,15 @@ const GroupBenhAn = () => {
     const renderSwitch = (sectionId) => {
         switch (mdSections["Bệnh án"][sectionId]) {
             case "Lý do vào viện": 
-                return !benhAn.thoiGian && role !== "BN" ? <FLyDoVaoVien /> : <BoxLyDoVaoVien />
+                return !benhAn.thoiGian && role === "BS" ? <FLyDoVaoVien /> : <BoxLyDoVaoVien />
             case "Hỏi bệnh":
-                return !benhAn.thoiGian && role !== "BN" ? <FHoiBenh /> : <BoxHoiBenh />
+                return !benhAn.thoiGian && role === "BS" ? <FHoiBenh /> : <BoxHoiBenh />
             case "Khám bệnh":
-                return !benhAn.thoiGian && role !== "BN" ? <FKhamBenh /> : <BoxKhamBenh />
+                return !benhAn.thoiGian && role === "BS" ? <FKhamBenh /> : <BoxKhamBenh />
             case "Tóm tắt bệnh án":
-                return !benhAn.thoiGian && role !== "BN" ? <FTomTatBenhAn /> : <Typography>{!!tomTatBenhAn ? tomTatBenhAn : <i>(trống)</i>}</Typography>
+                return !benhAn.thoiGian && role === "BS" ? <FTomTatBenhAn /> : <Typography>{!!tomTatBenhAn ? tomTatBenhAn : <i>(trống)</i>}</Typography>
             case "Chẩn đoán ban đầu":
-                return !benhAn.thoiGian && role !== "BN" ? <FChanDoanBanDau /> : <Typography>{!!chanDoanBanDau ? chanDoanBanDau : <i>(trống)</i>}</Typography>
+                return !benhAn.thoiGian && role === "BS" ? <FChanDoanBanDau /> : <Typography>{!!chanDoanBanDau ? chanDoanBanDau : <i>(trống)</i>}</Typography>
             default: 
                 return <></>
         }

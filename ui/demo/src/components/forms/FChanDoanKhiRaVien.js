@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, Grid, Divider, CircularProgress } from "@mui/material";
+import { Box, Typography, TextField, Grid, Divider } from "@mui/material";
 import React, { useState, useContext, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
@@ -15,7 +15,7 @@ const SECTION_NAME = "Chẩn đoán khi ra viện";
 const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien, updating } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
+    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
@@ -26,7 +26,7 @@ const FChanDoanKhiRaVien = () => {
     const [useResult, setUseResult] = useState(false);
 
     useEffect(() => {
-        if (updating) {
+        if (updating && chanDoan !== chanDoanKhiRaVien.chanDoan) {
             dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, text: chanDoan }));
         }
         // eslint-disable-next-line
@@ -44,18 +44,11 @@ const FChanDoanKhiRaVien = () => {
         // eslint-disable-next-line
     }, [spellingError.loading]);
 
-    if (spellingError.loading && updating) {
-        return (
-            <Box className="df jcc">
-                <CircularProgress size={20} sx={{ mt: 2, color: "#999" }} />
-            </Box>
-        )
-    }
-
     const handleReset = () => {
         setChanDoan(chanDoanKhiRaVien.chanDoan);
         setNgayRaVien(chanDoanKhiRaVien.ngayRaVien);
-        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: "" }));
+        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
     }
 
     const handleConfirm = () => {
@@ -80,9 +73,23 @@ const FChanDoanKhiRaVien = () => {
                 value={chanDoan}
                 onChange={({ target: { value } }) => {
                     setChanDoan(value);
-                    dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: new Date().toISOString() }));
+                    if (!updating) {
+                        if (value === chanDoanKhiRaVien.chanDoan) {
+                            dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+                            if (ngayRaVien === chanDoanKhiRaVien.ngayRaVien) {
+                                setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                            }
+                        } else {
+                            if (!spellingError.changed) {
+                                dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: true }));
+                            }
+                            if (!hasChanged[SECTION_NAME]) {
+                                setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                            }
+                        }
+                    }
                 }}
-                disabled={useResult || confirmSec[SECTION_NAME]}
+                disabled={updating && (useResult || confirmSec[SECTION_NAME] || !spellingError.changed)}
             />
 
             {!!result && !confirmSec[SECTION_NAME] ? 
@@ -108,7 +115,15 @@ const FChanDoanKhiRaVien = () => {
                         value={!ngayRaVien ? null : ngayRaVien}
                         onChange={(newValue) => {
                             setNgayRaVien(new Date(newValue).toISOString());
-                            dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: new Date().toISOString() }));
+                            if (new Date(newValue).toISOString() !== chanDoanKhiRaVien.ngayRaVien) {
+                                if (!hasChanged[SECTION_NAME]) {
+                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                }
+                            } else {
+                                if (chanDoan === chanDoanKhiRaVien.chanDoan) {
+                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                }
+                            }
                         }}
                         renderInput={(params) => <TextField {...params}/>}
                         inputFormat="DD/MM/yyyy HH:mm"
@@ -121,7 +136,7 @@ const FChanDoanKhiRaVien = () => {
             </Grid>
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
-                {chanDoan !== chanDoanKhiRaVien.chanDoan && !updating ?
+                {hasChanged[SECTION_NAME] && !updating ?
                     <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
                 {!confirmSec[SECTION_NAME] && updating ? 
