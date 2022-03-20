@@ -11,7 +11,6 @@ import { useParams } from "react-router";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
 import { Button } from "./common";
 import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
-import { HSBAProvider } from "../contexts/HSBAContext";
 import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
@@ -29,14 +28,6 @@ const HSBA = () => {
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating } = benhNhan;
-    const [saveSec, setSaveSec] = useState(mdSections["order"].map((sec) => {
-        if (sec === "Bệnh án") {
-            return new Array(mdSections["Bệnh án"].length).fill(null);
-        } else if (sec === "Tổng kết bệnh án") {
-            return new Array(mdSections["Tổng kết bệnh án"].length).fill(null);
-        }
-        return null;
-    }));
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
@@ -107,7 +98,6 @@ const HSBA = () => {
     }
 
     return (
-        <HSBAProvider value={{ saveSec, setSaveSec }}>
             <Container sx={{ mt: 3 }} maxWidth={false}>
                 <Grid container spacing={5} sx={{ mb: 3 }}>
                     <Grid item xs={9}>
@@ -239,18 +229,6 @@ const HSBA = () => {
                             <Grid item xs={9}> 
                                 <Typography fontWeight="bold" color={openSec[sectionId] ? "primary" : "inherit"} >
                                     {mdSections["order"][sectionId]}
-                                    {(saveSec[sectionId] !== null && !Array.isArray(saveSec[sectionId])) && (
-                                        <Typography component="span">
-                                            <Typography component="span" sx={{ mx: 1.5 }}>|</Typography>
-                                            <i>Đã chỉnh sửa: {format(new Date(saveSec[sectionId]), 'dd/MM/yyyy HH:mm:ss')}</i>
-                                        </Typography>
-                                    )}
-                                    {(Array.isArray(saveSec[sectionId]) && saveSec[sectionId].every(element => !!element)) && (
-                                        <Typography component="span">
-                                            <Typography component="span" sx={{ mx: 1.5 }}>|</Typography>
-                                            <i>Đã chỉnh sửa: {format(new Date(Math.max.apply(null, saveSec[sectionId])), 'dd/MM/yyyy HH:mm:ss')}</i>
-                                        </Typography>
-                                    )}
                                 </Typography>
                             </Grid>
                             <Grid item xs={3} align="right">
@@ -287,7 +265,6 @@ const HSBA = () => {
                     </>
                 : null} 
             </Container>
-        </HSBAProvider>
     )
 }
 

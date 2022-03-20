@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import { format } from "date-fns";
-import HSBAContext from "../../contexts/HSBAContext";
 import "../../styles/index.css";
 import Accordion, { AccordionDetails, AccordionSummary } from "../common/Accordion";
 import { FChanDoanBanDau, FHoiBenh, FKhamBenh, FLyDoVaoVien, FTomTatBenhAn } from "../forms";
@@ -12,8 +11,6 @@ import { BoxLyDoVaoVien, BoxHoiBenh, BoxKhamBenh } from "../boxes";
 const GroupBenhAn = () => {
     const { benhAn, tomTatBenhAn, chanDoanBanDau } = useSelector(state => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
-    const { saveSec } = useContext(HSBAContext);
-    const benhAnId = mdSections["order"].indexOf("Bệnh án");
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Bệnh án"][sectionId]) {
@@ -37,18 +34,7 @@ const GroupBenhAn = () => {
             {mdSections["Bệnh án"].map((section, id) => (
                 <Accordion key={`accordionSec${id}`}>
                     <AccordionSummary>
-                        <Grid container>
-                            <Grid item xs={9}>
-                                <Typography>{section}</Typography>
-                            </Grid>
-                            <Grid item xs={3} align="right">
-                                {!!saveSec[benhAnId][id] && 
-                                    <Typography color="primary">
-                                        <i>Đã chỉnh sửa: {format(new Date(saveSec[benhAnId][id]), 'dd/MM/yyyy HH:mm:ss')}</i>
-                                    </Typography>
-                                }
-                            </Grid>
-                        </Grid>
+                        <Typography>{section}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         {renderSwitch(id)}

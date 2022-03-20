@@ -3,7 +3,7 @@ import {
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,8 +11,6 @@ import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
     { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '20%', minWidth: 120 },
@@ -39,7 +37,6 @@ const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name } = useSelector(state => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -54,7 +51,6 @@ const FToDieuTri = () => {
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
-    const sectionId = mdSections["order"].indexOf("Tờ điều trị");
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -74,7 +70,7 @@ const FToDieuTri = () => {
         clearData();
     };
 
-    const handleSave = () => {
+    const handleAdd = () => {
         if (!!newNgayGio && !!newDienBienBenh && !!newYLenh) {
             const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n'));
             dispatch(HSBAActions.updateDinhKemSection({
@@ -101,10 +97,6 @@ const FToDieuTri = () => {
                 });
             }
             dispatch(HSBAActions.addDanhSachYLenh(danhSachYLenh));
-
-            let tSaveSec = [...saveSec];
-            tSaveSec[sectionId] = new Date();
-            setSaveSec(tSaveSec);
             clearData();
         } else {
             let errs = [];
@@ -230,8 +222,8 @@ const FToDieuTri = () => {
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleSave}>
-                                    Lưu tạm thời
+                                <Button variant="primary" onClick={handleAdd}>
+                                    Thêm
                                 </Button>
                             </>
                         )

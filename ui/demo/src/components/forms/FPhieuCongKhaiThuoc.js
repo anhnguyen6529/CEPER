@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, Paper, IconButton, Grid, Typography, TextField, Divider
@@ -10,8 +10,6 @@ import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow, SelectThuoc } from "../common";
 import { format } from "date-fns";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
 import drugList from "../../constants/drug_list.json";
 import { DatePicker } from "@mui/lab";
 
@@ -30,7 +28,6 @@ const FPhieuCongKhaiThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuCongKhaiThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role } = useSelector(state => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [page, setPage] = useState(0);
@@ -38,7 +35,6 @@ const FPhieuCongKhaiThuoc = () => {
     const [dateGroup, setDateGroup] = useState(0);
 
     const rows = content.data;
-    const sectionId = mdSections["order"].indexOf("Phiếu công khai thuốc");
 
     const [addNew, setAddNew] = useState(false);
     const [newNgay, setNewNgay] = useState(null);
@@ -56,7 +52,7 @@ const FPhieuCongKhaiThuoc = () => {
         clearData();
     };
 
-    const handleSave = () => {
+    const handleAdd = () => {
         if (!!newNgay && newDataList.every(newData => !!newData.tenThuoc && newData.soLuong > 0)) {
             const newNgayThang = format(newNgay, "yyyy-MM-dd") === content.ngayThang[content.ngayThang.length - 1]
                 ? [...content.ngayThang] : [...content.ngayThang, format(newNgay, "yyyy-MM-dd")];
@@ -74,9 +70,6 @@ const FPhieuCongKhaiThuoc = () => {
                     }
                 })
             }));
-            let tSaveSec = [...saveSec];
-            tSaveSec[sectionId] = new Date();
-            setSaveSec(tSaveSec);
             clearData();
         } else {
             let errs = [];
@@ -380,8 +373,8 @@ const FPhieuCongKhaiThuoc = () => {
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleSave}>
-                                    Lưu tạm thời
+                                <Button variant="primary" onClick={handleAdd}>
+                                    Thêm
                                 </Button>
                             </>
                         )

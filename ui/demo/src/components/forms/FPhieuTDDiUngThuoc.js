@@ -2,7 +2,7 @@ import {
     Box, Paper, TableContainer, TableHead, TableBody, TableRow, 
     TableCell, Table, TableSortLabel, Grid, Typography, TextField, Radio
 } from "@mui/material";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Add, RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { visuallyHidden } from "@mui/utils";
@@ -10,8 +10,6 @@ import { format } from "date-fns";
 import { UtilsTable } from "../../utils";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { TablePagination, StyledTableRow, Button, SelectThuoc } from "../common";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
     { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày giờ\ndùng thuốc', width: '15%' },
@@ -27,7 +25,6 @@ const FPhieuTDDiUngThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuTDDiUngThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name, position } = useSelector((state) => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -44,7 +41,6 @@ const FPhieuTDDiUngThuoc = () => {
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
-    const sectionId = mdSections["order"].indexOf("Phiếu TD dị ứng thuốc");
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -66,7 +62,7 @@ const FPhieuTDDiUngThuoc = () => {
         clearData();
     };
     
-    const handleSave = () => {
+    const handleAdd = () => {
         if (!!newNgayGioDungThuoc && newThuocDiUng.every(dn => !!dn) && !!newBieuHienLamSang) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuTDDiUngThuoc',
@@ -80,9 +76,6 @@ const FPhieuTDDiUngThuoc = () => {
                     ghiChu: newGhiChu
                 }
             }));
-            let tSaveSec = [...saveSec];
-            tSaveSec[sectionId] = new Date();
-            setSaveSec(tSaveSec);
             clearData();
         } else {
             let errs = [];
@@ -249,8 +242,8 @@ const FPhieuTDDiUngThuoc = () => {
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleSave}>
-                                    Lưu tạm thời
+                                <Button variant="primary" onClick={handleAdd}>
+                                    Thêm
                                 </Button>
                             </>
                         )

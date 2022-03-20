@@ -3,7 +3,7 @@ import {
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem
 } from "@mui/material";
 import { Add, DoneAll, Loop } from "@mui/icons-material";
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useSelector , useDispatch } from "react-redux";
@@ -11,8 +11,6 @@ import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination, Button, SelectYLenh } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
 
 const headCells = [
     { id: 'ngay', numeric: false, label: 'Ngày', width: '10%' },
@@ -27,7 +25,6 @@ const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name } = useSelector(state => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
     const { danhSachYLenh } = useSelector((state) => state.HSBA);
 
@@ -44,7 +41,6 @@ const FPhieuChamSoc = () => {
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
-    const sectionId = mdSections["order"].indexOf("Phiếu chăm sóc");
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -65,7 +61,7 @@ const FPhieuChamSoc = () => {
         clearData();
     };
 
-    const handleSave = () => {
+    const handleAdd = () => {
         if (!!newNgay && !!newGio && newTheoDoiDienBien.every(tddb => !! tddb) && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuChamSoc',
@@ -88,9 +84,6 @@ const FPhieuChamSoc = () => {
                     }));
                 }
             })
-            let tSaveSec = [...saveSec];
-            tSaveSec[sectionId] = new Date();
-            setSaveSec(tSaveSec);
             clearData();
         } else {
             let errs = [];
@@ -272,8 +265,8 @@ const FPhieuChamSoc = () => {
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleSave}>
-                                    Lưu tạm thời
+                                <Button variant="primary" onClick={handleAdd}>
+                                    Thêm
                                 </Button>
                             </>
                         )

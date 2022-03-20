@@ -1,7 +1,6 @@
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import React from "react";
+import { Box, Divider, Typography } from "@mui/material";
 import { format } from "date-fns";
-import React, { useContext } from "react";
-import HSBAContext from "../../contexts/HSBAContext";
 import "../../styles/index.css";
 import Accordion, { AccordionDetails, AccordionSummary } from "../common/Accordion";
 import { FChanDoanKhiRaVien, FHuongDieuTri, FPhuongPhapDieuTri, FTinhTrangRaVien } from "../forms";
@@ -12,8 +11,6 @@ import { BoxChanDoanKhiRaVien } from "../boxes";
 const GroupTongKetBA = () => {
     const { tongKetBenhAn, phuongPhapDieuTri, tinhTrangRaVien, huongDieuTri } = useSelector(state => state.HSBA);
     const { role, position } = useSelector(state => state.auth.user);
-    const { saveSec } = useContext(HSBAContext);
-    const tongKetBAId = mdSections["order"].indexOf("Tổng kết bệnh án");
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Tổng kết bệnh án"][sectionId]) {
@@ -41,18 +38,7 @@ const GroupTongKetBA = () => {
             {mdSections["Tổng kết bệnh án"].map((section, id) => (
                 <Accordion key={`accordionSec${id}`}>
                     <AccordionSummary>
-                        <Grid container>
-                            <Grid item xs={9}>
-                                <Typography>{section}</Typography>
-                            </Grid>
-                            <Grid item xs={3} align="right">
-                                {!!saveSec[tongKetBAId][id] && 
-                                    <Typography color="primary">
-                                        <i>Đã chỉnh sửa: {format(new Date(saveSec[tongKetBAId][id]), 'dd/MM/yyyy HH:mm:ss')}</i>
-                                    </Typography>
-                                }
-                            </Grid>
-                        </Grid>
+                        <Typography>{section}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         {renderSwitch(id)}

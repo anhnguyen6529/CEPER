@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useContext } from "react";
+import React, { Fragment, useState } from "react";
 import {  
     Box, Table, TableRow, TableContainer, TableBody, TextField, Select, MenuItem,
     TableHead, TableCell, TableSortLabel, Paper, Grid, Typography, IconButton, Divider, Autocomplete
@@ -11,8 +11,6 @@ import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination, Button, SelectThuoc } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
-import HSBAContext from "../../contexts/HSBAContext";
-import mdSections from "../../constants/md_sections.json";
 import doctorList from "../../constants/doctor_list.json";
 import drugList from "../../constants/drug_list.json";
 import { TimePicker } from "@mui/lab";
@@ -33,7 +31,6 @@ const FPhieuTDTruyenDich = () => {
     const content = useSelector((state) => state.HSBA.phieuTDTruyenDich);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role, name } = useSelector(state => state.auth.user);
-    const { saveSec, setSaveSec } = useContext(HSBAContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -49,7 +46,6 @@ const FPhieuTDTruyenDich = () => {
     const [errors, setErrors] = useState([]);
 
     const rows = content.data;
-    const sectionId = mdSections["order"].indexOf("Phiếu TD truyền dịch");
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -68,7 +64,7 @@ const FPhieuTDTruyenDich = () => {
         clearData();
     };
 
-    const handleSave = () => {
+    const handleAdd = () => {
         if (!!newNgayThang && (newValues.length > 0 
             && newValues.every(newValue => !!newValue.tenDichTruyen && !!newValue.loSanXuat
                 && ((newValue.BSChiDinh === "Khác" && !!BSChiDinhKhac) || (newValue.BSChiDinh !== "Khác" && !!newValue.BSChiDinh))
@@ -91,9 +87,6 @@ const FPhieuTDTruyenDich = () => {
                     })
                 }
             }));
-            let tSaveSec = [...saveSec];
-            tSaveSec[sectionId] = new Date();
-            setSaveSec(tSaveSec);
             clearData();
         } else {
             let errs = [], emptyErrs = [], timeErr = false;
@@ -467,8 +460,8 @@ const FPhieuTDTruyenDich = () => {
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleSave}>
-                                    Lưu tạm thời
+                                <Button variant="primary" onClick={handleAdd}>
+                                    Thêm
                                 </Button>
                             </>
                         )
