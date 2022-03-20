@@ -200,10 +200,10 @@ const FToDieuTri = () => {
 
             { (role === "BS" && !ngayRaVien) &&
                 <Grid container sx={{ mt: 2 }}>
-                    <Grid item xs={9}>
+                    <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
-                    <Grid item xs={3} align="right">
+                    <Grid item xs={4} align="right">
                         {!addNew
                         ? (
                             <Button 
@@ -218,11 +218,11 @@ const FToDieuTri = () => {
                             </Button>
                         ) : (
                             <>
-                                <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleAdd}>
+                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
                                     Thêm
                                 </Button>
                             </>

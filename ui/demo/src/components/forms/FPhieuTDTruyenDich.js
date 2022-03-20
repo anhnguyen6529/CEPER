@@ -434,14 +434,14 @@ const FPhieuTDTruyenDich = () => {
 
             { (role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
-                    <Grid item xs={9}>
+                    <Grid item xs={8}>
                         {errors.length > 0 ? errors.map((error, id) => 
                             Array.isArray(error) 
                                 ? <Typography key={id} color="error">{error[0]}{' '}<b>{error[1]}</b>.</Typography>
                                 : <Typography key={id} color="error">{error}.</Typography>
                         ) : null}
                     </Grid>
-                    <Grid item xs={3} align="right">
+                    <Grid item xs={4} align="right">
                         {!addNew
                         ? (
                             <Button 
@@ -456,11 +456,11 @@ const FPhieuTDTruyenDich = () => {
                             </Button>
                         ) : (
                             <>
-                                <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleAdd}>
+                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
                                     Thêm
                                 </Button>
                             </>

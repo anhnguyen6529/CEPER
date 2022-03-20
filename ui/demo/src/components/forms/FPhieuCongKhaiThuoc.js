@@ -13,6 +13,8 @@ import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import drugList from "../../constants/drug_list.json";
 import { DatePicker } from "@mui/lab";
 
+const NGAY_THANG_PER_GROUP = 5;
+
 const headCells = [
     { id: 'stt', numeric: false, label: 'STT', width: '5%' },
     { id: 'tenThuoc', numeric: false, label: 'Tên thuốc, hàm lượng', width: '25%' },
@@ -54,8 +56,8 @@ const FPhieuCongKhaiThuoc = () => {
 
     const handleAdd = () => {
         if (!!newNgay && newDataList.every(newData => !!newData.tenThuoc && newData.soLuong > 0)) {
-            const newNgayThang = format(newNgay, "yyyy-MM-dd") === content.ngayThang[content.ngayThang.length - 1]
-                ? [...content.ngayThang] : [...content.ngayThang, format(newNgay, "yyyy-MM-dd")];
+            const newNgayThang = format(new Date(newNgay), "yyyy-MM-dd") === content.ngayThang[content.ngayThang.length - 1]
+                ? [...content.ngayThang] : [...content.ngayThang, format(new Date(newNgay), "yyyy-MM-dd")];
             dispatch(HSBAActions.updatePhieuCongKhaiThuoc({
                 value: { ngayThang: newNgayThang },
                 newData: newDataList.map(newData => {
@@ -146,7 +148,7 @@ const FPhieuCongKhaiThuoc = () => {
                                             <TableCell 
                                                 key={`${headCell.id}Head`} 
                                                 align="center" 
-                                                colSpan={5}
+                                                colSpan={NGAY_THANG_PER_GROUP}
                                                 className="tableHeadBorderRight"
                                                 sx={{ px: 1 }}
                                             >
@@ -161,7 +163,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                         
                                                     </Grid>
                                                     <Grid item xs={3} align="right">
-                                                        <IconButton size="small" disabled={dateGroup === 1 || content.ngayThang.length <= 5} onClick={handleNextDateGroup}>
+                                                        <IconButton size="small" disabled={dateGroup === 1 || content.ngayThang.length <= NGAY_THANG_PER_GROUP} onClick={handleNextDateGroup}>
                                                             <KeyboardArrowRight/>
                                                         </IconButton>
                                                     </Grid>
@@ -171,7 +173,7 @@ const FPhieuCongKhaiThuoc = () => {
                                 ))}
                             </TableRow>
                             <TableRow>
-                                {Array.from(Array(5)).map((_, index) => (
+                                {Array.from(Array(NGAY_THANG_PER_GROUP)).map((_, index) => (
                                     <TableCell 
                                         key={`ngayThang${index}`}
                                         align="center"
@@ -179,8 +181,8 @@ const FPhieuCongKhaiThuoc = () => {
                                         width="5%"
                                         sx={{ p: '6px 10px', height: 40 }}
                                     >
-                                        {index < content.ngayThang.slice(dateGroup * 5, dateGroup * 5 + 5).length
-                                            ? format(new Date(content.ngayThang[index]), "dd/MM")
+                                        {index < content.ngayThang.slice(dateGroup * NGAY_THANG_PER_GROUP, dateGroup * NGAY_THANG_PER_GROUP + NGAY_THANG_PER_GROUP).length
+                                            ? format(new Date(content.ngayThang[dateGroup * NGAY_THANG_PER_GROUP + index]), "dd/MM")
                                             : "__/__"
                                         }
                                     </TableCell>
@@ -196,10 +198,10 @@ const FPhieuCongKhaiThuoc = () => {
                                             <TableCell className="tableBodyBorderRight" align="center">{index + 1}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
                                             <TableCell className="tableBodyBorderRight" align="center">{row.donVi}</TableCell>
-                                            {Array.from(Array(5)).map((_, idx) => (
+                                            {Array.from(Array(NGAY_THANG_PER_GROUP)).map((_, idx) => (
                                                 <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
-                                                    {idx < row.ngayThang.slice(dateGroup * 5, dateGroup * 5 + 5).length && row.ngayThang[idx] !== 0
-                                                        ? row.ngayThang[idx] : ""}
+                                                    {idx < row.ngayThang.slice(dateGroup * NGAY_THANG_PER_GROUP, dateGroup * NGAY_THANG_PER_GROUP + NGAY_THANG_PER_GROUP).length 
+                                                        && row.ngayThang[dateGroup * NGAY_THANG_PER_GROUP + idx] !== 0 ? row.ngayThang[dateGroup * NGAY_THANG_PER_GROUP + idx] : ""}
                                                 </TableCell>
                                             ))}
                                             <TableCell className="tableBodyBorderRight" align="center">{row.tongSo}</TableCell>
@@ -213,9 +215,9 @@ const FPhieuCongKhaiThuoc = () => {
                             <TableRow hover>
                                 <TableCell className="tableBodyBorderRight" colSpan={2}>Tổng số khoản thuốc dùng</TableCell>
                                 <TableCell className="tableBodyBorderRight"/>
-                                {Array.from(Array(5)).map((_, idx) => (
+                                {Array.from(Array(NGAY_THANG_PER_GROUP)).map((_, idx) => (
                                     <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
-                                        {calculateTotalByDate(dateGroup * 5 + idx)}
+                                        {calculateTotalByDate(dateGroup * NGAY_THANG_PER_GROUP + idx)}
                                     </TableCell>
                                 ))}
                                 <TableCell className="tableBodyBorderRight"/>
@@ -351,10 +353,10 @@ const FPhieuCongKhaiThuoc = () => {
 
             { (role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
-                    <Grid item xs={9}>
+                    <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
-                    <Grid item xs={3} align="right">
+                    <Grid item xs={4} align="right">
                         {!addNew
                         ? (
                             <Button 
@@ -369,11 +371,11 @@ const FPhieuCongKhaiThuoc = () => {
                             </Button>
                         ) : (
                             <>
-                                <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
                                     Hủy
                                 </Button>
 
-                                <Button variant="primary" onClick={handleAdd}>
+                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
                                     Thêm
                                 </Button>
                             </>
