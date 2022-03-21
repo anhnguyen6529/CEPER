@@ -214,7 +214,7 @@ const FToDieuTri = () => {
                                     setAddNew(true);
                                 }}
                             >
-                                Thêm diễn biến
+                                Thêm mới
                             </Button>
                         ) : (
                             <>

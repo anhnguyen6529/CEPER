@@ -230,8 +230,7 @@ const HSBA = () => {
 
             {appearSec.map((sectionId, id) => (
                 <Paper 
-                    key={id}
-                    id={`section-${appearSec[id]}`}
+                    key={mdSections["order"][sectionId]}
                     sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1 }} 
                 >  
                     <Grid container>
