@@ -14,7 +14,7 @@ const SECTION_NAME = "Hướng điều trị và các chế độ tiếp theo";
 const FHuongDieuTri = () => {
     const { updating, huongDieuTri } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
+    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [newHuongDieuTri, setNewHuongDieuTri] = useState(huongDieuTri);
@@ -24,8 +24,8 @@ const FHuongDieuTri = () => {
     const [useResult, setUseResult] = useState(false);
 
     useEffect(() => {
-        if (updating && newHuongDieuTri !== huongDieuTri) {
-            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, text: newHuongDieuTri }));
+        if (updating && spellingError.changed) {
+            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newHuongDieuTri }));
         }
         // eslint-disable-next-line
     }, [updating]);
@@ -34,9 +34,7 @@ const FHuongDieuTri = () => {
         if (!spellingError.loading) {
             setResult(spellingError);
             setUseResult(true);
-            setReplaced(spellingError.correction.map(res => {
-                return { type: "correct", repText: res[0] }
-            }));
+            setReplaced(spellingError.correction.map(res => ({ type: "correct", repText: res[0] })));
             setText(UtilsText.getOriginalWordList(newHuongDieuTri, spellingError.detection));
         }
         // eslint-disable-next-line
@@ -44,8 +42,7 @@ const FHuongDieuTri = () => {
 
     const handleReset = () => {
         setNewHuongDieuTri(huongDieuTri);
-        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
-        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
     }
 
     const handleConfirm = () => {
@@ -63,23 +60,19 @@ const FHuongDieuTri = () => {
     }
 
     return (
-        <Box component="form" noValidate id={SECTION_NAME}>       
+        <Box component="form" noValidate>       
             <TextField 
                 multiline
                 fullWidth
-                value={huongDieuTri}
+                value={newHuongDieuTri}
                 onChange={({ target: { value } }) => {
                     setNewHuongDieuTri(value);
                     if (!updating) {
-                        if (value !== huongDieuTri) {
-                            dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
-                            setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                        if (value === huongDieuTri) {
+                            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                         } else {
                             if (!spellingError.changed) {
-                                dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: true }));
-                            }
-                            if (!hasChanged[SECTION_NAME]) {
-                                setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                             }
                         }
                     }
@@ -100,7 +93,7 @@ const FHuongDieuTri = () => {
             : null}
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
-                {hasChanged[SECTION_NAME] && !updating ?
+                {(spellingError.changed && !updating) ?
                     <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
                 {(spellingError.changed && !confirmSec[SECTION_NAME]) && updating ? 

@@ -23,9 +23,8 @@ const User = () => {
 
     const [open, setOpen] = useState(true);
     const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => { return mdSections["order"].indexOf(sec) }));
-    const [openSec, setOpenSec] = useState(new Array(mdSections["order"].length).fill(true));
-    const [confirmSec, setConfirmSec] = useState(Object.keys(mdSections["clinicalText"]).reduce((prev, key) => ({ ...prev, [key]: false }), {}));
-    const [hasChanged, setHasChanged] = useState(mdSections["order"].reduce((prev, key) => {
+    const [openSec, setOpenSec] = useState(new Array(mdSections["order"].length).fill(true));  
+    const [confirmSec, setConfirmSec] = useState(mdSections["clinicalSection"].reduce((prev, key) => {
         if (key === "Bệnh án" || key === "Tổng kết bệnh án") {
             return { ...prev, ...mdSections[key].reduce((subPrev, subKey) => ({ ...subPrev, [subKey]: false }), {})};
         } 
@@ -73,8 +72,6 @@ const User = () => {
             setOpenSec,
             confirmSec,
             setConfirmSec,
-            hasChanged,
-            setHasChanged,
             today,
             danhSachHSBATab,
             setDanhSachHSBATab

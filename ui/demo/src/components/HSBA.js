@@ -15,6 +15,7 @@ import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
+import { clinicalState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -24,21 +25,21 @@ const HSBA = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { today, appearSec, openSec, hasChanged } = useContext(UserContext); 
+    const { today, appearSec, openSec } = useContext(UserContext); 
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
-    const { loading, updating } = benhNhan;
+    const { loading, updating, confirmUpdate } = benhNhan;
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
     useEffect(() => {
-        if (updating && Object.keys(mdSections["clinicalText"]).some(key => !!spellingError[key].changed)) {
+        if (updating && Object.keys(clinicalState).some(key => spellingError[key].changed)) {
             if (!spellingError.loading) {
                 setTimeout(() => {
                     setOpenBackdrop(false);
                     setOpenSnackbar(true);
-                    const firstKey = Object.keys(mdSections["clinicalText"]).find(key => !!spellingError[key].changed);
-                    document.getElementById(firstKey).scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                    const firstKey = Object.keys(clinicalState).find(key => !!spellingError[key].changed);
+                    document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
                 }, 2000);
             } else {
                 setOpenBackdrop(true);
@@ -94,7 +95,15 @@ const HSBA = () => {
     }
 
     const handleUpdate = () => {
-        dispatch(HSBAActions.update());
+        if (Object.keys(clinicalState).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+            && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
+            || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed))) {
+            dispatch(HSBAActions.update());
+        } else {
+            dispatch(HSBAActions.confirmUpdate());
+            setOpenSnackbar(true);
+            dispatch(SpellingErrorActions.resetState());
+        }
     }
 
     return (
@@ -242,28 +251,30 @@ const HSBA = () => {
                 </Paper>
             ))} 
 
-            {Object.values(hasChanged).some(value => value) ?
-                <>  
-                    <Box className="df aic jcfe" sx={{ mt: 3 }}>
-                        {!updating ? 
-                            <Button sx={{ width: 150 }} variant="primary-dark" onClick={handleUpdate}>
-                                Cập nhật
-                            </Button>
-                        : null}
-                    </Box>
+            {Object.keys(clinicalState).some(key => spellingError[key].changed) ?
+                <Box className="df aic jcfe" sx={{ mt: 3 }}>
+                    {!updating && !confirmUpdate ? 
+                        <Button sx={{ width: 150 }} variant="primary-dark" onClick={handleUpdate}>
+                            Cập nhật
+                        </Button>
+                    : null}
+                </Box>
+            : null} 
 
-                    <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={() => setOpenSnackbar(false)}>
-                        <Alert elevation={6} variant="filled" severity="success">
+            <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={() => setOpenSnackbar(false)}>
+                <Alert elevation={6} variant="filled" severity="success">
+                    {updating ? 
+                        <>
                             <AlertTitle>Thông tin bệnh án đã được xử lý!</AlertTitle>
                             Vui lòng di chuyển đến các mục trong "<i>Danh sách mục - Xác nhận</i>" và xác nhận kết quả xử lý.
-                        </Alert>
-                    </Snackbar>
+                        </> 
+                    : (confirmUpdate ? "Cập nhật thông tin bệnh án thành công" : "")}
+                </Alert>
+            </Snackbar>
 
-                    <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
-                </>
-            : null} 
+            <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </Container>
     )
 }

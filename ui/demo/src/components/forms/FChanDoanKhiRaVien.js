@@ -11,11 +11,12 @@ import { UtilsText } from "../../utils";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 
 const SECTION_NAME = "Chẩn đoán khi ra viện";
+const CLINICAL_SUBSECTION = "Chẩn đoán";
 
 const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien, updating } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
+    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
@@ -26,29 +27,27 @@ const FChanDoanKhiRaVien = () => {
     const [useResult, setUseResult] = useState(false);
 
     useEffect(() => {
-        if (updating && chanDoan !== chanDoanKhiRaVien.chanDoan) {
-            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, text: chanDoan }));
+        if (updating && spellingError.changed) {
+            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
         }
         // eslint-disable-next-line
     }, [updating]);
 
     useEffect(() => {
-        if (!spellingError.loading) {
-            setResult(spellingError);
+        if (!spellingError[CLINICAL_SUBSECTION].loading) {
+            setResult(spellingError[CLINICAL_SUBSECTION]);
             setUseResult(true);
-            setReplaced(spellingError.correction.map(res => {
-                return { type: "correct", repText: res[0] }
-            }));
-            setText(UtilsText.getOriginalWordList(chanDoan, spellingError.detection));
+            setReplaced(spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[0] })));
+            setText(UtilsText.getOriginalWordList(chanDoan, spellingError[CLINICAL_SUBSECTION].detection));
         }
         // eslint-disable-next-line
-    }, [spellingError.loading]);
+    }, [spellingError[CLINICAL_SUBSECTION].loading]);
 
     const handleReset = () => {
         setChanDoan(chanDoanKhiRaVien.chanDoan);
         setNgayRaVien(chanDoanKhiRaVien.ngayRaVien);
-        dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
-        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, changed: false }));
     }
 
     const handleConfirm = () => {
@@ -66,7 +65,7 @@ const FChanDoanKhiRaVien = () => {
     }
 
     return (
-        <Box component="form" noValidate id={SECTION_NAME}>
+        <Box component="form" noValidate>
             <TextField 
                 multiline
                 fullWidth
@@ -75,16 +74,16 @@ const FChanDoanKhiRaVien = () => {
                     setChanDoan(value);
                     if (!updating) {
                         if (value === chanDoanKhiRaVien.chanDoan) {
-                            dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: false }));
+                            dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, changed: false }));
                             if (ngayRaVien === chanDoanKhiRaVien.ngayRaVien) {
-                                setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                             }
                         } else {
-                            if (!spellingError.changed) {
-                                dispatch(SpellingErrorActions.updateChanged({ section: SECTION_NAME, changed: true }));
+                            if (!spellingError[CLINICAL_SUBSECTION].changed) {
+                                dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, changed: true }));
                             }
-                            if (!hasChanged[SECTION_NAME]) {
-                                setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                            if (!spellingError.changed) {
+                                dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                             }
                         }
                     }
@@ -116,12 +115,12 @@ const FChanDoanKhiRaVien = () => {
                         onChange={(newValue) => {
                             setNgayRaVien(new Date(newValue).toISOString());
                             if (new Date(newValue).toISOString() !== chanDoanKhiRaVien.ngayRaVien) {
-                                if (!hasChanged[SECTION_NAME]) {
-                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                if (!spellingError.changed) {
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                 }
                             } else {
                                 if (chanDoan === chanDoanKhiRaVien.chanDoan) {
-                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                 }
                             }
                         }}
@@ -136,10 +135,10 @@ const FChanDoanKhiRaVien = () => {
             </Grid>
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
-                {hasChanged[SECTION_NAME] && !updating ?
+                {(spellingError.changed && !updating) ?
                     <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
-                {!confirmSec[SECTION_NAME] && updating ? 
+                {(spellingError.changed && !confirmSec[SECTION_NAME]) && updating ? 
                     <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
             </Box>
         </Box>

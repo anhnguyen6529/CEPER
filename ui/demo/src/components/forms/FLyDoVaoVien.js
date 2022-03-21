@@ -9,14 +9,17 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
+import mdSections from "../../constants/md_sections.json";
 
 const SECTION_NAME = "Lý do vào viện";
+const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const FLyDoVaoVien = () => {
     const { updating, lyDoVaoVien } = useSelector((state) => state.HSBA);
-    const spellingErrorLyDo = useSelector((state) => state.spellingError["Lý do vào viện"]);
-    const spellingErrorChanDoan = useSelector((state) => state.spellingError["Chẩn đoán nơi giới thiệu"]);
-    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
+    const spellingErrorLyDo = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
+    const spellingErrorChanDoan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
+    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [lyDo, setLyDo] = useState(lyDoVaoVien.lyDo);
@@ -36,11 +39,11 @@ const FLyDoVaoVien = () => {
 
     useEffect(() => {
         if (updating) {
-            if (lyDo !== lyDoVaoVien.lyDo) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: "Lý do vào viện", text: lyDo }));
+            if (spellingErrorLyDo.changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
             }
-            if (chanDoanNoiGioiThieu !== lyDoVaoVien.chanDoanNoiGioiThieu) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: "Chẩn đoán nơi giới thiệu", text: chanDoanNoiGioiThieu }));
+            if (spellingErrorChanDoan.changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
             }
         }
         // eslint-disable-next-line
@@ -50,17 +53,13 @@ const FLyDoVaoVien = () => {
         if (!spellingErrorLyDo.loading) {
             setResultLyDo(spellingErrorLyDo);
             setUseResultLyDo(true);
-            setReplacedLyDo(spellingErrorLyDo.correction.map(res => {
-                return { type: "correct", repText: res[0] }
-            }));
+            setReplacedLyDo(spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[0] })));
             setTextLyDo(UtilsText.getOriginalWordList(lyDo, spellingErrorLyDo.detection));
         }
         if (!spellingErrorChanDoan.loading) {
             setResultChanDoan(spellingErrorChanDoan);
             setUseResultChanDoan(true);
-            setReplacedChanDoan(spellingErrorChanDoan.correction.map(res => {
-                return { type: "correct", repText: res[0] }
-            }));
+            setReplacedChanDoan(spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[0] })));
             setTextChanDoan(UtilsText.getOriginalWordList(chanDoanNoiGioiThieu, spellingErrorChanDoan.detection));
         }
         // eslint-disable-next-line
@@ -72,13 +71,13 @@ const FLyDoVaoVien = () => {
         setVaoNgayThu(lyDoVaoVien.vaoNgayThu);
         setChanDoanNoiGioiThieu(lyDoVaoVien.chanDoanNoiGioiThieu);
         setNoiGioiThieu(lyDoVaoVien.noiGioiThieu);
-        dispatch(SpellingErrorActions.updateChanged({ section: "Lý do vào viện", changed: false }));
-        dispatch(SpellingErrorActions.updateChanged({ section: "Chẩn đoán nơi giới thiệu", changed: false }));
-        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: false }));
+        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
     }
 
     const handleConfirm = () => {
-        setConfirmSec({ ...confirmSec, "Lý do vào viện": true, "Chẩn đoán nơi giới thiệu": true });
+        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
         if (useResultLyDo) {
             let confirmedLyDo = resultLyDo.detection.split(" "), countLyDo = 0;
             confirmedLyDo.forEach((word, id) => {
@@ -104,7 +103,7 @@ const FLyDoVaoVien = () => {
     return (
         <Box component="form" noValidate sx={{ '.MuiGrid-container': { alignItems: 'center' } }}>
             <Grid container style={{ alignItems: "flex-start" }}>
-                <Grid item xs={9} id="Lý do vào viện">
+                <Grid item xs={9}>
                     <TextField 
                         multiline
                         fullWidth
@@ -113,25 +112,25 @@ const FLyDoVaoVien = () => {
                             setLyDo(value);
                             if (!updating) {
                                 if (value === lyDoVaoVien.lyDo) {
-                                    dispatch(SpellingErrorActions.updateChanged({ section: "Lý do vào viện", changed: false }));
+                                    dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: false }));
                                     if (vaoNgayThu === lyDoVaoVien.vaoNgayThu && ngayVaoVien === lyDoVaoVien.ngayVaoVien
                                         && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 } else {
                                     if (!spellingErrorLyDo.changed) {
-                                        dispatch(SpellingErrorActions.updateChanged({ section: "Lý do vào viện", changed: true }));
+                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: true }));
                                     }
-                                    if (!hasChanged[SECTION_NAME]) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                    if (!spellingError.changed) {
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
                             }
                         }}
-                        disabled={updating && (useResultLyDo || confirmSec["Lý do vào viện"] || !spellingErrorLyDo.changed)}
+                        disabled={updating && (useResultLyDo || confirmSec[SECTION_NAME] || !spellingErrorLyDo.changed)}
                     />
 
-                    {!!resultLyDo && !confirmSec["Lý do vào viện"] ? 
+                    {!!resultLyDo && !confirmSec[SECTION_NAME] ? 
                         <BoxLoiChinhTa
                             text={textLyDo}
                             result={resultLyDo}
@@ -154,13 +153,13 @@ const FLyDoVaoVien = () => {
                             onChange={({ target: { value } }) => {
                                 setVaoNgayThu(value);
                                 if (value !== lyDoVaoVien.vaoNgayThu) {
-                                    if (!hasChanged[SECTION_NAME]) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                    if (!spellingError.changed) {
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 } else {
                                     if (lyDo === lyDoVaoVien.lyDo && ngayVaoVien === lyDoVaoVien.ngayVaoVien
                                         && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 }
                             }}
@@ -182,13 +181,13 @@ const FLyDoVaoVien = () => {
                         onChange={(newValue) => {
                             setNgayVaoVien(newValue);
                             if (newValue !== lyDoVaoVien.ngayVaoVien) {
-                                if (!hasChanged[SECTION_NAME]) {
-                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                if (!spellingError.changed) {
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                 }
                             } else {
                                 if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu
                                     && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
-                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                 }
                             }
                         }}
@@ -201,7 +200,7 @@ const FLyDoVaoVien = () => {
                     />
                 </Grid>
             </Grid>
-            <Grid container style={{ marginTop: 16, alignItems: "flex-start" }} id="Chẩn đoán nơi giới thiệu">
+            <Grid container style={{ marginTop: 16, alignItems: "flex-start" }}>
                 <Grid item xs={3}>
                     <Typography fontWeight="bold" sx={{ mt: '12px' }}>Chẩn đoán của nơi giới thiệu</Typography>
                 </Grid>
@@ -215,25 +214,25 @@ const FLyDoVaoVien = () => {
                             setChanDoanNoiGioiThieu(value);
                             if (!updating) {
                                 if (value === lyDoVaoVien.chanDoanNoiGioiThieu) {
-                                    dispatch(SpellingErrorActions.updateChanged({ section: "Chẩn đoán nơi giới thiệu", changed: false }));
+                                    dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
                                     if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu 
                                         && ngayVaoVien === lyDoVaoVien.ngayVaoVien && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 } else {
                                     if (!spellingErrorChanDoan.changed) {
-                                        dispatch(SpellingErrorActions.updateChanged({ section: "Chẩn đoán nơi giới thiệu", changed: true }));
+                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: true }));
                                     }
-                                    if (!hasChanged[SECTION_NAME]) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                    if (!spellingError.changed) {
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
                             }
                         }}
-                        disabled={updating && (useResultChanDoan || confirmSec["Chẩn đoán nơi giới thiệu"] || !spellingErrorChanDoan.changed)}
+                        disabled={updating && (useResultChanDoan || confirmSec[SECTION_NAME] || !spellingErrorChanDoan.changed)}
                     />
 
-                    {!!resultChanDoan && !confirmSec["Chẩn đoán nơi giới thiệu"] ? 
+                    {!!resultChanDoan && !confirmSec[SECTION_NAME] ? 
                         <BoxLoiChinhTa
                             text={textChanDoan}
                             result={resultChanDoan}
@@ -252,13 +251,13 @@ const FLyDoVaoVien = () => {
                         onChange={({ target: { value } }) => {
                             setNoiGioiThieu(value); 
                             if (value !== lyDoVaoVien.noiGioiThieu) {
-                                if (!hasChanged[SECTION_NAME]) {
-                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                if (!spellingError.changed) {
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                 }
                             } else {
                                 if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu 
                                     && ngayVaoVien === lyDoVaoVien.ngayVaoVien && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
-                                    setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                 }
                             }
                         }}
@@ -270,11 +269,10 @@ const FLyDoVaoVien = () => {
             </Grid>
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
-                {hasChanged[SECTION_NAME] && !updating ?
+                {(spellingError.changed && !updating) ?
                     <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
-                {((spellingErrorLyDo.changed && !confirmSec["Lý do vào viện"]) 
-                    || (spellingErrorChanDoan.changed && !confirmSec["Chẩn đoán nơi giới thiệu"])) && updating ? 
+                {(!confirmSec[SECTION_NAME] && (spellingErrorLyDo.changed || spellingErrorChanDoan.changed)) && updating ? 
                     <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
             </Box>
         </Box>

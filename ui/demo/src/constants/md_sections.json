@@ -17,11 +17,36 @@
         "Tóm tắt bệnh án",
         "Chẩn đoán ban đầu"
     ],
+    "Lý do vào viện": [
+        "Lý do",
+        "Chẩn đoán nơi giới thiệu"
+    ],
+    "Hỏi bệnh": [
+        "Quá trình bệnh lý",
+        "Bản thân",
+        "Gia đình"
+    ],
+    "Khám bệnh": [
+        "Khám toàn thân",
+        "Tuần hoàn",
+        "Hô hấp",
+        "Tiêu hóa",
+        "Thận - Tiết niệu - Sinh dục",
+        "Thần kinh",
+        "Cơ - Xương - Khớp",
+        "Tai - Mũi - Họng",
+        "Răng - Hàm - Mặt",
+        "Mắt",
+        "Nội tiết, dinh dưỡng và các bệnh lý khác"
+    ],
     "Tổng kết bệnh án": [
         "Phương pháp điều trị",
         "Chẩn đoán khi ra viện",
         "Tình trạng người bệnh ra viện",
         "Hướng điều trị và các chế độ tiếp theo"
+    ],
+    "Chẩn đoán khi ra viện": [
+        "Chẩn đoán"
     ],
     "attached": [
         "Tờ điều trị",  
@@ -41,6 +66,10 @@
         "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
         "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"]
     },
+    "clinicalSection": [
+        "Bệnh án",
+        "Tổng kết bệnh án"
+    ],
     "clinicalText": {
         "Lý do vào viện": "Bệnh án",
         "Chẩn đoán nơi giới thiệu": "Bệnh án / Lý do vào viện",

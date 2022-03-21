@@ -36,7 +36,7 @@ const GroupTongKetBA = () => {
     return (
         <>
             {mdSections["Tổng kết bệnh án"].map((section, id) => (
-                <Accordion key={`accordionSec${id}`}>
+                <Accordion key={`accordionSec${id}`} id={section} sx={{ scrollMarginTop: 72 }}>
                     <AccordionSummary>
                         <Typography>{section}</Typography>
                     </AccordionSummary>

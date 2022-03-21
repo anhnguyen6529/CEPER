@@ -172,6 +172,13 @@ const HSBASlice = createSlice({
                 ...state,
                 updating: true
             }
+        },
+        confirmUpdate: (state) => {
+            return {
+                ...state,
+                updating: false, 
+                confirmUpdate: true
+            }
         }
     },
     extraReducers: (builder) => {

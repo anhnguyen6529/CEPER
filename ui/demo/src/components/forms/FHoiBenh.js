@@ -10,9 +10,10 @@ import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import { Circle } from "@mui/icons-material";
 import { TDacDiemLienQuanBenh } from "../tables";
+import mdSections from "../../constants/md_sections.json";
 
 const SECTION_NAME = "Hỏi bệnh";
-const CLINICAL_SUBSECTION = ["Quá trình bệnh lý", "Bản thân", "Gia đình"];
+const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const equalsTo = (arr1, arr2) => {
     let equal = true;
@@ -35,10 +36,11 @@ const equalsTo = (arr1, arr2) => {
 
 const FHoiBenh = () => {
     const { updating, hoiBenh } = useSelector((state) => state.HSBA);
-    const spellingErrorQuaTrinhBenhLy = useSelector((state) => state.spellingError[CLINICAL_SUBSECTION[0]]);
-    const spellingErrorBanThan = useSelector((state) => state.spellingError[CLINICAL_SUBSECTION[1]]);
-    const spellingErrorGiaDinh = useSelector((state) => state.spellingError[CLINICAL_SUBSECTION[2]]);
-    const { confirmSec, setConfirmSec, hasChanged, setHasChanged } = useContext(UserContext);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
+    const spellingErrorQuaTrinhBenhLy = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
+    const spellingErrorBanThan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
+    const spellingErrorGiaDinh = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[2]]);
+    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [quaTrinhBenhLy, setQuaTrinhBenhLy] = useState(hoiBenh.quaTrinhBenhLy);
@@ -53,14 +55,14 @@ const FHoiBenh = () => {
 
     useEffect(() => {
         if (updating) {
-            if (quaTrinhBenhLy !== hoiBenh.quaTrinhBenhLy) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
+            if (spellingErrorQuaTrinhBenhLy.changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
             }
-            if (banThan !== hoiBenh.tienSu.banThan) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: CLINICAL_SUBSECTION[1], text: banThan }));
+            if (spellingErrorBanThan.changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
             }
-            if (giaDinh !== hoiBenh.tienSu.giaDinh) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: CLINICAL_SUBSECTION[2], text: giaDinh }));
+            if (spellingErrorGiaDinh.changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
             }
         }
         // eslint-disable-next-line
@@ -71,19 +73,19 @@ const FHoiBenh = () => {
         if (!spellingErrorQuaTrinhBenhLy.loading) {
             tResult[0] = spellingErrorQuaTrinhBenhLy; setResult(tResult);
             tUseResult[0] = true; setUseResult(tUseResult);
-            tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => { return { type: "correct", repText: res[0] } }); setReplaced(tReplaced);
+            tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
             tText[0] = UtilsText.getOriginalWordList(quaTrinhBenhLy, spellingErrorQuaTrinhBenhLy.detection); setText(tText);
         }
         if (!spellingErrorBanThan.loading) {
             tResult[1] = spellingErrorBanThan; setResult(tResult);
             tUseResult[1] = true; setUseResult(tUseResult);
-            tReplaced[1] = spellingErrorBanThan.correction.map(res => { return { type: "correct", repText: res[0] } }); setReplaced(tReplaced);
+            tReplaced[1] = spellingErrorBanThan.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
             tText[1] = UtilsText.getOriginalWordList(banThan, spellingErrorBanThan.detection); setText(tText);
         }
         if (!spellingErrorGiaDinh.loading) {
             tResult[2] = spellingErrorGiaDinh; setResult(tResult);
             tUseResult[2] = true; setUseResult(tUseResult);
-            tReplaced[2] = spellingErrorGiaDinh.correction.map(res => { return { type: "correct", repText: res[0] } }); setReplaced(tReplaced);
+            tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
             tText[2] = UtilsText.getOriginalWordList(giaDinh, spellingErrorGiaDinh.detection); setText(tText);
         }
         // eslint-disable-next-line
@@ -94,13 +96,13 @@ const FHoiBenh = () => {
         setBanThan(hoiBenh.tienSu.banThan);
         setDacDiemLienQuan(hoiBenh.tienSu.dacDiemLienQuanBenh);
         setGiaDinh(hoiBenh.tienSu.giaDinh);
-        CLINICAL_SUBSECTION.forEach(subSection => dispatch(SpellingErrorActions.updateChanged({ section: subSection, changed: false })));
-        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+        CLINICAL_SUBSECTION.forEach(subSection => dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection, changed: false })));
     }
 
     const handleConfirm = () => {
+        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
         CLINICAL_SUBSECTION.forEach((subSection, index) => {
-            setConfirmSec({ ...confirmSec, [subSection]: true });
             if (useResult[index]) {
                 let confirmed = result[index].detection.split(" "), count = 0;
                 confirmed.forEach((word, id) => {
@@ -117,10 +119,10 @@ const FHoiBenh = () => {
     }
 
     return (
-        <Box component="form" noValidate sx={{ '.MuiGrid-container': { alignItems: 'center' } }}>
-            <Grid container id={CLINICAL_SUBSECTION[0]}>
+        <Box component="form" noValidate>
+            <Grid container>
                 <Grid item xs={2}>
-                    <Typography fontWeight="bold">Quá trình bệnh lý</Typography>
+                    <Typography fontWeight="bold" sx={{ mt: '12px' }}>Quá trình bệnh lý</Typography>
                 </Grid>
                 <Grid item xs={10}>
                     <TextField 
@@ -131,25 +133,25 @@ const FHoiBenh = () => {
                             setQuaTrinhBenhLy(value);
                             if (!updating) {
                                 if (value === hoiBenh.quaTrinhBenhLy) {
-                                    dispatch(SpellingErrorActions.updateChanged({ section: CLINICAL_SUBSECTION[0], changed: false }));
+                                    dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: false }));
                                     if (banThan === hoiBenh.tienSu.banThan && equalsTo(dacDiemLienQuan, hoiBenh.tienSu.dacDiemLienQuanBenh) 
                                         && giaDinh === hoiBenh.tienSu.giaDinh) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 } else {
                                     if (!spellingErrorQuaTrinhBenhLy.changed) {
-                                        dispatch(SpellingErrorActions.updateChanged({ section: CLINICAL_SUBSECTION[0], changed: true }));
+                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: true }));
                                     }
-                                    if (!hasChanged[SECTION_NAME]) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                    if (!spellingError.changed) {
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[0] || confirmSec[CLINICAL_SUBSECTION[0]] || !spellingErrorQuaTrinhBenhLy.changed)}
+                        disabled={updating && (useResult[0] || confirmSec[SECTION_NAME] || !spellingErrorQuaTrinhBenhLy.changed)}
                     />
 
-                    {!!result[0] && !confirmSec[CLINICAL_SUBSECTION[0]] ? 
+                    {!!result[0] && !confirmSec[SECTION_NAME] ? 
                         <BoxLoiChinhTa
                             text={text[0]}
                             result={result[0]}
@@ -172,16 +174,16 @@ const FHoiBenh = () => {
             </Grid>
 
             <Typography sx={{ mt: 2 }} fontWeight="bold">Tiền sử bệnh</Typography>
-            <Box sx={{ '.MuiListItemIcon-root': { minWidth: 24 }, '.MuiListItem-root': { pr: 0 } }}>
+            <Box sx={{ '.MuiListItemIcon-root': { minWidth: 24 }, '.MuiListItem-root': { pr: 0, alignItems: "flex-start" } }}>
                 <List>
-                    <ListItem id="Bản thân">
+                    <ListItem>
                         <ListItemIcon>
-                            <Circle sx={{ width: 9, color: 'black' }}/>
+                            <Circle sx={{ width: 9, color: 'black', mt: 2 }}/>
                         </ListItemIcon>
                         <ListItemText>
                             <Grid container>
                                 <Grid item xs={1}>
-                                    <Typography fontWeight="bold">Bản thân</Typography>
+                                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Bản thân</Typography>
                                 </Grid>
                                 <Grid item xs={11}>
                                     <TextField 
@@ -192,25 +194,25 @@ const FHoiBenh = () => {
                                             setBanThan(value);
                                             if (!updating) {
                                                 if (value === hoiBenh.tienSu.banThan) {
-                                                    dispatch(SpellingErrorActions.updateChanged({ section: CLINICAL_SUBSECTION[1], changed: false }));
+                                                    dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
                                                     if (quaTrinhBenhLy === hoiBenh.quaTrinhBenhLy && equalsTo(dacDiemLienQuan, hoiBenh.tienSu.dacDiemLienQuanBenh)
                                                         && giaDinh === hoiBenh.tienSu.giaDinh) {
-                                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                                     }
                                                 } else {
                                                     if (!spellingErrorBanThan.changed) {
-                                                        dispatch(SpellingErrorActions.updateChanged({ section: CLINICAL_SUBSECTION[1], changed: true }));
+                                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: true }));
                                                     }
-                                                    if (!hasChanged[SECTION_NAME]) {
-                                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                                    if (!spellingError.changed) {
+                                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                                     }
                                                 }
                                             }
                                         }}
-                                        disabled={updating && (useResult[1] || confirmSec[CLINICAL_SUBSECTION[1]] || !spellingErrorBanThan.changed)}
+                                        disabled={updating && (useResult[1] || confirmSec[SECTION_NAME] || !spellingErrorBanThan.changed)}
                                     />
 
-                                    {!!result[1] && !confirmSec[CLINICAL_SUBSECTION[1]] ? 
+                                    {!!result[1] && !confirmSec[SECTION_NAME] ? 
                                         <BoxLoiChinhTa
                                             text={text[1]}
                                             result={result[1]}
@@ -236,7 +238,7 @@ const FHoiBenh = () => {
 
                     <ListItem>
                         <ListItemIcon>
-                            <Circle sx={{ width: 9, color: 'black' }}/>
+                            <Circle sx={{ width: 9, color: 'black', mt: 0.5 }}/>
                         </ListItemIcon>
                         <ListItemText>
                             <Typography fontWeight="bold">Đặc điểm liên quan bệnh</Typography>
@@ -249,25 +251,25 @@ const FHoiBenh = () => {
                             handleChange={(value) => {
                                 if (equalsTo(value, hoiBenh.tienSu.dacDiemLienQuanBenh)) {
                                     if (quaTrinhBenhLy === hoiBenh.quaTrinhBenhLy && banThan === hoiBenh.tienSu.banThan && giaDinh === hoiBenh.tienSu.giaDinh) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 } else {
-                                    if (!hasChanged[SECTION_NAME]) {
-                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                    if (!spellingError.changed) {
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
                             }} 
                         /> 
                     </Box>
                     
-                    <ListItem sx={{ mt: 1 }} id="Gia đình">
+                    <ListItem sx={{ mt: 1 }}>
                         <ListItemIcon>
-                            <Circle sx={{ width: 9, color: 'black' }}/>
+                            <Circle sx={{ width: 9, color: 'black', mt: 2 }}/>
                         </ListItemIcon>
                         <ListItemText>
                             <Grid container>
                                 <Grid item xs={1}>
-                                    <Typography fontWeight="bold">Gia đình</Typography>
+                                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Gia đình</Typography>
                                 </Grid>
                                 <Grid item xs={11}>
                                     <TextField 
@@ -278,25 +280,25 @@ const FHoiBenh = () => {
                                             setGiaDinh(value);
                                             if (!updating) {
                                                 if (value === hoiBenh.tienSu.giaDinh) {
-                                                    dispatch(SpellingErrorActions.updateChanged({ section: CLINICAL_SUBSECTION[2], changed: false }));
+                                                    dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], changed: false }));
                                                     if (quaTrinhBenhLy === hoiBenh.quaTrinhBenhLy && banThan === hoiBenh.tienSu.banThan 
                                                         && equalsTo(dacDiemLienQuan, hoiBenh.tienSu.dacDiemLienQuanBenh)) {
-                                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: false });
+                                                            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                                     }
                                                 } else {
                                                     if (!spellingErrorGiaDinh.changed) {
-                                                        dispatch(SpellingErrorActions.updateChanged({ section: CLINICAL_SUBSECTION[2], changed: true }));
+                                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], changed: true }));
                                                     }
-                                                    if (!hasChanged[SECTION_NAME]) {
-                                                        setHasChanged({ ...hasChanged, [SECTION_NAME]: true });
+                                                    if (!spellingError.changed) {
+                                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                                     }
                                                 }
                                             }
                                         }}
-                                        disabled={updating && (useResult[2] || confirmSec[CLINICAL_SUBSECTION[2]] || !spellingErrorGiaDinh.changed)}
+                                        disabled={updating && (useResult[2] || confirmSec[SECTION_NAME] || !spellingErrorGiaDinh.changed)}
                                     />
 
-                                    {!!result[2] && !confirmSec[CLINICAL_SUBSECTION[2]] ? 
+                                    {!!result[2] && !confirmSec[SECTION_NAME] ? 
                                         <BoxLoiChinhTa
                                             text={text[2]}
                                             result={result[2]}
@@ -323,12 +325,11 @@ const FHoiBenh = () => {
             </Box>
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
-                {hasChanged[SECTION_NAME] && !updating ?
+                {(spellingError.changed && !updating) ?
                     <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
-                {((spellingErrorQuaTrinhBenhLy.changed && !confirmSec[CLINICAL_SUBSECTION[0]]) 
-                    || (spellingErrorBanThan.changed && !confirmSec[CLINICAL_SUBSECTION[1]])
-                    || (spellingErrorGiaDinh.changed && !confirmSec[CLINICAL_SUBSECTION[2]])) && updating ? 
+                {(!confirmSec[SECTION_NAME] && (spellingErrorQuaTrinhBenhLy.changed
+                    || spellingErrorBanThan.changed || spellingErrorGiaDinh.changed)) && updating ? 
                     <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
             </Box>
         </Box>

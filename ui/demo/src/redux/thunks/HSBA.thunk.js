@@ -135,9 +135,9 @@ const datas = [
         khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Sốt nhiễm siêu vi ngày 4 / TD Bệnh Sởi - Rối loạn tiêu hoá',
-        phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
+        phuongPhapDieuTri: 'kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt',
         chanDoanKhiRaVien: {
-            chanDoan: '',
+            chanDoan: 'kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt',
             ngayRaVien: '',
         },   
         tinhTrangRaVien: '',
@@ -197,9 +197,9 @@ const datas = [
         khamBenh: KHAMBENH,
         tomTatBenhAn: '',
         chanDoanBanDau: 'Rối loạn tiêu hoá',
-        phuongPhapDieuTri: 'kháng sinh, men vi snh, chốngg ói, hạ sốt',
+        phuongPhapDieuTri: 'kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt',
         chanDoanKhiRaVien: {
-            chanDoan: '',
+            chanDoan: 'kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt',
             ngayRaVien: '',
         },  
         tinhTrangRaVien: '',

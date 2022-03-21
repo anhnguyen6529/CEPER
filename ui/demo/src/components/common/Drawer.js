@@ -16,6 +16,7 @@ import { ListSwitchColumn } from "../lists";
 import DrawerHeader from "./DrawerHeader";
 import { useSelector } from "react-redux";
 import Button from "./Button";
+import { clinicalState } from "../../redux/slices/spellingError.slice";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
@@ -62,39 +63,43 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             <Divider sx={{ mt: 2 }} />
             {(content.role === "BN" || typeof(pid) !== 'undefined') &&
                 <Box sx={{ overflowY: 'auto' }}>     
-                    {updating && Object.keys(mdSections["clinicalText"]).some(key => !!spellingError[key].changed) ?
-                        <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
-                            {Object.keys(mdSections["clinicalText"]).map((key, id) =>
-                                !!spellingError[key].changed ?
-                                    <ListItem 
-                                        key={id}
-                                        sx={{ py: 0 }}
-                                        secondaryAction={
-                                            !confirmSec[key] ?
-                                                <Tooltip placement="right" title="Di chuyển đến">
-                                                    <IconButton size="small" onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" })}>
-                                                        <EditLocationOutlined />
-                                                    </IconButton>
-                                                </Tooltip> 
-                                            : <Check color="success" />
-                                        }
-                                    >
-                                        <ListItemText 
-                                            primary={key}
-                                            secondary={mdSections["clinicalText"][key]}
-                                        />
-                                    </ListItem>
-                                : null
-                            )}
-                            <ListItem>
-                                <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}} disabled={Object.keys(confirmSec).some(key => !!spellingError[key].changed && !confirmSec[key])}>
-                                    Xác nhận cập nhật
-                                </Button>
-                            </ListItem>
-                        </List>  
+                    {updating && Object.keys(clinicalState).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+                        && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
+                        || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed)) ?
+                        <>
+                            <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
+                                {Object.keys(clinicalState).map((key, id) =>
+                                    spellingError[key].changed ?
+                                        <ListItem 
+                                            key={id}
+                                            sx={{ py: 0.5 }}
+                                            alignItems="flex-start"
+                                            button={!confirmSec[key]}
+                                            onClick={() => {
+                                                if (!confirmSec[key]) {
+                                                    document.getElementById(key).scrollIntoView({ behavior: "smooth" });
+                                            }}}
+                                        >
+                                            <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
+                                                {!confirmSec[key] 
+                                                    ? <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
+                                                    : <Check color="success" />
+                                                }
+                                            </ListItemIcon>
+                                            <ListItemText primary={key} />
+                                        </ListItem>
+                                    : null
+                                )}
+                                <ListItem>
+                                    <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}} disabled={Object.keys(confirmSec).some(key => !!spellingError[key].changed && !confirmSec[key])}>
+                                        Xác nhận cập nhật
+                                    </Button>
+                                </ListItem>
+                            </List>  
+                            <Divider />
+                        </>
                         : null}
 
-                    <Divider />
                     <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Hồ sơ bệnh án</ListSubheader>}>
                         {mdSections["order"].map((section, id) => (
                             <div key={id}>
