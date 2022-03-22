@@ -16,14 +16,14 @@ import { DatePicker } from "@mui/lab";
 const NGAY_THANG_PER_GROUP = 5;
 
 const headCells = [
-    { id: 'stt', numeric: false, label: 'STT', width: '5%' },
-    { id: 'tenThuoc', numeric: false, label: 'Tên thuốc, hàm lượng', width: '25%' },
-    { id: 'donVi', numeric: false, label: 'Đơn vị', width: '5%' },
-    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '25%' },
-    { id: 'tongSo', numeric: true, label: 'Tổng số', width: '7%' },
-    { id: 'donGia', numeric: true, label: 'Đơn giá', width: '9%' },
-    { id: 'thanhTien', numeric: true, label: 'Thành tiền', width: '12%' },
-    { id: 'ghiChu', numeric: false, label: 'Ghi chú', width: '12%' }
+    { id: 'stt', label: 'STT', width: '5%', minWidth: 0 },
+    { id: 'tenThuoc', label: 'Tên thuốc, hàm lượng', width: '25%', minWidth: 250 },
+    { id: 'donVi', label: 'Đơn vị', width: '5%', minWidth: 0 },
+    { id: 'ngayThang', label: 'Ngày tháng', width: '25%', minWidth: 0 },
+    { id: 'tongSo', label: 'Tổng số', width: '7%', minWidth: 0 },
+    { id: 'donGia', label: 'Đơn giá', width: '9%', minWidth: 0 },
+    { id: 'thanhTien', label: 'Thành tiền', width: '12%', minWidth: 0 },
+    { id: 'ghiChu', label: 'Ghi chú', width: '12%', minWidth: 150 }
 ];
 
 const FPhieuCongKhaiThuoc = () => {
@@ -138,6 +138,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                 align="center"
                                                 sortDirection={headCell.id === "stt" ? "asc" : false}
                                                 width={headCell.width}
+                                                sx={{ minWidth: headCell.minWidth }}
                                                 rowSpan={2}
                                                 className={id < headCells.length - 1 ? "tableHeadBorderRight" : "" }
                                             >
@@ -351,7 +352,7 @@ const FPhieuCongKhaiThuoc = () => {
                 </Paper>
             ) : null}
 
-            { (role === "DD" && !ngayRaVien) && 
+            {(role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}

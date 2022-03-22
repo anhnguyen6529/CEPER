@@ -13,12 +13,12 @@ import { TablePagination, Button, SelectYLenh } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const headCells = [
-    { id: 'ngay', numeric: false, label: 'Ngày', width: '10%' },
-    { id: 'gio', numeric: false, label: 'Giờ', width: '5%' },
-    { id: 'theoDoiDienBien', numeric: true, label: 'Theo dõi diễn biến', width: '25%' },
-    { id: 'thucHienYLenh', numeric: true, label: 'Thực hiện y lệnh', width: '30%' },
-    { id: 'xacNhan', numeric: false, label: 'Xác nhận', width: '15%' },
-    { id: 'dieuDuongGhi', numeric: true, label: 'Điều dưỡng ghi', width: '15%' }
+    { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
+    { id: 'gio', label: 'Giờ', width: '5%', minWidth: 85 },
+    { id: 'theoDoiDienBien', label: 'Theo dõi diễn biến', width: '25%', minWidth: 250 },
+    { id: 'thucHienYLenh', label: 'Thực hiện y lệnh', width: '30%', minWidth: 250 },
+    { id: 'xacNhan', label: 'Xác nhận', width: '15%', minWidth: 160 },
+    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', width: '15%', minWidth: 170 }
 ];
 
 const FPhieuChamSoc = () => {
@@ -29,13 +29,12 @@ const FPhieuChamSoc = () => {
     const { danhSachYLenh } = useSelector((state) => state.HSBA);
 
     const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('ngay');
+    const [orderBy, setOrderBy] = useState('ngayGio');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const [addNew, setAddNew] = useState(false);
-    const [newNgay, setNewNgay] = useState(null);
-    const [newGio, setNewGio] = useState(null);
+    const [newNgayGio, setNewNgayGio] = useState(null);
     const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState(['']);
     const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ yLenh: '', xacNhan: '' }]);
     const [errors, setErrors] = useState([]);
@@ -49,8 +48,7 @@ const FPhieuChamSoc = () => {
     };
 
     const clearData = () => {
-        setNewNgay(null);
-        setNewGio(null);
+        setNewNgayGio(null);
         setNewTheoDoiDienBien(['']);
         setNewThucHienYLenh([{ yLenh: '', xacNhan: '' }]);
         setAddNew(false);
@@ -62,13 +60,12 @@ const FPhieuChamSoc = () => {
     };
 
     const handleAdd = () => {
-        if (!!newNgay && !!newGio && newTheoDoiDienBien.every(tddb => !! tddb) && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
+        if (!!newNgayGio && newTheoDoiDienBien.every(tddb => !! tddb) && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
             dispatch(HSBAActions.updateDinhKemSection({
                 section: 'phieuChamSoc',
                 value: {},
                 newData: { 
-                    ngay: newNgay, 
-                    gio: newGio, 
+                    ngayGio: newNgayGio.toISOString(), 
                     theoDoiDienBien: newTheoDoiDienBien, 
                     thucHienYLenh: newThucHienYLenh.map(thyl => thyl.yLenh),
                     xacNhan: newThucHienYLenh.map(thyl => thyl.xacNhan),
@@ -112,20 +109,23 @@ const FPhieuChamSoc = () => {
                                         align="left"
                                         sortDirection={orderBy === headCell.id ? order : false}
                                         width={headCell.width}
+                                        sx={{ minWidth: headCell.minWidth }}
                                         className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""} 
                                     >
-                                        <TableSortLabel
-                                            active={orderBy === headCell.id}
-                                            direction={orderBy === headCell.id ? order : 'asc'}
-                                            onClick={createSortHandler(headCell.id)}
-                                        >
-                                            {headCell.label}
-                                            {orderBy === headCell.id ? (
-                                                <Box component="span" sx={visuallyHidden}>
-                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                                </Box>
-                                            ) : null}
-                                        </TableSortLabel>
+                                        {headCell.id !== "gio" ?
+                                            <TableSortLabel
+                                                active={orderBy === headCell.id}
+                                                direction={orderBy === headCell.id ? order : 'asc'}
+                                                onClick={createSortHandler(headCell.id)}
+                                            >
+                                                {headCell.label}
+                                                {orderBy === headCell.id ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
+                                        : headCell.label}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -138,10 +138,10 @@ const FPhieuChamSoc = () => {
                                         <Fragment key={index}>
                                             <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
                                                 <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
-                                                    {format(new Date(row.ngay), 'dd/MM/yyyy')}
+                                                    {format(new Date(row.ngayGio), 'dd/MM/yyyy')}
                                                 </TableCell>
                                                 <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
-                                                    {row.gio}
+                                                    {format(new Date(row.ngayGio), 'HH:mm')}
                                                 </TableCell>
                                             </TableRow>
                                             {row.thucHienYLenh.map((thucHienYLenh, idx) => (
@@ -169,8 +169,8 @@ const FPhieuChamSoc = () => {
                             {addNew && 
                                 <Fragment>
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgay), 'dd/MM/yyyy')}</TableCell>
-                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{newGio}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
                                     </TableRow>
 
                                     {newThucHienYLenh.map((thucHienYLenh, idx) => (
@@ -239,7 +239,7 @@ const FPhieuChamSoc = () => {
                 />
             </Paper>
 
-            { (role === "DD" && !ngayRaVien) &&
+            {(role === "DD" && !ngayRaVien) &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
@@ -251,9 +251,7 @@ const FPhieuChamSoc = () => {
                                 sx={{ width: 150 }} 
                                 startIcon={<Add fontSize="small"/>}
                                 onClick={() => {
-                                    let now = new Date();
-                                    setNewNgay(now.toDateString());
-                                    setNewGio(format(now, 'HH:mm'));
+                                    setNewNgayGio(new Date());
                                     setAddNew(true);
                                 }}
                             >

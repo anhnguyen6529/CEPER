@@ -13,13 +13,14 @@ import { TablePagination, Button, StyledTableRow } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const headCells = [
-    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', unit: '', width: '16%' },
-    { id: 'mach', numeric: true, label: 'Mạch', unit: '(lần/phút)', width: '12%' },
-    { id: 'nhietDo', numeric: true, label: 'Nhiệt độ', unit: '(°C)', width: '10%' },
-    { id: 'huyetAp', numeric: true, label: 'Huyết áp', unit: '(mmHg)', width: '16%' },
-    { id: 'nhipTho', numeric: true, label: 'Nhịp thở', unit: '(lần/phút)', width: '12%' },
-    { id: 'canNang', numeric: true, label: 'Cân nặng', unit: '(kg)', width: '14%' },
-    { id: 'dieuDuongGhi', numeric: false, label: 'Điều dưỡng ghi', unit: '', width: '20%' }
+    { id: 'ngayGio', label: 'Ngày', unit: '', width: '10%', minWidth: 115 },
+    { id: 'gio', label: 'Giờ', unit: '', width: '5%', minWidth: 80 },
+    { id: 'mach', label: 'Mạch', unit: '(lần/phút)', width: '12%', minWidth: 120 },
+    { id: 'nhietDo', label: 'Nhiệt độ', unit: '(°C)', width: '12%', minWidth: 120 },
+    { id: 'huyetAp', label: 'Huyết áp', unit: '(mmHg)', width: '17%', minWidth: 190 },
+    { id: 'nhipTho', label: 'Nhịp thở', unit: '(lần/phút)', width: '12%', minWidth: 120 },
+    { id: 'canNang', label: 'Cân nặng', unit: '(kg)', width: '12%', minWidth: 130 },
+    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '20%', minWidth: 170 }
 ];
 
 const FPhieuTDChucNangSong = () => {
@@ -99,20 +100,23 @@ const FPhieuTDChucNangSong = () => {
                                         align="left"
                                         sortDirection={orderBy === headCell.id ? order : false}
                                         width={headCell.width}
+                                        sx={{ minWidth: headCell.minWidth }}
                                         className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""} 
                                     >
-                                        <TableSortLabel
-                                            active={orderBy === headCell.id}
-                                            direction={orderBy === headCell.id ? order : 'asc'}
-                                            onClick={createSortHandler(headCell.id)}
-                                        >
-                                            {headCell.label}<br />{headCell.unit}
-                                            {orderBy === headCell.id ? (
-                                                <Box component="span" sx={visuallyHidden}>
-                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                                </Box>
-                                            ) : null}
-                                        </TableSortLabel>
+                                        {headCell.id !== "gio" ?
+                                            <TableSortLabel
+                                                active={orderBy === headCell.id}
+                                                direction={orderBy === headCell.id ? order : 'asc'}
+                                                onClick={createSortHandler(headCell.id)}
+                                            >
+                                                {headCell.label}<br />{headCell.unit}
+                                                {orderBy === headCell.id ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
+                                        : <>{headCell.label}<br />{headCell.unit}</>}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -123,7 +127,8 @@ const FPhieuTDChucNangSong = () => {
                                 .map((row, index) => {
                                     return (
                                         <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.mach}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.nhietDo}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.huyetAp}</TableCell>
@@ -136,7 +141,8 @@ const FPhieuTDChucNangSong = () => {
 
                             {addNew ? 
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             type="number"
@@ -209,7 +215,7 @@ const FPhieuTDChucNangSong = () => {
                 />
             </Paper>
 
-            { (role === "DD" && !ngayRaVien) && 
+            {(role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}

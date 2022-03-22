@@ -16,15 +16,15 @@ import drugList from "../../constants/drug_list.json";
 import { TimePicker } from "@mui/lab";
 
 const headCells = [
-    { id: 'ngayThang', numeric: false, label: 'Ngày tháng', width: '10%' },
-    { id: 'tenDichTruyen', numeric: false, label: 'TÊN DỊCH TRUYỀN/HÀM LƯỢNG', width: '20%' },
-    { id: 'soLuong', numeric: true, label: 'Số lượng (ml)', width: '6%' },
-    { id: 'loSanXuat', numeric: false, label: 'Lô/Số sản xuất', width: '8%' },
-    { id: 'tocDo', numeric: true, label: 'Tốc độ giọt/ph', width: '6%' },
-    { id: 'thoiGianBatDau', numeric: false, label: 'Bắt đầu', width: '10%' },
-    { id: 'thoiGianKetThuc', numeric: false, label: 'Kết thúc', width: '10%' },
-    { id: 'BSChiDinh', numeric: false, label: 'Bác sĩ chỉ định', width: '15%' },
-    { id: 'DDThucHien', numeric: false, label: 'Điều dưỡng thực hiện', width: '15%' }
+    { id: 'ngayThang', label: 'Ngày tháng', width: '10%', minWidth: 115 },
+    { id: 'tenDichTruyen', label: 'TÊN DỊCH TRUYỀN/HÀM LƯỢNG', width: '20%', minWidth: 250 },
+    { id: 'soLuong', label: 'Số lượng (ml)', width: '6%', minWidth: 0 },
+    { id: 'loSanXuat', label: 'Lô/Số sản xuất', width: '8%', minWidth: 0 },
+    { id: 'tocDo', label: 'Tốc độ giọt/ph', width: '6%', minWidth: 0 },
+    { id: 'thoiGianBatDau', label: 'Bắt đầu', width: '10%', minWidth: 0 },
+    { id: 'thoiGianKetThuc', label: 'Kết thúc', width: '10%', minWidth: 0 },
+    { id: 'BSChiDinh', label: 'Bác sĩ chỉ định', width: '15%', minWidth: 170 },
+    { id: 'DDThucHien', label: 'Điều dưỡng thực hiện', width: '15%', minWidth: 170 }
 ];
 
 const FPhieuTDTruyenDich = () => {
@@ -122,6 +122,7 @@ const FPhieuTDTruyenDich = () => {
                 align="center"
                 sortDirection={orderBy === headCell.id ? order : false}
                 width={headCell.width}
+                sx={{ minWidth: headCell.minWidth }}
                 {...other}
             >
                 {headCell.id === 'ngayThang' ?
@@ -432,7 +433,7 @@ const FPhieuTDTruyenDich = () => {
                 </Paper>
             ) : null}
 
-            { (role === "DD" && !ngayRaVien) && 
+            {(role === "DD" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 ? errors.map((error, id) => 

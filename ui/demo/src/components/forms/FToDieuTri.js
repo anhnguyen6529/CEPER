@@ -13,10 +13,11 @@ import { TablePagination, Button, StyledTableRow } from "../common";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const headCells = [
-    { id: 'ngayGio', numeric: false, label: 'Ngày giờ', width: '20%', minWidth: 120 },
-    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '30%', minWidth: 200 },
-    { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '30%', minWidth: 200 },
-    { id: 'bacSiGhi', numeric: false, label: 'Bác sĩ ghi', width: '20%', minWidth: 120 },
+    { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
+    { id: 'gio', label: 'Giờ', width: '5%', minWidth: 85 },
+    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '35%', minWidth: 250 },
+    { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '35%', minWidth: 250 },
+    { id: 'bacSiGhi', label: 'Bác sĩ ghi', width: '15%', minWidth: 170 },
 ];
 
 const removeHashAndSpaces = (arrStr) => {
@@ -123,18 +124,20 @@ const FToDieuTri = () => {
                                         sx={{ minWidth: headCell.minWidth }}
                                         className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""}
                                     >
-                                        <TableSortLabel
-                                            active={orderBy === headCell.id}
-                                            direction={orderBy === headCell.id ? order : 'asc'}
-                                            onClick={createSortHandler(headCell.id)}
-                                        >
-                                            {headCell.label}
-                                            {orderBy === headCell.id ? (
-                                                <Box component="span" sx={visuallyHidden}>
-                                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                                </Box>
-                                            ) : null}
-                                        </TableSortLabel>
+                                        {headCell.id !== "gio" ? 
+                                            <TableSortLabel
+                                                active={orderBy === headCell.id}
+                                                direction={orderBy === headCell.id ? order : 'asc'}
+                                                onClick={createSortHandler(headCell.id)}
+                                            >
+                                                {headCell.label}
+                                                {orderBy === headCell.id ? (
+                                                    <Box component="span" sx={visuallyHidden}>
+                                                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    </Box>
+                                                ) : null}
+                                            </TableSortLabel>
+                                        : headCell.label}
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -145,7 +148,8 @@ const FToDieuTri = () => {
                                 .map((row, index) => {
                                     return (
                                         <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
                                             <TableCell className="tableBodyBorderRight">
                                                 {(Array.isArray(row.dienBienBenh) && row.dienBienBenh.length > 1) 
                                                     ? row.dienBienBenh.map(dbb => '- ' + dbb).join('\n') 
@@ -165,7 +169,8 @@ const FToDieuTri = () => {
 
                             {addNew && 
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             multiline
@@ -198,7 +203,7 @@ const FToDieuTri = () => {
                 />
             </Paper>
 
-            { (role === "BS" && !ngayRaVien) &&
+            {(role === "BS" && !ngayRaVien) &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}

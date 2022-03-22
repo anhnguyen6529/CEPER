@@ -12,13 +12,14 @@ import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { TablePagination, StyledTableRow, Button, SelectThuoc } from "../common";
 
 const headCells = [
-    { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày giờ\ndùng thuốc', width: '15%' },
-    { id: 'thuocDiUng', align: 'left', label: 'Thuốc dị ứng', width: '25%' },
-    { id: 'nghiNgo', align: 'center', label: 'Nghi ngờ', width: '5%' },
-    { id: 'chacChan', align: 'center', label: 'Chắc chắn', width: '5%' },
-    { id: 'bieuHienLamSang', align: 'left', label: 'Biểu hiện lâm sàng', width: '20%' },
-    { id: 'bacSiXacNhan', align: 'left', label: 'Bác sĩ xác nhận chẩn đoán', width: '15%' },
-    { id: 'ghiChu', align: 'left', label: 'Ghi chú', width: '15%' }
+    { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày', width: '10%', minWidth: 115 },
+    { id: 'gioDungThuoc', align: 'left', label: 'Giờ', width: '5%', minWidth: 85 },
+    { id: 'thuocDiUng', align: 'left', label: 'Thuốc dị ứng', width: '25%', minWidth: 200 },
+    { id: 'nghiNgo', align: 'center', label: 'Nghi ngờ', width: '5%', minWidth: 0 },
+    { id: 'chacChan', align: 'center', label: 'Chắc chắn', width: '5%', minWidth: 0 },
+    { id: 'bieuHienLamSang', align: 'left', label: 'Biểu hiện lâm sàng', width: '20%', minWidth: 250 },
+    { id: 'bacSiXacNhan', align: 'left', label: 'Bác sĩ xác nhận chẩn đoán', width: '15%', minWidth: 170 },
+    { id: 'ghiChu', align: 'left', label: 'Ghi chú', width: '15%', minWidth: 150 }
 ];
 
 const FPhieuTDDiUngThuoc = () => {
@@ -68,7 +69,7 @@ const FPhieuTDDiUngThuoc = () => {
                 section: 'phieuTDDiUngThuoc',
                 value: {},
                 newData: {
-                    ngayGioDungThuoc: newNgayGioDungThuoc,
+                    ngayGioDungThuoc: newNgayGioDungThuoc.toISOString(),
                     thuocDiUng: newThuocDiUng,
                     kieuDiUng: newKieuDiUng,
                     bieuHienLamSang: newBieuHienLamSang,
@@ -108,9 +109,10 @@ const FPhieuTDDiUngThuoc = () => {
                                         align={headCell.align}
                                         sortDirection={orderBy === headCell.id ? order : false}
                                         width={headCell.width}
+                                        sx={{ minWidth: headCell.minWidth }}
                                         className={id < headCells.length - 1 ? "tableHeadBorderRight" : ""} 
                                     >
-                                        {headCell.id === "nghiNgo" || headCell.id === "chacChan" 
+                                        {headCell.id === "nghiNgo" || headCell.id === "chacChan" || headCell.id === "gioDungThuoc"
                                             ? headCell.label
                                             : (
                                                 <TableSortLabel
@@ -136,7 +138,8 @@ const FPhieuTDDiUngThuoc = () => {
                                 .map((row, index) => {
                                     return (
                                         <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'HH:mm')}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.thuocDiUng.join('\n')}</TableCell>
                                             <TableCell className="tableBodyBorderRight" align="center">
                                                 {row.kieuDiUng === "Nghi ngờ" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
@@ -153,7 +156,8 @@ const FPhieuTDDiUngThuoc = () => {
 
                             {addNew && 
                                 <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'dd/MM/yyyy, HH:mm')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'HH:mm')}</TableCell>
                                     <TableCell className="tableBodyBorderRight" sx={{ pb: 0.5 }}>
                                         {newThuocDiUng.map((thuocDiUng, id) => (
                                             <Box className="df aic" sx={{ mb: 1.5 }} key={id}>
@@ -218,7 +222,7 @@ const FPhieuTDDiUngThuoc = () => {
                 />
             </Paper>
 
-            { (role === "BS" && position === "Bác sĩ điều trị" && !ngayRaVien) && 
+            {(role === "BS" && position === "Bác sĩ điều trị" && !ngayRaVien) && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
