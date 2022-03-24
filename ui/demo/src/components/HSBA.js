@@ -15,17 +15,21 @@ import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
-import { clinicalState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
+import { sectionState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
 
 const HSBA = () => {
     const dispatch = useDispatch();
     const { pid } = useParams();
+    const { today, appearSec, appearTime, setAppearTime, openSec } = useContext(UserContext); 
+    const { role } = useSelector(state => state.auth.user);
+
     useEffect(() => {
         dispatch(HSBAThunk.getOneHSBAByPID(pid));
+        const appearFirstTime = new Date().toISOString();
+        setAppearTime({ ...appearTime, ...mdSections["appearFirst"][role].reduce((prev, key) => ({ ...prev, [key]: appearFirstTime }), {}) });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const { today, appearSec, openSec } = useContext(UserContext); 
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating, confirmUpdate } = benhNhan;
@@ -33,12 +37,12 @@ const HSBA = () => {
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
     useEffect(() => {
-        if (updating && Object.keys(clinicalState).some(key => spellingError[key].changed)) {
+        if (updating && Object.keys(sectionState).some(key => spellingError[key].changed)) {
             if (!spellingError.loading) {
                 setTimeout(() => {
                     setOpenBackdrop(false);
                     setOpenSnackbar(true);
-                    const firstKey = Object.keys(clinicalState).find(key => !!spellingError[key].changed);
+                    const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
                     document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
                 }, 2000);
             } else {
@@ -95,9 +99,8 @@ const HSBA = () => {
     }
 
     const handleUpdate = () => {
-        if (Object.keys(clinicalState).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
-            && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
-            || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed))) {
+        if (Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key)).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+            && mdSections[key].some(subKey => spellingError[key][subKey].changed))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed))) {
             dispatch(HSBAActions.update());
         } else {
             dispatch(HSBAActions.confirmUpdate());
@@ -250,10 +253,10 @@ const HSBA = () => {
                 </Paper>
             ))} 
 
-            {Object.keys(clinicalState).some(key => spellingError[key].changed) ?
-                <Box className="df aic jcfe" sx={{ mt: 3 }}>
+            {Object.keys(sectionState).some(key => spellingError[key].changed) ?
+                <Box className="df aic" sx={{ mt: 3 }}>
                     {!updating && !confirmUpdate ? 
-                        <Button sx={{ width: 150 }} variant="primary-dark" onClick={handleUpdate}>
+                        <Button variant="primary-dark" onClick={handleUpdate}>
                             Cập nhật
                         </Button>
                     : null}

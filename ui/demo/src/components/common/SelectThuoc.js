@@ -24,6 +24,7 @@ const SelectThuoc = ({ existValue, value, onChange, placeholder, hamLuong, input
             renderInput={(params) => 
                 <TextField 
                     {...params} 
+                    multiline
                     placeholder={placeholder}
                     inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }}
                     {...inputProps}

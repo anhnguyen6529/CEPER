@@ -270,10 +270,10 @@ const FLyDoVaoVien = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
                 {(!confirmSec[SECTION_NAME] && (spellingErrorLyDo.changed || spellingErrorChanDoan.changed)) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
+                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
             </Box>
         </Box>
     )

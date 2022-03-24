@@ -2,14 +2,17 @@ import {
     Box, Paper, TableContainer, TableHead, TableBody, TableRow, 
     TableCell, Table, TableSortLabel, Grid, Typography, TextField, Radio
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Add, RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { visuallyHidden } from "@mui/utils";
 import { format } from "date-fns";
 import { UtilsTable } from "../../utils";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { TablePagination, StyledTableRow, Button, SelectThuoc } from "../common";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import UserContext from "../../contexts/UserContext";
+
+const SECTION_NAME = "Phiếu TD dị ứng thuốc";
 
 const headCells = [
     { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày', width: '10%', minWidth: 115 },
@@ -25,7 +28,8 @@ const headCells = [
 const FPhieuTDDiUngThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuTDDiUngThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { role, name, position } = useSelector((state) => state.auth.user);
+    const { role, name, id, position } = useSelector((state) => state.auth.user);
+    const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -33,15 +37,15 @@ const FPhieuTDDiUngThuoc = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [addNew, setAddNew] = useState(false);
-    const [newNgayGioDungThuoc, setNewNgayGioDungThuoc] = useState(null);
+    const [newNgayGioDungThuoc, setNewNgayGioDungThuoc] = useState(appearTime[SECTION_NAME]);
     const [newThuocDiUng, setNewThuocDiUng] = useState([null]);
-    const [newKieuDiUng, setNewKieuDiUng] = useState('Nghi ngờ');
+    const [newKieuDiUng, setNewKieuDiUng] = useState('');
     const [newBieuHienLamSang, setNewBieuHienLamSang] = useState('');
     const [newGhiChu, setNewGhiChu] = useState('');
     const [errors, setErrors] = useState([]);
+    const [hasChanged, setHasChanged] = useState(false);
 
-    const rows = content.data;
+    const [rows, setRows] = useState(content.data);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -50,37 +54,38 @@ const FPhieuTDDiUngThuoc = () => {
     }; 
 
     const clearData = () => {
-        setNewNgayGioDungThuoc(null);
         setNewThuocDiUng([null]);
-        setNewKieuDiUng('Nghi ngờ');
+        setNewKieuDiUng('');
         setNewBieuHienLamSang('');
         setNewGhiChu('');
-        setAddNew(false);
         setErrors([]);
     }
 
     const handleCancel = () => {
         clearData();
+        setHasChanged(false);
     };
     
     const handleAdd = () => {
-        if (!!newNgayGioDungThuoc && newThuocDiUng.every(dn => !!dn) && !!newBieuHienLamSang) {
-            dispatch(HSBAActions.updateDinhKemSection({
-                section: 'phieuTDDiUngThuoc',
-                value: {},
-                newData: {
-                    ngayGioDungThuoc: newNgayGioDungThuoc.toISOString(),
-                    thuocDiUng: newThuocDiUng,
-                    kieuDiUng: newKieuDiUng,
-                    bieuHienLamSang: newBieuHienLamSang,
-                    bacSiXacNhan: name,
-                    ghiChu: newGhiChu
-                }
-            }));
+        if (newThuocDiUng.every(dn => !!dn) && !!newKieuDiUng && !!newBieuHienLamSang) {
+            const now = new Date().toISOString();
+            setRows([...rows, {
+                ngayGioDungThuoc: now,
+                thuocDiUng: newThuocDiUng,
+                kieuDiUng: newKieuDiUng,
+                bieuHienLamSang: newBieuHienLamSang,
+                bacSiXacNhan: `${id} - ${name}`,
+                ghiChu: newGhiChu
+            }]);
+            setNewNgayGioDungThuoc(now);
+
             clearData();
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            setHasChanged(false);
         } else {
             let errs = [];
             if (newThuocDiUng.some(dn => !dn)) errs.push('thuốc');
+            if (!newKieuDiUng) errs.push('nghi ngờ/chắc chắn');
             if (!newBieuHienLamSang) errs.push('biểu hiện lâm sàng');
             setErrors(errs);
         }
@@ -88,12 +93,9 @@ const FPhieuTDDiUngThuoc = () => {
 
     const handleAddClick = () => {
         setNewThuocDiUng([...newThuocDiUng, null]);
-    }
-
-    const handleDelete = (id) => {
-        const tNewThuocDiUng = [...newThuocDiUng];
-        tNewThuocDiUng.splice(id, 1);
-        setNewThuocDiUng(tNewThuocDiUng);
+        if (!hasChanged) {
+            setHasChanged(true);
+        }
     }
 
     return (
@@ -154,7 +156,7 @@ const FPhieuTDDiUngThuoc = () => {
                                     );
                             })}
 
-                            {addNew && 
+                            {(role === "BS" && position === "Bác sĩ điều trị" && !ngayRaVien) ?
                                 <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'HH:mm')}</TableCell>
@@ -162,6 +164,7 @@ const FPhieuTDDiUngThuoc = () => {
                                         {newThuocDiUng.map((thuocDiUng, id) => (
                                             <Box className="df aic" sx={{ mb: 1.5 }} key={id}>
                                                 <SelectThuoc 
+                                                    fullWidth
                                                     hamLuong={false}
                                                     placeholder="Thuốc dị ứng"
                                                     value={thuocDiUng}
@@ -169,46 +172,91 @@ const FPhieuTDDiUngThuoc = () => {
                                                         const tThuocDiUng = [...newThuocDiUng];
                                                         tThuocDiUng[id] = value;
                                                         setNewThuocDiUng(tThuocDiUng);
+                                                        if (!value) {
+                                                            if (newThuocDiUng.every((thuoc, i) => (i !== id && !thuoc) || i === id)
+                                                                && !newKieuDiUng && !newBieuHienLamSang && !newGhiChu) {
+                                                                setHasChanged(false);
+                                                            }
+                                                        } else {
+                                                            if (!hasChanged) {
+                                                                setHasChanged(true);
+                                                            }
+                                                        }
                                                     }}
                                                     existValue={newThuocDiUng}
-                                                    sx={{ width: "85%" }}
                                                 />
 
                                                 {id === newThuocDiUng.length - 1 
                                                     ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
-                                                    : (
-                                                        <Typography sx={{ cursor: "pointer", ml: 1 }} color="primary" onClick={() => handleDelete(id)}>
-                                                            Xóa
-                                                        </Typography>
-                                                    )}
+                                                : null}
                                             </Box>
                                         ))}
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight" align="center">
-                                        <Radio sx={{ p: 0 }} checked={newKieuDiUng === "Nghi ngờ"} onChange={() => setNewKieuDiUng("Nghi ngờ")}/>
+                                        <Radio 
+                                            sx={{ p: 0 }} 
+                                            checked={newKieuDiUng === "Nghi ngờ"} 
+                                            onChange={() => { 
+                                                setNewKieuDiUng("Nghi ngờ");
+                                                if (!hasChanged) {
+                                                    setHasChanged(true);
+                                                }
+                                            }}
+                                        />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight" align="center">
-                                        <Radio sx={{ p: 0 }} checked={newKieuDiUng === "Chắc chắn"} onChange={() => setNewKieuDiUng("Chắc chắn")} />
+                                        <Radio 
+                                            sx={{ p: 0 }} 
+                                            checked={newKieuDiUng === "Chắc chắn"} 
+                                            onChange={() => {
+                                                setNewKieuDiUng("Chắc chắn");
+                                                if (!hasChanged) {
+                                                    setHasChanged(true);
+                                                }
+                                            }} 
+                                        />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             multiline
                                             fullWidth
                                             value={newBieuHienLamSang}
-                                            onChange={(event) => setNewBieuHienLamSang(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewBieuHienLamSang(value);
+                                                if (!value) {
+                                                    if (newThuocDiUng.every((thuoc) => !thuoc) && !newKieuDiUng && !newGhiChu) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
-                                    <TableCell className="tableBodyBorderRight">{name}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{`${id} - ${name}`}</TableCell>
                                     <TableCell>
                                         <TextField
                                             multiline
                                             fullWidth
                                             value={newGhiChu}
-                                            onChange={(event) => setNewGhiChu(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewGhiChu(value);
+                                                if (!value) {
+                                                    if (newThuocDiUng.every((thuoc) => !thuoc) && !newKieuDiUng && !newBieuHienLamSang) {
+                                                        setHasChanged(false);
+                                                    } 
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
                                 </TableRow>
-                            }
+                            : null}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -222,36 +270,21 @@ const FPhieuTDDiUngThuoc = () => {
                 />
             </Paper>
 
-            {(role === "BS" && position === "Bác sĩ điều trị" && !ngayRaVien) && 
+            {hasChanged && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
-                        {!addNew
-                        ? (
-                            <Button 
-                                sx={{ width: 150 }} 
-                                startIcon={<Add fontSize="small"/>}
-                                onClick={() => {
-                                    setNewNgayGioDungThuoc(new Date());
-                                    setAddNew(true);
-                                }}
-                            >
-                                Thêm mới
+                        <>
+                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                Hủy
                             </Button>
-                        ) : (
-                            <>
-                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
-                                    Hủy
-                                </Button>
 
-                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
-                                    Thêm
-                                </Button>
-                            </>
-                        )
-                        }
+                            <Button variant="primary" onClick={handleAdd}>
+                                Thêm
+                            </Button>
+                        </>
                     </Grid>
                 </Grid>
             }

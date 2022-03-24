@@ -22,7 +22,8 @@ const User = () => {
     const selectedHSBA = useSelector(state => state.HSBA);
 
     const [open, setOpen] = useState(true);
-    const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => { return mdSections["order"].indexOf(sec) }));
+    const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => mdSections["order"].indexOf(sec)));
+    const [appearTime, setAppearTime] = useState(mdSections["order"].reduce((prev, key) => ({ ...prev, [key]: null }), {}));
     const [openSec, setOpenSec] = useState(new Array(mdSections["order"].length).fill(true));  
     const [confirmSec, setConfirmSec] = useState(mdSections["clinicalSection"].reduce((prev, key) => {
         if (key === "Bệnh án" || key === "Tổng kết bệnh án") {
@@ -68,6 +69,8 @@ const User = () => {
         <UserProvider value={{
             appearSec,
             setAppearSec,
+            appearTime,
+            setAppearTime,
             openSec, 
             setOpenSec,
             confirmSec,

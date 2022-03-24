@@ -16,11 +16,11 @@ import { ListSwitchColumn } from "../lists";
 import DrawerHeader from "./DrawerHeader";
 import { useSelector } from "react-redux";
 import Button from "./Button";
-import { clinicalState } from "../../redux/slices/spellingError.slice";
+import { sectionState } from "../../redux/slices/spellingError.slice";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
-    const { appearSec, setAppearSec, openSec, setOpenSec, confirmSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, confirmSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
     const { updating } = useSelector(state => state.HSBA);
     const { spellingError } = useSelector((state) => state);
 
@@ -63,12 +63,12 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             <Divider sx={{ mt: 2 }} />
             {(content.role === "BN" || typeof(pid) !== 'undefined') &&
                 <Box sx={{ overflowY: 'auto' }}>     
-                    {updating && Object.keys(clinicalState).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+                    {updating && Object.keys(sectionState).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
                         && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
                         || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed)) ?
                         <>
                             <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
-                                {Object.keys(clinicalState).map((key, id) =>
+                                {Object.keys(sectionState).map((key, id) =>
                                     spellingError[key].changed ?
                                         <ListItem 
                                             key={id}
@@ -107,16 +107,18 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                     button 
                                     sx={{ '.MuiListItemSecondaryAction-root': { display: 'flex' } }}
                                     onClick={() => {
-                                        var temp = [...appearSec], idx = temp.indexOf(id), tmp = [...openSec];
+                                        var tAppearSec = [...appearSec], idx = tAppearSec.indexOf(id), tOpenSec = [...openSec];
                                         if (idx === -1) {
-                                            temp.unshift(id);
-                                            tmp[id] = true;
+                                            tAppearSec.unshift(id);
+                                            tOpenSec[id] = true;
+                                            setAppearTime({ ...appearTime, [section]: new Date().toISOString() });
                                         } else {
-                                            temp.splice(idx, 1);
-                                            tmp[id] = false;
+                                            tAppearSec.splice(idx, 1);
+                                            tOpenSec[id] = false;
+                                            setAppearTime({ ...appearTime, [section]: null });
                                         }
-                                        setOpenSec(tmp);
-                                        setAppearSec(temp);
+                                        setOpenSec(tOpenSec);
+                                        setAppearSec(tAppearSec);
                                     }}
                                     secondaryAction={
                                         section === "Bệnh án" 

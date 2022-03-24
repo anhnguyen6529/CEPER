@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 const PHIEUTDDIUNGTHUOC = {
     data: [
-        { ngayGioDungThuoc: '2021-11-08 09:30', thuocDiUng: ['Bigentil', 'Ofloxacin'], kieuDiUng: 'Nghi ngờ', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: 'Trần Quốc A', ghiChu: '' },
-        { ngayGioDungThuoc: '2021-11-09 10:30', thuocDiUng: ['Cefuroxime'], kieuDiUng: 'Chắc chắn', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: 'Trần Quốc A', ghiChu: '' }
+        { ngayGioDungThuoc: '2021-11-08 09:30', thuocDiUng: ['Bigentil', 'Ofloxacin'], kieuDiUng: 'Nghi ngờ', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: '000001 - Trần Quốc A', ghiChu: '' },
+        { ngayGioDungThuoc: '2021-11-09 10:30', thuocDiUng: ['Cefuroxime'], kieuDiUng: 'Chắc chắn', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: '000001 - Trần Quốc A', ghiChu: '' }
     ]
 };
 const HOIBENH = {
@@ -49,31 +49,41 @@ const KHAMBENH_EMPTY = {
 };
 const PHIEUTDCHUCNANGSONG = {
     data: [
-        { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: '105/70', nhipTho: 15, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
-        { ngayGio: '2021-11-07 14:05', mach: 80, nhietDo: 36.5, huyetAp: '110/70', nhipTho: 16, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A'},
-        { ngayGio: '2021-11-07 09:30', mach: 75, nhietDo: 36.4, huyetAp: '110/75', nhipTho: 17, canNang: 65, dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-06 09:30', mach: 70, nhietDo: 36.3, huyetAp: '105/70', nhipTho: 15, canNang: 65, dieuDuongGhi: '100001 - Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-07 14:05', mach: 80, nhietDo: 36.5, huyetAp: '110/70', nhipTho: 16, canNang: 65, dieuDuongGhi: '100001 - Nguyễn Ngọc A'},
+        { ngayGio: '2021-11-07 09:30', mach: 75, nhietDo: 36.4, huyetAp: '110/75', nhipTho: 17, canNang: 65, dieuDuongGhi: '100001 - Nguyễn Ngọc A' },
     ],
 };
 const PHIEUCHAMSOC = {
     data: [
-        { ngayGio: '2021-11-06 17:30', theoDoiDienBien: ['hạ sốt, còn đau đầu'], thucHienYLenh: ['theo dõi sốt huyết não'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
-        { ngayGio: '2021-11-07 18:30', theoDoiDienBien: ['hết sốt, đau bụng nhẹ'], thucHienYLenh: ['Tylenol cách 3 tiếng/ngày'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: 'Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-06 17:30', theoDoiDienBien: ['hạ sốt, còn đau đầu'], thucHienYLenh: ['theo dõi sốt huyết não'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: '100001 - Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-07 18:30', theoDoiDienBien: ['hết sốt, đau bụng nhẹ'], thucHienYLenh: ['Tylenol cách 3 tiếng/ngày'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: '100001 - Nguyễn Ngọc A' }
     ],
 };
 const TODIEUTRI = {
     data: [
-        { ngayGio: '2021-11-06 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: 'Trần Quốc A' },
-        { ngayGio: '2021-11-07 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: 'Trần Quốc A' },
+        { ngayGio: '2021-11-06 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-07 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-08 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-08 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-09 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-09 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-10 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-10 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-11 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-11 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-12 09:30', dienBienBenh: 'giảm đau đầu', yLenh: 'theo dõi sốt huyết não', bacSiGhi: '000001 - Trần Quốc A' },
+        { ngayGio: '2021-11-12 14:05', dienBienBenh: 'hạ sốt', yLenh: 'Tylenol cách 3 tiếng/ngày', bacSiGhi: '000001 - Trần Quốc A' }
     ],
 };
 const PHIEUTDTRUYENDICH = {
     data: [
         { ngayThang: '2021-11-08', values: [
-            { tenDichTruyen: 'Ringer lactat 500ml', soLuong: 500, loSanXuat: '19803', tocDo: 100, thoiGianBatDau: '2021-11-08 19:00', thoiGianKetThuc: '2021-11-08 20:30', BSChiDinh: 'Trần Quốc A', DDThucHien: 'Nguyễn Ngọc A' },
-            { tenDichTruyen: 'Glucose 5%; 500ml', soLuong: 500, loSanXuat: '18904', tocDo: 100, thoiGianBatDau: '2021-11-08 21:00', thoiGianKetThuc: '2021-11-09 01:00', BSChiDinh: 'Trần Quốc A', DDThucHien: 'Nguyễn Ngọc A' },
+            { tenDichTruyen: 'Ringer lactat 500ml', soLuong: 500, loSanXuat: '19803', tocDo: 100, thoiGianBatDau: '2021-11-08 19:00', thoiGianKetThuc: '2021-11-08 20:30', BSChiDinh: '000001 - Trần Quốc A', DDThucHien: '100001 - Nguyễn Ngọc A' },
+            { tenDichTruyen: 'Glucose 5%; 500ml', soLuong: 500, loSanXuat: '18904', tocDo: 100, thoiGianBatDau: '2021-11-08 21:00', thoiGianKetThuc: '2021-11-09 01:00', BSChiDinh: '000001 - Trần Quốc A', DDThucHien: '100001 - Nguyễn Ngọc A' },
         ]},
         { ngayThang: '2021-11-09', values: [
-            { tenDichTruyen: 'Paracetamol 10mg/ml', soLuong: 100, loSanXuat: '182', tocDo: 100, thoiGianBatDau: '2021-11-09 08:00', thoiGianKetThuc: '2021-11-09 08:40', BSChiDinh: 'Trần Quốc A', DDThucHien: 'Nguyễn Ngọc A' },
+            { tenDichTruyen: 'Paracetamol 10mg/ml', soLuong: 100, loSanXuat: '182', tocDo: 100, thoiGianBatDau: '2021-11-09 08:00', thoiGianKetThuc: '2021-11-09 08:40', BSChiDinh: '000001 - Trần Quốc A', DDThucHien: '100001 - Nguyễn Ngọc A' },
         ]}
     ]
 };
@@ -86,8 +96,8 @@ const PHIEUCONGKHAITHUOC = {
     ]
 };
 const DANHSACHYLENH = [
-    { yLenh: '06/11/2021 09:30 - theo dõi sốt huyết não - BS: Trần Quốc A', xacNhan: 'Đang thực hiện' },
-    { yLenh: '07/11/2021 14:05 - Tylenol cách 3 tiếng/ngày - BS: Trần Quốc A', xacNhan: 'Đang thực hiện' }
+    { yLenh: '06/11/2021 09:30 - theo dõi sốt huyết não - BS: 000001 - Trần Quốc A', xacNhan: 'Đang thực hiện' },
+    { yLenh: '07/11/2021 14:05 - Tylenol cách 3 tiếng/ngày - BS: 000001 - Trần Quốc A', xacNhan: 'Đang thực hiện' }
 ]
 
 const datas = [
@@ -184,7 +194,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         benhAn: {
             thoiGian: '2021-06-08 10:30',
-            bacSiLamBenhAn: 'Trần Quốc A',
+            bacSiLamBenhAn: '000001 - Trần Quốc A',
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -362,7 +372,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         benhAn: {
             thoiGian: '2021-08-04 10:50',
-            bacSiLamBenhAn: 'Trần Quốc A'
+            bacSiLamBenhAn: '000001 - Trần Quốc A'
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -377,7 +387,7 @@ const datas = [
         chanDoanBanDau: 'Sốt siêu vi',
         tongKetBenhAn: {
             thoiGian: '2021-06-18 18:50',
-            bacSiDieuTri: 'Trần Quốc A'
+            bacSiDieuTri: '000001 - Trần Quốc A'
         },
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
@@ -428,7 +438,7 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         benhAn: {
             thoiGian: '2021-06-13 10:10',
-            bacSiLamBenhAn: 'Trần Quốc A'
+            bacSiLamBenhAn: '000001 - Trần Quốc A'
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -443,7 +453,7 @@ const datas = [
         chanDoanBanDau: 'Viêm dạ dày',
         tongKetBenhAn: {
             thoiGian: '2021-06-15 10:10',
-            bacSiDieuTri: 'Trần Quốc A'
+            bacSiDieuTri: '000001 - Trần Quốc A'
         },
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {

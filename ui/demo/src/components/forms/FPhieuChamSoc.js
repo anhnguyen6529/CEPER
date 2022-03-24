@@ -3,14 +3,17 @@ import {
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem
 } from "@mui/material";
 import { Add, DoneAll, Loop } from "@mui/icons-material";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useSelector , useDispatch } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination, Button, SelectYLenh } from "../common";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import UserContext from "../../contexts/UserContext";
+
+const SECTION_NAME = "Phiếu chăm sóc";
 
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
@@ -24,7 +27,8 @@ const headCells = [
 const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { role, name } = useSelector(state => state.auth.user);
+    const { role, name, id } = useSelector(state => state.auth.user);
+    const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
     const { danhSachYLenh } = useSelector((state) => state.HSBA);
 
@@ -33,13 +37,14 @@ const FPhieuChamSoc = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [addNew, setAddNew] = useState(false);
-    const [newNgayGio, setNewNgayGio] = useState(null);
+    const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
     const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState(['']);
     const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ yLenh: '', xacNhan: '' }]);
     const [errors, setErrors] = useState([]);
+    const [hasChanged, setHasChanged] = useState(false);
 
-    const rows = content.data;
+    const [filterDanhSachYLenh, setFilterDanhSachYLenh] = useState(danhSachYLenh);
+    const [rows, setRows] = useState(content.data);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -48,40 +53,38 @@ const FPhieuChamSoc = () => {
     };
 
     const clearData = () => {
-        setNewNgayGio(null);
         setNewTheoDoiDienBien(['']);
         setNewThucHienYLenh([{ yLenh: '', xacNhan: '' }]);
-        setAddNew(false);
         setErrors([]);
     }
 
     const handleCancel = () => {
         clearData();
+        setHasChanged(false);
     };
 
     const handleAdd = () => {
-        if (!!newNgayGio && newTheoDoiDienBien.every(tddb => !! tddb) && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
-            dispatch(HSBAActions.updateDinhKemSection({
-                section: 'phieuChamSoc',
-                value: {},
-                newData: { 
-                    ngayGio: newNgayGio.toISOString(), 
-                    theoDoiDienBien: newTheoDoiDienBien, 
-                    thucHienYLenh: newThucHienYLenh.map(thyl => thyl.yLenh),
-                    xacNhan: newThucHienYLenh.map(thyl => thyl.xacNhan),
-                    dieuDuongGhi: name 
-                }
-            }));
+        if (newTheoDoiDienBien.every(tddb => !! tddb) && newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan)) {
+            const now = new Date().toISOString();
+            setRows([...rows, {
+                ngayGio: now, 
+                theoDoiDienBien: newTheoDoiDienBien, 
+                thucHienYLenh: newThucHienYLenh.map(thyl => thyl.yLenh),
+                xacNhan: newThucHienYLenh.map(thyl => thyl.xacNhan),
+                dieuDuongGhi: `${id} - ${name}`
+            }]);
+            setNewNgayGio(now);
+           
             newThucHienYLenh.forEach((thyl) => {
-                const findIdx = danhSachYLenh.findIndex(dsyl => dsyl.yLenh === thyl.yLenh);
+                const findIdx = filterDanhSachYLenh.findIndex(dsyl => dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...filterDanhSachYLenh];
                 if (findIdx !== -1) {
-                    dispatch(HSBAActions.updateDanhSachYLenh({
-                        index: findIdx,
-                        value: { xacNhan: thyl.xacNhan }
-                    }));
+                    tFilterDSYL[findIdx] = { ...tFilterDSYL[findIdx], xacNhan: thyl.xacNhan };
+                    setFilterDanhSachYLenh(tFilterDSYL);
                 }
             })
             clearData();
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            setHasChanged(false);
         } else {
             let errs = [];
             if (!newTheoDoiDienBien.every(tddb => !!tddb)) errs.push('theo dõi diễn biến');
@@ -137,53 +140,140 @@ const FPhieuChamSoc = () => {
                                     return (
                                         <Fragment key={index}>
                                             <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
-                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
+                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
                                                     {format(new Date(row.ngayGio), 'dd/MM/yyyy')}
                                                 </TableCell>
-                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length + 1}>
+                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
                                                     {format(new Date(row.ngayGio), 'HH:mm')}
                                                 </TableCell>
+                                                <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[0]}</TableCell>
+                                                <TableCell className="tableBodyBorderRight">{row.thucHienYLenh[0]}</TableCell> 
+                                                <TableCell className="tableBodyBorderRight">
+                                                    <Box className="df aic">
+                                                        {row.xacNhan[0] === "Đang thực hiện" 
+                                                            ? <Loop fontSize="small" sx={{ mr: 0.5 }} color="warning" /> 
+                                                            : <DoneAll fontSize="small" sx={{ mr: 0.5 }} color="success" />
+                                                        }
+                                                        {row.xacNhan[0]}
+                                                    </Box>
+                                                </TableCell>
+                                                <TableCell rowSpan={row.thucHienYLenh.length}>{row.dieuDuongGhi}</TableCell>
                                             </TableRow>
-                                            {row.thucHienYLenh.map((thucHienYLenh, idx) => (
-                                                <TableRow key={idx} hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
-                                                    <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[idx]}</TableCell>
+
+                                            {row.thucHienYLenh.slice(1).map((thucHienYLenh, idx) => (
+                                                <TableRow key={idx + 1} hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
+                                                    <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[idx + 1]}</TableCell>
                                                     <TableCell className="tableBodyBorderRight">
                                                         {thucHienYLenh}
                                                     </TableCell> 
                                                     <TableCell className="tableBodyBorderRight">
                                                         <Box className="df aic">
-                                                            {row.xacNhan[idx] === "Đang thực hiện" 
+                                                            {row.xacNhan[idx + 1] === "Đang thực hiện" 
                                                                 ? <Loop fontSize="small" sx={{ mr: 0.5 }} color="warning" /> 
                                                                 : <DoneAll fontSize="small" sx={{ mr: 0.5 }} color="success" />
                                                             }
-                                                            {row.xacNhan[idx]}
+                                                            {row.xacNhan[idx + 1]}
                                                         </Box>
                                                     </TableCell>
-                                                    {idx === 0 && <TableCell rowSpan={row.thucHienYLenh.length + 1}>{row.dieuDuongGhi}</TableCell>}
                                                 </TableRow>
                                             ))}
                                         </Fragment>
                                     );
                             })}
 
-                            {addNew && 
+                            {(role === "DD" && !ngayRaVien) ? 
                                 <Fragment>
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
-                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
-                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length + 1}>{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">
+                                            <TextField
+                                                multiline
+                                                fullWidth
+                                                value={newTheoDoiDienBien[0]}
+                                                onChange={({ target: { value } }) => {
+                                                    const tTheoDoiDienBien = [...newTheoDoiDienBien];
+                                                    tTheoDoiDienBien[0] = value;
+                                                    setNewTheoDoiDienBien(tTheoDoiDienBien);
+                                                    if (!value) {
+                                                        if (newTheoDoiDienBien.every((tddb, i) => (i !== 0 && !tddb) || i === 0)
+                                                            && newThucHienYLenh.every((thyl) => !thyl.yLenh && !thyl.xacNhan)) {
+                                                            setHasChanged(false);
+                                                        }
+                                                    } else {
+                                                        if (!hasChanged) {
+                                                            setHasChanged(true);
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell className="tableBodyBorderRight">
+                                            <Box className="df aic">
+                                                <SelectYLenh 
+                                                    fullWidth
+                                                    value={newThucHienYLenh[0].yLenh}
+                                                    onChange={({ target: { value } }) => {
+                                                        const tThucHienYLenh = [...newThucHienYLenh];
+                                                        tThucHienYLenh[0].yLenh = value;
+                                                        tThucHienYLenh[0].xacNhan = "Đang thực hiện";
+                                                        setNewThucHienYLenh(tThucHienYLenh);
+                                                        if (!hasChanged) {
+                                                            setHasChanged(true);
+                                                        }
+                                                    }}
+                                                    existValue={newThucHienYLenh}
+                                                    danhSachYLenh={filterDanhSachYLenh}
+                                                />
+
+                                                {newThucHienYLenh.length === 1
+                                                    && filterDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                    ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
+                                                    : null}
+                                            </Box>         
+                                        </TableCell>
+                                        <TableCell className="tableBodyBorderRight">
+                                            <Select 
+                                                fullWidth 
+                                                value={newThucHienYLenh[0].xacNhan}
+                                                onChange={({ target: { value } }) => {
+                                                    const tThucHienYLenh = [...newThucHienYLenh];
+                                                    tThucHienYLenh[0].xacNhan = value;
+                                                    setNewThucHienYLenh(tThucHienYLenh);
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }}
+                                                disabled={!newThucHienYLenh[0].yLenh}
+                                            >
+                                                <MenuItem value="Đang thực hiện">Đang thực hiện</MenuItem>
+                                                <MenuItem value="Thực hiện xong">Thực hiện xong</MenuItem>
+                                            </Select>
+                                        </TableCell>
+                                        <TableCell rowSpan={newThucHienYLenh.length}>{`${id} - ${name}`}</TableCell>
                                     </TableRow>
 
-                                    {newThucHienYLenh.map((thucHienYLenh, idx) => (
-                                        <TableRow key={idx}>
+                                    {newThucHienYLenh.slice(1).map((thucHienYLenh, idx) => (
+                                        <TableRow key={idx + 1}>
                                             <TableCell className="tableBodyBorderRight">
                                                 <TextField
                                                     multiline
                                                     fullWidth
-                                                    value={newTheoDoiDienBien[idx]}
-                                                    onChange={(event) => {
+                                                    value={newTheoDoiDienBien[idx + 1]}
+                                                    onChange={({ target: { value } }) => {
                                                         const tTheoDoiDienBien = [...newTheoDoiDienBien];
-                                                        tTheoDoiDienBien[idx] = event.target.value;
+                                                        tTheoDoiDienBien[idx + 1] = value;
                                                         setNewTheoDoiDienBien(tTheoDoiDienBien);
+                                                        if (!value) {
+                                                            if (newTheoDoiDienBien.every((tddb, i) => (i !== idx + 1 && !tddb) || i === idx + 1)
+                                                                && newThucHienYLenh.every((thyl) => !thyl.yLenh && !thyl.xacNhan)) {
+                                                                setHasChanged(false);
+                                                            }
+                                                        } else {
+                                                            if (!hasChanged) {
+                                                                setHasChanged(true);
+                                                            }
+                                                        }
                                                     }}
                                                 />
                                             </TableCell>
@@ -192,17 +282,21 @@ const FPhieuChamSoc = () => {
                                                     <SelectYLenh 
                                                         fullWidth
                                                         value={thucHienYLenh.yLenh}
-                                                        onChange={(event) => {
+                                                        onChange={({ target: { value } }) => {
                                                             const tThucHienYLenh = [...newThucHienYLenh];
-                                                            tThucHienYLenh[idx].yLenh = event.target.value;
-                                                            tThucHienYLenh[idx].xacNhan = "Đang thực hiện";
+                                                            tThucHienYLenh[idx + 1].yLenh = value;
+                                                            tThucHienYLenh[idx + 1].xacNhan = "Đang thực hiện";
                                                             setNewThucHienYLenh(tThucHienYLenh);
+                                                            if (!hasChanged) {
+                                                                setHasChanged(true);
+                                                            }
                                                         }}
                                                         existValue={newThucHienYLenh}
+                                                        danhSachYLenh={filterDanhSachYLenh}
                                                     />
 
-                                                    {idx === newThucHienYLenh.length - 1 
-                                                        && danhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                    {idx + 1 === newThucHienYLenh.length - 1 
+                                                        && filterDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
                                                         ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
                                                         : null}
                                                 </Box>         
@@ -211,21 +305,24 @@ const FPhieuChamSoc = () => {
                                                 <Select 
                                                     fullWidth 
                                                     value={thucHienYLenh.xacNhan}
-                                                    onChange={(event) => {
+                                                    onChange={({ target: { value } }) => {
                                                         const tThucHienYLenh = [...newThucHienYLenh];
-                                                        tThucHienYLenh[idx].xacNhan = event.target.value;
+                                                        tThucHienYLenh[idx + 1].xacNhan = value;
                                                         setNewThucHienYLenh(tThucHienYLenh);
+                                                        if (!hasChanged) {
+                                                            setHasChanged(true);
+                                                        }
                                                     }}
+                                                    disabled={!newThucHienYLenh[idx + 1].yLenh}
                                                 >
                                                     <MenuItem value="Đang thực hiện">Đang thực hiện</MenuItem>
                                                     <MenuItem value="Thực hiện xong">Thực hiện xong</MenuItem>
                                                 </Select>
                                             </TableCell>
-                                            {idx === 0 && <TableCell rowSpan={newThucHienYLenh.length + 1}>{name}</TableCell>}
                                         </TableRow>
                                     ))}
                                 </Fragment>
-                            }
+                            : null}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -239,36 +336,21 @@ const FPhieuChamSoc = () => {
                 />
             </Paper>
 
-            {(role === "DD" && !ngayRaVien) &&
+            {hasChanged &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
-                        {!addNew
-                        ? (
-                            <Button 
-                                sx={{ width: 150 }} 
-                                startIcon={<Add fontSize="small"/>}
-                                onClick={() => {
-                                    setNewNgayGio(new Date());
-                                    setAddNew(true);
-                                }}
-                            >
-                                Thêm mới
+                        <>
+                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                Hủy
                             </Button>
-                        ) : (
-                            <>
-                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
-                                    Hủy
-                                </Button>
 
-                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
-                                    Thêm
-                                </Button>
-                            </>
-                        )
-                        }
+                            <Button variant="primary" onClick={handleAdd}>
+                                Thêm
+                            </Button>
+                        </>
                     </Grid>
                 </Grid>
             }

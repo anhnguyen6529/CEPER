@@ -8,7 +8,7 @@ const initialState = {
         username: '',
         avatar: '',
         role: 'BS',
-        id: '',
+        id: '000001',
         name: 'Trần Quốc A',
         dateOfBirth: '',
         gender: '',
@@ -54,11 +54,13 @@ const authSlice = createSlice({
                 state.user.role = action.payload.role;
 
                 if (action.payload.username === 'user02') {
-                    state.user.name = 'Nguyễn Ngọc A'
+                    state.user.name = 'Nguyễn Ngọc A';
+                    state.user.id = '100001';
                 }
 
                 if (action.payload.username === 'user03') {
-                    state.user.name = 'Nguyễn Văn A'
+                    state.user.name = 'Nguyễn Văn A';
+                    state.user.id = '100001';
                 }
             } else {
                 state.login.success = false;

@@ -720,7 +720,7 @@ const FKhamBenh = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ width: 150, mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
 
                 {(!confirmSec[SECTION_NAME] && (spellingError[CLINICAL_SUBSECTION[0]].changed || spellingError[CLINICAL_SUBSECTION[1]].changed
                     || spellingError[CLINICAL_SUBSECTION[2]].changed || spellingError[CLINICAL_SUBSECTION[3]].changed
@@ -728,7 +728,7 @@ const FKhamBenh = () => {
                     || spellingError[CLINICAL_SUBSECTION[6]].changed || spellingError[CLINICAL_SUBSECTION[7]].changed
                     || spellingError[CLINICAL_SUBSECTION[8]].changed || spellingError[CLINICAL_SUBSECTION[9]].changed
                     || spellingError[CLINICAL_SUBSECTION[10]].changed)) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ width: 150, mt: 2 }}>Xác nhận</Button> : null}
+                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
             </Box>
         </Box>
     )

@@ -10,7 +10,7 @@ const EMPTY_SPELLING = {
     correction: ''
 }
 
-export const clinicalState = mdSections["clinicalSection"].reduce((prev, key) => {
+export const sectionState = [...mdSections["clinicalSection"], ...mdSections["attached"]].reduce((prev, key) => {
     if (key === "Bệnh án" || key === "Tổng kết bệnh án") {
         return { ...prev, ...mdSections[key].reduce((subPrev, subKey) => {
             if (subKey === "Lý do vào viện" || subKey === "Hỏi bệnh" || subKey === "Khám bệnh" || subKey === "Chẩn đoán khi ra viện") {
@@ -31,7 +31,7 @@ export const clinicalState = mdSections["clinicalSection"].reduce((prev, key) =>
 }, {});
 
 const initialState = {
-    ...clinicalState,
+    ...sectionState,
     loading: true
 }
 
@@ -46,14 +46,14 @@ const SpellingErrorSlice = createSlice({
             state[action.payload.section][action.payload.subSection].changed = action.payload.changed;
         },
         resetState: () => {
-            return { ...initialState };
+            return { ...sectionState };
         }
     },
     extraReducers: (builder) => {
         builder
         .addCase(SpellingErrorThunk.getProcessResult.fulfilled, (state, action) => {
             if (!action.payload.subSection) {
-                const filter = Object.keys(clinicalState).filter(key => key !== action.payload.section);
+                const filter = Object.keys(sectionState).filter(key => key !== action.payload.section && !mdSections["attached"].includes(key));
                 const loadedAll = filter.every((key) => {
                     if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
                         return Object.keys(state[key]).filter(subKey => subKey !== "changed").every(subKey => !state[key][subKey].changed 
@@ -65,7 +65,8 @@ const SpellingErrorSlice = createSlice({
                 if (loadedAll) state.loading = false;
                 state[action.payload.section] = { ...state[action.payload.section], ...action.payload.result, loading: false, error: "" };
             } else {
-                const loadedAll = Object.keys(clinicalState).every((key) => {
+                const filter = Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key));
+                const loadedAll = filter.every((key) => {
                     if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
                         return Object.keys(state[key]).filter(subKey => subKey !== "changed" 
                             && subKey !== action.payload.subSection).every(subKey => !state[key][subKey].changed 

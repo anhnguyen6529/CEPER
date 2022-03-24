@@ -2,15 +2,17 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import { UtilsTable } from "../../utils";
 import { useSelector, useDispatch } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow } from "../common";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import UserContext from "../../contexts/UserContext";
+
+const SECTION_NAME = "Phiếu TD chức năng sống";
 
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', unit: '', width: '10%', minWidth: 115 },
@@ -26,7 +28,8 @@ const headCells = [
 const FPhieuTDChucNangSong = () => {
     const content = useSelector((state) => state.HSBA.phieuTDChucNangSong);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { role, name } = useSelector(state => state.auth.user);
+    const { role, name, id } = useSelector(state => state.auth.user);
+    const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -34,16 +37,16 @@ const FPhieuTDChucNangSong = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [addNew, setAddNew] = useState(false);
-    const [newNgayGio, setNewNgayGio] = useState(null);
+    const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
     const [newMach, setNewMach] = useState(0);
     const [newNhietDo, setNewNhietDo] = useState(0);
     const [newHuyetAp, setNewHuyetAp] = useState([0, 0]);
     const [newNhipTho, setNewNhipTho] = useState(0);
     const [newCanNang, setNewCanNang] = useState(0);
     const [errors, setErrors] = useState([]);
+    const [hasChanged, setHasChanged] = useState(false);
 
-    const rows = content.data;
+    const [rows, setRows] = useState(content.data);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -52,30 +55,36 @@ const FPhieuTDChucNangSong = () => {
     };
 
     const clearData = () => {
-        setNewNgayGio(null);
-        setNewMach(0); setNewNhietDo(0); setNewHuyetAp([0, 0]); setNewNhipTho(0); setNewCanNang(0);
-        setAddNew(false);
+        setNewMach(0); 
+        setNewNhietDo(0); 
+        setNewHuyetAp([0, 0]); 
+        setNewNhipTho(0); 
+        setNewCanNang(0);
         setErrors([]);
     }
 
     const handleCancel = () => {
         clearData();
+        setHasChanged(false);
     };
 
     const handleAdd = () => {
-        if (!!newNgayGio && newMach > 0 && newNhietDo > 0 && newHuyetAp[0] > 0 && newHuyetAp[1] > 0 && newNhipTho > 0 && newCanNang > 0) {
-            dispatch(HSBAActions.updateDinhKemSection({
-                section: 'phieuTDChucNangSong',
-                value: {},
-                newData: { 
-                    ngayGio: newNgayGio.toISOString(), 
-                    mach: newMach, nhietDo: newNhietDo, 
-                    huyetAp: String(newHuyetAp[0]).concat('/').concat(String(newHuyetAp[1])), 
-                    nhipTho: newNhipTho, canNang: newCanNang,
-                    dieuDuongGhi: name 
-                }
-            }));
+        if (newMach > 0 && newNhietDo > 0 && newHuyetAp[0] > 0 && newHuyetAp[1] > 0 && newNhipTho > 0 && newCanNang > 0) {
+            const now = new Date().toISOString();
+            setRows([...rows, {
+                ngayGio: now, 
+                mach: newMach, 
+                nhietDo: newNhietDo, 
+                huyetAp: String(newHuyetAp[0]).concat('/').concat(String(newHuyetAp[1])), 
+                nhipTho: newNhipTho, 
+                canNang: newCanNang,
+                dieuDuongGhi: `${id} - ${name}`
+            }]);
+            setNewNgayGio(now);
+            
             clearData();
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            setHasChanged(false);
         } else {
             let errs = [];
             if (newMach === 0) errs.push('mạch');
@@ -139,7 +148,7 @@ const FPhieuTDChucNangSong = () => {
                                     );
                             })}
 
-                            {addNew ? 
+                            {(role === "DD" && !ngayRaVien) ? 
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
@@ -149,7 +158,18 @@ const FPhieuTDChucNangSong = () => {
                                             InputProps={{ inputProps: { min: 0 } }}
                                             fullWidth
                                             value={newMach}
-                                            onChange={(event) => setNewMach(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewMach(!value ? 0 : parseInt(value));
+                                                if (!value || parseInt(value) === 0) {
+                                                    if (newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -158,7 +178,18 @@ const FPhieuTDChucNangSong = () => {
                                             InputProps={{ inputProps: { min: 0 } }}
                                             fullWidth
                                             value={newNhietDo}
-                                            onChange={(event) => setNewNhietDo(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewNhietDo(!value ? 0 : parseInt(value));
+                                                if (!value || parseInt(value) === 0) {
+                                                    if (newMach === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -168,7 +199,18 @@ const FPhieuTDChucNangSong = () => {
                                                 InputProps={{ inputProps: { min: 0 } }}
                                                 fullWidth
                                                 value={newHuyetAp[0]}
-                                                onChange={(event) => setNewHuyetAp([event.target.value, newHuyetAp[1]])}
+                                                onChange={({ target: { value } }) => {
+                                                    setNewHuyetAp([!value ? 0 : parseInt(value), newHuyetAp[1]]);
+                                                    if (!value || parseInt(value) === 0) {
+                                                        if (newMach === 0 && newNhietDo === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                            setHasChanged(false);
+                                                        }
+                                                    } else {
+                                                        if (!hasChanged) {
+                                                            setHasChanged(true);
+                                                        }
+                                                    }
+                                                }}
                                             />
                                             <Typography sx={{ mx: 1 }}>/</Typography>
                                             <TextField
@@ -176,7 +218,18 @@ const FPhieuTDChucNangSong = () => {
                                                 InputProps={{ inputProps: { min: 0 } }}
                                                 fullWidth
                                                 value={newHuyetAp[1]}
-                                                onChange={(event) => setNewHuyetAp([newHuyetAp[0], event.target.value])}
+                                                onChange={({ target: { value } }) => {
+                                                    setNewHuyetAp([newHuyetAp[0], !value ? 0 : parseInt(value)]);
+                                                    if (!value || parseInt(value) === 0) {
+                                                        if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                            setHasChanged(false);
+                                                        }
+                                                    } else {
+                                                        if (!hasChanged) {
+                                                            setHasChanged(true);
+                                                        }
+                                                    }
+                                                }}
                                             />
                                         </Box>
                                         
@@ -187,7 +240,18 @@ const FPhieuTDChucNangSong = () => {
                                             InputProps={{ inputProps: { min: 0 } }}
                                             fullWidth
                                             value={newNhipTho}
-                                            onChange={(event) => setNewNhipTho(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewNhipTho(!value ? 0 : parseInt(value));
+                                                if (!value || parseInt(value) === 0) {
+                                                    if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newCanNang === 0) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -196,10 +260,21 @@ const FPhieuTDChucNangSong = () => {
                                             InputProps={{ inputProps: { min: 0 } }}
                                             fullWidth
                                             value={newCanNang}
-                                            onChange={(event) => setNewCanNang(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewCanNang(!value ? 0 : parseInt(value));
+                                                if (!value || parseInt(value) === 0) {
+                                                    if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
-                                    <TableCell>{name}</TableCell>
+                                    <TableCell>{`${id} - ${name}`}</TableCell>
                                 </TableRow>
                             : null}
                         </TableBody>
@@ -215,36 +290,21 @@ const FPhieuTDChucNangSong = () => {
                 />
             </Paper>
 
-            {(role === "DD" && !ngayRaVien) && 
+            {hasChanged && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
-                        {!addNew
-                        ?
-                            <Button 
-                                sx={{ width: 150 }} 
-                                startIcon={<Add fontSize="small"/>}
-                                onClick={() => {
-                                    setNewNgayGio(new Date());
-                                    setAddNew(true);
-                                }}
-                            >
-                                Thêm mới
+                        <>
+                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                Hủy
                             </Button>
-                        : (
-                            <>
-                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
-                                    Hủy
-                                </Button>
 
-                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
-                                    Thêm
-                                </Button>
-                            </>
-                        )
-                        }
+                            <Button variant="primary" onClick={handleAdd}>
+                                Thêm
+                            </Button>
+                        </>
                     </Grid>
                 </Grid>
             }

@@ -2,15 +2,17 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useDispatch, useSelector } from "react-redux";
 import { format } from "date-fns";
 import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow } from "../common";
-import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import UserContext from "../../contexts/UserContext";
+
+const SECTION_NAME = "Tờ điều trị";
 
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
@@ -37,7 +39,8 @@ const removeHashAndSpaces = (arrStr) => {
 const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { role, name } = useSelector(state => state.auth.user);
+    const { role, name, id } = useSelector(state => state.auth.user);
+    const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -45,13 +48,13 @@ const FToDieuTri = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [addNew, setAddNew] = useState(false);
-    const [newNgayGio, setNewNgayGio] = useState(null);
+    const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
     const [newDienBienBenh, setNewDienBienBenh] = useState('');
     const [newYLenh, setNewYLenh] = useState('');
     const [errors, setErrors] = useState([]);
+    const [hasChanged, setHasChanged] = useState(false);
 
-    const rows = content.data;
+    const [rows, setRows] = useState(content.data);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -60,48 +63,32 @@ const FToDieuTri = () => {
     };   
 
     const clearData = () => {
-        setNewNgayGio(null);
         setNewDienBienBenh('');
         setNewYLenh('');
-        setAddNew(false);
         setErrors([]);
     }
 
     const handleCancel = () => {
         clearData();
+        setHasChanged(false);
     };
 
     const handleAdd = () => {
-        if (!!newNgayGio && !!newDienBienBenh && !!newYLenh) {
-            const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n'));
-            dispatch(HSBAActions.updateDinhKemSection({
-                section: 'toDieuTri',
-                value: {},
-                newData: { 
-                    ngayGio: newNgayGio.toISOString(), 
-                    dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
-                    yLenh: tYLenh,
-                    bacSiGhi: name 
-                }
-            }));
-
-            let danhSachYLenh = [];
-            if (Array.isArray(tYLenh)) {
-                danhSachYLenh.push({
-                    yLenh: format(new Date(newNgayGio), 'dd/MM/yyyy HH:mm') + ' - ' + tYLenh.join(';') + ' - BS: ' + name,
-                    xacNhan: 'Chưa thực hiện'
-                });
-            } else {
-                danhSachYLenh.push({
-                    yLenh: format(new Date(newNgayGio), 'dd/MM/yyyy HH:mm') + ' - ' + tYLenh + ' - BS: ' + name,
-                    xacNhan: 'Chưa thực hiện'
-                });
-            }
-            dispatch(HSBAActions.addDanhSachYLenh(danhSachYLenh));
+        if (!!newDienBienBenh && !!newYLenh) {
+            const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n')), now = new Date().toISOString();
+            setRows([...rows, {
+                ngayGio: now,
+                dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
+                yLenh: tYLenh,
+                bacSiGhi: `${id} - ${name}`
+            }]);
+            setNewNgayGio(now);
+        
             clearData();
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            setHasChanged(false);
         } else {
             let errs = [];
-            if (!newNgayGio) errs.push('ngày giờ');
             if (!newDienBienBenh) errs.push('diễn biến bệnh');
             if (!newYLenh) errs.push('y lệnh');
             setErrors(errs);
@@ -167,7 +154,7 @@ const FToDieuTri = () => {
                                     );
                             })}
 
-                            {addNew && 
+                            {(role === "BS" && !ngayRaVien) ?
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
@@ -176,7 +163,18 @@ const FToDieuTri = () => {
                                             multiline
                                             fullWidth
                                             value={newDienBienBenh}
-                                            onChange={(event) => setNewDienBienBenh(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewDienBienBenh(value);
+                                                if (!value) {
+                                                    if (!newYLenh) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -184,12 +182,23 @@ const FToDieuTri = () => {
                                             multiline
                                             fullWidth
                                             value={newYLenh}
-                                            onChange={(event) => setNewYLenh(event.target.value)}
+                                            onChange={({ target: { value } }) => {
+                                                setNewYLenh(value);
+                                                if (!value) {
+                                                    if (!newDienBienBenh) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
                                         />
                                     </TableCell>
-                                    <TableCell>{name}</TableCell>
+                                    <TableCell>{`${id} - ${name}`}</TableCell>
                                 </TableRow>
-                            }
+                            : null}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -203,36 +212,21 @@ const FToDieuTri = () => {
                 />
             </Paper>
 
-            {(role === "BS" && !ngayRaVien) &&
+            {hasChanged &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
                         {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
-                        {!addNew
-                        ? (
-                            <Button 
-                                sx={{ width: 150 }} 
-                                startIcon={<Add fontSize="small"/>}
-                                onClick={() => {
-                                    setNewNgayGio(new Date());
-                                    setAddNew(true);
-                                }}
-                            >
-                                Thêm mới
+                        <>
+                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                                Hủy
                             </Button>
-                        ) : (
-                            <>
-                                <Button variant="outlined" sx={{ width: 150, mr: 2 }} onClick={handleCancel}>
-                                    Hủy
-                                </Button>
 
-                                <Button variant="primary" sx={{ width: 150 }} onClick={handleAdd}>
-                                    Thêm
-                                </Button>
-                            </>
-                        )
-                        }
+                            <Button variant="primary" onClick={handleAdd}>
+                                Thêm
+                            </Button>
+                        </>
                     </Grid>
                 </Grid>
             }

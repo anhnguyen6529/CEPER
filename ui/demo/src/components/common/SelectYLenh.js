@@ -1,9 +1,7 @@
 import React from "react";
 import { Select, MenuItem } from "@mui/material";
-import { useSelector } from "react-redux";
 
-const SelectYLenh = ({ existValue, value, onChange, ...otherProps }) => {
-    const { danhSachYLenh } = useSelector(state => state.HSBA);
+const SelectYLenh = ({ danhSachYLenh, existValue, value, onChange, ...otherProps }) => {
     const filteredDSYL = [];
     danhSachYLenh.forEach((dsyl) => {
         if (dsyl.xacNhan !== "Thực hiện xong") filteredDSYL.push(dsyl);
