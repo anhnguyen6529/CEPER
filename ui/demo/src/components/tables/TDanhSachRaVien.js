@@ -125,9 +125,10 @@ const TDanhSachRaVien = ({ data }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                    {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((row, index) => {
+                        {(rowsPerPage > 0
+                            ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                        ).map((row, index) => {
                             return (
                                 <StyledTableRow hover key={index} sx={{ height: 90, cursor: 'pointer' }} onClick={() => navigate(`/user/HSBA/${row.pid}`)}>
                                     {danhSachHSBATab.raVienColsChecked[0] && 
@@ -146,7 +147,7 @@ const TDanhSachRaVien = ({ data }) => {
                                     {danhSachHSBATab.raVienColsChecked[9] && <TableCell>{row.tinhTrangRaVien}</TableCell>}
                                 </StyledTableRow>
                             );
-                    })}
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>

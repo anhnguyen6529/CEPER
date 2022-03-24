@@ -130,28 +130,29 @@ const FToDieuTri = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">
-                                                {(Array.isArray(row.dienBienBenh) && row.dienBienBenh.length > 1) 
-                                                    ? row.dienBienBenh.map(dbb => '- ' + dbb).join('\n') 
-                                                    : row.dienBienBenh
-                                                }
-                                            </TableCell>
-                                            <TableCell className="tableBodyBorderRight">
-                                                {(Array.isArray(row.yLenh) && row.yLenh.length > 1) 
-                                                    ? row.yLenh.map(yl => '- ' + yl).join('\n') 
-                                                    : row.yLenh
-                                                }
-                                            </TableCell>
-                                            <TableCell>{row.bacSiGhi}</TableCell>
-                                        </StyledTableRow>
-                                    );
+                            {(rowsPerPage > 0
+                                ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                            ).map((row, index) => {
+                                return (
+                                    <StyledTableRow hover key={index}>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">
+                                            {(Array.isArray(row.dienBienBenh) && row.dienBienBenh.length > 1) 
+                                                ? row.dienBienBenh.map(dbb => '- ' + dbb).join('\n') 
+                                                : row.dienBienBenh
+                                            }
+                                        </TableCell>
+                                        <TableCell className="tableBodyBorderRight">
+                                            {(Array.isArray(row.yLenh) && row.yLenh.length > 1) 
+                                                ? row.yLenh.map(yl => '- ' + yl).join('\n') 
+                                                : row.yLenh
+                                            }
+                                        </TableCell>
+                                        <TableCell>{row.bacSiGhi}</TableCell>
+                                    </StyledTableRow>
+                                );
                             })}
 
                             {(role === "BS" && !ngayRaVien) ?

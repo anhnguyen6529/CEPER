@@ -179,38 +179,39 @@ const FPhieuTDTruyenDich = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <Fragment key={index}>
-                                            <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
-                                                <TableCell className="tableBodyBorderRight" rowSpan={row.values.length}>
-                                                    {format(new Date(row.ngayThang), "dd/MM/yyyy")}
-                                                </TableCell>
-                                                <TableCell className="tableBodyBorderRight">{row.values[0].tenDichTruyen}</TableCell>
-                                                <TableCell className="tableBodyBorderRight" align="center">{row.values[0].soLuong > 0 ? row.values[0].soLuong : ""}</TableCell>
-                                                <TableCell className="tableBodyBorderRight" align="center">{row.values[0].loSanXuat}</TableCell>
-                                                <TableCell className="tableBodyBorderRight" align="center">{row.values[0].tocDo > 0 ? row.values[0].tocDo : ""}</TableCell>
-                                                <TableCell className="tableBodyBorderRight" align="center">{format(new Date(row.values[0].thoiGianBatDau), "dd/MM/yyyy HH:mm")}</TableCell>
-                                                <TableCell className="tableBodyBorderRight" align="center">{format(new Date(row.values[0].thoiGianKetThuc), "dd/MM/yyyy HH:mm")}</TableCell>
-                                                <TableCell className="tableBodyBorderRight">{row.values[0].BSChiDinh}</TableCell>
-                                                <TableCell>{row.values[0].DDThucHien}</TableCell>
+                            {(rowsPerPage > 0
+                                ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                            ).map((row, index) => {
+                                return (
+                                    <Fragment key={index}>
+                                        <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
+                                            <TableCell className="tableBodyBorderRight" rowSpan={row.values.length}>
+                                                {format(new Date(row.ngayThang), "dd/MM/yyyy")}
+                                            </TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.values[0].tenDichTruyen}</TableCell>
+                                            <TableCell className="tableBodyBorderRight" align="center">{row.values[0].soLuong > 0 ? row.values[0].soLuong : ""}</TableCell>
+                                            <TableCell className="tableBodyBorderRight" align="center">{row.values[0].loSanXuat}</TableCell>
+                                            <TableCell className="tableBodyBorderRight" align="center">{row.values[0].tocDo > 0 ? row.values[0].tocDo : ""}</TableCell>
+                                            <TableCell className="tableBodyBorderRight" align="center">{format(new Date(row.values[0].thoiGianBatDau), "dd/MM/yyyy HH:mm")}</TableCell>
+                                            <TableCell className="tableBodyBorderRight" align="center">{format(new Date(row.values[0].thoiGianKetThuc), "dd/MM/yyyy HH:mm")}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.values[0].BSChiDinh}</TableCell>
+                                            <TableCell>{row.values[0].DDThucHien}</TableCell>
+                                        </TableRow>
+                                        {row.values.slice(1).map((value, idx) => (
+                                            <TableRow hover key={idx + 1} sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
+                                                <TableCell className="tableBodyBorderRight">{value.tenDichTruyen}</TableCell>
+                                                <TableCell className="tableBodyBorderRight" align="center">{value.soLuong > 0 ? value.soLuong : ""}</TableCell>
+                                                <TableCell className="tableBodyBorderRight" align="center">{value.loSanXuat}</TableCell>
+                                                <TableCell className="tableBodyBorderRight" align="center">{value.tocDo > 0 ? value.tocDo : ""}</TableCell>
+                                                <TableCell className="tableBodyBorderRight" align="center">{format(new Date(value.thoiGianBatDau), "dd/MM/yyyy HH:mm")}</TableCell>
+                                                <TableCell className="tableBodyBorderRight" align="center">{format(new Date(value.thoiGianKetThuc), "dd/MM/yyyy HH:mm")}</TableCell>
+                                                <TableCell className="tableBodyBorderRight">{value.BSChiDinh}</TableCell>
+                                                <TableCell>{value.DDThucHien}</TableCell>
                                             </TableRow>
-                                            {row.values.slice(1).map((value, idx) => (
-                                                <TableRow hover key={idx + 1} sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
-                                                    <TableCell className="tableBodyBorderRight">{value.tenDichTruyen}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight" align="center">{value.soLuong > 0 ? value.soLuong : ""}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight" align="center">{value.loSanXuat}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight" align="center">{value.tocDo > 0 ? value.tocDo : ""}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight" align="center">{format(new Date(value.thoiGianBatDau), "dd/MM/yyyy HH:mm")}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight" align="center">{format(new Date(value.thoiGianKetThuc), "dd/MM/yyyy HH:mm")}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight">{value.BSChiDinh}</TableCell>
-                                                    <TableCell>{value.DDThucHien}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </Fragment>
-                                    );
+                                        ))}
+                                    </Fragment>
+                                );
                             })}
 
                             {(role === "DD" && !ngayRaVien) ? 

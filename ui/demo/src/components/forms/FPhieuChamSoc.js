@@ -134,51 +134,52 @@ const FPhieuChamSoc = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <Fragment key={index}>
-                                            <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
-                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
-                                                    {format(new Date(row.ngayGio), 'dd/MM/yyyy')}
-                                                </TableCell>
-                                                <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
-                                                    {format(new Date(row.ngayGio), 'HH:mm')}
-                                                </TableCell>
-                                                <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[0]}</TableCell>
-                                                <TableCell className="tableBodyBorderRight">{row.thucHienYLenh[0]}</TableCell> 
+                            {(rowsPerPage > 0
+                                ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                            ).map((row, index) => {
+                                return (
+                                    <Fragment key={index}>
+                                        <TableRow hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
+                                            <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
+                                                {format(new Date(row.ngayGio), 'dd/MM/yyyy')}
+                                            </TableCell>
+                                            <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
+                                                {format(new Date(row.ngayGio), 'HH:mm')}
+                                            </TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[0]}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.thucHienYLenh[0]}</TableCell> 
+                                            <TableCell className="tableBodyBorderRight">
+                                                <Box className="df aic">
+                                                    {row.xacNhan[0] === "Đang thực hiện" 
+                                                        ? <Loop fontSize="small" sx={{ mr: 0.5 }} color="warning" /> 
+                                                        : <DoneAll fontSize="small" sx={{ mr: 0.5 }} color="success" />
+                                                    }
+                                                    {row.xacNhan[0]}
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell rowSpan={row.thucHienYLenh.length}>{row.dieuDuongGhi}</TableCell>
+                                        </TableRow>
+
+                                        {row.thucHienYLenh.slice(1).map((thucHienYLenh, idx) => (
+                                            <TableRow key={idx + 1} hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
+                                                <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[idx + 1]}</TableCell>
+                                                <TableCell className="tableBodyBorderRight">
+                                                    {thucHienYLenh}
+                                                </TableCell> 
                                                 <TableCell className="tableBodyBorderRight">
                                                     <Box className="df aic">
-                                                        {row.xacNhan[0] === "Đang thực hiện" 
+                                                        {row.xacNhan[idx + 1] === "Đang thực hiện" 
                                                             ? <Loop fontSize="small" sx={{ mr: 0.5 }} color="warning" /> 
                                                             : <DoneAll fontSize="small" sx={{ mr: 0.5 }} color="success" />
                                                         }
-                                                        {row.xacNhan[0]}
+                                                        {row.xacNhan[idx + 1]}
                                                     </Box>
                                                 </TableCell>
-                                                <TableCell rowSpan={row.thucHienYLenh.length}>{row.dieuDuongGhi}</TableCell>
                                             </TableRow>
-
-                                            {row.thucHienYLenh.slice(1).map((thucHienYLenh, idx) => (
-                                                <TableRow key={idx + 1} hover sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.04)' }}>
-                                                    <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[idx + 1]}</TableCell>
-                                                    <TableCell className="tableBodyBorderRight">
-                                                        {thucHienYLenh}
-                                                    </TableCell> 
-                                                    <TableCell className="tableBodyBorderRight">
-                                                        <Box className="df aic">
-                                                            {row.xacNhan[idx + 1] === "Đang thực hiện" 
-                                                                ? <Loop fontSize="small" sx={{ mr: 0.5 }} color="warning" /> 
-                                                                : <DoneAll fontSize="small" sx={{ mr: 0.5 }} color="success" />
-                                                            }
-                                                            {row.xacNhan[idx + 1]}
-                                                        </Box>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </Fragment>
-                                    );
+                                        ))}
+                                    </Fragment>
+                                );
                             })}
 
                             {(role === "DD" && !ngayRaVien) ? 

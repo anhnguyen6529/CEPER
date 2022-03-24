@@ -1,7 +1,7 @@
 import React from "react";
 import { TablePagination as MuiTablePagination } from "@mui/material";
 
-const TablePagination = ({ length, page, setPage, rowsPerPage, setRowsPerPage }) => {
+const TablePagination = ({ length, page, setPage, rowsPerPage, setRowsPerPage, rowsPerPageOptions }) => {
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -13,7 +13,7 @@ const TablePagination = ({ length, page, setPage, rowsPerPage, setRowsPerPage })
 
     return (
         <MuiTablePagination
-            rowsPerPageOptions={[10, 25, 50, { label: 'Tất cả', value: length }]}
+            rowsPerPageOptions={[...rowsPerPageOptions, { label: 'Tất cả', value: -1 }]}
             component="div"
             count={length}
             rowsPerPage={rowsPerPage}
@@ -29,6 +29,10 @@ const TablePagination = ({ length, page, setPage, rowsPerPage, setRowsPerPage })
             showLastButton
         />
     )
+}
+
+TablePagination.defaultProps = {
+    rowsPerPageOptions: [10, 25, 50]
 }
 
 export default TablePagination;

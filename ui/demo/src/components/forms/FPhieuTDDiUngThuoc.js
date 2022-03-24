@@ -135,25 +135,26 @@ const FPhieuTDDiUngThuoc = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'HH:mm')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.thuocDiUng.join('\n')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">
-                                                {row.kieuDiUng === "Nghi ngờ" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
-                                            </TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">
-                                                {row.kieuDiUng === "Chắc chắn" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
-                                            </TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.bieuHienLamSang}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.bacSiXacNhan}</TableCell>
-                                            <TableCell>{row.ghiChu}</TableCell>
-                                        </StyledTableRow>
-                                    );
+                            {(rowsPerPage > 0
+                                ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                            ).map((row, index) => {
+                                return (
+                                    <StyledTableRow hover key={index}>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.thuocDiUng.join('\n')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">
+                                            {row.kieuDiUng === "Nghi ngờ" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
+                                        </TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">
+                                            {row.kieuDiUng === "Chắc chắn" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
+                                        </TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.bieuHienLamSang}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.bacSiXacNhan}</TableCell>
+                                        <TableCell>{row.ghiChu}</TableCell>
+                                    </StyledTableRow>
+                                );
                             })}
 
                             {(role === "BS" && position === "Bác sĩ điều trị" && !ngayRaVien) ?

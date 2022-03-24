@@ -257,67 +257,69 @@ const FPhieuCongKhaiThuoc = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt"))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight" align="center">{index + 1}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">{row.donVi}</TableCell>
-                                            {ngayThang.length <= MAX_LAST_ROWS || expandAllRows ? (
-                                                <>
-                                                    {row.ngayThang.map((nth, idx) => (
-                                                        <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
-                                                            {nth !== 0 ? nth : ""}
-                                                        </TableCell>
-                                                    ))}
-                                                    {expandAllRows && <TableCell className="tableBodyBorderRight" />}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <TableCell className="tableBodyBorderRight" />
-                                                    {row.ngayThang.slice(row.ngayThang.length - MAX_LAST_ROWS).map((nth, idx) => (
-                                                        <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
-                                                            {nth !== 0 ? nth : ""}
-                                                        </TableCell>
-                                                    ))}
-                                                </>
-                                            )}
+                        
+                            {(rowsPerPage > 0
+                                ? UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt")).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt"))
+                            ).map((row, index) => {
+                                return (
+                                    <StyledTableRow hover key={index}>
+                                        <TableCell className="tableBodyBorderRight" align="center">{index + 1}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">{row.donVi}</TableCell>
+                                        {ngayThang.length <= MAX_LAST_ROWS || expandAllRows ? (
+                                            <>
+                                                {row.ngayThang.map((nth, idx) => (
+                                                    <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
+                                                        {nth !== 0 ? nth : ""}
+                                                    </TableCell>
+                                                ))}
+                                                {expandAllRows && <TableCell className="tableBodyBorderRight" />}
+                                            </>
+                                        ) : (
+                                            <>
+                                                <TableCell className="tableBodyBorderRight" />
+                                                {row.ngayThang.slice(row.ngayThang.length - MAX_LAST_ROWS).map((nth, idx) => (
+                                                    <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
+                                                        {nth !== 0 ? nth : ""}
+                                                    </TableCell>
+                                                ))}
+                                            </>
+                                        )}
 
-                                            {(role === "DD" && !ngayRaVien) ? 
-                                                <TableCell className="tableBodyBorderRight">
-                                                    <TextField 
-                                                        type="number"
-                                                        InputProps={{ inputProps: { min: 0 } }}
-                                                        fullWidth
-                                                        value={newNgay.soLuong[index]}
-                                                        onChange={({ target: { value } }) => {
-                                                            const tSoLuong = [...newNgay.soLuong];
-                                                            tSoLuong[index] = !value ? 0 : parseInt(value);
-                                                            setNewNgay({ ...newNgay, soLuong: tSoLuong });
-                                                            if (!value || parseInt(value) === 0) {
-                                                                if (!newNgay.ngay && newNgay.soLuong.every((sl, i) => (i !== index && sl === 0) || i === index) 
-                                                                    && newDataList.every((newData) => !newData.tenThuoc && !newData.donVi && newData.soLuong === 0 
-                                                                    && newData.donGia === 0 && !newData.ghiChu)) {
-                                                                    setHasChanged(false);
-                                                                }
-                                                            } else {
-                                                                if (!hasChanged) {
-                                                                    setHasChanged(true);
-                                                                }
+                                        {(role === "DD" && !ngayRaVien) ? 
+                                            <TableCell className="tableBodyBorderRight">
+                                                <TextField 
+                                                    type="number"
+                                                    InputProps={{ inputProps: { min: 0 } }}
+                                                    fullWidth
+                                                    value={newNgay.soLuong[index]}
+                                                    onChange={({ target: { value } }) => {
+                                                        const tSoLuong = [...newNgay.soLuong];
+                                                        tSoLuong[index] = !value ? 0 : parseInt(value);
+                                                        setNewNgay({ ...newNgay, soLuong: tSoLuong });
+                                                        if (!value || parseInt(value) === 0) {
+                                                            if (!newNgay.ngay && newNgay.soLuong.every((sl, i) => (i !== index && sl === 0) || i === index) 
+                                                                && newDataList.every((newData) => !newData.tenThuoc && !newData.donVi && newData.soLuong === 0 
+                                                                && newData.donGia === 0 && !newData.ghiChu)) {
+                                                                setHasChanged(false);
                                                             }
-                                                        }}
-                                                        sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }}
-                                                    />
-                                                </TableCell>
-                                            : null}
-                                            <TableCell className="tableBodyBorderRight" align="center">{row.tongSo}</TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">{row.donGia.toLocaleString()}</TableCell>
-                                            <TableCell className="tableBodyBorderRight" align="center">{row.thanhTien.toLocaleString()}</TableCell>
-                                            <TableCell>{row.ghiChu}</TableCell>
-                                        </StyledTableRow>
-                                    );
+                                                        } else {
+                                                            if (!hasChanged) {
+                                                                setHasChanged(true);
+                                                            }
+                                                        }
+                                                    }}
+                                                    sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }}
+                                                />
+                                            </TableCell>
+                                        : null}
+                                        <TableCell className="tableBodyBorderRight" align="center">{row.tongSo}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">{row.donGia.toLocaleString()}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">{row.thanhTien.toLocaleString()}</TableCell>
+                                        <TableCell>{row.ghiChu}</TableCell>
+                                    </StyledTableRow>
+                                );
                             })}
 
                             {(role === "DD" && !ngayRaVien) ? 

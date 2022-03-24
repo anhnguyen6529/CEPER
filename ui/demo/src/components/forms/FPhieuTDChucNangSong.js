@@ -131,21 +131,22 @@ const FPhieuTDChucNangSong = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    return (
-                                        <StyledTableRow hover key={index}>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.mach}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.nhietDo}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.huyetAp}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.nhipTho}</TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.canNang}</TableCell>
-                                            <TableCell>{row.dieuDuongGhi}</TableCell>
-                                        </StyledTableRow>
-                                    );
+                            {(rowsPerPage > 0
+                                ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
+                            ).map((row, index) => {
+                                return (
+                                    <StyledTableRow hover key={index}>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.mach}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.nhietDo}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.huyetAp}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.nhipTho}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.canNang}</TableCell>
+                                        <TableCell>{row.dieuDuongGhi}</TableCell>
+                                    </StyledTableRow>
+                                );
                             })}
 
                             {(role === "DD" && !ngayRaVien) ? 
