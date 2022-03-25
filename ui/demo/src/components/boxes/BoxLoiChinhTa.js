@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Checkbox, Button as ButtonWord, Pagination, Card } from "@mui/material";
+import { Box, Typography, Grid, Checkbox, Button as ButtonWord, Card } from "@mui/material";
 import "../../styles/index.css";
+import { TablePagination } from "../common";
 
-const ROWS_PER_PAGE = 5;
-
-const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseResult, setSection }) => {
-    const pages = Math.ceil(result.correction.length / ROWS_PER_PAGE * 1.0);
-    const [page, setPage] = useState(1);
+const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseResult, handleChangeCheckbox, setSection }) => {
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
     const [hoverDetection, setHoverDetection] = useState(new Array(result.correction.length).fill(false));
     const [hoverCorrection, setHoverCorrection] = useState(new Array(result.correction.length).fill(false));
 
@@ -26,17 +25,12 @@ const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseR
 
     return (
         <Box sx={{ mt: 1 }}>
-            <Typography fontWeight="bold">
+            <Typography fontWeight="bold" fontStyle="italic">
                 Văn bản kết quả
                 <Checkbox 
                     sx={{ py: 0 }} 
                     checked={useResult} 
-                    onChange={({ target: { checked } }) => {
-                        if (checked) {
-                            setSection();
-                        }
-                        setUseResult(checked);
-                    }}
+                    onChange={({ target: { checked } }) => handleChangeCheckbox(checked)}
                 />
             </Typography>
             <Typography sx={{ mt: 0.5 }}>{markDetection().map((mark, id) => mark.replace
@@ -48,8 +42,8 @@ const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseR
                             sx={{ cursor: "pointer" }}
                             fontWeight={hoverDetection[mark.id] ? "bold" : "regular"}
                             onClick={() => {
-                                if (mark.id < (page - 1) * ROWS_PER_PAGE || mark.id >= (page - 1) * ROWS_PER_PAGE + ROWS_PER_PAGE) {
-                                    setPage(Math.trunc(mark.id / ROWS_PER_PAGE * 1.0) + 1);
+                                if (mark.id < page * rowsPerPage || mark.id >= page * rowsPerPage + rowsPerPage) {
+                                    setPage(Math.trunc(mark.id / rowsPerPage * 1.0));
                                 }
                             }}
                             onMouseEnter={() => {
@@ -69,48 +63,39 @@ const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseR
                     </Typography>
                 ) : mark.string.concat(" "))}
             </Typography>
-
-            <Grid container sx={{ pt: 1.5, pb: 0.5 }}>
-                <Grid item xs={6}>
-                    <Typography fontWeight="bold">Nhận diện và sửa lỗi</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                    <Box className="df jcfe">
-                        {pages > 1 ?
-                            <Pagination shape="rounded" count={pages} page={page} onChange={(_, value) => setPage(value)} size="small"/>
-                        : null}
-                    </Box>
-                </Grid>
-            </Grid>
-            {result.correction.slice((page - 1) * ROWS_PER_PAGE, (page - 1) * ROWS_PER_PAGE + ROWS_PER_PAGE).map((correction, id) => (
-                <Card key={id} variant="outlined" sx={{ p: 1, mt: 1, borderColor: hoverCorrection[(page - 1) * ROWS_PER_PAGE + id] ? "#09425A" : "rgba(0, 0, 0, 0.12)" }}>
+            <Typography fontWeight="bold" fontStyle="italic" sx={{ mt: 1.5, mb: 0.5 }}>Nhận diện và sửa lỗi</Typography>
+            {(rowsPerPage > 0
+                ? result.correction.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                : result.correction
+            ).map((correction, id) => (
+                <Card key={id} variant="outlined" sx={{ p: 1, mt: 1, borderColor: hoverCorrection[page * rowsPerPage + id] ? "#09425A" : "rgba(0, 0, 0, 0.12)" }}>
                     <Grid container>
                         <Grid item xs={3}>
                             <Box className="df aic">
-                                <Typography sx={{ mr: 1 }}>{(page - 1) * ROWS_PER_PAGE + (id + 1)}) Từ gốc:</Typography>
+                                <Typography sx={{ mr: 1 }}>{page * rowsPerPage + (id + 1)}) Từ gốc:</Typography>
                                 <ButtonWord 
-                                    variant={text[(page - 1) * ROWS_PER_PAGE + id] === replaced[(page - 1) * ROWS_PER_PAGE + id].repText 
-                                        && replaced[(page - 1) * ROWS_PER_PAGE + id].type === "text" ? "contained" : "outlined"} 
+                                    variant={text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
+                                        && replaced[page * rowsPerPage + id].type === "text" ? "contained" : "outlined"} 
                                     color="warning"
                                     onClick={() => {
                                         const tReplaced = [...replaced];
-                                        tReplaced[(page - 1) * ROWS_PER_PAGE + id] = { type: "text", repText: text[(page - 1) * ROWS_PER_PAGE + id] };
+                                        tReplaced[page * rowsPerPage + id] = { type: "text", repText: text[page * rowsPerPage + id] };
                                         setReplaced(tReplaced);
                                     }}
-                                    sx={{ cursor: text[(page - 1) * ROWS_PER_PAGE + id] === replaced[(page - 1) * ROWS_PER_PAGE + id].repText 
-                                        && replaced[(page - 1) * ROWS_PER_PAGE + id].type === "text" ? "help" : "pointer" }}
+                                    sx={{ cursor: text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
+                                        && replaced[page * rowsPerPage + id].type === "text" ? "help" : "pointer" }}
                                     onMouseEnter={() => {
                                         const tHoverDetection = [...hoverDetection];
-                                        tHoverDetection[(page - 1) * ROWS_PER_PAGE + id] = true;
+                                        tHoverDetection[page * rowsPerPage + id] = true;
                                         setHoverDetection(tHoverDetection);
                                     }}
                                     onMouseLeave={() => {
                                         const tHoverDetection = [...hoverDetection];
-                                        tHoverDetection[(page - 1) * ROWS_PER_PAGE + id] = false;
+                                        tHoverDetection[page * rowsPerPage + id] = false;
                                         setHoverDetection(tHoverDetection);
                                     }}
                                 >
-                                    {text[(page - 1) * ROWS_PER_PAGE + id]}
+                                    {text[page * rowsPerPage + id]}
                                 </ButtonWord>
                             </Box>
                         </Grid>
@@ -122,26 +107,26 @@ const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseR
                                     <ButtonWord
                                         key={idx}
                                         color="success"
-                                        variant={correct === replaced[(page - 1) * ROWS_PER_PAGE + id].repText 
-                                            && replaced[(page - 1) * ROWS_PER_PAGE + id].type === "correct" ? "contained" : "outlined"}
+                                        variant={correct === replaced[page * rowsPerPage + id].repText 
+                                            && replaced[page * rowsPerPage + id].type === "correct" ? "contained" : "outlined"}
                                         sx={{ 
                                             mr: 1, 
-                                            cursor: correct === replaced[(page - 1) * ROWS_PER_PAGE + id].repText 
-                                                && replaced[(page - 1) * ROWS_PER_PAGE + id].type === "correct" ? "help" : "pointer"
+                                            cursor: correct === replaced[page * rowsPerPage + id].repText 
+                                                && replaced[page * rowsPerPage + id].type === "correct" ? "help" : "pointer"
                                         }}
                                         onClick={() => {
                                             const tReplaced = [...replaced];
-                                            tReplaced[(page - 1) * ROWS_PER_PAGE + id] = { type: "correct", repText: correct };
+                                            tReplaced[page * rowsPerPage + id] = { type: "correct", repText: correct };
                                             setReplaced(tReplaced);
                                         }}
                                         onMouseEnter={() => {
                                             const tHoverDetection = [...hoverDetection];
-                                            tHoverDetection[(page - 1) * ROWS_PER_PAGE + id] = true;
+                                            tHoverDetection[page * rowsPerPage + id] = true;
                                             setHoverDetection(tHoverDetection);
                                         }}
                                         onMouseLeave={() => {
                                             const tHoverDetection = [...hoverDetection];
-                                            tHoverDetection[(page - 1) * ROWS_PER_PAGE + id] = false;
+                                            tHoverDetection[page * rowsPerPage + id] = false;
                                             setHoverDetection(tHoverDetection);
                                         }}
                                     >
@@ -153,6 +138,17 @@ const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseR
                     </Grid>
                 </Card>
             ))}
+            
+            {result.correction.length > 5 ?
+                <TablePagination 
+                    length={result.correction.length}
+                    rowsPerPageOptions={[5, 10, 15]}
+                    rowsPerPage={rowsPerPage}
+                    setRowsPerPage={setRowsPerPage}
+                    page={page}
+                    setPage={setPage}
+                />
+            : null}
         </Box>
     )
 }

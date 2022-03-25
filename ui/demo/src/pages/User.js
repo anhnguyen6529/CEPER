@@ -25,12 +25,6 @@ const User = () => {
     const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => mdSections["order"].indexOf(sec)));
     const [appearTime, setAppearTime] = useState(mdSections["order"].reduce((prev, key) => ({ ...prev, [key]: null }), {}));
     const [openSec, setOpenSec] = useState(new Array(mdSections["order"].length).fill(true));  
-    const [confirmSec, setConfirmSec] = useState(mdSections["clinicalSection"].reduce((prev, key) => {
-        if (key === "Bệnh án" || key === "Tổng kết bệnh án") {
-            return { ...prev, ...mdSections[key].reduce((subPrev, subKey) => ({ ...subPrev, [subKey]: false }), {})};
-        } 
-        return { ...prev, [key]: false };
-    }, {}));
     const [today, setToday] = useState(new Date());
     const [danhSachHSBATab, setDanhSachHSBATab] = useState({
         value: 0,
@@ -73,8 +67,6 @@ const User = () => {
             setAppearTime,
             openSec, 
             setOpenSec,
-            confirmSec,
-            setConfirmSec,
             today,
             danhSachHSBATab,
             setDanhSachHSBATab

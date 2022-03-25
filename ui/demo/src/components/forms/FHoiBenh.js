@@ -1,8 +1,7 @@
-import { Box, Typography, TextField, Grid, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import React, { useState, useContext, useEffect } from "react";
+import { Box, Typography, TextField, Grid, List, ListItem, ListItemIcon, ListItemText, CircularProgress } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
-import UserContext from "../../contexts/UserContext";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import { UtilsText } from "../../utils";
@@ -40,7 +39,6 @@ const FHoiBenh = () => {
     const spellingErrorQuaTrinhBenhLy = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
     const spellingErrorBanThan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
     const spellingErrorGiaDinh = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[2]]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [quaTrinhBenhLy, setQuaTrinhBenhLy] = useState(hoiBenh.quaTrinhBenhLy);
@@ -51,7 +49,7 @@ const FHoiBenh = () => {
     const [result, setResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(""));
     const [replaced, setReplaced] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
     const [text, setText] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
-    const [useResult, setUseResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(false));
+    const [useResult, setUseResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(true));
 
     useEffect(() => {
         if (updating) {
@@ -69,22 +67,19 @@ const FHoiBenh = () => {
     }, [updating]);
 
     useEffect(() => {
-        const tResult = [...result], tUseResult = [...useResult], tReplaced = [...replaced], tText = [...text];
+        const tResult = [...result], tReplaced = [...replaced], tText = [...text];
         if (!spellingErrorQuaTrinhBenhLy.loading) {
             tResult[0] = spellingErrorQuaTrinhBenhLy; setResult(tResult);
-            tUseResult[0] = true; setUseResult(tUseResult);
             tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
             tText[0] = UtilsText.getOriginalWordList(quaTrinhBenhLy, spellingErrorQuaTrinhBenhLy.detection); setText(tText);
         }
         if (!spellingErrorBanThan.loading) {
             tResult[1] = spellingErrorBanThan; setResult(tResult);
-            tUseResult[1] = true; setUseResult(tUseResult);
             tReplaced[1] = spellingErrorBanThan.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
             tText[1] = UtilsText.getOriginalWordList(banThan, spellingErrorBanThan.detection); setText(tText);
         }
         if (!spellingErrorGiaDinh.loading) {
             tResult[2] = spellingErrorGiaDinh; setResult(tResult);
-            tUseResult[2] = true; setUseResult(tUseResult);
             tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
             tText[2] = UtilsText.getOriginalWordList(giaDinh, spellingErrorGiaDinh.detection); setText(tText);
         }
@@ -100,34 +95,18 @@ const FHoiBenh = () => {
         CLINICAL_SUBSECTION.forEach(subSection => dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection, changed: false })));
     }
 
-    const handleConfirm = () => {
-        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
-        CLINICAL_SUBSECTION.forEach((subSection, index) => {
-            if (useResult[index]) {
-                let confirmed = result[index].detection.split(" "), count = 0;
-                confirmed.forEach((word, id) => {
-                    if (word.includes("<mask>")) {
-                        confirmed[id] = word.replace("<mask>", replaced[index][count].repText);
-                        count++;
-                    }
-                })
-                if (subSection === "Quá trình bệnh lý") setQuaTrinhBenhLy(confirmed.join(" ")); 
-                else if (subSection === "Bản thân") setBanThan(confirmed.join(" "));
-                else if (subSection === "Gia đình") setGiaDinh(confirmed.join(" "));
-            }
-        });
-    }
-
     return (
         <Box component="form" noValidate>
             <Grid container>
                 <Grid item xs={2}>
-                    <Typography fontWeight="bold" sx={{ mt: '12px' }}>Quá trình bệnh lý</Typography>
+                    <Typography fontWeight="bold">Quá trình bệnh lý</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[0]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[0]) ? "dense" : "none"}
                         value={quaTrinhBenhLy}
                         onChange={({ target: { value } }) => {
                             setQuaTrinhBenhLy(value);
@@ -148,10 +127,10 @@ const FHoiBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[0] || confirmSec[SECTION_NAME] || !spellingErrorQuaTrinhBenhLy.changed)}
+                        disabled={updating && (useResult[0] || !spellingErrorQuaTrinhBenhLy.changed)}
                     />
 
-                    {!!result[0] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[0] && !spellingErrorQuaTrinhBenhLy.loading ? 
                         <BoxLoiChinhTa
                             text={text[0]}
                             result={result[0]}
@@ -162,14 +141,26 @@ const FHoiBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[0]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[0] = newUseResult;
+                                tUseResult[0] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setQuaTrinhBenhLy(hoiBenh.quaTrinhBenhLy)}
                         />
-                    : null}
+                    : ( 
+                        !!result[0] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
 
@@ -178,17 +169,19 @@ const FHoiBenh = () => {
                 <List>
                     <ListItem>
                         <ListItemIcon>
-                            <Circle sx={{ width: 9, color: 'black', mt: 2 }}/>
+                            <Circle sx={{ width: 9, color: 'black', mt: 0.5 }}/>
                         </ListItemIcon>
                         <ListItemText>
                             <Grid container>
                                 <Grid item xs={1}>
-                                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Bản thân</Typography>
+                                    <Typography fontWeight="bold">Bản thân</Typography>
                                 </Grid>
                                 <Grid item xs={11}>
+                                    {(updating && !!result[1]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                                     <TextField 
                                         multiline
                                         fullWidth
+                                        margin={(updating && !!result[1]) ? "dense" : "none"}
                                         value={banThan}
                                         onChange={({ target: { value } }) => {
                                             setBanThan(value);
@@ -209,10 +202,10 @@ const FHoiBenh = () => {
                                                 }
                                             }
                                         }}
-                                        disabled={updating && (useResult[1] || confirmSec[SECTION_NAME] || !spellingErrorBanThan.changed)}
+                                        disabled={updating && (useResult[1] || !spellingErrorBanThan.changed)}
                                     />
 
-                                    {!!result[1] && !confirmSec[SECTION_NAME] ? 
+                                    {!!result[1] && !spellingErrorBanThan.loading ? 
                                         <BoxLoiChinhTa
                                             text={text[1]}
                                             result={result[1]}
@@ -223,14 +216,26 @@ const FHoiBenh = () => {
                                                 setReplaced(tReplaced);
                                             }}
                                             useResult={useResult[1]}
-                                            setUseResult={(newUseResult) => {
+                                            handleChangeCheckbox={(checked) => {
                                                 const tUseResult = [...useResult];
-                                                tUseResult[1] = newUseResult;
+                                                tUseResult[1] = checked;
                                                 setUseResult(tUseResult);
+                                                if (checked) {
+                                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
+                                                    setTimeout(() => {
+                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
+                                                    }, 2000);
+                                                }
                                             }}
-                                            setSection={() => setBanThan(hoiBenh.tienSu.banThan)}
                                         />
-                                    : null}
+                                    : ( 
+                                        !!result[1] ? 
+                                            <div className="df fdc aic jcc">
+                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                                <Typography color="primary">Đang xử lý...</Typography>
+                                            </div> 
+                                        : null
+                                    )}
                                 </Grid>
                             </Grid>
                         </ListItemText>
@@ -264,17 +269,19 @@ const FHoiBenh = () => {
                     
                     <ListItem sx={{ mt: 1 }}>
                         <ListItemIcon>
-                            <Circle sx={{ width: 9, color: 'black', mt: 2 }}/>
+                            <Circle sx={{ width: 9, color: 'black', mt: 0.5 }}/>
                         </ListItemIcon>
                         <ListItemText>
                             <Grid container>
                                 <Grid item xs={1}>
-                                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Gia đình</Typography>
+                                    <Typography fontWeight="bold">Gia đình</Typography>
                                 </Grid>
                                 <Grid item xs={11}>
+                                    {(updating && !!result[2]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                                     <TextField 
                                         multiline
                                         fullWidth
+                                        margin={(updating && !!result[2]) ? "dense" : "none"}
                                         value={giaDinh}
                                         onChange={({ target: { value } }) => {
                                             setGiaDinh(value);
@@ -295,10 +302,10 @@ const FHoiBenh = () => {
                                                 }
                                             }
                                         }}
-                                        disabled={updating && (useResult[2] || confirmSec[SECTION_NAME] || !spellingErrorGiaDinh.changed)}
+                                        disabled={updating && (useResult[2] || !spellingErrorGiaDinh.changed)}
                                     />
 
-                                    {!!result[2] && !confirmSec[SECTION_NAME] ? 
+                                    {!!result[2] && !spellingErrorGiaDinh.loading ? 
                                         <BoxLoiChinhTa
                                             text={text[2]}
                                             result={result[2]}
@@ -309,14 +316,26 @@ const FHoiBenh = () => {
                                                 setReplaced(tReplaced);
                                             }}
                                             useResult={useResult[2]}
-                                            setUseResult={(newUseResult) => {
+                                            handleChangeCheckbox={(checked) => {
                                                 const tUseResult = [...useResult];
-                                                tUseResult[2] = newUseResult;
+                                                tUseResult[2] = checked;
                                                 setUseResult(tUseResult);
+                                                if (checked) {
+                                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2] }));
+                                                    setTimeout(() => {
+                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
+                                                    }, 2000);
+                                                }
                                             }}
-                                            setSection={() => setGiaDinh(hoiBenh.tienSu.giaDinh)}
                                         />
-                                    : null}
+                                    : ( 
+                                        !!result[2] ? 
+                                            <div className="df fdc aic jcc">
+                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                                <Typography color="primary">Đang xử lý...</Typography>
+                                            </div> 
+                                        : null
+                                    )}
                                 </Grid>
                             </Grid>
                         </ListItemText>
@@ -326,11 +345,8 @@ const FHoiBenh = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
-
-                {(!confirmSec[SECTION_NAME] && (spellingErrorQuaTrinhBenhLy.changed
-                    || spellingErrorBanThan.changed || spellingErrorGiaDinh.changed)) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                : null}
             </Box>
         </Box>
     )

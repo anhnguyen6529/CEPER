@@ -1,8 +1,7 @@
-import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import React, { useContext, useState, useEffect } from "react";
+import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel, Radio, CircularProgress } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
-import UserContext from "../../contexts/UserContext";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import DateTimePicker from '@mui/lab/DateTimePicker';
@@ -19,7 +18,6 @@ const FLyDoVaoVien = () => {
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const spellingErrorLyDo = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
     const spellingErrorChanDoan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [lyDo, setLyDo] = useState(lyDoVaoVien.lyDo);
@@ -31,11 +29,11 @@ const FLyDoVaoVien = () => {
     const [resultLyDo, setResultLyDo] = useState('');
     const [replacedLyDo, setReplacedLyDo] = useState([]);
     const [textLyDo, setTextLyDo] = useState([]);
-    const [useResultLyDo, setUseResultLyDo] = useState(false);
+    const [useResultLyDo, setUseResultLyDo] = useState(true);
     const [resultChanDoan, setResultChanDoan] = useState('');
     const [replacedChanDoan, setReplacedChanDoan] = useState([]);
     const [textChanDoan, setTextChanDoan] = useState([]);
-    const [useResultChanDoan, setUseResultChanDoan] = useState(false);
+    const [useResultChanDoan, setUseResultChanDoan] = useState(true);
 
     useEffect(() => {
         if (updating) {
@@ -52,13 +50,11 @@ const FLyDoVaoVien = () => {
     useEffect(() => {
         if (!spellingErrorLyDo.loading) {
             setResultLyDo(spellingErrorLyDo);
-            setUseResultLyDo(true);
             setReplacedLyDo(spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[0] })));
             setTextLyDo(UtilsText.getOriginalWordList(lyDo, spellingErrorLyDo.detection));
         }
         if (!spellingErrorChanDoan.loading) {
             setResultChanDoan(spellingErrorChanDoan);
-            setUseResultChanDoan(true);
             setReplacedChanDoan(spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[0] })));
             setTextChanDoan(UtilsText.getOriginalWordList(chanDoanNoiGioiThieu, spellingErrorChanDoan.detection));
         }
@@ -76,37 +72,15 @@ const FLyDoVaoVien = () => {
         dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
     }
 
-    const handleConfirm = () => {
-        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
-        if (useResultLyDo) {
-            let confirmedLyDo = resultLyDo.detection.split(" "), countLyDo = 0;
-            confirmedLyDo.forEach((word, id) => {
-                if (word.includes("<mask>")) {
-                    confirmedLyDo[id] = word.replace("<mask>", replacedLyDo[countLyDo].repText);
-                    countLyDo++;
-                }
-            })
-            setLyDo(confirmedLyDo.join(" "));
-        }
-        if (useResultChanDoan) {
-            let confirmedChanDoan = resultChanDoan.detection.split(" "), countChanDoan = 0;
-            confirmedChanDoan.forEach((word, id) => {
-                if (word.includes("<mask>")) {
-                    confirmedChanDoan[id] = word.replace("<mask>", replacedChanDoan[countChanDoan].repText);
-                    countChanDoan++;
-                }
-            })
-            setChanDoanNoiGioiThieu(confirmedChanDoan.join(" "));
-        }
-    }
-
     return (
-        <Box component="form" noValidate sx={{ '.MuiGrid-container': { alignItems: 'center' } }}>
-            <Grid container style={{ alignItems: "flex-start" }}>
+        <Box component="form" noValidate>
+            <Grid container>
                 <Grid item xs={9}>
+                    {(updating && !!resultLyDo) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!resultLyDo) ? "dense" : "none"}
                         value={lyDo}
                         onChange={({ target: { value } }) => {
                             setLyDo(value);
@@ -127,20 +101,34 @@ const FLyDoVaoVien = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResultLyDo || confirmSec[SECTION_NAME] || !spellingErrorLyDo.changed)}
+                        disabled={updating && (useResultLyDo || !spellingErrorLyDo.changed)}
                     />
 
-                    {!!resultLyDo && !confirmSec[SECTION_NAME] ? 
+                    {!!resultLyDo && !spellingErrorLyDo.loading ? 
                         <BoxLoiChinhTa
                             text={textLyDo}
                             result={resultLyDo}
                             replaced={replacedLyDo}
                             setReplaced={setReplacedLyDo}
                             useResult={useResultLyDo}
-                            setUseResult={setUseResultLyDo}
-                            setSection={() => setLyDo(lyDoVaoVien.lyDo)}
+                            handleChangeCheckbox={(checked) => {
+                                setUseResultLyDo(checked);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
+                                    }, 2000);
+                                }
+                            }}
                         />
-                    : null}
+                    : ( 
+                        !!resultLyDo ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
                 <Grid item xs={3}>
                     <Box className="df aic jcfe" sx={{ mr: 2 }}>
@@ -200,14 +188,16 @@ const FLyDoVaoVien = () => {
                     />
                 </Grid>
             </Grid>
-            <Grid container style={{ marginTop: 16, alignItems: "flex-start" }}>
+            <Grid container style={{ marginTop: 16 }}>
                 <Grid item xs={3}>
-                    <Typography fontWeight="bold" sx={{ mt: '12px' }}>Chẩn đoán của nơi giới thiệu</Typography>
+                    <Typography fontWeight="bold">Chẩn đoán của nơi giới thiệu</Typography>
                 </Grid>
                 <Grid item xs={7}>
+                    {(updating && !!resultChanDoan) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!resultChanDoan) ? "dense" : "none"}
                         sx={{ width: '90%' }}
                         value={chanDoanNoiGioiThieu}
                         onChange={({ target: { value } }) => {
@@ -229,20 +219,34 @@ const FLyDoVaoVien = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResultChanDoan || confirmSec[SECTION_NAME] || !spellingErrorChanDoan.changed)}
+                        disabled={updating && (useResultChanDoan || !spellingErrorChanDoan.changed)}
                     />
 
-                    {!!resultChanDoan && !confirmSec[SECTION_NAME] ? 
+                    {!!resultChanDoan && !spellingErrorChanDoan.loading ? 
                         <BoxLoiChinhTa
                             text={textChanDoan}
                             result={resultChanDoan}
                             replaced={replacedChanDoan}
                             setReplaced={setReplacedChanDoan}
                             useResult={useResultChanDoan}
-                            setUseResult={setUseResultChanDoan}
-                            setSection={() => setChanDoanNoiGioiThieu(lyDoVaoVien.chanDoanNoiGioiThieu)}
+                            handleChangeCheckbox={(checked) => {
+                                setUseResultChanDoan(checked);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+                                    }, 2000);
+                                }
+                            }}
                         />
-                    : null}
+                    : ( 
+                        !!resultChanDoan ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
                 <Grid item xs={2}>
                     <RadioGroup 
@@ -270,10 +274,8 @@ const FLyDoVaoVien = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
-
-                {(!confirmSec[SECTION_NAME] && (spellingErrorLyDo.changed || spellingErrorChanDoan.changed)) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                : null}
             </Box>
         </Box>
     )

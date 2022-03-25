@@ -47,6 +47,13 @@ const SpellingErrorSlice = createSlice({
         },
         resetState: () => {
             return { ...sectionState };
+        },
+        resetLoading: (state, action) => {
+            if (!action.payload.subSection) {
+                state[action.payload.section].loading = true;
+            } else {
+                state[action.payload.section][action.payload.subSection].loading = true;
+            }
         }
     },
     extraReducers: (builder) => {

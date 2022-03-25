@@ -1,7 +1,6 @@
-import { Box, TextField } from "@mui/material";
-import React, { useState, useContext, useEffect } from "react";
+import { Box, CircularProgress, TextField, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import UserContext from "../../contexts/UserContext";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import "../../styles/index.css";
@@ -14,14 +13,13 @@ const SECTION_NAME = "Hướng điều trị và các chế độ tiếp theo";
 const FHuongDieuTri = () => {
     const { updating, huongDieuTri } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [newHuongDieuTri, setNewHuongDieuTri] = useState(huongDieuTri);
     const [result, setResult] = useState('');
     const [replaced, setReplaced] = useState([]);
     const [text, setText] = useState([]);
-    const [useResult, setUseResult] = useState(false);
+    const [useResult, setUseResult] = useState(true);
 
     useEffect(() => {
         if (updating && spellingError.changed) {
@@ -33,7 +31,6 @@ const FHuongDieuTri = () => {
     useEffect(() => {
         if (!spellingError.loading) {
             setResult(spellingError);
-            setUseResult(true);
             setReplaced(spellingError.correction.map(res => ({ type: "correct", repText: res[0] })));
             setText(UtilsText.getOriginalWordList(newHuongDieuTri, spellingError.detection));
         }
@@ -45,25 +42,13 @@ const FHuongDieuTri = () => {
         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
     }
 
-    const handleConfirm = () => {
-        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
-        if (useResult) {
-            let confirmed = result.detection.split(" "), count = 0;
-            confirmed.forEach((word, id) => {
-                if (word.includes("<mask>")) {
-                    confirmed[id] = word.replace("<mask>", replaced[count].repText);
-                    count++;
-                }
-            })
-            setNewHuongDieuTri(confirmed.join(" "));
-        }
-    }
-
     return (
-        <Box component="form" noValidate>       
+        <Box component="form" noValidate>   
+            {(updating && !!result) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}    
             <TextField 
                 multiline
                 fullWidth
+                margin={(updating && !!result) ? "dense" : "none"}
                 value={newHuongDieuTri}
                 onChange={({ target: { value } }) => {
                     setNewHuongDieuTri(value);
@@ -77,27 +62,39 @@ const FHuongDieuTri = () => {
                         }
                     }
                 }}
-                disabled={updating && (useResult || confirmSec[SECTION_NAME] || !spellingError.changed)}
+                disabled={updating && (useResult || !spellingError.changed)}
             />
 
-            {!!result && !confirmSec[SECTION_NAME] ? 
+            {!!result && !spellingError.loading ? 
                 <BoxLoiChinhTa
                     text={text}
                     result={result}
                     replaced={replaced}
                     setReplaced={setReplaced}
                     useResult={useResult}
-                    setUseResult={setUseResult}
-                    setSection={() => setNewHuongDieuTri(huongDieuTri)}
+                    handleChangeCheckbox={(checked) => {
+                        setUseResult(checked);
+                        if (checked) {
+                            dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
+                            setTimeout(() => {
+                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newHuongDieuTri }));
+                            }, 2000);
+                        }
+                    }}
                 />
-            : null}
+            : ( 
+                !!result ? 
+                    <div className="df fdc aic jcc">
+                        <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                        <Typography color="primary">Đang xử lý...</Typography>
+                    </div> 
+                : null
+            )}
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
-
-                {(spellingError.changed && !confirmSec[SECTION_NAME]) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                : null}
             </Box>
         </Box>
     )

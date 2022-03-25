@@ -6,7 +6,7 @@ import {
 import logo from "../../images/logo.png";
 import { faFileMedicalAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Check, ChevronLeft, EditLocationOutlined, InfoOutlined } from "@mui/icons-material";
+import { ChevronLeft, EditLocationOutlined, InfoOutlined } from "@mui/icons-material";
 import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
 import UserContext from "../../contexts/UserContext";
@@ -20,7 +20,7 @@ import { sectionState } from "../../redux/slices/spellingError.slice";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
-    const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, confirmSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
     const { updating } = useSelector(state => state.HSBA);
     const { spellingError } = useSelector((state) => state);
 
@@ -69,29 +69,24 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                         <>
                             <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
                                 {Object.keys(sectionState).map((key, id) =>
-                                    spellingError[key].changed ?
+                                    ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
+                                    || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed) ?
                                         <ListItem 
                                             key={id}
                                             sx={{ py: 0.5 }}
                                             alignItems="flex-start"
-                                            button={!confirmSec[key]}
-                                            onClick={() => {
-                                                if (!confirmSec[key]) {
-                                                    document.getElementById(key).scrollIntoView({ behavior: "smooth" });
-                                            }}}
+                                            button
+                                            onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth" })}
                                         >
                                             <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
-                                                {!confirmSec[key] 
-                                                    ? <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
-                                                    : <Check color="success" />
-                                                }
+                                                <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
                                             </ListItemIcon>
                                             <ListItemText primary={key} />
                                         </ListItem>
                                     : null
                                 )}
                                 <ListItem>
-                                    <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}} disabled={Object.keys(confirmSec).some(key => !!spellingError[key].changed && !confirmSec[key])}>
+                                    <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}}>
                                         Xác nhận cập nhật
                                     </Button>
                                 </ListItem>

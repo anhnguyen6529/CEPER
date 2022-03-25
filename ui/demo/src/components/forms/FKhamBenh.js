@@ -1,8 +1,7 @@
-import { Box, Typography, TextField, Grid } from "@mui/material";
-import React, { useState, useContext, useEffect } from "react";
+import { Box, Typography, TextField, Grid, CircularProgress } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
-import UserContext from "../../contexts/UserContext";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import { UtilsText } from "../../utils";
@@ -27,7 +26,6 @@ const FKhamBenh = () => {
     const spellingErrorRangHamMat = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[8]]);
     const spellingErrorMat = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[9]]);
     const spellingErrorNoiTiet = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[10]]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [khamToanThan, setKhamToanThan] = useState(khamBenh.khamToanThan);
@@ -45,7 +43,7 @@ const FKhamBenh = () => {
     const [result, setResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(""));
     const [replaced, setReplaced] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
     const [text, setText] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
-    const [useResult, setUseResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(false));
+    const [useResult, setUseResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(true));
 
     useEffect(() => {
         if (updating) {
@@ -65,11 +63,10 @@ const FKhamBenh = () => {
     }, [updating]);
 
     useEffect(() => {
-        const tResult = [...result], tUseResult = [...useResult], tReplaced = [...replaced], tText = [...text];
+        const tResult = [...result], tReplaced = [...replaced], tText = [...text];
         CLINICAL_SUBSECTION.forEach((subSection, id) => {
             if (!spellingError[subSection].loading) {
                 tResult[id] = spellingError[subSection]; setResult(tResult);
-                tUseResult[id] = true; setUseResult(tUseResult);
                 tReplaced[id] = spellingError[subSection].correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
                 if (subSection === "Khám toàn thân") tText[id] = UtilsText.getOriginalWordList(khamToanThan, spellingError[subSection].detection);
                 else if (subSection === "Tuần hoàn") tText[id] = UtilsText.getOriginalWordList(tuanHoan, spellingError[subSection].detection);
@@ -106,42 +103,18 @@ const FKhamBenh = () => {
         CLINICAL_SUBSECTION.forEach(subSection => dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection, changed: false })));
     }
 
-    const handleConfirm = () => {
-        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
-        CLINICAL_SUBSECTION.forEach((subSection, index) => {
-            if (useResult[index]) {
-                let confirmed = result[index].detection.split(" "), count = 0;
-                confirmed.forEach((word, id) => {
-                    if (word.includes("<mask>")) {
-                        confirmed[id] = word.replace("<mask>", replaced[index][count].repText);
-                        count++;
-                    }
-                });
-                if (subSection === "Khám toàn thân") setKhamToanThan(confirmed.join(" "));
-                else if (subSection === "Tuần hoàn") setTuanHoan(confirmed.join(" "));
-                else if (subSection === "Hô hấp") setHoHap(confirmed.join(" "));
-                else if (subSection === "Tiêu hóa") setTieuHoa(confirmed.join(" "));
-                else if (subSection === "Thận - Tiết niệu - Sinh dục") setThan(confirmed.join(" "));
-                else if (subSection === "Thần kinh") setThanKinh(confirmed.join(" "));
-                else if (subSection === "Cơ - Xương - Khớp") setCoXuongKhop(confirmed.join(" "));
-                else if (subSection === "Tai - Mũi - Họng") setTaiMuiHong(confirmed.join(" "));
-                else if (subSection === "Răng - Hàm - Mặt") setRangHamMat(confirmed.join(" "));
-                else if (subSection === "Mắt") setMat(confirmed.join(" "));
-                else if (subSection === "Nội tiết, dinh dưỡng và các bệnh lý khác") setNoiTiet(confirmed.join(" "));
-            }
-        });
-    }
-
     return (
         <Box component="form" noValidate>
             <Grid container>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Khám toàn thân</Typography>
+                    <Typography fontWeight="bold">Khám toàn thân</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[0]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[0]) ? "dense" : "none"}
                         value={khamToanThan}
                         onChange={({ target: { value } }) => {
                             setKhamToanThan(value);
@@ -163,10 +136,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[0] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[0]].changed)}
+                        disabled={updating && (useResult[0] || !spellingError[CLINICAL_SUBSECTION[0]].changed)}
                     />
 
-                    {!!result[0] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[0] && !spellingError[CLINICAL_SUBSECTION[0]].loading ? 
                         <BoxLoiChinhTa
                             text={text[0]}
                             result={result[0]}
@@ -177,24 +150,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[0]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[0] = newUseResult;
+                                tUseResult[0] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: khamToanThan }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setKhamToanThan(khamBenh.khamToanThan)}
                         />
-                    : null}
+                    : ( 
+                        !!result[0] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Tuần hoàn</Typography>
+                    <Typography fontWeight="bold">Tuần hoàn</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[1]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[1]) ? "dense" : "none"}
                         value={tuanHoan}
                         onChange={({ target: { value } }) => {
                             setTuanHoan(value);
@@ -216,10 +203,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[1] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[1]].changed)}
+                        disabled={updating && (useResult[1] || !spellingError[CLINICAL_SUBSECTION[1]].changed)}
                     />
 
-                    {!!result[1] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[1] && !spellingError[CLINICAL_SUBSECTION[1]].loading ? 
                         <BoxLoiChinhTa
                             text={text[1]}
                             result={result[1]}
@@ -230,24 +217,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[1]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[1] = newUseResult;
+                                tUseResult[1] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: tuanHoan }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setTuanHoan(khamBenh.tuanHoan)}
                         />
-                    : null}
+                    :  ( 
+                        !!result[1] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Hô hấp</Typography>
+                    <Typography fontWeight="bold">Hô hấp</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[2]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[2]) ? "dense" : "none"}
                         value={hoHap}
                         onChange={({ target: { value } }) => {
                             setHoHap(value);
@@ -269,10 +270,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[2] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[2]].changed)}
+                        disabled={updating && (useResult[2] || !spellingError[CLINICAL_SUBSECTION[2]].changed)}
                     />
 
-                    {!!result[2] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[2] && !spellingError[CLINICAL_SUBSECTION[2]].loading ? 
                         <BoxLoiChinhTa
                             text={text[2]}
                             result={result[2]}
@@ -283,25 +284,39 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[2]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[2] = newUseResult;
+                                tUseResult[2] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: hoHap }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setHoHap(khamBenh.hoHap)}
                         />
-                    : null}
+                    : ( 
+                        !!result[2] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Tiêu hóa</Typography>
+                    <Typography fontWeight="bold">Tiêu hóa</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[3]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
                         value={tieuHoa}
+                        margin={(updating && !!result[3]) ? "dense" : "none"}
                         onChange={({ target: { value } }) => {
                             setTieuHoa(value);
                             if (!updating) {
@@ -322,10 +337,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[3] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[3]].changed)}
+                        disabled={updating && (useResult[3] || !spellingError[CLINICAL_SUBSECTION[3]].changed)}
                     />
 
-                    {!!result[3] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[3] && !spellingError[CLINICAL_SUBSECTION[3]].loading ? 
                         <BoxLoiChinhTa
                             text={text[3]}
                             result={result[3]}
@@ -336,24 +351,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[3]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[3] = newUseResult;
+                                tUseResult[3] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[3] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[3], text: tieuHoa }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setTieuHoa(khamBenh.tieuHoa)}
                         />
-                    : null}
+                    : ( 
+                        !!result[3] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Thận - Tiết niệu - Sinh dục</Typography>
+                    <Typography fontWeight="bold">Thận - Tiết niệu - Sinh dục</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[4]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[4]) ? "dense" : "none"}
                         value={than}
                         onChange={({ target: { value } }) => {
                             setThan(value);
@@ -375,10 +404,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[4] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[4]].changed)}
+                        disabled={updating && (useResult[4] || !spellingError[CLINICAL_SUBSECTION[4]].changed)}
                     />
 
-                    {!!result[4] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[4] && !spellingError[CLINICAL_SUBSECTION[4]].loading ? 
                         <BoxLoiChinhTa
                             text={text[4]}
                             result={result[4]}
@@ -389,24 +418,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[4]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[4] = newUseResult;
+                                tUseResult[4] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[4] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[4], text: than }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setThan(khamBenh.than)}
                         />
-                    : null}
+                    : ( 
+                        !!result[4] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Thần kinh</Typography>
+                    <Typography fontWeight="bold">Thần kinh</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[5]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[5]) ? "dense" : "none"}
                         value={thanKinh}
                         onChange={({ target: { value } }) => {
                             setThanKinh(value);
@@ -428,10 +471,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[5] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[5]].changed)}
+                        disabled={updating && (useResult[5] || !spellingError[CLINICAL_SUBSECTION[5]].changed)}
                     />
                     
-                    {!!result[5] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[5] && !spellingError[CLINICAL_SUBSECTION[5]].loading ? 
                         <BoxLoiChinhTa
                             text={text[5]}
                             result={result[5]}
@@ -442,24 +485,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[5]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[5] = newUseResult;
+                                tUseResult[5] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[5] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[5], text: thanKinh }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setThanKinh(khamBenh.thanKinh)}
                         />
-                    : null}
+                    : ( 
+                        !!result[5] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Cơ - Xương - Khớp</Typography>
+                    <Typography fontWeight="bold">Cơ - Xương - Khớp</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating[6] && !!result) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[6]) ? "dense" : "none"}
                         value={coXuongKhop}
                         onChange={({ target: { value } }) => {
                             setCoXuongKhop(value);
@@ -481,10 +538,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[6] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[6]].changed)}
+                        disabled={updating && (useResult[6] || !spellingError[CLINICAL_SUBSECTION[6]].changed)}
                     />
 
-                    {!!result[6] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[6] && !spellingError[CLINICAL_SUBSECTION[6]].loading ? 
                         <BoxLoiChinhTa
                             text={text[6]}
                             result={result[6]}
@@ -495,24 +552,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[6]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[6] = newUseResult;
+                                tUseResult[6] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[6] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[6], text: coXuongKhop }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setCoXuongKhop(khamBenh.coXuongKhop)}
                         />
-                    : null}
+                    : ( 
+                        !!result[6] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Tai - Mũi - Họng</Typography>
+                    <Typography fontWeight="bold">Tai - Mũi - Họng</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[7]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[7]) ? "dense" : "none"}
                         value={taiMuiHong}
                         onChange={({ target: { value } }) => {
                             setTaiMuiHong(value);
@@ -534,10 +605,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[7] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[7]].changed)}
+                        disabled={updating && (useResult[7] || !spellingError[CLINICAL_SUBSECTION[7]].changed)}
                     />
 
-                    {!!result[7] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[7] && !spellingError[CLINICAL_SUBSECTION[7]].loading ? 
                         <BoxLoiChinhTa
                             text={text[7]}
                             result={result[7]}
@@ -548,24 +619,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[7]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[7] = newUseResult;
+                                tUseResult[7] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[7] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[7], text: taiMuiHong }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setTaiMuiHong(khamBenh.taiMuiHong)}
                         />
-                    : null}
+                    : ( 
+                        !!result[7] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Răng - Hàm - Mặt</Typography>
+                    <Typography fontWeight="bold">Răng - Hàm - Mặt</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[8]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[8]) ? "dense" : "none"}
                         value={rangHamMat}
                         onChange={({ target: { value } }) => {
                             setRangHamMat(value);
@@ -587,10 +672,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[8] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[8]].changed)}
+                        disabled={updating && (useResult[8] || !spellingError[CLINICAL_SUBSECTION[8]].changed)}
                     />
 
-                    {!!result[8] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[8] && !spellingError[CLINICAL_SUBSECTION[8]].loading ? 
                         <BoxLoiChinhTa
                             text={text[8]}
                             result={result[8]}
@@ -601,24 +686,38 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[8]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[8] = newUseResult;
+                                tUseResult[8] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[8] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[8], text: rangHamMat }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setRangHamMat(khamBenh.rangHamMat)}
                         />
-                    : null}
+                    : ( 
+                        !!result[8] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
                 <Grid item xs={2}>
-                    <Typography sx={{ mt: '12px' }} fontWeight="bold">Mắt</Typography>
+                    <Typography fontWeight="bold">Mắt</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[9]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[9]) ? "dense" : "none"}
                         value={mat}
                         onChange={({ target: { value } }) => {
                             setMat(value);
@@ -640,10 +739,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[9] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[9]].changed)}
+                        disabled={updating && (useResult[9] || !spellingError[CLINICAL_SUBSECTION[9]].changed)}
                     />
 
-                    {!!result[9] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[9] && !spellingError[CLINICAL_SUBSECTION[9]].loading ? 
                         <BoxLoiChinhTa
                             text={text[9]}
                             result={result[9]}
@@ -654,14 +753,26 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[9]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[9] = newUseResult;
+                                tUseResult[9] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[9] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[9], text: mat }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setMat(khamBenh.mat)}
                         />
-                    : null}
+                    : ( 
+                        !!result[9] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Grid container sx={{ mt: 2 }}>
@@ -669,9 +780,11 @@ const FKhamBenh = () => {
                     <Typography fontWeight="bold">Nội tiết, dinh dưỡng và các bệnh lý khác</Typography>
                 </Grid>
                 <Grid item xs={10}>
+                    {(updating && !!result[10]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
+                        margin={(updating && !!result[10]) ? "dense" : "none"}
                         value={noiTiet}
                         onChange={({ target: { value } }) => {
                             setNoiTiet(value);
@@ -693,10 +806,10 @@ const FKhamBenh = () => {
                                 }
                             }
                         }}
-                        disabled={updating && (useResult[10] || confirmSec[SECTION_NAME] || !spellingError[CLINICAL_SUBSECTION[10]].changed)}
+                        disabled={updating && (useResult[10] || !spellingError[CLINICAL_SUBSECTION[10]].changed)}
                     />
 
-                    {!!result[10] && !confirmSec[SECTION_NAME] ? 
+                    {!!result[10] && !spellingError[CLINICAL_SUBSECTION[10]].loading ? 
                         <BoxLoiChinhTa
                             text={text[10]}
                             result={result[10]}
@@ -707,28 +820,33 @@ const FKhamBenh = () => {
                                 setReplaced(tReplaced);
                             }}
                             useResult={useResult[10]}
-                            setUseResult={(newUseResult) => {
+                            handleChangeCheckbox={(checked) => {
                                 const tUseResult = [...useResult];
-                                tUseResult[10] = newUseResult;
+                                tUseResult[10] = checked;
                                 setUseResult(tUseResult);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[10] }));
+                                    setTimeout(() => {
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[10], text: noiTiet }));
+                                    }, 2000);
+                                }
                             }}
-                            setSection={() => setNoiTiet(khamBenh.noiTiet)}
                         />
-                    : null}
+                    : ( 
+                        !!result[10] ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
-
-                {(!confirmSec[SECTION_NAME] && (spellingError[CLINICAL_SUBSECTION[0]].changed || spellingError[CLINICAL_SUBSECTION[1]].changed
-                    || spellingError[CLINICAL_SUBSECTION[2]].changed || spellingError[CLINICAL_SUBSECTION[3]].changed
-                    || spellingError[CLINICAL_SUBSECTION[4]].changed || spellingError[CLINICAL_SUBSECTION[5]].changed
-                    || spellingError[CLINICAL_SUBSECTION[6]].changed || spellingError[CLINICAL_SUBSECTION[7]].changed
-                    || spellingError[CLINICAL_SUBSECTION[8]].changed || spellingError[CLINICAL_SUBSECTION[9]].changed
-                    || spellingError[CLINICAL_SUBSECTION[10]].changed)) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                : null}
             </Box>
         </Box>
     )

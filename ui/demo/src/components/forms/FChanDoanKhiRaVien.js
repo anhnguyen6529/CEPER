@@ -1,9 +1,8 @@
-import { Box, Typography, TextField, Grid, Divider } from "@mui/material";
-import React, { useState, useContext, useEffect } from "react";
+import { Box, Typography, TextField, Grid, Divider, CircularProgress } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import DateTimePicker from '@mui/lab/DateTimePicker';
-import UserContext from "../../contexts/UserContext";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import { Button } from "../common";
 import { BoxLoiChinhTa } from "../boxes";
@@ -16,7 +15,6 @@ const CLINICAL_SUBSECTION = "Chẩn đoán";
 const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien, updating } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { confirmSec, setConfirmSec } = useContext(UserContext);
     const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
@@ -24,10 +22,10 @@ const FChanDoanKhiRaVien = () => {
     const [result, setResult] = useState('');
     const [replaced, setReplaced] = useState([]);
     const [text, setText] = useState([]);
-    const [useResult, setUseResult] = useState(false);
+    const [useResult, setUseResult] = useState(true);
 
     useEffect(() => {
-        if (updating && spellingError.changed) {
+        if (updating && spellingError[CLINICAL_SUBSECTION].changed) {
             dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
         }
         // eslint-disable-next-line
@@ -36,7 +34,6 @@ const FChanDoanKhiRaVien = () => {
     useEffect(() => {
         if (!spellingError[CLINICAL_SUBSECTION].loading) {
             setResult(spellingError[CLINICAL_SUBSECTION]);
-            setUseResult(true);
             setReplaced(spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[0] })));
             setText(UtilsText.getOriginalWordList(chanDoan, spellingError[CLINICAL_SUBSECTION].detection));
         }
@@ -50,25 +47,13 @@ const FChanDoanKhiRaVien = () => {
         dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, changed: false }));
     }
 
-    const handleConfirm = () => {
-        setConfirmSec({ ...confirmSec, [SECTION_NAME]: true });
-        if (useResult) {
-            let confirmed = result.detection.split(" "), count = 0;
-            confirmed.forEach((word, id) => {
-                if (word.includes("<mask>")) {
-                    confirmed[id] = word.replace("<mask>", replaced[count].repText);
-                    count++;
-                }
-            })
-            setChanDoan(confirmed.join(" "));
-        }
-    }
-
     return (
         <Box component="form" noValidate>
+            {(updating && !!result) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
             <TextField 
                 multiline
                 fullWidth
+                margin={(updating && !!result) ? "dense" : "none"}
                 value={chanDoan}
                 onChange={({ target: { value } }) => {
                     setChanDoan(value);
@@ -88,20 +73,34 @@ const FChanDoanKhiRaVien = () => {
                         }
                     }
                 }}
-                disabled={updating && (useResult || confirmSec[SECTION_NAME] || !spellingError.changed)}
+                disabled={updating && (useResult || !spellingError.changed)}
             />
 
-            {!!result && !confirmSec[SECTION_NAME] ? 
+            {!!result && !spellingError[CLINICAL_SUBSECTION].loading ? 
                 <BoxLoiChinhTa
                     text={text}
                     result={result}
                     replaced={replaced}
                     setReplaced={setReplaced}
                     useResult={useResult}
-                    setUseResult={setUseResult}
-                    setSection={() => setChanDoan(chanDoanKhiRaVien.chanDoan)}
+                    handleChangeCheckbox={(checked) => {
+                        setUseResult(checked);
+                        if (checked) {
+                            dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION }));
+                            setTimeout(() => {
+                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
+                            }, 2000);
+                        }
+                    }}
                 />
-            : null}
+            : ( 
+                !!result ? 
+                    <div className="df fdc aic jcc">
+                        <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                        <Typography color="primary">Đang xử lý...</Typography>
+                    </div> 
+                : null
+            )}
 
             <Divider sx={{ my: 2 }}/>
 
@@ -136,10 +135,8 @@ const FChanDoanKhiRaVien = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> : null}
-
-                {(spellingError.changed && !confirmSec[SECTION_NAME]) && updating ? 
-                    <Button onClick={handleConfirm} sx={{ mt: 2 }}>Xác nhận</Button> : null}
+                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                : null}
             </Box>
         </Box>
     )
