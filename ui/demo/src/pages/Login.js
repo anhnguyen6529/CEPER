@@ -71,16 +71,14 @@ const Login = () => {
 
     useEffect(() => {
         if (login.success) {
-            setTimeout(() => {
-                if (login.role === "BN") {
-                    // get user pid => api
-                    const pid = '123456';
-                    navigate(`/user/HSBA/${pid}`);
-                } else {
-                    navigate('/user/HSBA');
-                }  
-                localStorage.setItem('user', login.username);
-            }, 1000);
+            if (login.role === "BN") {
+                // get user pid => api
+                const pid = '123456';
+                navigate(`/user/HSBA/${pid}`);
+            } else {
+                navigate('/user/HSBA');
+            }  
+            localStorage.setItem('user', login.username);
         }
         // eslint-disable-next-line
     }, [login.success]);

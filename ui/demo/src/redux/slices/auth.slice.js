@@ -60,7 +60,7 @@ const authSlice = createSlice({
 
                 if (action.payload.username === 'user03') {
                     state.user.name = 'Nguyễn Văn A';
-                    state.user.id = '100001';
+                    state.user.id = '123456';
                 }
             } else {
                 state.login.success = false;

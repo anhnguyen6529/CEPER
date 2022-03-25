@@ -12,14 +12,19 @@ import mdSections from "../constants/md_sections.json";
 const User = () => {
     const navigate = useNavigate();
     const { pid } = useParams();
+    const { user } = useSelector(state => state.auth);
+    const selectedHSBA = useSelector(state => state.HSBA);
+
     useEffect(() => {
         if (!localStorage.getItem('user')) {
             navigate('/login');
         }
-    });
-
-    const { user } = useSelector(state => state.auth);
-    const selectedHSBA = useSelector(state => state.HSBA);
+        if (user.role === 'BN' && typeof(pid) === 'undefined') {
+            navigate(`/user/HSBA/${user.id}`);
+            window.location.reload();
+        }
+        // eslint-disable-next-line
+    }, []);
 
     const [open, setOpen] = useState(true);
     const [appearSec, setAppearSec] = useState(mdSections["appearFirst"][user.role].map((sec) => mdSections["order"].indexOf(sec)));
@@ -40,7 +45,6 @@ const User = () => {
         switch (role) {
             case "BN":
                 return <HSBA />;
-            // eslint-disable-next-line
             case "BS":
                 return typeof(pid) === 'undefined' ? <DanhSachHSBA /> : <HSBA />;
             case "DD": 

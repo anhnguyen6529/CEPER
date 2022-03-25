@@ -7,7 +7,7 @@ import '../styles/index.css';
 import { format } from "date-fns";
 import UserContext from "../contexts/UserContext";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
 import { Button } from "./common";
 import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
@@ -19,14 +19,23 @@ import { sectionState, SpellingErrorActions } from "../redux/slices/spellingErro
 
 const HSBA = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { pid } = useParams();
     const { today, appearSec, appearTime, setAppearTime, openSec } = useContext(UserContext); 
-    const { role } = useSelector(state => state.auth.user);
+    const { role, id } = useSelector(state => state.auth.user);
 
     useEffect(() => {
-        dispatch(HSBAThunk.getOneHSBAByPID(pid));
-        const appearFirstTime = new Date().toISOString();
-        setAppearTime({ ...appearTime, ...mdSections["appearFirst"][role].reduce((prev, key) => ({ ...prev, [key]: appearFirstTime }), {}) });
+        if (id === pid) {
+            dispatch(HSBAThunk.getOneHSBAByPID(pid));
+            const appearFirstTime = new Date().toISOString();
+            setAppearTime({ ...appearTime, ...mdSections["appearFirst"][role].reduce((prev, key) => ({ ...prev, [key]: appearFirstTime }), {}) });
+        } else {
+            // if (typeof(pid) !== "undefined") {
+            //     alert("Bạn không có quyền truy cập vào bệnh án này.");
+            // }
+            navigate(`/user/HSBA/${id}`);
+            window.location.reload();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
