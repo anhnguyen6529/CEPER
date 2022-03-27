@@ -3,7 +3,7 @@ import {
     TableCell, Table, TableSortLabel, Grid, Typography, TextField, Radio
 } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { Add, RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material";
+import { Add, CancelOutlined, RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { visuallyHidden } from "@mui/utils";
 import { format } from "date-fns";
@@ -278,11 +278,11 @@ const FPhieuTDDiUngThuoc = () => {
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>
-                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                            <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                 Hủy
                             </Button>
 
-                            <Button variant="primary" onClick={handleAdd}>
+                            <Button startIcon={<Add />} variant="primary" onClick={handleAdd}>
                                 Thêm
                             </Button>
                         </>

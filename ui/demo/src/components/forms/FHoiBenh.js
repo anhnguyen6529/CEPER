@@ -7,7 +7,7 @@ import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
-import { Circle } from "@mui/icons-material";
+import { CancelOutlined, Circle } from "@mui/icons-material";
 import { TDacDiemLienQuanBenh } from "../tables";
 import mdSections from "../../constants/md_sections.json";
 
@@ -345,7 +345,7 @@ const FHoiBenh = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                    <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
                 : null}
             </Box>
         </Box>

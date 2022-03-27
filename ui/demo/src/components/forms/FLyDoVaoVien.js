@@ -9,6 +9,7 @@ import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import mdSections from "../../constants/md_sections.json";
+import { CancelOutlined } from "@mui/icons-material";
 
 const SECTION_NAME = "Lý do vào viện";
 const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
@@ -274,7 +275,7 @@ const FLyDoVaoVien = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                    <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
                 : null}
             </Box>
         </Box>

@@ -8,6 +8,7 @@ import { Button } from "../common";
 import { BoxLoiChinhTa } from "../boxes";
 import { UtilsText } from "../../utils";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import { CancelOutlined } from "@mui/icons-material";
 
 const SECTION_NAME = "Chẩn đoán khi ra viện";
 const CLINICAL_SUBSECTION = "Chẩn đoán";
@@ -135,7 +136,7 @@ const FChanDoanKhiRaVien = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                    <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
                 : null}
             </Box>
         </Box>

@@ -3,7 +3,7 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, Paper, Grid, Typography, TextField, Tooltip
 } from "@mui/material";
-import { Add, ArrowLeft, ArrowRight } from "@mui/icons-material";
+import { Add, ArrowLeft, ArrowRight, CancelOutlined } from "@mui/icons-material";
 import { UtilsTable } from "../../utils";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
@@ -484,11 +484,11 @@ const FPhieuCongKhaiThuoc = () => {
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>
-                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                            <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                 Hủy
                             </Button>
 
-                            <Button variant="primary" onClick={handleAdd}>
+                            <Button startIcon={<Add />} variant="primary" onClick={handleAdd}>
                                 Thêm
                             </Button>
                         </>

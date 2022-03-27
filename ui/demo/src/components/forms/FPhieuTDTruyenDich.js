@@ -3,7 +3,7 @@ import {
     Box, Table, TableRow, TableContainer, TableBody, TextField,
     TableHead, TableCell, TableSortLabel, Paper, Grid, Typography, Autocomplete
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, CancelOutlined } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
 import { UtilsTable } from "../../utils";
 import { useSelector, useDispatch } from "react-redux";
@@ -701,11 +701,11 @@ const FPhieuTDTruyenDich = () => {
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>
-                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                            <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                 Hủy
                             </Button>
 
-                            <Button variant="primary" onClick={handleAdd}>
+                            <Button startIcon={<Add />} variant="primary" onClick={handleAdd}>
                                 Thêm
                             </Button>
                         </>

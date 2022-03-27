@@ -1,3 +1,4 @@
+import { CancelOutlined } from "@mui/icons-material";
 import { Box, CircularProgress, TextField, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -93,7 +94,7 @@ const FTinhTrangRaVien = () => {
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>
                 {(spellingError.changed && !updating) ?
-                    <Button variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
+                    <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mt: 2 }} onClick={handleReset}>Hủy</Button> 
                 : null}
             </Box>
         </Box>

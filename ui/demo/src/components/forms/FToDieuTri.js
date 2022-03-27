@@ -11,6 +11,7 @@ import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow } from "../common";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
+import { Add, CancelOutlined } from "@mui/icons-material";
 
 const SECTION_NAME = "Tờ điều trị";
 
@@ -220,11 +221,11 @@ const FToDieuTri = () => {
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>
-                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                            <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                 Hủy
                             </Button>
 
-                            <Button variant="primary" onClick={handleAdd}>
+                            <Button startIcon={<Add />} variant="primary" onClick={handleAdd}>
                                 Thêm
                             </Button>
                         </>

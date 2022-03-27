@@ -2,7 +2,7 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem
 } from "@mui/material";
-import { Add, DoneAll, Loop } from "@mui/icons-material";
+import { Add, CancelOutlined, DoneAll, Loop } from "@mui/icons-material";
 import React, { Fragment, useContext, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
@@ -344,11 +344,11 @@ const FPhieuChamSoc = () => {
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>
-                            <Button variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
+                            <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                                 Hủy
                             </Button>
 
-                            <Button variant="primary" onClick={handleAdd}>
+                            <Button startIcon={<Add />} variant="primary" onClick={handleAdd}>
                                 Thêm
                             </Button>
                         </>
