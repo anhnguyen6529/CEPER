@@ -64,7 +64,8 @@
     "appearFirst": {
         "BN": ["Hành chính", "Bệnh án", "Tổng kết bệnh án"],
         "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
-        "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"]
+        "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"],
+        "": []
     },
     "clinicalSection": [
         "Bệnh án",

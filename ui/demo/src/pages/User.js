@@ -18,10 +18,8 @@ const User = () => {
     useEffect(() => {
         if (!localStorage.getItem('user')) {
             navigate('/login');
-        }
-        if (user.role === 'BN' && typeof(pid) === 'undefined') {
+        } else if (user.role === 'BN' && typeof(pid) === 'undefined') {
             navigate(`/user/HSBA/${user.id}`);
-            window.location.reload();
         }
         // eslint-disable-next-line
     }, []);

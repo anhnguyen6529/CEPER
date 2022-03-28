@@ -1,8 +1,14 @@
 import React from "react";
 import { Menu, MenuItem, ListItemIcon } from "@mui/material";
 import { Settings, Help, Logout } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../redux/slices/auth.slice";
+import { useNavigate } from "react-router";
 
 const DropDownMenu = ({ anchorEl, open, onClose }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     return (
         <Menu
         anchorEl={anchorEl}
@@ -45,8 +51,9 @@ const DropDownMenu = ({ anchorEl, open, onClose }) => {
           Trợ giúp & hỗ trợ
         </MenuItem>
         <MenuItem onClick={() => {
+          dispatch(authActions.logout());
           localStorage.removeItem('user');
-          window.location.reload();
+          navigate('/login');
         }}>
           <ListItemIcon>
             <Logout fontSize="small" />

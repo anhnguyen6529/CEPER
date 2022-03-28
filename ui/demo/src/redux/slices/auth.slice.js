@@ -7,16 +7,16 @@ const initialState = {
         error: '',
         username: '',
         avatar: '',
-        role: 'BS',
-        id: '000001',
-        name: 'Trần Quốc A',
+        role: '',
+        id: '',
+        name: '',
         dateOfBirth: '',
         gender: '',
         address: '',
         phone: '',
         email: '',
         speciality: '',
-        position: 'Bác sĩ điều trị', // Trưởng khoa, Phó khoa, Bác sĩ điều trị, Điều dưỡng
+        position: '', // Trưởng khoa, Phó khoa, Bác sĩ điều trị, Điều dưỡng
         medicalLicenseNo: '',
         signature: ''
     },
@@ -53,6 +53,12 @@ const authSlice = createSlice({
                 state.user.username = action.payload.username;
                 state.user.role = action.payload.role;
 
+                if (action.payload.username === 'user01') {
+                    state.user.name = 'Trần Quốc A';
+                    state.user.id = '000001';
+                    state.user.position = 'Bác sĩ điều trị';
+                }
+
                 if (action.payload.username === 'user02') {
                     state.user.name = 'Nguyễn Ngọc A';
                     state.user.id = '100001';
@@ -71,6 +77,9 @@ const authSlice = createSlice({
                 }
             }
         },
+        logout: () => {
+            return { ...initialState }
+        }
     },
     extraReducers: (builder) => {
         builder

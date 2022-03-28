@@ -5,14 +5,19 @@ import { IconButton } from "@mui/material";
 const ScrollToTop = () => {
     const [showTopBtn, setShowTopBtn] = useState(false);
 
+    const scrollFunction = () => {
+        if (window.scrollY > 400) {
+            setShowTopBtn(true);
+        } else {
+            setShowTopBtn(false);
+        }
+    }
+
     useEffect(() => {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 400) {
-                setShowTopBtn(true);
-            } else {
-                setShowTopBtn(false);
-            }
-            });
+        window.addEventListener('scroll', scrollFunction);
+        return () => {
+            window.removeEventListener('scroll', scrollFunction);
+        }
     }, []);
 
     const goToTop = () => {
@@ -30,7 +35,7 @@ const ScrollToTop = () => {
                         position: "fixed", 
                         right: 20, 
                         bottom: 25, 
-                        zIndex: 1, 
+                        zIndex: (theme) => theme.zIndex.drawer + 1, 
                         bgcolor: "#09425A", 
                         color: "white",
                         '&:hover': {

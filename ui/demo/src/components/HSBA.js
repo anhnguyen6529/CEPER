@@ -25,7 +25,7 @@ const HSBA = () => {
     const { role, id } = useSelector(state => state.auth.user);
 
     useEffect(() => {
-        if (id === pid) {
+        if ((id === pid && role === "BN") || role !== "BN") {
             dispatch(HSBAThunk.getOneHSBAByPID(pid));
             const appearFirstTime = new Date().toISOString();
             setAppearTime({ ...appearTime, ...mdSections["appearFirst"][role].reduce((prev, key) => ({ ...prev, [key]: appearFirstTime }), {}) });
@@ -34,7 +34,7 @@ const HSBA = () => {
             //     alert("Bạn không có quyền truy cập vào bệnh án này.");
             // }
             navigate(`/user/HSBA/${id}`);
-            window.location.reload();
+            dispatch(HSBAThunk.getOneHSBAByPID(id));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -277,7 +277,7 @@ const HSBA = () => {
                     {updating ? 
                         <>
                             <AlertTitle>Thông tin bệnh án đã được xử lý!</AlertTitle>
-                            Vui lòng di chuyển đến các mục trong "<i>Danh sách mục - Xác nhận</i>" và xác nhận kết quả xử lý.
+                            Vui lòng di chuyển đến các mục trong "<i>Danh sách mục - Xử lý lỗi</i>" để xem kết quả.
                         </> 
                     : (confirmUpdate ? "Cập nhật thông tin bệnh án thành công" : "")}
                 </Alert>
