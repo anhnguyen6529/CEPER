@@ -76,9 +76,6 @@ const authSlice = createSlice({
                     state.login.error = 'Tên đăng nhập và mật khẩu không đúng. Vui lòng kiểm tra và nhập lại.';
                 }
             }
-        },
-        logout: () => {
-            return { ...initialState }
         }
     },
     extraReducers: (builder) => {

@@ -12,12 +12,19 @@ const persistConfig = {
     whitelist: ['auth']
 }
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
     auth: authReducer,
     HSBA: HSBAReducer,
     danhSachHSBA: danhSachHSBAReducer,
     spellingError: SpellingErrorReducer
-})
+});
+
+const rootReducer = (state, action) => {
+    if (action.type === 'LOG_OUT') {
+        return appReducer(undefined, action);
+    }
+    return appReducer(state, action);
+}
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
 
