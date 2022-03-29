@@ -34,8 +34,8 @@ const ScrollToTop = () => {
                     sx={{ 
                         position: "fixed", 
                         right: 20, 
-                        bottom: 25, 
-                        zIndex: (theme) => theme.zIndex.drawer + 1, 
+                        bottom: 12, 
+                        zIndex: (theme) => theme.zIndex.drawer + 2, 
                         bgcolor: "#09425A", 
                         color: "white",
                         '&:hover': {

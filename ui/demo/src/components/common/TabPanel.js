@@ -12,7 +12,7 @@ const TabPanel = (props) => {
         style={{ borderRadius: 4 }}
       >
         {value === index && (
-          <Box sx={{ p: 3 }}>
+          <Box sx={{ px: 3 }}>
             {children}
           </Box>
         )}

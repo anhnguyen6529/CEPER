@@ -75,10 +75,10 @@ const TDanhSachRaVien = ({ data }) => {
 
     return (
         <>
-            <TableContainer>
-                <Table sx={{ '& .MuiTableCell-root': { fontSize: '16px' } }}> 
+            <TableContainer sx={{ maxHeight: 430 }}>
+                <Table stickyHeader>
                     <TableHead>
-                        <TableRow sx={{ height: 120, '& .MuiTableCell-root': { pt: 0 } }}> 
+                        <TableRow sx={{ height: 120, '& .MuiTableCell-root': { py: 2, bgcolor: 'white' } }}> 
                             {danhSachHSBATab.raVienColsChecked.every((element) => element === false) && 
                                 <TableCell width="100%"></TableCell>
                             }

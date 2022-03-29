@@ -14,7 +14,7 @@ const User = () => {
     const { pid } = useParams();
     const { user } = useSelector(state => state.auth);
     const selectedHSBA = useSelector(state => state.HSBA);
-
+    
     useEffect(() => {
         if (!localStorage.getItem('user')) {
             navigate('/login');
@@ -63,6 +63,7 @@ const User = () => {
     
     return (
         <UserProvider value={{
+            open, 
             appearSec,
             setAppearSec,
             appearTime,
@@ -86,62 +87,45 @@ const User = () => {
 
                 <Main open={open}>
                     <ScrollToTop />
-
                     <DrawerHeader />
-                    <Divider color="#007C92" sx={{ mt: 3.5 }} />
-
-                    <Container maxWidth={false}>
-                        {user.role === "BN"
-                        ? 
-                            <Breadcrumbs sx={{ my: 1, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
-                                    <Link underline="none" key="1" color="inherit" href="#">
-                                        Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
+                
+                    {user.role !== "BN" ?
+                        <>
+                            <Divider color="#007C92" sx={{ mt: 3 }} />
+                            <Container maxWidth={false}>
+                                <Breadcrumbs sx={{ my: 1.5, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
+                                    <Link underline="none" key="1" color="inherit" href="/user/HSBA">
+                                        Danh sách bệnh án
                                     </Link>
-                                    <Typography key="2">
-                                        Hồ sơ bệnh án
-                                    </Typography>
-                            </Breadcrumbs>
-                        :
-                            <Breadcrumbs sx={{ my: 1.5, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
-                                <Link underline="none" key="1" color="inherit" href="/user/HSBA">
-                                    Danh sách bệnh án
-                                </Link>
-                                {typeof(pid) !== 'undefined' && 
-                                    <Typography key="2">
-                                        Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
-                                    </Typography>
-                                }
-                            </Breadcrumbs>
-                        }
-                    </Container>
-                    <Divider color="#007C92"/>
-
+                                    {typeof(pid) !== 'undefined' && 
+                                        <Typography key="2">
+                                            Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
+                                        </Typography>
+                                    }
+                                </Breadcrumbs>
+                            </Container>
+                            <Divider color="#007C92" />
+                        </>
+                    : null}
+                        
                     {getUserContent(user.role)}
 
-                    <Container maxWidth={false}>
-                        {user.role === "BN"
-                        ? 
-                            <Breadcrumbs sx={{ mt: 3, mb: 3, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
-                                    <Link underline="none" key="1" color="inherit" href="#">
-                                        Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
+                    {user.role !== "BN" ? 
+                        <Container maxWidth={false}>
+                            {(typeof(pid) !== 'undefined') ?
+                                <Breadcrumbs sx={{ mt: 3, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
+                                    <Link underline="none" key="1" color="inherit" href="/user/HSBA">
+                                        Danh sách bệnh án
                                     </Link>
-                                    <Typography key="2">
-                                        Hồ sơ bệnh án
-                                    </Typography>
-                            </Breadcrumbs>
-                        :
-                            <Breadcrumbs sx={{ mt: 3, mb: 3, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
-                                <Link underline="none" key="1" color="inherit" href="/user/HSBA">
-                                    Danh sách bệnh án
-                                </Link>
-                                {typeof(pid) !== 'undefined' && 
-                                    <Typography key="2">
-                                        Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
-                                    </Typography>
-                                }
-                            </Breadcrumbs>
-                        }
-                    </Container>
+                                    {typeof(pid) !== 'undefined' && 
+                                        <Typography key="2">
+                                            Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
+                                        </Typography>
+                                    }
+                                </Breadcrumbs>
+                            : null}
+                        </Container>
+                    : null}
                 </Main>
             </Box>
         </UserProvider>

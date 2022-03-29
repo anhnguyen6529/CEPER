@@ -1,10 +1,14 @@
 import React from "react";
 import { List, ListSubheader, ListItem, ListItemText, Switch } from "@mui/material";
 import { Button } from "../common";
+import { Visibility } from "@mui/icons-material";
 
-const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll }) => {
+const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll, ...other }) => {
     return (
-        <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1 }} component="div">Danh sách cột</ListSubheader>}>
+        <List 
+            subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1 }} component="div">Danh sách cột</ListSubheader>}
+            {...other}
+        >
             {columnsChecked.map((col, id) => (
                 <ListItem 
                     button 
@@ -18,7 +22,12 @@ const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll
             ))}
 
             <ListItem sx={{ mt: 1 }}>
-                <Button sx={{ width: '100%' }} onClick={onClickShowAll} disabled={columnsChecked.every((element) => element === true)}>
+                <Button 
+                    sx={{ width: '100%' }} 
+                    startIcon={<Visibility />}
+                    onClick={onClickShowAll} 
+                    disabled={columnsChecked.every((element) => element === true)}
+                >
                     Hiện tất cả cột
                 </Button>   
             </ListItem>

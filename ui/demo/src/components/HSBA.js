@@ -21,7 +21,7 @@ const HSBA = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { pid } = useParams();
-    const { today, appearSec, appearTime, setAppearTime, openSec } = useContext(UserContext); 
+    const { open, today, appearSec, appearTime, setAppearTime, openSec } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
 
     useEffect(() => {
@@ -263,13 +263,26 @@ const HSBA = () => {
             ))} 
 
             {Object.keys(sectionState).some(key => spellingError[key].changed) ?
-                <Box className="df aic" sx={{ mt: 3 }}>
-                    {!updating && !confirmUpdate ? 
+                !updating && !confirmUpdate ? 
+                    <Box 
+                        className="df aic" 
+                        sx={{ 
+                            bgcolor: "white", 
+                            width: "100%", 
+                            position: "fixed", 
+                            left: open ? 240 : 0, 
+                            bottom: 0, 
+                            px: 3, 
+                            py: 1.5, 
+                            borderTop: (theme) => `0.5px solid ${theme.palette.divider}`, 
+                            zIndex: (theme) => theme.zIndex.drawer + 1
+                        }}
+                    >
                         <Button variant="primary-dark" onClick={handleUpdate}>
                             Cập nhật
                         </Button>
-                    : null}
-                </Box>
+                    </Box>
+                : null
             : null} 
 
             <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={() => setOpenSnackbar(false)}>
