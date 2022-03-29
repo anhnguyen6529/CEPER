@@ -56,6 +56,15 @@ const FPhieuTDTruyenDich = () => {
     const [hasChanged, setHasChanged] = useState(false);
 
     const [rows, setRows] = useState(content.data);
+    doctorList.sort((a, b) => {
+        if (a.id < b.id) {
+            return -1;
+        } else if (a.id > b.id) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -666,7 +675,7 @@ const FPhieuTDTruyenDich = () => {
                                                             setHasChanged(true);
                                                         }
                                                     }}
-                                                    renderInput={(params) => <TextField {...params} multiline  placeholder="Bác sĩ" inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }} />}
+                                                    renderInput={(params) => <TextField {...params} multiline placeholder="Bác sĩ" inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }} />}
                                                     options={doctorList.map(doctor => doctor.id + " - " + doctor.ho_ten)}
                                                     disableClearable
                                                     getOptionDisabled={(option) => newValue.BSChiDinh === option}

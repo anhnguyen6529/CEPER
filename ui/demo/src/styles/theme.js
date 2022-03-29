@@ -1,3 +1,4 @@
+import { Popper } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -128,7 +129,13 @@ const theme = createTheme({
       },
       MuiAutocomplete: {
         defaultProps: {
-          noOptionsText: '(trống)'
+          noOptionsText: '(trống)',
+          PopperComponent: (params) => <Popper {...params} placement='bottom-start' />
+        },
+        styleOverrides: {
+          popper: {
+            minWidth: 300
+          }
         }
       }
     }

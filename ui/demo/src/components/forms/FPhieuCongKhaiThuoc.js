@@ -31,12 +31,12 @@ const FPhieuCongKhaiThuoc = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
-    const MAX_LAST_ROWS = (role === "DD" && !ngayRaVien) ? 1 : 3;
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [ngayThang, setNgayThang] = useState(content.ngayThang);
     const [rows, setRows] = useState(content.data);
+    const [maxLastRows, setMaxLastRows] = useState(role === "DD" && !ngayRaVien ? 1 : 3);
     const [expandAllRows, setExpandAllRows] = useState(false);
 
     const [newNgay, setNewNgay] = useState({ ngay: null, soLuong: new Array(rows.length).fill(0) });
@@ -164,11 +164,11 @@ const FPhieuCongKhaiThuoc = () => {
                                             <TableCell
                                                 key={`${headCell.id}Head`} 
                                                 align="center" 
-                                                colSpan={ngayThang.length <= MAX_LAST_ROWS || expandAllRows 
+                                                colSpan={ngayThang.length <= maxLastRows || expandAllRows 
                                                     ? (expandAllRows 
                                                         ? (role === "DD" && !ngayRaVien ? (ngayThang.length + 1) + 1 : ngayThang.length + 1)
                                                         : (role === "DD" && !ngayRaVien ? ngayThang.length + 1 : ngayThang.length)
-                                                    ) : (role === "DD" && !ngayRaVien ? (1 + MAX_LAST_ROWS) + 1 : 1 + MAX_LAST_ROWS)
+                                                    ) : (role === "DD" && !ngayRaVien ? (1 + maxLastRows) + 1 : 1 + maxLastRows)
                                                 }
                                                 className="tableHeadBorderRight"
                                                 sx={{ px: 1, zIndex: 0 }}
@@ -179,7 +179,7 @@ const FPhieuCongKhaiThuoc = () => {
                                 ))}
                             </TableRow>
                             <TableRow>
-                                {ngayThang.length <= MAX_LAST_ROWS || expandAllRows 
+                                {ngayThang.length <= maxLastRows || expandAllRows 
                                     ? (
                                         <>
                                             {ngayThang.map((nth, index) => (
@@ -187,7 +187,13 @@ const FPhieuCongKhaiThuoc = () => {
                                                     key={`ngayThang${index}`}
                                                     align="center"
                                                     className="tableHeadBorderRight"
-                                                    sx={{ p: '6px 10px', minWidth: 95, zIndex: 0 }}
+                                                    sx={{ p: '6px 10px', minWidth: 95, zIndex: 0, cursor: expandAllRows && index > 0 ? 'pointer' : 'default' }}
+                                                    onClick={() => {
+                                                        if (index > 0) {
+                                                            setMaxLastRows(ngayThang.length - index);
+                                                            setExpandAllRows(false);
+                                                        }
+                                                    }}
                                                 >
                                                     {format(new Date(nth), "dd/MM/yyyy")}
                                                 </TableCell>
@@ -197,9 +203,12 @@ const FPhieuCongKhaiThuoc = () => {
                                                     className="tableHeadBorderRight" 
                                                     align="center" 
                                                     sx={{ cursor: 'pointer', p: 0, zIndex: 0 }}
-                                                    onClick={() => setExpandAllRows(false)}
+                                                    onClick={() => {
+                                                        setMaxLastRows(0);
+                                                        setExpandAllRows(false);
+                                                    }}
                                                 >
-                                                    <Tooltip title="Ẩn bớt ngày" placement="top">
+                                                    <Tooltip title="Ẩn tất cả ngày" placement="top">
                                                         <ArrowLeft sx={{ mt: 1 }} />
                                                     </Tooltip>
                                                 </TableCell>
@@ -217,7 +226,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                     <ArrowRight sx={{ mt: 1 }} />
                                                 </Tooltip>
                                             </TableCell>
-                                            {ngayThang.slice(ngayThang.length - MAX_LAST_ROWS).map((nth, index) => (
+                                            {ngayThang.slice(ngayThang.length - maxLastRows).map((nth, index) => (
                                                 <TableCell 
                                                     key={`ngayThang${index}`}
                                                     align="center"
@@ -267,7 +276,7 @@ const FPhieuCongKhaiThuoc = () => {
                                         <TableCell className="tableBodyBorderRight" align="center">{index + 1}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.tenThuoc}</TableCell>
                                         <TableCell className="tableBodyBorderRight" align="center">{row.donVi}</TableCell>
-                                        {ngayThang.length <= MAX_LAST_ROWS || expandAllRows ? (
+                                        {ngayThang.length <= maxLastRows || expandAllRows ? (
                                             <>
                                                 {row.ngayThang.map((nth, idx) => (
                                                     <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
@@ -279,7 +288,7 @@ const FPhieuCongKhaiThuoc = () => {
                                         ) : (
                                             <>
                                                 <TableCell className="tableBodyBorderRight" />
-                                                {row.ngayThang.slice(row.ngayThang.length - MAX_LAST_ROWS).map((nth, idx) => (
+                                                {row.ngayThang.slice(row.ngayThang.length - maxLastRows).map((nth, idx) => (
                                                     <TableCell key={`nth${idx}`} className="tableBodyBorderRight" align="center">
                                                         {nth !== 0 ? nth : ""}
                                                     </TableCell>
@@ -355,14 +364,14 @@ const FPhieuCongKhaiThuoc = () => {
                                             </Box>
                                         </TableCell>
                                         <TableCell className="tableBodyBorderRight" align="center">{newData.donVi}</TableCell>
-                                        {ngayThang.length <= MAX_LAST_ROWS || expandAllRows ? (
+                                        {ngayThang.length <= maxLastRows || expandAllRows ? (
                                             expandAllRows 
                                                 ? Array.from(Array(ngayThang.length + 1)).map((_, id) => (<TableCell key={id} className="tableBodyBorderRight" />))
                                                 : Array.from(Array(ngayThang.length)).map((_, id) => (<TableCell key={id} className="tableBodyBorderRight" />))
                                         ) : (
                                             <>
                                                 <TableCell className="tableBodyBorderRight" />
-                                                {ngayThang.slice(ngayThang.length - MAX_LAST_ROWS).map((_, id) => (
+                                                {ngayThang.slice(ngayThang.length - maxLastRows).map((_, id) => (
                                                     <TableCell key={id} className="tableBodyBorderRight" />
                                                 ))}
                                             </>
@@ -424,7 +433,7 @@ const FPhieuCongKhaiThuoc = () => {
                             <TableRow>
                                 <TableCell className="tableBodyBorderRight" colSpan={2}>Tổng số khoản thuốc dùng</TableCell>
                                 <TableCell className="tableBodyBorderRight" />
-                                {ngayThang.length <= MAX_LAST_ROWS || expandAllRows ? (
+                                {ngayThang.length <= maxLastRows || expandAllRows ? (
                                     <>
                                         {ngayThang.map((_, idx) => (
                                             <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
@@ -436,9 +445,9 @@ const FPhieuCongKhaiThuoc = () => {
                                 ) : (
                                     <>
                                         <TableCell className="tableBodyBorderRight" />
-                                        {ngayThang.slice(ngayThang.length - MAX_LAST_ROWS).map((_, idx) => (
+                                        {ngayThang.slice(ngayThang.length - maxLastRows).map((_, idx) => (
                                             <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
-                                                {calculateTotalByDate(ngayThang.length - MAX_LAST_ROWS + idx)}
+                                                {calculateTotalByDate(ngayThang.length - maxLastRows + idx)}
                                             </TableCell>
                                         ))}
                                     </>

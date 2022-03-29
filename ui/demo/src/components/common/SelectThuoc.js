@@ -15,7 +15,8 @@ const SelectThuoc = ({ existValue, value, onChange, placeholder, hamLuong, input
         if (drugs.findIndex((drug) => drug === mappedDrug) === -1) {
             drugs.push(mappedDrug);
         }
-    })
+    });
+    drugs.sort();
 
     return (
         <Autocomplete 
@@ -31,7 +32,6 @@ const SelectThuoc = ({ existValue, value, onChange, placeholder, hamLuong, input
                 />}
             options={drugs}
             disableClearable
-            // PopperComponent={(params) => <Popper {...params} placement="bottom-start" />}
             getOptionDisabled={(option) => existValue.findIndex((eVal) => eVal === option) !== -1}
             {...otherProps}
         />

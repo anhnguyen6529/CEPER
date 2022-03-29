@@ -84,7 +84,7 @@ const FPhieuTDDiUngThuoc = () => {
             setHasChanged(false);
         } else {
             let errs = [];
-            if (newThuocDiUng.some(dn => !dn)) errs.push('thuốc');
+            if (newThuocDiUng.some(dn => !dn)) errs.push('thuốc dị ứng');
             if (!newKieuDiUng) errs.push('nghi ngờ/chắc chắn');
             if (!newBieuHienLamSang) errs.push('biểu hiện lâm sàng');
             setErrors(errs);

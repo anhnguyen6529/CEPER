@@ -56,8 +56,8 @@ const PHIEUTDCHUCNANGSONG = {
 };
 const PHIEUCHAMSOC = {
     data: [
-        { ngayGio: '2021-11-06 17:30', theoDoiDienBien: ['hạ sốt, còn đau đầu'], thucHienYLenh: ['theo dõi sốt huyết não'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: '100001 - Nguyễn Ngọc A' },
-        { ngayGio: '2021-11-07 18:30', theoDoiDienBien: ['hết sốt, đau bụng nhẹ'], thucHienYLenh: ['Tylenol cách 3 tiếng/ngày'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: '100001 - Nguyễn Ngọc A' }
+        { ngayGio: '2021-11-06 17:30', theoDoiDienBien: ['hạ sốt, còn đau đầu'], thucHienYLenh: ['06/11/2021 09:30 - theo dõi sốt huyết não - BS: 000001 - Trần Quốc A'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: '100001 - Nguyễn Ngọc A' },
+        { ngayGio: '2021-11-07 18:30', theoDoiDienBien: ['hết sốt, đau bụng nhẹ'], thucHienYLenh: ['07/11/2021 14:05 - Tylenol cách 3 tiếng/ngày - BS: 000001 - Trần Quốc A'], xacNhan: ['Đang thực hiện'], dieuDuongGhi: '100001 - Nguyễn Ngọc A' }
     ],
 };
 const TODIEUTRI = {
