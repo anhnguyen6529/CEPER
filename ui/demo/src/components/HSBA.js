@@ -83,7 +83,7 @@ const HSBA = () => {
         : { mach: '', nhietDo: '', huyetAp: '', nhipTho: '', canNang: '' };
         
     const renderSwitch = (sectionId) => {
-        switch (mdSections["order"][sectionId]) {
+        switch (mdSections["sortOrder"][role][sectionId]) {
             case "Hành chính": 
                 return <BoxHanhChinh />
             case "Bệnh án": 
@@ -242,13 +242,13 @@ const HSBA = () => {
 
             {appearSec.map((sectionId, id) => (
                 <Paper 
-                    key={mdSections["order"][sectionId]}
+                    key={mdSections["sortOrder"][role][sectionId]}
                     sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1 }} 
                 >  
                     <Grid container>
                         <Grid item xs={9}> 
                             <Typography fontWeight="bold" color={openSec[sectionId] ? "primary" : "inherit"} >
-                                {mdSections["order"][sectionId]}
+                                {mdSections["sortOrder"][role][sectionId]}
                             </Typography>
                         </Grid>
                         <Grid item xs={3} align="right">

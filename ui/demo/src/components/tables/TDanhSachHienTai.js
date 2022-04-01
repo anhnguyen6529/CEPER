@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { 
     Box, Avatar, TableContainer, TableCell, TableRow, TableSortLabel, TableBody, 
-    Table, TableHead, TextField, InputAdornment
+    Table, TableHead, TextField, InputAdornment, Chip
 } from "@mui/material";
 import "../../styles/index.css";
 import { Search } from "@mui/icons-material";
@@ -15,16 +15,19 @@ import { useNavigate } from "react-router-dom";
 const headCells = [
     { id: 'avatar', label: 'Ảnh đại diện', width: 88, show: true },
     { id: 'pid', label: 'Mã BN', width: 120, show: true },
-    { id: 'hoTen', label: 'Họ tên', width: 180, show: true },
+    { id: 'hoTen', label: 'Họ tên', width: 160, show: true },
+    { id: 'trangThai', label: 'Trạng thái', width: 140, show: true },
     { id: 'tuoi', label: 'Tuổi', width: 140, show: false },
     { id: 'gioiTinh', label: 'Giới tính', width: 120, show: false },
     { id: 'ngayVaoVien', label: 'Ngày vào viện', width: 160, show: true },
     { id: 'khoa', label: 'Khoa', width: 120, show: true },
-    { id: 'phong', label: 'Phòng', width: 120, show: true },
+    { id: 'phong', label: 'Phòng', width: 120, show: false },
     { id: 'giuong', label: 'Giường', width: 120, show: false },
     { id: 'benhDieuTri', label: 'Bệnh điều trị', width: 200, show: true },
     { id: 'tinhTrangHienTai', label: 'Tình trạng hiện tại', width: 200, show: true }
 ];
+
+const colorTrangThai = { 'Chờ khám': 'warning', 'Đã khám': 'primary' };
 
 const TDanhSachHienTai = ({ data }) => {
     const navigate = useNavigate();
@@ -43,7 +46,7 @@ const TDanhSachHienTai = ({ data }) => {
         return rHeadCell;
     }));
     const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('pid');
+    const [orderBy, setOrderBy] = useState('trangThai');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [rows, setRows] = useState(data);
@@ -139,14 +142,19 @@ const TDanhSachHienTai = ({ data }) => {
                                     }
                                     {danhSachHSBATab.hienTaiColsChecked[1] && <TableCell>{row.pid}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[2] && <TableCell>{row.hoTen}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[3] && <TableCell>{row.tuoi}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[4] && <TableCell>{row.gioiTinh}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[5] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[6] && <TableCell>{row.khoa}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[7] && <TableCell>{row.phong}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[8] && <TableCell>{row.giuong}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[9] && <TableCell>{row.benhDieuTri}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[10] && <TableCell>{row.tinhTrangHienTai}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[3] &&
+                                        <TableCell>
+                                            <Chip label={row.trangThai} color={colorTrangThai[row.trangThai]} />
+                                        </TableCell>
+                                    }
+                                    {danhSachHSBATab.hienTaiColsChecked[4] && <TableCell>{row.tuoi}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[5] && <TableCell>{row.gioiTinh}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[6] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[7] && <TableCell>{row.khoa}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[8] && <TableCell>{row.phong}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[9] && <TableCell>{row.giuong}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[10] && <TableCell>{row.benhDieuTri}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[11] && <TableCell>{row.tinhTrangHienTai}</TableCell>}
                                 </StyledTableRow>
                             );
                         })}

@@ -130,6 +130,7 @@ const Login = () => {
                                 id="username"
                                 label="Tên đăng nhập"
                                 name="username"
+                                autoComplete="none"
                                 style={{ background: 'white' }}
                                 value={login.username}
                                 onChange={(event) => {

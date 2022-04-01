@@ -1,11 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-const PHIEUTDDIUNGTHUOC = {
-    data: [
-        { ngayGioDungThuoc: '2021-11-08 09:30', thuocDiUng: ['Bigentil', 'Ofloxacin'], kieuDiUng: 'Nghi ngờ', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: '000001 - Trần Quốc A', ghiChu: '' },
-        { ngayGioDungThuoc: '2021-11-09 10:30', thuocDiUng: ['Cefuroxime'], kieuDiUng: 'Chắc chắn', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: '000001 - Trần Quốc A', ghiChu: '' }
-    ]
-};
 const HOIBENH = {
     quaTrinhBenhLy: 'cháu sốt cao 3 ngày nay, ở nhà uống hạ sốt không giảm, từ sáng đến giờ cháu sốt cao, ói, ăn uống không được',
     tienSu: {
@@ -87,6 +81,12 @@ const PHIEUTDTRUYENDICH = {
         ]}
     ]
 };
+const PHIEUTDDIUNGTHUOC = {
+    data: [
+        { ngayGioDungThuoc: '2021-11-08 09:30', thuocDiUng: ['Bigentil', 'Ofloxacin'], kieuDiUng: 'Nghi ngờ', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: '000001 - Trần Quốc A', ghiChu: '' },
+        { ngayGioDungThuoc: '2021-11-09 10:30', thuocDiUng: ['Cefuroxime'], kieuDiUng: 'Chắc chắn', bieuHienLamSang: 'Mề đay, đau đầu, khó thở', bacSiXacNhan: '000001 - Trần Quốc A', ghiChu: '' }
+    ]
+};
 const PHIEUCONGKHAITHUOC = {
     ngayThang: ['2021-11-20', '2021-11-21', '2021-11-22', '2021-11-23'],
     nguoiBenhKyTen: ['Nguyễn Văn A', 'Nguyễn Văn A', 'Nguyễn Văn A', 'Nguyễn Văn A'],
@@ -103,6 +103,8 @@ const DANHSACHYLENH = [
 const datas = [
     {
         pid: '123456',
+        avatar: '',
+        trangThai: 'Đã khám',
         khoa: 'Cấp cứu',
         giuong: '08',
         phong: '302',
@@ -134,6 +136,13 @@ const datas = [
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
+        benhAn: {
+            thoiGian: '',
+            bacSiLamBenhAn: {
+                id: '',
+                name: ''
+            },
+        },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
             ngayVaoVien: '2021-11-08 14:00',
@@ -161,6 +170,8 @@ const datas = [
     },
     {
         pid: '102345',
+        avatar: '',
+        trangThai: 'Đã khám',
         khoa: 'Khám bệnh',
         giuong: '02',
         phong: '201',
@@ -194,7 +205,10 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         benhAn: {
             thoiGian: '2021-06-08 10:30',
-            bacSiLamBenhAn: '000001 - Trần Quốc A',
+            bacSiLamBenhAn: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -223,6 +237,8 @@ const datas = [
     },
     {
         pid: '200001',
+        avatar: '',
+        trangThai: 'Đã khám',
         khoa: 'Cấp cứu',
         giuong: '04',
         phong: '302',
@@ -281,6 +297,8 @@ const datas = [
     },
     {
         pid: '165423',
+        avatar: '',
+        trangThai: 'Đã khám',
         khoa: 'Hô hấp',
         giuong: '06',
         phong: '102',
@@ -339,6 +357,8 @@ const datas = [
     },
     {
         pid: '143256',
+        avatar: '',
+        trangThai: 'Đã ra viện',
         khoa: 'Cấp cứu',
         giuong: '04',
         phong: '302',
@@ -372,7 +392,10 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         benhAn: {
             thoiGian: '2021-08-04 10:50',
-            bacSiLamBenhAn: '000001 - Trần Quốc A'
+            bacSiLamBenhAn: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -387,7 +410,10 @@ const datas = [
         chanDoanBanDau: 'Sốt siêu vi',
         tongKetBenhAn: {
             thoiGian: '2021-06-18 18:50',
-            bacSiDieuTri: '000001 - Trần Quốc A'
+            bacSiDieuTri: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
         },
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {
@@ -405,6 +431,8 @@ const datas = [
     },
     {
         pid: '132456',
+        avatar: '',
+        trangThai: 'Đã ra viện',
         khoa: 'Nhi',
         giuong: '09',
         phong: '510',
@@ -438,7 +466,10 @@ const datas = [
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
         benhAn: {
             thoiGian: '2021-06-13 10:10',
-            bacSiLamBenhAn: '000001 - Trần Quốc A'
+            bacSiLamBenhAn: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -453,7 +484,10 @@ const datas = [
         chanDoanBanDau: 'Viêm dạ dày',
         tongKetBenhAn: {
             thoiGian: '2021-06-15 10:10',
-            bacSiDieuTri: '000001 - Trần Quốc A'
+            bacSiDieuTri: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
         },
         phuongPhapDieuTri: 'kháng sinh, men vi sinh, chống ói, hạ sốt',
         chanDoanKhiRaVien: {

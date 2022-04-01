@@ -20,8 +20,10 @@ import { sectionState } from "../../redux/slices/spellingError.slice";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
+    const { role } = useSelector((state) => state.auth.user);
     const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
-    const { updating } = useSelector(state => state.HSBA);
+    const { updating } = useSelector((state) => state.HSBA);
+    const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
 
     return (
@@ -60,92 +62,93 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                 </Grid>
             </Box>
             
-            <Divider sx={{ mt: 2 }} />
             {(content.role === "BN" || typeof(pid) !== 'undefined') &&
-                <Box sx={{ overflowY: 'auto' }}>     
-                    {updating && Object.keys(sectionState).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
-                        && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
-                        || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed)) ?
-                        <>
-                            <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xác nhận</ListSubheader>}>
-                                {Object.keys(sectionState).map((key, id) =>
-                                    ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
-                                    || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed) ?
-                                        <ListItem 
-                                            key={id}
-                                            sx={{ py: 0.5 }}
-                                            alignItems="flex-start"
-                                            button
-                                            onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth" })}
-                                        >
-                                            <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
-                                                <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
-                                            </ListItemIcon>
-                                            <ListItemText primary={key} />
-                                        </ListItem>
-                                    : null
-                                )}
-                                <ListItem>
-                                    <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}}>
-                                        Xác nhận cập nhật
-                                    </Button>
-                                </ListItem>
-                            </List>  
-                            <Divider />
-                        </>
-                        : null}
+                <>
+                    <Divider sx={{ mt: 0.5 }} />
+                    <Box sx={{ overflowY: 'auto' }}>     
+                        {(content.role !== "BN" && updating) ?
+                            <>
+                                <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xử lý lỗi</ListSubheader>}>
+                                    {Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key)).map((key, id) =>
+                                        ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
+                                        || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed) ?
+                                            <ListItem 
+                                                key={id}
+                                                sx={{ py: 0.5 }}
+                                                alignItems="flex-start"
+                                                button
+                                                onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth" })}
+                                            >
+                                                <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
+                                                    <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
+                                                </ListItemIcon>
+                                                <ListItemText primary={key} />
+                                            </ListItem>
+                                        : null
+                                    )}
+                                    <ListItem>
+                                        <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}}>
+                                            Xác nhận cập nhật
+                                        </Button>
+                                    </ListItem>
+                                </List>  
+                                <Divider />
+                            </>
+                            : null}
 
-                    <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Hồ sơ bệnh án</ListSubheader>}>
-                        {mdSections["order"].map((section, id) => (
-                            <div key={id}>
-                                <ListItem 
-                                    button 
-                                    sx={{ '.MuiListItemSecondaryAction-root': { display: 'flex' } }}
-                                    onClick={() => {
-                                        var tAppearSec = [...appearSec], idx = tAppearSec.indexOf(id), tOpenSec = [...openSec];
-                                        if (idx === -1) {
-                                            tAppearSec.unshift(id);
-                                            tOpenSec[id] = true;
-                                            setAppearTime({ ...appearTime, [section]: new Date().toISOString() });
-                                        } else {
-                                            tAppearSec.splice(idx, 1);
-                                            tOpenSec[id] = false;
-                                            setAppearTime({ ...appearTime, [section]: null });
-                                        }
-                                        setOpenSec(tOpenSec);
-                                        setAppearSec(tAppearSec);
-                                    }}
-                                    secondaryAction={
-                                        section === "Bệnh án" 
-                                            ? (
-                                                <Tooltip placement="right" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
-                                                    <InfoOutlined fontSize="small"/>
-                                                </Tooltip>
-                                            )
-                                            : (section === "Tổng kết bệnh án"
+                        <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Hồ sơ bệnh án</ListSubheader>}>
+                            {mdSections["sortOrder"][role].map((section, id) => (
+                                <div key={id}>
+                                    <ListItem 
+                                        button 
+                                        sx={{ '.MuiListItemSecondaryAction-root': { display: 'flex' } }}
+                                        onClick={() => {
+                                            var tAppearSec = [...appearSec], idx = tAppearSec.indexOf(id), tOpenSec = [...openSec];
+                                            if (idx === -1) {
+                                                tAppearSec.unshift(id);
+                                                tOpenSec[id] = true;
+                                                setAppearTime({ ...appearTime, [section]: new Date().toISOString() });
+                                            } else {
+                                                tAppearSec.splice(idx, 1);
+                                                tOpenSec[id] = false;
+                                                setAppearTime({ ...appearTime, [section]: null });
+                                            }
+                                            setOpenSec(tOpenSec);
+                                            setAppearSec(tAppearSec);
+                                        }}
+                                        secondaryAction={
+                                            section === "Bệnh án" 
                                                 ? (
-                                                    <Tooltip placement="right" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
+                                                    <Tooltip placement="right" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
                                                         <InfoOutlined fontSize="small"/>
                                                     </Tooltip>
-                                                ) : null
-                                            )
-                                    }
-                                >
-                                    <ListItemIcon sx={{ minWidth: 32 }}>
-                                        <FontAwesomeIcon color='#48B0F7' icon={faFileMedicalAlt} />
-                                    </ListItemIcon>
-                                    <ListItemText sx={{ color: appearSec.indexOf(id) === -1 ? 'black' : '#009ABB' }}>
-                                        {section}
-                                    </ListItemText>
-                                </ListItem>
-                            </div>
-                        ))}
-                    </List>
-                </Box> 
+                                                )
+                                                : (section === "Tổng kết bệnh án"
+                                                    ? (
+                                                        <Tooltip placement="right" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
+                                                            <InfoOutlined fontSize="small"/>
+                                                        </Tooltip>
+                                                    ) : null
+                                                )
+                                        }
+                                    >
+                                        <ListItemIcon sx={{ minWidth: 32 }}>
+                                            <FontAwesomeIcon color='#48B0F7' icon={faFileMedicalAlt} />
+                                        </ListItemIcon>
+                                        <ListItemText sx={{ color: appearSec.indexOf(id) === -1 ? 'black' : '#009ABB' }}>
+                                            {section}
+                                        </ListItemText>
+                                    </ListItem>
+                                </div>
+                            ))}
+                        </List>
+                    </Box> 
+                </>
             }
 
-            {typeof(pid) === 'undefined' && content.role !== 'BN' &&
+            {typeof(pid) === 'undefined' && content.role !== 'BN' && !creatingMode ?
                 <>
+                    <Divider sx={{ mt: 0.5 }} />
                     {danhSachHSBATab.value === 0 &&
                         <ListSwitchColumn 
                             columns={danhSachHSBATab.hienTaiCols}
@@ -187,7 +190,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                         />
                     }
                 </>
-            }
+            : null}
         </MuiDrawer>
     )
 }

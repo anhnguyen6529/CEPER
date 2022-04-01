@@ -1,9 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import danhSachHSBAThunk from "../thunks/danhSachHSBA.thunk";
 
 const initialState = {
     hienTai: [
         { 
             pid: '123456', 
+            avatar: '',
+            trangThai: 'Đã khám',
             hoTen: 'Nguyễn Văn A',
             tuoi: 25,
             gioiTinh: 'Nam',
@@ -16,6 +19,8 @@ const initialState = {
         },
         { 
             pid: '102345', 
+            avatar: '',
+            trangThai: 'Đã khám',
             hoTen: 'Nguyễn Thị B',
             tuoi: 22,
             gioiTinh: 'Nữ',
@@ -28,6 +33,8 @@ const initialState = {
         },
         { 
             pid: '200001', 
+            avatar: '',
+            trangThai: 'Đã khám',
             hoTen: 'Phạm Quang C',
             tuoi: 31,
             gioiTinh: 'Nam',
@@ -40,6 +47,8 @@ const initialState = {
         },
         { 
             pid: '165423', 
+            avatar: '',
+            trangThai: 'Đã khám',
             hoTen: 'Lê Thị D',
             tuoi: 29,
             gioiTinh: 'Nữ',
@@ -54,6 +63,8 @@ const initialState = {
     raVien: [
         {
             pid: '143256', 
+            avatar: '',
+            trangThai: 'Đã ra viện',
             khoa: 'Cấp cứu',
             hoTen: 'Trần Văn A',
             tuoi: 27,
@@ -65,6 +76,8 @@ const initialState = {
         },
         {
             pid: '132456', 
+            avatar: '',
+            trangThai: 'Đã ra viện',
             khoa: 'Nhi',
             hoTen: 'Nguyễn Thị B',
             tuoi: 9,
@@ -74,13 +87,45 @@ const initialState = {
             chanDoanKhiRaVien: 'Viêm dạ dày ruột',
             tinhTrangRaVien: 'Khỏi'
         },
-    ]
+    ],
+    creatingMode: false,
+    creatingHSBA: false,
+    creatingHSBAError: ''
 }
 
 const danhSachHSBASlice = createSlice({
     name: 'danhSachHSBA',
     initialState,
-    reducers: {}
+    reducers: {
+        setCreatingMode: (state, action) => {
+            state.creatingMode = action.payload;
+        }
+    },
+    extraReducers: (builder) => {
+        builder
+        .addCase(danhSachHSBAThunk.createNewHSBA.pending, (state) => {
+            return {
+                ...state,
+                creatingHSBA: true
+            }
+        })
+        .addCase(danhSachHSBAThunk.createNewHSBA.fulfilled, (state, action) => {
+            return {
+                ...state,
+                creatingHSBA: false,
+                creatingHSBAError: '',
+                hienTai: [action.payload, ...state.hienTai],
+                creatingMode: false
+            }
+        })
+        .addCase(danhSachHSBAThunk.createNewHSBA.rejected, (state, action) => {
+            return {
+                ...state,
+                creatingHSBA: false,
+                creatingHSBAError: action.payload
+            }
+        })
+    }
 })
 
 export const danhSachHSBAReducer = danhSachHSBASlice.reducer;

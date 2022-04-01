@@ -56,7 +56,9 @@ const GroupTongKetBA = () => {
                         </Typography>
                         <Typography fontWeight="bold">
                             Bác sĩ điều trị:{' '}
-                            <Typography component="span">{tongKetBenhAn.bacSiDieuTri}</Typography>
+                            <Typography component="span">
+                                {`${tongKetBenhAn.bacSiDieuTri.id} - ${tongKetBenhAn.bacSiDieuTri.name}`}
+                            </Typography>
                         </Typography>
                     </Box>
                 </>

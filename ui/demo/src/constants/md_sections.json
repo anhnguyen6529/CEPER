@@ -1,15 +1,30 @@
 {
-    "order": [
-        "Hành chính",
-        "Bệnh án",
-        "Tổng kết bệnh án",
-        "Tờ điều trị",  
-        "Phiếu chăm sóc",
-        "Phiếu TD truyền dịch",
-        "Phiếu TD chức năng sống", 
-        "Phiếu TD dị ứng thuốc", 
-        "Phiếu công khai thuốc"
-    ],
+    "sortOrder": {
+        "BN": ["Hành chính", "Phiếu TD chức năng sống", "Phiếu công khai thuốc"],
+        "BS": [
+            "Hành chính",
+            "Bệnh án",
+            "Tổng kết bệnh án",
+            "Tờ điều trị",  
+            "Phiếu chăm sóc",
+            "Phiếu TD truyền dịch",
+            "Phiếu TD chức năng sống", 
+            "Phiếu TD dị ứng thuốc", 
+            "Phiếu công khai thuốc"
+        ],
+        "DD": [
+            "Hành chính",
+            "Bệnh án",
+            "Tổng kết bệnh án",
+            "Tờ điều trị",  
+            "Phiếu chăm sóc",
+            "Phiếu TD truyền dịch",
+            "Phiếu TD chức năng sống", 
+            "Phiếu TD dị ứng thuốc", 
+            "Phiếu công khai thuốc"
+        ],
+        "": []
+    },
     "Bệnh án": [
         "Lý do vào viện",
         "Hỏi bệnh",
@@ -62,7 +77,7 @@
         "DD": [9, 10, 11, 13]
     },
     "appearFirst": {
-        "BN": ["Hành chính", "Bệnh án", "Tổng kết bệnh án"],
+        "BN": ["Hành chính", "Phiếu TD chức năng sống", "Phiếu công khai thuốc"],
         "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
         "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"],
         "": []

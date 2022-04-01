@@ -118,6 +118,13 @@ const theme = createTheme({
           }
         }
       },
+      MuiDialogContentText: {
+        styleOverrides: {
+          root: {
+            color: 'black'
+          }
+        }
+      },
       MuiDialogActions: {
         styleOverrides: {
           root: {

@@ -1,13 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import HSBAThunk from "../thunks/HSBA.thunk";
 
-const initialState = {
-    loading: true,
-    updating: false,
-    confirmUpdate: false,
-    setting: false,
-    error: '',
+export const initialHSBAState = {
     pid: '',
+    avatar: '',
+    trangThai: '',
     khoa: '',
     giuong: '',
     phong: '',
@@ -40,7 +37,10 @@ const initialState = {
     },
     benhAn: {
         thoiGian: '',
-        bacSiLamBenhAn: '',
+        bacSiLamBenhAn: {
+            id: '',
+            name: ''
+        },
     },
     lyDoVaoVien: {
         lyDo: '',
@@ -81,7 +81,10 @@ const initialState = {
     chanDoanBanDau: '',
     tongKetBenhAn: {
         thoiGian: '',
-        bacSiDieuTri: ''
+        bacSiDieuTri: {
+            id: '',
+            name: ''
+        }
     },
     phuongPhapDieuTri: '',
     chanDoanKhiRaVien: {
@@ -111,8 +114,16 @@ const initialState = {
         ngayThang: [],
         data: [{ tenThuoc: '', donVi: '', ngayThang: [], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }],
     },
-    danhSachYLenh: [],
-    edited: {}
+    danhSachYLenh: []
+}
+
+const initialState = {
+    loading: true,
+    updating: false,
+    confirmUpdate: false,
+    setting: false,
+    error: '',
+    ...initialHSBAState
 }
 
 const HSBASlice = createSlice({

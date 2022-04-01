@@ -52,7 +52,9 @@ const GroupBenhAn = () => {
                         </Typography>
                         <Typography fontWeight="bold">
                             Bác sĩ làm bệnh án:{' '}
-                            <Typography component="span">{benhAn.bacSiLamBenhAn}</Typography>
+                            <Typography component="span">
+                                {`${benhAn.bacSiLamBenhAn.id} - ${benhAn.bacSiLamBenhAn.name}`}
+                            </Typography>
                         </Typography>
                     </Box>
                 </>
