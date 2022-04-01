@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { Box, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Typography } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Typography, CircularProgress, Snackbar, Alert } from "@mui/material";
 import "../styles/index.css";
 import { useDispatch, useSelector } from "react-redux";
 import { TDanhSachHienTai, TDanhSachRaVien } from "./tables";
@@ -12,15 +12,31 @@ import { initialValues, requiredValues, TaoHSBAProvider } from "../contexts/TaoH
 import danhSachHSBAThunk from "../redux/thunks/danhSachHSBA.thunk";
 
 const DanhSachHSBA = () => {
-    const { danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
-    const { hienTai, raVien, creatingMode } = useSelector(state => state.danhSachHSBA);
-    const { name } = useSelector(state => state.auth.user);
+    const { role, name, id } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(danhSachHSBAThunk.getDanhSachHSBA({ role: role, doctorID: role === "BS" ? id : "" }))
+        // eslint-disable-next-line 
+    }, []);
+
+    const { danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { hienTai, raVien, creatingMode, loading } = useSelector(state => state.danhSachHSBA);
     
     const [values, setValues] = useState(initialValues);
     const [hasChangedNew, setHasChangedNew] = useState(false);
     const [openDialogNew, setOpenDialogNew] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+
+    if (loading) {
+        return (
+            <div className="df fdc aic jcc">
+                <CircularProgress sx={{ mt: 3, mb: 1 }} />
+                <Typography color="primary">Đang tải...</Typography>
+            </div>
+        )
+    }
 
     const handleChangeTab = (_, newValue) => {
         setDanhSachHSBATab({
@@ -61,6 +77,7 @@ const DanhSachHSBA = () => {
             setHasChangedNew(false);
             setOpenDialogNew(false);
             setValues(initialValues);
+            setOpenSnackbar(true);
         } else {
             setSubmitted(true);
         }
@@ -143,6 +160,12 @@ const DanhSachHSBA = () => {
                         </Dialog>
                     </Box>
                 </Slide>
+
+                <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={() => setOpenSnackbar(false)}>
+                    <Alert elevation={6} variant="filled" severity="success">
+                        Tạo bệnh án thành công
+                    </Alert>
+                </Snackbar>
             </Container>
         </TaoHSBAProvider>
     )

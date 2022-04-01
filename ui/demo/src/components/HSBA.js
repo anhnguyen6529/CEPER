@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { 
-    Typography, Divider, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Snackbar, Alert, AlertTitle, Backdrop
+    Typography, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Snackbar, Alert, AlertTitle, Backdrop, Chip
 } from "@mui/material";
 import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
@@ -17,6 +17,8 @@ import { BoxHanhChinh } from "./boxes";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
 import { sectionState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
 
+const colorTrangThai = { "Chờ khám": "warning", "Đã khám": "primary", "Đã ra viện": "default" };
+
 const HSBA = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -30,9 +32,6 @@ const HSBA = () => {
             const appearFirstTime = new Date().toISOString();
             setAppearTime({ ...appearTime, ...mdSections["appearFirst"][role].reduce((prev, key) => ({ ...prev, [key]: appearFirstTime }), {}) });
         } else {
-            // if (typeof(pid) !== "undefined") {
-            //     alert("Bạn không có quyền truy cập vào bệnh án này.");
-            // }
             navigate(`/user/HSBA/${id}`);
             dispatch(HSBAThunk.getOneHSBAByPID(id));
         }
@@ -122,14 +121,14 @@ const HSBA = () => {
         <Container sx={{ mt: 3 }} maxWidth={false}>
             <Grid container spacing={5} sx={{ mb: 3 }}>
                 <Grid item xs={9}>
-                    <Paper sx={{ width: '100%', p: 3, pt: 2.5, height: 220 }}>
+                    <Paper sx={{ width: '100%', p: 3, pt: 2.5 }}>
                         <Grid container spacing={3}>
                             <Grid item xs={2}>
                                 <Avatar src="/images/avatar_default.png" sx={{ width: 100, height: 100 }} />
                             </Grid>
                             <Grid item xs={10}>
                                 <Typography variant="h5" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>{benhNhan.hanhChinh.hoTen}</Typography>
-                                <Grid container>
+                                <Grid container columnSpacing={3}>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Mã BN</Typography>
                                         <Typography>{benhNhan.pid}</Typography>
@@ -143,11 +142,11 @@ const HSBA = () => {
                                         <Typography>{Math.ceil((today - new Date(String(benhNhan.lyDoVaoVien.ngayVaoVien))) / (1000 * 60 * 60 * 24))}</Typography>
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Ngày ra viện</Typography>
-                                        <Typography>{benhNhan.chanDoanKhiRaVien.ngayRaVien ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy') : benhNhan.chanDoanKhiRaVien.ngayRaVien}</Typography>
+                                        <Typography fontWeight="bold">Trạng thái</Typography>
+                                        <Chip size="small" label={benhNhan.trangThai} color={colorTrangThai[benhNhan.trangThai]} />
                                     </Grid>
                                 </Grid>
-                                <Grid container>
+                                <Grid container columnSpacing={3}>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Khoa</Typography>
                                         <Typography>{benhNhan.khoa}</Typography>
@@ -161,14 +160,19 @@ const HSBA = () => {
                                         <Typography>{benhNhan.giuong}</Typography>
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Bệnh điều trị</Typography>
-                                        <Typography>Sốt siêu vi</Typography>
+                                        <Typography fontWeight="bold">Ngày ra viện</Typography>
+                                        <Typography>{benhNhan.chanDoanKhiRaVien.ngayRaVien ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy') : benhNhan.chanDoanKhiRaVien.ngayRaVien}</Typography>
                                     </Grid>
+                                    
                                 </Grid>
-                                <Grid container>
+                                <Grid container columnSpacing={3}>
+                                    <Grid item xs={6}>
+                                        <Typography fontWeight="bold">Bệnh điều trị</Typography>
+                                        <Typography>{benhNhan.chanDoanBanDau}</Typography>
+                                    </Grid>
                                     <Grid item xs={6}>
                                         <Typography fontWeight="bold">Tình trạng hiện tại</Typography>
-                                        <Typography>Giảm đau đầu, hạ sốt</Typography>
+                                        <Typography>{benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh}</Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -176,64 +180,62 @@ const HSBA = () => {
                     </Paper>
                 </Grid>
                 <Grid item xs={3}>
-                    <Paper sx={{ height: 220, width: '100%', p: 3, pt: 2.5 }}>
-                        <Grid container >
-                            <Grid item xs={6}>
-                                <Typography fontWeight="bold">Mạch</Typography>
+                    <Paper sx={{ height: '100%', width: '100%', px: 3, py: 2 }}>
+                        <Grid container direction="column" sx={{ height: '100%' }}>
+                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                <Grid item xs={6}>
+                                    <Typography fontWeight="bold">Mạch</Typography>
+                                </Grid>
+                                <Grid item xs={6} align="right">
+                                    <Typography variant="h6" color="primary">
+                                        {mach}{' '}
+                                        <Typography color="#000" component="span">lần/phút</Typography>
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6} align="right">
-                                <Typography variant="h6" color="primary">
-                                    {mach}{' '}
-                                    <Typography color="#000" component="span">lần/phút</Typography>
-                                </Typography>
+                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                <Grid item xs={6}>
+                                    <Typography fontWeight="bold">Nhiệt độ</Typography>
+                                </Grid>
+                                <Grid item xs={6} align="right">
+                                    <Typography variant="h6" color="primary">
+                                        {nhietDo}{' '}
+                                        <Typography color="#000" component="span">°C</Typography>
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Divider color="#D9EFFE" sx={{ borderBottomWidth: 2, mb: 0.5 }}/>
-                        <Grid container >
-                            <Grid item xs={6}>
-                                <Typography fontWeight="bold">Nhiệt độ</Typography>
+                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                <Grid item xs={6}>
+                                    <Typography fontWeight="bold">Huyết áp</Typography>
+                                </Grid>
+                                <Grid item xs={6} align="right">
+                                    <Typography variant="h6" color="primary">
+                                        {huyetAp}{' '}
+                                        <Typography color="#000" component="span">mmHg</Typography>
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={6} align="right">
-                                <Typography variant="h6" color="primary">
-                                    {nhietDo}{' '}
-                                    <Typography color="#000" component="span">°C</Typography>
-                                </Typography>
+                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                <Grid item xs={6}>
+                                    <Typography fontWeight="bold">Nhịp thở</Typography>
+                                </Grid>
+                                <Grid item xs={6} align="right">
+                                    <Typography variant="h6" color="primary">
+                                        {nhipTho}{' '}
+                                        <Typography color="#000" component="span">lần/phút</Typography>
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                        <Divider color="#D9EFFE" sx={{ borderBottomWidth: 2, mb: 0.5 }}/>
-                        <Grid container >
-                            <Grid item xs={6}>
-                                <Typography fontWeight="bold">Huyết áp</Typography>
-                            </Grid>
-                            <Grid item xs={6} align="right">
-                                <Typography variant="h6" color="primary">
-                                    {huyetAp}{' '}
-                                    <Typography color="#000" component="span">mmHg</Typography>
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Divider color="#D9EFFE" sx={{ borderBottomWidth: 2, mb: 0.5 }}/>
-                        <Grid container >
-                            <Grid item xs={6}>
-                                <Typography fontWeight="bold">Nhịp thở</Typography>
-                            </Grid>
-                            <Grid item xs={6} align="right">
-                                <Typography variant="h6" color="primary">
-                                    {nhipTho}{' '}
-                                    <Typography color="#000" component="span">lần/phút</Typography>
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                        <Divider color="#D9EFFE" sx={{ borderBottomWidth: 2, mb: 0.5 }}/>
-                        <Grid container >
-                            <Grid item xs={6}>
-                                <Typography fontWeight="bold">Cân nặng</Typography>
-                            </Grid>
-                            <Grid item xs={6} align="right">
-                                <Typography variant="h6" color="primary">
-                                    {canNang}{' '}
-                                    <Typography color="#000" component="span">kg</Typography>
-                                </Typography>
+                            <Grid container item xs={2.4} alignItems="center">
+                                <Grid item xs={6}>
+                                    <Typography fontWeight="bold">Cân nặng</Typography>
+                                </Grid>
+                                <Grid item xs={6} align="right">
+                                    <Typography variant="h6" color="primary">
+                                        {canNang}{' '}
+                                        <Typography color="#000" component="span">kg</Typography>
+                                    </Typography>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Paper>

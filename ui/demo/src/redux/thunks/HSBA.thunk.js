@@ -100,7 +100,7 @@ const DANHSACHYLENH = [
     { yLenh: '07/11/2021 14:05 - Tylenol cách 3 tiếng/ngày - BS: 000001 - Trần Quốc A', xacNhan: 'Đang thực hiện' }
 ]
 
-const datas = [
+export const datas = [
     {
         pid: '123456',
         avatar: '',
@@ -139,9 +139,9 @@ const datas = [
         benhAn: {
             thoiGian: '',
             bacSiLamBenhAn: {
-                id: '',
-                name: ''
-            },
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
         },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
@@ -161,6 +161,13 @@ const datas = [
         },   
         tinhTrangRaVien: '',
         huongDieuTri: '',
+        tongKetBenhAn: {
+            thoiGian: '',
+            bacSiDieuTri: {
+                id: '',
+                name: ''
+            }
+        },
         phieuTDChucNangSong: PHIEUTDCHUCNANGSONG,
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
@@ -228,6 +235,13 @@ const datas = [
         },  
         tinhTrangRaVien: '',
         huongDieuTri: '',
+        tongKetBenhAn: {
+            thoiGian: '',
+            bacSiDieuTri: {
+                id: '',
+                name: ''
+            }
+        },
         phieuTDChucNangSong: PHIEUTDCHUCNANGSONG,
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
@@ -270,9 +284,16 @@ const datas = [
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
+        benhAn: {
+            thoiGian: '',
+            bacSiLamBenhAn: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
+        },
         lyDoVaoVien: {
             lyDo: '',
-            ngayVaoVien: '',
+            ngayVaoVien: '2021-10-20 09:20',
             vaoNgayThu: 0,
             chanDoanNoiGioiThieu: '',
             noiGioiThieu: ''
@@ -280,7 +301,7 @@ const datas = [
         hoiBenh: HOIBENH,
         khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
-        chanDoanBanDau: '',
+        chanDoanBanDau: 'Viêm loát dạ dày',
         phuongPhapDieuTri: '',
         chanDoanKhiRaVien: {
             chanDoan: '',
@@ -288,6 +309,13 @@ const datas = [
         },
         tinhTrangRaVien: '',
         huongDieuTri: '',
+        tongKetBenhAn: {
+            thoiGian: '',
+            bacSiDieuTri: {
+                id: '',
+                name: ''
+            }
+        },
         phieuTDChucNangSong: PHIEUTDCHUCNANGSONG,
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
@@ -330,6 +358,13 @@ const datas = [
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
+        benhAn: {
+            thoiGian: '',
+            bacSiLamBenhAn: {
+                id: '000001',
+                name: 'Trần Quốc A'
+            }
+        },
         lyDoVaoVien: {
             lyDo: 'sốt cao, ói',
             ngayVaoVien: '2021-12-12 15:40',
@@ -348,6 +383,13 @@ const datas = [
         },
         tinhTrangRaVien: '',
         huongDieuTri: '',
+        tongKetBenhAn: {
+            thoiGian: '',
+            bacSiDieuTri: {
+                id: '',
+                name: ''
+            }
+        },
         phieuTDChucNangSong: PHIEUTDCHUCNANGSONG,
         toDieuTri: TODIEUTRI,
         phieuChamSoc: PHIEUCHAMSOC,
