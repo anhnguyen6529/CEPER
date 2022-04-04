@@ -161,7 +161,12 @@ const HSBA = () => {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Ngày ra viện</Typography>
-                                        <Typography>{benhNhan.chanDoanKhiRaVien.ngayRaVien ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy') : benhNhan.chanDoanKhiRaVien.ngayRaVien}</Typography>
+                                        <Typography>
+                                            {benhNhan.chanDoanKhiRaVien.ngayRaVien 
+                                                ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy') 
+                                                : <Typography component="span">(<i>trống</i>)</Typography>
+                                            }
+                                        </Typography>
                                     </Grid>
                                     
                                 </Grid>
@@ -276,7 +281,7 @@ const HSBA = () => {
                             bottom: 0, 
                             px: 3, 
                             py: 1.5, 
-                            borderTop: (theme) => `0.5px solid ${theme.palette.divider}`, 
+                            borderTop: (theme) => `1px solid ${theme.palette.divider}`, 
                             zIndex: (theme) => theme.zIndex.drawer + 1
                         }}
                     >

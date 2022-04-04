@@ -243,7 +243,7 @@ export const datas = [
             }
         },
         phieuTDChucNangSong: PHIEUTDCHUCNANGSONG,
-        toDieuTri: TODIEUTRI,
+        toDieuTri: { ...TODIEUTRI, data: TODIEUTRI.data.slice(0, 2) },
         phieuChamSoc: PHIEUCHAMSOC,
         phieuTDTruyenDich: PHIEUTDTRUYENDICH,
         phieuCongKhaiThuoc: PHIEUCONGKHAITHUOC,
@@ -301,7 +301,7 @@ export const datas = [
         hoiBenh: HOIBENH,
         khamBenh: KHAMBENH_EMPTY,
         tomTatBenhAn: '',
-        chanDoanBanDau: 'Viêm loát dạ dày',
+        chanDoanBanDau: 'Viêm loét dạ dày',
         phuongPhapDieuTri: '',
         chanDoanKhiRaVien: {
             chanDoan: '',

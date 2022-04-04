@@ -18,8 +18,8 @@ const SECTION_NAME = "Tờ điều trị";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', width: '5%', minWidth: 85 },
-    { id: 'dienBienBenh', numeric: true, label: 'Diễn biến bệnh', width: '35%', minWidth: 250 },
-    { id: 'yLenh', numeric: true, label: 'Y lệnh', width: '35%', minWidth: 250 },
+    { id: 'dienBienBenh', numeric: true, label: 'DIỄN BIẾN BỆNH', width: '35%', minWidth: 250 },
+    { id: 'yLenh', numeric: true, label: 'Y LỆNH', width: '35%', minWidth: 250 },
     { id: 'bacSiGhi', label: 'Bác sĩ ghi', width: '15%', minWidth: 170 },
 ];
 

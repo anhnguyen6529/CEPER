@@ -176,8 +176,8 @@ const FHoSo = () => {
     
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Mạch*
-                                <Typography component="span" fontWeight="bold" fontStyle="italic">{' '}(lần/phút)</Typography>
+                                Mạch*{' '}
+                                <Typography component="span" fontWeight="bold">(<i>lần/phút</i>)</Typography>
                             </Typography>
                             <TextField 
                                 type="number"
@@ -197,8 +197,8 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Nhiệt độ*
-                                <Typography component="span" fontWeight="bold" fontStyle="italic">{' '}(°C)</Typography>
+                                Nhiệt độ*{' '}
+                                <Typography component="span" fontWeight="bold">(<i>°C</i>)</Typography>
                             </Typography>
                             <TextField 
                                 type="number"
@@ -218,8 +218,8 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Huyết áp*
-                                <Typography component="span" fontWeight="bold" fontStyle="italic">{' '}(mmHg)</Typography>
+                                Huyết áp*{' '}
+                                <Typography component="span" fontWeight="bold">(<i>mmHg</i>)</Typography>
                             </Typography>
                             <FormControl sx={{ width: "100%" }}>
                                 <Box className="df aic">
@@ -261,8 +261,8 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Nhịp thở*
-                                <Typography component="span" fontWeight="bold" fontStyle="italic">{' '}(lần/phút)</Typography>
+                                Nhịp thở*{' '}
+                                <Typography component="span" fontWeight="bold">(<i>lần/phút</i>)</Typography>
                             </Typography>
                             <TextField 
                                 type="number"
@@ -282,8 +282,8 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Cân nặng*
-                                <Typography component="span" fontWeight="bold" fontStyle="italic">{' '}(kg)</Typography>
+                                Cân nặng*{' '}
+                                <Typography component="span" fontWeight="bold">(<i>kg</i>)</Typography>
                             </Typography>
                             <TextField 
                                 type="number"

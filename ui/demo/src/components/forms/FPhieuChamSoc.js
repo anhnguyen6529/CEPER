@@ -18,8 +18,8 @@ const SECTION_NAME = "Phiếu chăm sóc";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', width: '5%', minWidth: 85 },
-    { id: 'theoDoiDienBien', label: 'Theo dõi diễn biến', width: '25%', minWidth: 250 },
-    { id: 'thucHienYLenh', label: 'Thực hiện y lệnh', width: '30%', minWidth: 250 },
+    { id: 'theoDoiDienBien', label: 'THEO DÕI DIỄN BIẾN', width: '25%', minWidth: 250 },
+    { id: 'thucHienYLenh', label: 'THỰC HIỆN Y LỆNH', width: '30%', minWidth: 250 },
     { id: 'xacNhan', label: 'Xác nhận', width: '15%', minWidth: 160 },
     { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', width: '15%', minWidth: 170 }
 ];

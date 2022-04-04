@@ -1,5 +1,3 @@
-export { default as FHanhChinh} from './FHanhChinh';
-
 export { default as FPhieuTDDiUngThuoc } from './FPhieuTDDiUngThuoc';
 
 export { default as FLyDoVaoVien } from './FLyDoVaoVien';

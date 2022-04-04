@@ -17,7 +17,7 @@ const SECTION_NAME = "Phiếu công khai thuốc";
 
 const headCells = [
     { id: 'stt', label: 'STT', width: '5%', minWidth: 65 },
-    { id: 'tenThuoc', label: 'Tên thuốc, hàm lượng', width: '22%', minWidth: 225 },
+    { id: 'tenThuoc', label: 'TÊN THUỐC, HÀM LƯỢNG', width: '22%', minWidth: 225 },
     { id: 'donVi', label: 'Đơn vị', width: '5%', minWidth: 65 },
     { id: 'ngayThang', label: 'Ngày tháng', width: '25%', minWidth: 0 },
     { id: 'tongSo', label: 'Tổng số', width: '7%', minWidth: 80 },

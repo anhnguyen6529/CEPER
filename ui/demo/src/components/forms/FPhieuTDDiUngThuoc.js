@@ -17,7 +17,7 @@ const SECTION_NAME = "Phiếu TD dị ứng thuốc";
 const headCells = [
     { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày', width: '10%', minWidth: 115 },
     { id: 'gioDungThuoc', align: 'left', label: 'Giờ', width: '5%', minWidth: 85 },
-    { id: 'thuocDiUng', align: 'left', label: 'Thuốc dị ứng', width: '25%', minWidth: 200 },
+    { id: 'thuocDiUng', align: 'left', label: 'THUỐC DỊ ỨNG', width: '25%', minWidth: 200 },
     { id: 'nghiNgo', align: 'center', label: 'Nghi ngờ', width: '5%', minWidth: 0 },
     { id: 'chacChan', align: 'center', label: 'Chắc chắn', width: '5%', minWidth: 0 },
     { id: 'bieuHienLamSang', align: 'left', label: 'Biểu hiện lâm sàng', width: '20%', minWidth: 250 },

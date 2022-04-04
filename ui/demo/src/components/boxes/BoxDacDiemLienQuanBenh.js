@@ -5,10 +5,10 @@ import { TableContainer, Table, TableHead, TableBody, TableRow,
 import "../../styles/index.css";
 
 const headCells = [
-    { id: 'tt', label: 'TT', width: '5%' },
-    { id: 'benh', label: '', width: '10%' },
-    { id: 'kyHieu', label: '', width: '5%' },
-    { id: 'thoiGian', label: 'Thời gian (tính theo tháng)', width: '20%' }
+    { id: 'tt', label: 'TT', unit: '', width: '5%' },
+    { id: 'benh', label: '', unit: '', width: '10%' },
+    { id: 'kyHieu', label: '', unit: '', width: '5%' },
+    { id: 'thoiGian', label: 'Thời gian', unit: 'tính theo tháng', width: '20%' }
 ]
 headCells.push(...headCells);
 
@@ -26,7 +26,8 @@ const BoxDacDiemLienQuanBenh = ({ dacDiemLienQuan }) => {
                                 className={id < headCells.length - 1 && headCell.id !== "benh" ? "tableHeadBorderRight" : ""}
                                 width={headCell.width}
                             >
-                                {headCell.label}
+                                {headCell.label}{' '}
+                                {!!headCell.unit ? <Typography component="span" fontWeight="bold">({<i>{headCell.unit}</i>})</Typography> : ""}
                             </TableCell>
                         ))}
                     </TableRow>

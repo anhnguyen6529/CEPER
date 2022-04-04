@@ -11,7 +11,7 @@ const FHoSo = () => {
         <Paper sx={{ px: 3, py: 2 }}>
             <Grid container columnSpacing={3}>
                 <Grid item xs={1.5}>
-                    <Typography fontWeight="bold" sx={{ mt: '16px' }}>Bác sĩ phụ trách</Typography>
+                    <Typography fontWeight="bold" sx={{ mt: '16px' }}>Bác sĩ phụ trách*</Typography>
                 </Grid>
                 <Grid item xs={4.5}>
                     <Autocomplete 

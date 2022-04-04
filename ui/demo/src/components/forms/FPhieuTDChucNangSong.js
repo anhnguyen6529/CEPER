@@ -18,12 +18,12 @@ const SECTION_NAME = "Phiếu TD chức năng sống";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', unit: '', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', unit: '', width: '5%', minWidth: 80 },
-    { id: 'mach', label: 'Mạch', unit: '(lần/phút)', width: '12%', minWidth: 120 },
-    { id: 'nhietDo', label: 'Nhiệt độ', unit: '(°C)', width: '12%', minWidth: 120 },
-    { id: 'huyetAp', label: 'Huyết áp', unit: '(mmHg)', width: '17%', minWidth: 190 },
-    { id: 'nhipTho', label: 'Nhịp thở', unit: '(lần/phút)', width: '12%', minWidth: 120 },
-    { id: 'canNang', label: 'Cân nặng', unit: '(kg)', width: '12%', minWidth: 130 },
-    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '20%', minWidth: 170 }
+    { id: 'mach', label: 'MẠCH', unit: 'lần/phút', width: '12%', minWidth: 120 },
+    { id: 'nhietDo', label: 'NHIỆT ĐỘ', unit: '°C', width: '12%', minWidth: 120 },
+    { id: 'huyetAp', label: 'HUYẾT ÁP', unit: 'mmHg', width: '17%', minWidth: 190 },
+    { id: 'nhipTho', label: 'NHỊP THỞ', unit: 'lần/phút', width: '12%', minWidth: 120 },
+    { id: 'canNang', label: 'CÂN NẶNG', unit: 'kg', width: '14%', minWidth: 130 },
+    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '18%', minWidth: 170 }
 ];
 
 const FPhieuTDChucNangSong = () => {
@@ -119,7 +119,12 @@ const FPhieuTDChucNangSong = () => {
                                                 direction={orderBy === headCell.id ? order : 'asc'}
                                                 onClick={createSortHandler(headCell.id)}
                                             >
-                                                {headCell.label}<br />{headCell.unit}
+                                                <Box className="df fdc">
+                                                    {headCell.label}
+                                                    {!!headCell.unit 
+                                                        ? <Typography fontWeight="bold">({<i>{headCell.unit}</i>})</Typography> : ""}
+                                                </Box>
+                                                
                                                 {orderBy === headCell.id ? (
                                                     <Box component="span" sx={visuallyHidden}>
                                                         {order === 'desc' ? 'sorted descending' : 'sorted ascending'}

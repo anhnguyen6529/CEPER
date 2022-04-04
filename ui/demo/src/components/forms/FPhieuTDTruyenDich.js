@@ -19,15 +19,15 @@ import moment from "moment";
 const SECTION_NAME = "Phiếu TD truyền dịch";
 
 const headCells = [
-    { id: 'ngayThang', align: 'left', label: 'Ngày tháng', width: '10%', minWidth: 100 },
-    { id: 'tenDichTruyen', align: 'left', label: 'TÊN DỊCH TRUYỀN/\nHÀM LƯỢNG', width: '20%', minWidth: 200 },
-    { id: 'soLuong', align: 'center', label: 'Số lượng (ml)', width: '6%', minWidth: 110 },
+    { id: 'ngayThang', align: 'left', label: 'Ngày tháng', unit: '', width: '10%', minWidth: 100 },
+    { id: 'tenDichTruyen', align: 'left', label: 'TÊN DỊCH TRUYỀN,\nHÀM LƯỢNG', unit: '', width: '20%', minWidth: 200 },
+    { id: 'soLuong', align: 'center', label: 'Số lượng', unit: 'ml', width: '6%', minWidth: 110 },
     { id: 'loSanXuat', align: 'center', label: 'Lô/Số sản xuất', width: '8%', minWidth: 100 },
-    { id: 'tocDo', align: 'center', label: 'Tốc độ giọt/ph', width: '6%', minWidth: 100 },
-    { id: 'thoiGianBatDau', align: 'center', label: 'Bắt đầu', width: '10%', minWidth: 170 },
-    { id: 'thoiGianKetThuc', align: 'center', label: 'Kết thúc', width: '10%', minWidth: 170 },
-    { id: 'BSChiDinh', align: 'left', label: 'Bác sĩ chỉ định', width: '15%', minWidth: 170 },
-    { id: 'DDThucHien', align: 'left', label: 'Điều dưỡng thực hiện', width: '15%', minWidth: 170 }
+    { id: 'tocDo', align: 'center', label: 'Tốc độ', unit: 'giọt/ph', width: '6%', minWidth: 100 },
+    { id: 'thoiGianBatDau', align: 'center', label: 'Bắt đầu', unit: '', width: '10%', minWidth: 170 },
+    { id: 'thoiGianKetThuc', align: 'center', label: 'Kết thúc', unit: '', width: '10%', minWidth: 170 },
+    { id: 'BSChiDinh', align: 'left', label: 'Bác sĩ chỉ định', unit: '', width: '15%', minWidth: 170 },
+    { id: 'DDThucHien', align: 'left', label: 'Điều dưỡng thực hiện', unit: '', width: '15%', minWidth: 170 }
 ];
 
 const setTimetoDate = (date, time) => {
@@ -148,7 +148,13 @@ const FPhieuTDTruyenDich = () => {
                             </Box>
                         ) : null}
                     </TableSortLabel>
-                : headCell.label}
+                : (
+                    <>
+                        {headCell.label}
+                        {!!headCell.unit 
+                            ? <Typography fontWeight="bold">({<i>{headCell.unit}</i>})</Typography> : ""}
+                    </>
+                )}
             </TableCell>
         )
     }
