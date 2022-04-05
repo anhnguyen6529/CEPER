@@ -37,7 +37,7 @@ const FHanhChinh = () => {
                                 }
                             }}
                             error={submitted && !values.hoTen}
-                            helperText={submitted && !values.hoTen ? "Vui lòng nhập họ tên" : ""} 
+                            helperText={submitted && !values.hoTen ? "Vui lòng nhập Họ và tên" : ""} 
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -56,7 +56,7 @@ const FHanhChinh = () => {
                                     {...params} 
                                     margin="dense"
                                     error={submitted && !values.ngaySinh}
-                                    helperText={submitted && !values.ngaySinh ? "Vui lòng nhập ngày sinh" : ""}
+                                    helperText={submitted && !values.ngaySinh ? "Vui lòng nhập Ngày sinh" : ""}
                                 />
                             }
                             inputFormat="DD/MM/yyyy"
@@ -83,7 +83,7 @@ const FHanhChinh = () => {
                                 <MenuItem value="Nam">Nam</MenuItem>
                                 <MenuItem value="Nữ">Nữ</MenuItem>
                             </Select>
-                            <FormHelperText error>{submitted && !values.gioiTinh ? "Vui lòng nhập giới tính" : ""}</FormHelperText>
+                            <FormHelperText error>{submitted && !values.gioiTinh ? "Vui lòng nhập Giới tính" : ""}</FormHelperText>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -100,7 +100,7 @@ const FHanhChinh = () => {
                                 }
                             }}
                             error={submitted && !values.ngheNghiep}
-                            helperText={submitted && !values.ngheNghiep ? "Vui lòng nhập nghề nghiệp" : ""}
+                            helperText={submitted && !values.ngheNghiep ? "Vui lòng nhập Nghề nghiệp" : ""}
                         />
                     </Grid>
                 </Grid>
@@ -119,7 +119,7 @@ const FHanhChinh = () => {
                                 }
                             }}
                             error={submitted && !values.danToc}
-                            helperText={submitted && !values.danToc ? "Vui lòng nhập dân tộc" : ""}
+                            helperText={submitted && !values.danToc ? "Vui lòng nhập Dân tộc" : ""}
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -144,7 +144,7 @@ const FHanhChinh = () => {
                         </Select>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Số CMND/CCCD/SSN*</Typography>
+                        <Typography fontWeight="bold">Số CMND/CCCD/hộ chiếu*</Typography>
                         <TextField 
                             fullWidth
                             margin="dense"
@@ -157,11 +157,11 @@ const FHanhChinh = () => {
                                 }
                             }}
                             error={submitted && !values.soCCCD}
-                            helperText={submitted && !values.soCCCD ? "Vui lòng nhập số CMND/CCCD/SSN" : ""}
+                            helperText={submitted && !values.soCCCD ? "Vui lòng nhập Số CMND/CCCD/hộ chiếu" : ""}
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Điện thoại*</Typography>
+                        <Typography fontWeight="bold">Điện thoại</Typography>
                         <TextField  
                             fullWidth
                             margin="dense"
@@ -173,8 +173,6 @@ const FHanhChinh = () => {
                                     setHasChangedNew(true);
                                 }
                             }}
-                            error={submitted && !values.dienThoai}
-                            helperText={submitted && !values.dienThoai ? "Vui lòng nhập điện thoại" : ""}
                         />
                     </Grid>
                 </Grid>
@@ -216,7 +214,7 @@ const FHanhChinh = () => {
                                 <MenuItem value="Miễn">Miễn</MenuItem>
                                 <MenuItem value="Khác">Khác</MenuItem>
                             </Select>
-                            <FormHelperText error>{submitted && !values.doiTuong ? "Vui lòng nhập đối tượng" : ""}</FormHelperText>
+                            <FormHelperText error>{submitted && !values.doiTuong ? "Vui lòng nhập Đối tượng" : ""}</FormHelperText>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -273,7 +271,7 @@ const FHanhChinh = () => {
                                     <MenuItem value={province.name} key={id}>{province.name}</MenuItem>
                                 ))}
                             </Select>
-                            <FormHelperText error>{submitted && !values.tinhTP ? "Vui lòng nhập tỉnh/thành phố" : ""}</FormHelperText>
+                            <FormHelperText error>{submitted && !values.tinhTP ? "Vui lòng nhập Tỉnh/Thành phố" : ""}</FormHelperText>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -298,7 +296,7 @@ const FHanhChinh = () => {
                                     <MenuItem value={district.name} key={id}>{district.name}</MenuItem>
                                 ))}
                             </Select>
-                            <FormHelperText error>{submitted && !values.quanHuyen ? "Vui lòng nhập quận/huyện" : ""}</FormHelperText>
+                            <FormHelperText error>{submitted && !values.quanHuyen ? "Vui lòng nhập Quận/Huyện" : ""}</FormHelperText>
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -326,7 +324,7 @@ const FHanhChinh = () => {
                                     ))
                                 }
                             </Select>
-                            <FormHelperText error>{submitted && !values.phuongXa ? "Vui lòng nhập phường/xã" : ""}</FormHelperText>
+                            <FormHelperText error>{submitted && !values.phuongXa ? "Vui lòng nhập Phường/Xã" : ""}</FormHelperText>
                         </FormControl>
                     </Grid>
                 </Grid>

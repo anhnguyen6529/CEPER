@@ -87,9 +87,9 @@ const FPhieuChamSoc = () => {
             setHasChanged(false);
         } else {
             let errs = [];
-            if (!newTheoDoiDienBien.every(tddb => !!tddb)) errs.push('theo dõi diễn biến');
+            if (!newTheoDoiDienBien.every(tddb => !!tddb)) errs.push('THEO DÕI DIỄN BIẾN');
             if (!newThucHienYLenh.every(thyl => !!thyl.yLenh && !!thyl.xacNhan) 
-                && errs.findIndex(err => err === 'thực hiện y lệnh') === -1) errs.push('thực hiện y lệnh');
+                && errs.findIndex(err => err === 'THỰC HIỆN Y LỆNH') === -1) errs.push('THỰC HIỆN Y LỆNH');
             setErrors(errs);
         }
     };
@@ -340,7 +340,7 @@ const FPhieuChamSoc = () => {
             {hasChanged &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
-                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
+                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join('; ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>

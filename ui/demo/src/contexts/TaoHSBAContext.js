@@ -16,7 +16,6 @@ export const requiredValues = [
     "ngheNghiep",
     "danToc",
     "soCCCD",
-    "dienThoai",
     "doiTuong",
     "tinhTP",
     "quanHuyen",

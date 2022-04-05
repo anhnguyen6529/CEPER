@@ -105,18 +105,18 @@ const FPhieuTDTruyenDich = () => {
         } else {
             let errs = [], emptyErrs = [], timeErr = false;
             newValues.forEach(newValue => {
-                if (!newValue.tenDichTruyen && emptyErrs.findIndex(err => err === 'tên dịch truyền') === -1) emptyErrs.push('tên dịch truyền');
-                if (!newValue.loSanXuat && emptyErrs.findIndex(err => err === 'lô sản xuất') === -1) emptyErrs.push('lô sản xuất');
-                if ((!newValue.thoiGianBatDau.ngay || !newValue.thoiGianBatDau.gio) && emptyErrs.findIndex(err => err === 'thời gian bắt đầu') === -1) emptyErrs.push('thời gian bắt đầu');
-                if ((!newValue.thoiGianKetThuc.ngay || !newValue.thoiGianKetThuc.gio) && emptyErrs.findIndex(err => err === 'thời gian kết thúc') === -1) emptyErrs.push('thời gian kết thúc');
-                if (!newValue.BSChiDinh && emptyErrs.findIndex(err => err === 'bác sĩ chỉ định') === -1) emptyErrs.push('bác sĩ chỉ định');
+                if (!newValue.tenDichTruyen && emptyErrs.findIndex(err => err === 'TÊN DỊCH TRUYỀN, HÀM LƯỢNG') === -1) emptyErrs.push('TÊN DỊCH TRUYỀN, HÀM LƯỢNG');
+                if (!newValue.loSanXuat && emptyErrs.findIndex(err => err === 'Lô sản xuất') === -1) emptyErrs.push('Lô sản xuất');
+                if ((!newValue.thoiGianBatDau.ngay || !newValue.thoiGianBatDau.gio) && emptyErrs.findIndex(err => err === 'Thời gian bắt đầu') === -1) emptyErrs.push('Thời gian bắt đầu');
+                if ((!newValue.thoiGianKetThuc.ngay || !newValue.thoiGianKetThuc.gio) && emptyErrs.findIndex(err => err === 'Thời gian kết thúc') === -1) emptyErrs.push('Thời gian kết thúc');
+                if (!newValue.BSChiDinh && emptyErrs.findIndex(err => err === 'Bác sĩ chỉ định') === -1) emptyErrs.push('Bác sĩ chỉ định');
                 if ((!!newValue.thoiGianBatDau.ngay && !!newValue.thoiGianBatDau.gio) && (!!newValue.thoiGianKetThuc.ngay && !!newValue.thoiGianKetThuc.gio) 
                     && setTimetoDate(newValue.thoiGianBatDau.ngay, newValue.thoiGianBatDau.gio) >= setTimetoDate(newValue.thoiGianKetThuc.ngay, newValue.thoiGianKetThuc.gio)) {
                     timeErr = true;
                 }
             })
-            if (emptyErrs.length > 0) errs.push(["Vui lòng nhập đầy đủ thông tin:", emptyErrs.join(', ')]);
-            if (timeErr) errs.push("Thời gian kết thúc phải sau thời gian bắt đầu (các ô viền đỏ)");
+            if (emptyErrs.length > 0) errs.push(["Vui lòng nhập đầy đủ thông tin:", emptyErrs.join('; ')]);
+            if (timeErr) errs.push("Thời gian kết thúc phải sau Thời gian bắt đầu (các ô viền đỏ)");
             setErrors(errs);
         }
     };

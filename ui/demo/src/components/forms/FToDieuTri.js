@@ -90,8 +90,8 @@ const FToDieuTri = () => {
             setHasChanged(false);
         } else {
             let errs = [];
-            if (!newDienBienBenh) errs.push('diễn biến bệnh');
-            if (!newYLenh) errs.push('y lệnh');
+            if (!newDienBienBenh) errs.push('DIỄN BIẾN BỆNH');
+            if (!newYLenh) errs.push('Y LỆNH');
             setErrors(errs);
         }
     };
@@ -217,7 +217,7 @@ const FToDieuTri = () => {
             {hasChanged &&
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
-                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
+                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join('; ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>

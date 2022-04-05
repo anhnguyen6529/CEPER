@@ -84,9 +84,9 @@ const FPhieuTDDiUngThuoc = () => {
             setHasChanged(false);
         } else {
             let errs = [];
-            if (newThuocDiUng.some(dn => !dn)) errs.push('thuốc dị ứng');
-            if (!newKieuDiUng) errs.push('nghi ngờ/chắc chắn');
-            if (!newBieuHienLamSang) errs.push('biểu hiện lâm sàng');
+            if (newThuocDiUng.some(dn => !dn)) errs.push('THUỐC DỊ ỨNG');
+            if (!newKieuDiUng) errs.push('Nghi ngờ/Chắc chắn');
+            if (!newBieuHienLamSang) errs.push('Biểu hiện lâm sàng');
             setErrors(errs);
         }
     }
@@ -274,7 +274,7 @@ const FPhieuTDDiUngThuoc = () => {
             {hasChanged && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
-                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
+                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join('; ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>

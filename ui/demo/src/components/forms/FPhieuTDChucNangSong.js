@@ -88,11 +88,11 @@ const FPhieuTDChucNangSong = () => {
             setHasChanged(false);
         } else {
             let errs = [];
-            if (newMach === 0) errs.push('mạch');
-            if (newNhietDo === 0) errs.push('nhiệt độ');
-            if (newHuyetAp[0] === 0 || newHuyetAp[1] === 0) errs.push('huyết áp');
-            if (newNhipTho === 0) errs.push('nhịp thở');
-            if (newCanNang === 0) errs.push('cân nặng');
+            if (newMach === 0) errs.push('MẠCH');
+            if (newNhietDo === 0) errs.push('NHIỆT ĐỘ');
+            if (newHuyetAp[0] === 0 || newHuyetAp[1] === 0) errs.push('HUYẾT ÁP');
+            if (newNhipTho === 0) errs.push('NHỊP THỞ');
+            if (newCanNang === 0) errs.push('CÂN NẶNG');
             setErrors(errs);
         }
     };
@@ -300,7 +300,7 @@ const FPhieuTDChucNangSong = () => {
             {hasChanged && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
-                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join(', ')}</b>.</Typography>}
+                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join('; ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>

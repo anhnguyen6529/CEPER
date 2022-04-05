@@ -88,7 +88,7 @@ const FHoSo = () => {
                                         {...params} 
                                         margin="dense" 
                                         error={submitted && !values.ngayVaoVien}
-                                        helperText={submitted && !values.ngayVaoVien ? "Vui lòng nhập ngày vào viện" : ""} 
+                                        helperText={submitted && !values.ngayVaoVien ? "Vui lòng nhập Ngày vào viện" : ""} 
                                     />
                                 }
                                 inputFormat="DD/MM/yyyy HH:mm"
@@ -120,7 +120,7 @@ const FHoSo = () => {
                                         <MenuItem value={dept} key={id}>{dept}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText error>{submitted && !values.khoa ? "Vui lòng nhập khoa" : ""}</FormHelperText>
+                                <FormHelperText error>{submitted && !values.khoa ? "Vui lòng nhập Khoa" : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
@@ -145,7 +145,7 @@ const FHoSo = () => {
                                         <MenuItem value={phongOption} key={id}>{phongOption}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText error>{submitted && !values.phong ? "Vui lòng nhập phòng" : ""}</FormHelperText>
+                                <FormHelperText error>{submitted && !values.phong ? "Vui lòng nhập Phòng" : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
@@ -170,7 +170,7 @@ const FHoSo = () => {
                                         <MenuItem value={giuongOption} key={id}>{giuongOption}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText error>{submitted && !values.giuong ? "Vui lòng nhập giường" : ""}</FormHelperText>
+                                <FormHelperText error>{submitted && !values.giuong ? "Vui lòng nhập Giường" : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
     
@@ -192,7 +192,7 @@ const FHoSo = () => {
                                     }
                                 }}
                                 error={submitted && values.mach === 0}
-                                helperText={submitted && values.mach === 0 ? "Vui lòng nhập mạch" : ""} 
+                                helperText={submitted && values.mach === 0 ? "Vui lòng nhập Mạch" : ""} 
                             />
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
@@ -213,7 +213,7 @@ const FHoSo = () => {
                                     }
                                 }}
                                 error={submitted && values.nhietDo === 0}
-                                helperText={submitted && values.nhietDo === 0 ? "Vui lòng nhập nhiệt độ" : ""} 
+                                helperText={submitted && values.nhietDo === 0 ? "Vui lòng nhập Nhiệt độ" : ""} 
                             />
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
@@ -255,7 +255,7 @@ const FHoSo = () => {
                                 </Box>
                                 <FormHelperText error>
                                     {submitted && (values.huyetAp[0] === 0 || values.huyetAp[1] === 0)
-                                        ? "Vui lòng nhập huyết áp" : ""}
+                                        ? "Vui lòng nhập Huyết áp" : ""}
                                 </FormHelperText>
                             </FormControl>
                         </Grid>
@@ -277,7 +277,7 @@ const FHoSo = () => {
                                     }
                                 }}
                                 error={submitted && values.nhipTho === 0}
-                                helperText={submitted && values.nhipTho === 0 ? "Vui lòng nhập nhịp thở" : ""} 
+                                helperText={submitted && values.nhipTho === 0 ? "Vui lòng nhập Nhịp thở" : ""} 
                             />
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
@@ -298,7 +298,7 @@ const FHoSo = () => {
                                     }
                                 }}
                                 error={submitted && values.canNang === 0}
-                                helperText={submitted && values.canNang === 0 ? "Vui lòng nhập cân nặng" : ""} 
+                                helperText={submitted && values.canNang === 0 ? "Vui lòng nhập Cân nặng" : ""} 
                             />
                         </Grid>
                     </Grid>

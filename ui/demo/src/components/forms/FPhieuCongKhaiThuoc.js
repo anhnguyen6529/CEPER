@@ -16,14 +16,14 @@ import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 const SECTION_NAME = "Phiếu công khai thuốc";
 
 const headCells = [
-    { id: 'stt', label: 'STT', width: '5%', minWidth: 65 },
-    { id: 'tenThuoc', label: 'TÊN THUỐC, HÀM LƯỢNG', width: '22%', minWidth: 225 },
-    { id: 'donVi', label: 'Đơn vị', width: '5%', minWidth: 65 },
-    { id: 'ngayThang', label: 'Ngày tháng', width: '25%', minWidth: 0 },
-    { id: 'tongSo', label: 'Tổng số', width: '7%', minWidth: 80 },
-    { id: 'donGia', label: 'Đơn giá', width: '9%', minWidth: 95 },
-    { id: 'thanhTien', label: 'Thành tiền', width: '12%', minWidth: 120 },
-    { id: 'ghiChu', label: 'Ghi chú', width: '15%', minWidth: 150 }
+    { id: 'stt', label: 'STT', unit: '', width: '5%', minWidth: 65 },
+    { id: 'tenThuoc', label: 'TÊN THUỐC, HÀM LƯỢNG', unit: '', width: '22%', minWidth: 225 },
+    { id: 'donVi', label: 'Đơn vị', unit: '', width: '5%', minWidth: 65 },
+    { id: 'ngayThang', label: 'Ngày tháng', unit: '', width: '25%', minWidth: 0 },
+    { id: 'tongSo', label: 'Tổng số', unit: '', width: '7%', minWidth: 80 },
+    { id: 'donGia', label: 'Đơn giá', unit: 'đồng', width: '9%', minWidth: 95 },
+    { id: 'thanhTien', label: 'Thành tiền', unit: 'đồng', width: '12%', minWidth: 120 },
+    { id: 'ghiChu', label: 'Ghi chú', unit: '', width: '15%', minWidth: 150 }
 ];
 
 const FPhieuCongKhaiThuoc = () => {
@@ -92,23 +92,23 @@ const FPhieuCongKhaiThuoc = () => {
         } else {
             let errs = [], dateErrs = [], drugErrs = [];
             if (!newNgay.ngay) {
-                dateErrs.push('ngày tháng');
-                drugErrs.push('ngày tháng');
+                dateErrs.push('Ngày tháng');
+                drugErrs.push('Ngày tháng');
             }
             if (newDataList.length === 1) {
                 if (!newDataList[0].tenThuoc && newDataList[0].soLuong === 0 && !newDataList[0].ghiChu && newNgay.soLuong.every(sl => sl === 0)) {
-                    dateErrs.push('số lượng thuốc dùng (cột đã có)');
+                    dateErrs.push('Số lượng thuốc dùng (cột đã có)');
                 }
-                if (!newDataList[0].tenThuoc) drugErrs.push('tên thuốc');
-                if (newDataList[0].soLuong === 0) drugErrs.push('số lượng thuốc dùng (hàng mới)');
+                if (!newDataList[0].tenThuoc) drugErrs.push('TÊN THUỐC, HÀM LƯỢNG');
+                if (newDataList[0].soLuong === 0) drugErrs.push('Số lượng thuốc dùng (hàng mới)');
             } else if (newDataList.length > 1) {
                 newDataList.forEach((newData) => {
-                    if (!newData.tenThuoc && drugErrs.findIndex(err => err === 'tên thuốc') === -1) drugErrs.push('tên thuốc');
-                    if (newData.soLuong === 0 && drugErrs.findIndex(err => err === 'số lượng thuốc dùng (hàng mới)') === -1) drugErrs.push('số lượng thuốc dùng (hàng mới)');
+                    if (!newData.tenThuoc && drugErrs.findIndex(err => err === 'TÊN THUỐC, HÀM LƯỢNG') === -1) drugErrs.push('TÊN THUỐC, HÀM LƯỢNG');
+                    if (newData.soLuong === 0 && drugErrs.findIndex(err => err === 'Số lượng thuốc dùng (hàng mới)') === -1) drugErrs.push('Số lượng thuốc dùng (hàng mới)');
                 });
             }
-            if (dateErrs.length > 0) errs.push([dateErrs.join(', '), "- nếu muốn thêm thông tin thuốc đã có"]);
-            if (drugErrs.length > 0) errs.push([drugErrs.join(', '), "- nếu muốn thêm thông tin thuốc mới"]);
+            if (dateErrs.length > 0) errs.push([dateErrs.join('; '), "- nếu muốn thêm thông tin thuốc đã có"]);
+            if (drugErrs.length > 0) errs.push([drugErrs.join('; '), "- nếu muốn thêm thông tin thuốc mới"]);
             setErrors(errs);
         }
     };
@@ -158,6 +158,8 @@ const FPhieuCongKhaiThuoc = () => {
                                                 className={id < headCells.length - 1 ? "tableHeadBorderRight" : "" }
                                             >
                                                 {headCell.label}
+                                                {!!headCell.unit 
+                                                    ? <Typography fontWeight="bold">({<i>{headCell.unit}</i>})</Typography> : ""}
                                             </TableCell>
                                         )
                                         : (

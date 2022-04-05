@@ -27,7 +27,7 @@ const headCells = [
     { id: 'tinhTrangHienTai', label: 'Tình trạng hiện tại', width: 200, show: true }
 ];
 
-const colorTrangThai = { 'Chờ khám': 'warning', 'Đã khám': 'primary' };
+const colorTrangThai = { 'Chờ khám': 'warning', 'Đang điều trị': 'primary' };
 
 const TDanhSachHienTai = ({ data }) => {
     const navigate = useNavigate();

@@ -17,7 +17,7 @@ import { BoxHanhChinh } from "./boxes";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
 import { sectionState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
 
-const colorTrangThai = { "Chờ khám": "warning", "Đã khám": "primary", "Đã ra viện": "default" };
+const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "primary", "Đã ra viện": "default" };
 
 const HSBA = () => {
     const dispatch = useDispatch();

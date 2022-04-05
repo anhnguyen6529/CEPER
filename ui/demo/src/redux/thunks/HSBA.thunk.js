@@ -104,7 +104,7 @@ export const datas = [
     {
         pid: '123456',
         avatar: '',
-        trangThai: 'Đã khám',
+        trangThai: 'Đang điều trị',
         khoa: 'Cấp cứu',
         giuong: '08',
         phong: '302',
@@ -178,7 +178,7 @@ export const datas = [
     {
         pid: '102345',
         avatar: '',
-        trangThai: 'Đã khám',
+        trangThai: 'Đang điều trị',
         khoa: 'Khám bệnh',
         giuong: '02',
         phong: '201',
@@ -252,7 +252,7 @@ export const datas = [
     {
         pid: '200001',
         avatar: '',
-        trangThai: 'Đã khám',
+        trangThai: 'Đang điều trị',
         khoa: 'Cấp cứu',
         giuong: '04',
         phong: '302',
@@ -326,7 +326,7 @@ export const datas = [
     {
         pid: '165423',
         avatar: '',
-        trangThai: 'Đã khám',
+        trangThai: 'Đang điều trị',
         khoa: 'Hô hấp',
         giuong: '06',
         phong: '102',

@@ -27,7 +27,7 @@ const FHoSo = () => {
                                 {...params} 
                                 placeholder="Bác sĩ"
                                 error={submitted && !values.bacSiPhuTrach.id}
-                                helperText={submitted && !values.bacSiPhuTrach.id ? "Vui lòng nhập bác sĩ phụ trách" : ""}
+                                helperText={submitted && !values.bacSiPhuTrach.id ? "Vui lòng nhập Bác sĩ phụ trách" : ""}
                             />
                         }
                         options={[{ id: "", name: "" }, ...doctorList.map(doctor => ({ id: doctor.id, name: doctor.ho_ten }))]}
