@@ -33,6 +33,7 @@ export const initialHSBAState = {
             diaChi: '',
             dienThoai: '',
             quanHeVoiBenhNhan: '',
+            soCCCD: ''
         }
     },
     benhAn: {

@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const FHoSo = () => {
-    const { values, setValues, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
+    const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
     const dispatch = useDispatch();
     const classes = useStyles();
     const now = new Date();
@@ -78,8 +78,13 @@ const FHoSo = () => {
                                 value={values.ngayVaoVien}
                                 onChange={(newValue) => {
                                     setValues({ ...values, ngayVaoVien: newValue });
-                                    if (!!newValue && !hasChangedNew) {
-                                        setHasChangedNew(true);
+                                    if (!!newValue) {
+                                        if (!hasChangedNew) {
+                                            setHasChangedNew(true);
+                                        }
+                                        setErrors({ ...errors, ngayVaoVien: "" });
+                                    } else {
+                                        setErrors({ ...errors, ngayVaoVien: "Vui lòng nhập Ngày vào viện" });
                                     }
                                 }}
                                 renderInput={(params) => 
@@ -87,8 +92,8 @@ const FHoSo = () => {
                                         fullWidth 
                                         {...params} 
                                         margin="dense" 
-                                        error={submitted && !values.ngayVaoVien}
-                                        helperText={submitted && !values.ngayVaoVien ? "Vui lòng nhập Ngày vào viện" : ""} 
+                                        error={submitted && !!errors.ngayVaoVien}
+                                        helperText={submitted ? errors.ngayVaoVien : ""} 
                                     />
                                 }
                                 inputFormat="DD/MM/yyyy HH:mm"
@@ -107,11 +112,16 @@ const FHoSo = () => {
                                     value={values.khoa}
                                     onChange={({ target: { value } }) => {
                                         setValues({ ...values, khoa: value, phong: "", giuong: "" });
-                                        if (!!value && !hasChangedNew) {
-                                            setHasChangedNew(true);
+                                        if (!!value) {
+                                            if (!hasChangedNew) {
+                                                setHasChangedNew(true);
+                                            }
+                                            setErrors({ ...errors, khoa: "" });
+                                        } else {
+                                            setErrors({ ...errors, khoa: "Vui lòng nhập Khoa" });
                                         }
                                     }}
-                                    error={submitted && !values.khoa}
+                                    error={submitted && !!errors.khoa}
                                     displayEmpty
                                     renderValue={(select) => !select ? "-- Chọn --" : select}
                                 >
@@ -120,7 +130,7 @@ const FHoSo = () => {
                                         <MenuItem value={dept} key={id}>{dept}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText error>{submitted && !values.khoa ? "Vui lòng nhập Khoa" : ""}</FormHelperText>
+                                <FormHelperText error>{submitted ? errors.khoa : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
@@ -132,11 +142,16 @@ const FHoSo = () => {
                                     value={values.phong}
                                     onChange={({ target: { value } }) => {
                                         setValues({ ...values, phong: value, giuong: "" });
-                                        if (!!value && !hasChangedNew) {
-                                            setHasChangedNew(true);
+                                        if (!!value) {
+                                            if (!hasChangedNew) {
+                                                setHasChangedNew(true);
+                                            }
+                                            setErrors({ ...errors, phong: "" });
+                                        } else {
+                                            setErrors({ ...errors, phong: "Vui lòng nhập Phòng" });
                                         }
                                     }}
-                                    error={submitted && !values.phong}
+                                    error={submitted && !!errors.phong}
                                     displayEmpty
                                     renderValue={(select) => !select ? "-- Chọn --" : select}
                                 >
@@ -145,7 +160,7 @@ const FHoSo = () => {
                                         <MenuItem value={phongOption} key={id}>{phongOption}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText error>{submitted && !values.phong ? "Vui lòng nhập Phòng" : ""}</FormHelperText>
+                                <FormHelperText error>{submitted ? errors.phong : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
@@ -157,11 +172,16 @@ const FHoSo = () => {
                                     value={values.giuong}
                                     onChange={({ target: { value } }) => {
                                         setValues({ ...values, giuong: value });
-                                        if (!!value && !hasChangedNew) {
-                                            setHasChangedNew(true);
+                                        if (!!value) {
+                                            if (!hasChangedNew) {
+                                                setHasChangedNew(true);
+                                            }
+                                            setErrors({ ...errors, giuong: "" });
+                                        } else {
+                                            setErrors({ ...errors, giuong: "Vui lòng nhập Giường" });
                                         }
                                     }}
-                                    error={submitted && !values.giuong}
+                                    error={submitted && !!errors.giuong}
                                     displayEmpty
                                     renderValue={(select) => !select ? "-- Chọn --" : select}
                                 >
@@ -170,7 +190,7 @@ const FHoSo = () => {
                                         <MenuItem value={giuongOption} key={id}>{giuongOption}</MenuItem>
                                     ))}
                                 </Select>
-                                <FormHelperText error>{submitted && !values.giuong ? "Vui lòng nhập Giường" : ""}</FormHelperText>
+                                <FormHelperText error>{submitted ? errors.giuong : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
     
@@ -187,12 +207,17 @@ const FHoSo = () => {
                                 value={values.mach}
                                 onChange={({ target: { value } }) => {
                                     setValues({ ...values, mach: !value ? 0 : parseInt(value) });
-                                    if (!!value && parseInt(value) > 0 && !hasChangedNew) {
-                                        setHasChangedNew(true);
+                                    if (!!value && parseInt(value) > 0) {
+                                        if (!hasChangedNew) {
+                                            setHasChangedNew(true);
+                                        }
+                                        setErrors({ ...errors, mach: "" });
+                                    } else {
+                                        setErrors({ ...errors, mach: "Vui lòng nhập Mạch" });
                                     }
                                 }}
-                                error={submitted && values.mach === 0}
-                                helperText={submitted && values.mach === 0 ? "Vui lòng nhập Mạch" : ""} 
+                                error={submitted && !!errors.mach}
+                                helperText={submitted ? errors.mach : ""} 
                             />
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
@@ -208,12 +233,17 @@ const FHoSo = () => {
                                 value={values.nhietDo}
                                 onChange={({ target: { value } }) => {
                                     setValues({ ...values, nhietDo: !value ? 0 : parseInt(value) });
-                                    if (!!value && parseInt(value) > 0 && !hasChangedNew) {
-                                        setHasChangedNew(true);
+                                    if (!!value && parseInt(value) > 0) {
+                                        if (!hasChangedNew) {
+                                            setHasChangedNew(true);
+                                        }
+                                        setErrors({ ...errors, nhietDo: "" });
+                                    } else {
+                                        setErrors({ ...errors, nhietDo: "Vui lòng nhập Nhiệt độ" });
                                     }
                                 }}
-                                error={submitted && values.nhietDo === 0}
-                                helperText={submitted && values.nhietDo === 0 ? "Vui lòng nhập Nhiệt độ" : ""} 
+                                error={submitted && !!errors.nhietDo}
+                                helperText={submitted ? errors.nhietDo : ""} 
                             />
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
@@ -231,11 +261,18 @@ const FHoSo = () => {
                                         value={values.huyetAp[0]}
                                         onChange={({ target: { value } }) => {
                                             setValues({ ...values, huyetAp: [!value ? 0 : parseInt(value), values.huyetAp[1]] });
-                                            if (!!value && parseInt(value) > 0 && !hasChangedNew) {
-                                                setHasChangedNew(true);
+                                            if (!!value && parseInt(value) > 0) {
+                                                if (!hasChangedNew) {
+                                                    setHasChangedNew(true);
+                                                } 
+                                                if (values.huyetAp[1] > 0) {
+                                                    setErrors({ ...errors, huyetAp: "" });
+                                                }
+                                            } else {
+                                                setErrors({ ...errors, huyetAp: "Vui lòng nhập Huyết áp" });
                                             }
                                         }}
-                                        error={submitted && values.huyetAp[0] === 0}
+                                        error={submitted && !!errors.huyetAp}
                                     />
                                     <Typography sx={{ mx: 1 }}>/</Typography>
                                     <TextField 
@@ -246,17 +283,21 @@ const FHoSo = () => {
                                         value={values.huyetAp[1]}
                                         onChange={({ target: { value } }) => {
                                             setValues({ ...values, huyetAp: [values.huyetAp[0], !value ? 0 : parseInt(value)] });
-                                            if (!!value && parseInt(value) > 0 && !hasChangedNew) {
-                                                setHasChangedNew(true);
+                                            if (!!value && parseInt(value) > 0) {
+                                                if (!hasChangedNew) {
+                                                    setHasChangedNew(true);
+                                                }
+                                                if (values.huyetAp[0] > 0) {
+                                                    setErrors({ ...errors, huyetAp: "" });
+                                                }
+                                            } else {
+                                                setErrors({ ...errors, huyetAp: "Vui lòng nhập Huyết áp" });
                                             }
                                         }}
-                                        error={submitted && values.huyetAp[1] === 0}
+                                        error={submitted && !!errors.huyetAp}
                                     />
                                 </Box>
-                                <FormHelperText error>
-                                    {submitted && (values.huyetAp[0] === 0 || values.huyetAp[1] === 0)
-                                        ? "Vui lòng nhập Huyết áp" : ""}
-                                </FormHelperText>
+                                <FormHelperText error>{submitted ? errors.huyetAp : ""}</FormHelperText>
                             </FormControl>
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
@@ -272,12 +313,17 @@ const FHoSo = () => {
                                 value={values.nhipTho}
                                 onChange={({ target: { value } }) => {
                                     setValues({ ...values, nhipTho: !value ? 0 : parseInt(value) });
-                                    if (!!value && parseInt(value) > 0 && !hasChangedNew) {
-                                        setHasChangedNew(true);
+                                    if (!!value && parseInt(value) > 0) {
+                                        if (!hasChangedNew) {
+                                            setHasChangedNew(true);
+                                        }
+                                        setErrors({ ...errors, nhipTho: "" });
+                                    } else {
+                                        setErrors({ ...errors, nhipTho: "Vui lòng nhập Nhịp thở" });
                                     }
                                 }}
-                                error={submitted && values.nhipTho === 0}
-                                helperText={submitted && values.nhipTho === 0 ? "Vui lòng nhập Nhịp thở" : ""} 
+                                error={submitted && !!errors.nhipTho}
+                                helperText={submitted ? errors.nhipTho : ""} 
                             />
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
@@ -293,12 +339,17 @@ const FHoSo = () => {
                                 value={values.canNang}
                                 onChange={({ target: { value } }) => {
                                     setValues({ ...values, canNang: !value ? 0 : parseInt(value) });
-                                    if (!!value && parseInt(value) > 0 && !hasChangedNew) {
-                                        setHasChangedNew(true);
+                                    if (!!value && parseInt(value) > 0) {
+                                        if (!hasChangedNew) {
+                                            setHasChangedNew(true);
+                                        }
+                                        setErrors({ ...errors, canNang: "" });
+                                    } else {
+                                        setErrors({ ...errors, canNang: "Vui lòng nhập Cân nặng" });
                                     }
                                 }}
-                                error={submitted && values.canNang === 0}
-                                helperText={submitted && values.canNang === 0 ? "Vui lòng nhập Cân nặng" : ""} 
+                                error={submitted && !!errors.canNang}
+                                helperText={submitted ? errors.canNang : ""} 
                             />
                         </Grid>
                     </Grid>

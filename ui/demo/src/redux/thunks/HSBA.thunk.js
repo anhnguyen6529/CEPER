@@ -133,6 +133,7 @@ export const datas = [
                 diaChi: '',
                 dienThoai: '',
                 quanHeVoiBenhNhan: '',
+                soCCCD: ''
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
@@ -207,6 +208,7 @@ export const datas = [
                 diaChi: '',
                 dienThoai: '',
                 quanHeVoiBenhNhan: '',
+                soCCCD: ''
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
@@ -281,6 +283,7 @@ export const datas = [
                 diaChi: '',
                 dienThoai: '',
                 quanHeVoiBenhNhan: '',
+                soCCCD: ''
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
@@ -355,6 +358,7 @@ export const datas = [
                 diaChi: '',
                 dienThoai: '',
                 quanHeVoiBenhNhan: '',
+                soCCCD: ''
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
@@ -429,6 +433,7 @@ export const datas = [
                 diaChi: '',
                 dienThoai: '',
                 quanHeVoiBenhNhan: '',
+                soCCCD: ''
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,
@@ -503,6 +508,7 @@ export const datas = [
                 diaChi: '',
                 dienThoai: '',
                 quanHeVoiBenhNhan: '',
+                soCCCD: ''
             }
         },
         phieuTDDiUngThuoc: PHIEUTDDIUNGTHUOC,

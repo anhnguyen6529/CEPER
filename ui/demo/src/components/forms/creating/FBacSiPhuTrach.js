@@ -5,7 +5,7 @@ import TaoHSBAContext from "../../../contexts/TaoHSBAContext";
 import doctorList from "../../../constants/doctor_list.json";
 
 const FHoSo = () => {
-    const { values, setValues, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
+    const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
     
     return (
         <Paper sx={{ px: 3, py: 2 }}>
@@ -21,13 +21,14 @@ const FHoSo = () => {
                             if (!hasChangedNew) {
                                 setHasChangedNew(true);
                             }
+                            setErrors({ ...errors, bacSiPhuTrach: "" });
                         }}
                         renderInput={(params) => 
                             <TextField
                                 {...params} 
                                 placeholder="Bác sĩ"
-                                error={submitted && !values.bacSiPhuTrach.id}
-                                helperText={submitted && !values.bacSiPhuTrach.id ? "Vui lòng nhập Bác sĩ phụ trách" : ""}
+                                error={submitted && !!errors.bacSiPhuTrach}
+                                helperText={submitted ? errors.bacSiPhuTrach : ""}
                             />
                         }
                         options={[{ id: "", name: "" }, ...doctorList.map(doctor => ({ id: doctor.id, name: doctor.ho_ten }))]}

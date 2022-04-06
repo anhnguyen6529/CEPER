@@ -8,7 +8,7 @@ import UserContext from "../contexts/UserContext";
 import { ArrowBack } from "@mui/icons-material";
 import { FBacSiPhuTrach, FHanhChinh, FHoSo } from "./forms/creating";
 import { danhSachHSBAActions } from "../redux/slices/danhSachHSBA.slice";
-import { initialValues, requiredValues, TaoHSBAProvider } from "../contexts/TaoHSBAContext";
+import { initialValues, initialErrors, TaoHSBAProvider } from "../contexts/TaoHSBAContext";
 import danhSachHSBAThunk from "../redux/thunks/danhSachHSBA.thunk";
 
 const DanhSachHSBA = () => {
@@ -24,6 +24,7 @@ const DanhSachHSBA = () => {
     const { hienTai, raVien, creatingMode, loading } = useSelector(state => state.danhSachHSBA);
     
     const [values, setValues] = useState(initialValues);
+    const [errors, setErrors] = useState(initialErrors);
     const [hasChangedNew, setHasChangedNew] = useState(false);
     const [openDialogNew, setOpenDialogNew] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -46,8 +47,7 @@ const DanhSachHSBA = () => {
     }
 
     const handleCreate = () => {
-        if (requiredValues.every(key => (key === "huyetAp" && (values[key][0] > 0 && values[key][1] > 0)) 
-        || (key === "bacSiPhuTrach" && !!values[key].id && !!values[key].name) || values[key] !== initialValues[key])) {
+        if (Object.keys(errors).every(key => (key !== "nguoiNha" && !errors[key]) || (key === "nguoiNha" && Object.values(errors.nguoiNha).every(val => !val)))) {
             dispatch(danhSachHSBAThunk.createNewHSBA({
                 pid: values.pid, avatar: values.avatar, trangThai: "Chờ khám",
                 khoa: values.khoa, phong: values.phong, giuong: values.giuong,
@@ -77,6 +77,7 @@ const DanhSachHSBA = () => {
             setHasChangedNew(false);
             setOpenDialogNew(false);
             setValues(initialValues);
+            setErrors(initialErrors);
             setOpenSnackbar(true);
         } else {
             setSubmitted(true);
@@ -84,7 +85,7 @@ const DanhSachHSBA = () => {
     }
 
     return (
-        <TaoHSBAProvider value={{ values, setValues, hasChangedNew, setHasChangedNew, submitted, setSubmitted }}>
+        <TaoHSBAProvider value={{ values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted, setSubmitted }}>
             <Container sx={{ mt: 3 }} maxWidth={false}>
                 <Slide direction="right" appear={false} in={!creatingMode} mountOnEnter unmountOnExit>
                     <Box sx={{ bgcolor: 'white' }}>
@@ -127,9 +128,9 @@ const DanhSachHSBA = () => {
                         <Box className="df aic" sx={{ mt: 3 }}>
                             <Button variant="primary-dark" onClick={handleCreate} disabled={!hasChangedNew}>Tạo</Button>
                             <Typography color="error" fontWeight="bold" sx={{ ml: 2 }}>
-                                {submitted && requiredValues.some(key => (key === "huyetAp" && (values[key][0] === 0 || values[key][1] === 0)) 
-                                || (key === "bacSiPhuTrach" && !values[key].id && !values[key].name) || values[key] === initialValues[key]) 
-                                    ? "*Vui lòng nhập đầy đủ thông tin!" : ""}
+                                {submitted && Object.keys(errors).some(key => (key !== "nguoiNha" && !!errors[key]) 
+                                || (key === "nguoiNha" && Object.values(errors.nguoiNha).some(val => !!val)))
+                                    ? "*Vui lòng nhập thông tin đầy đủ và hợp lệ!" : ""}
                             </Typography>
                         </Box>
 
@@ -148,6 +149,7 @@ const DanhSachHSBA = () => {
                                         setHasChangedNew(false);
                                         setOpenDialogNew(false);
                                         setValues(initialValues);
+                                        setErrors(initialErrors);
                                         dispatch(danhSachHSBAActions.setCreatingMode(false));
                                     }}
                                 >
