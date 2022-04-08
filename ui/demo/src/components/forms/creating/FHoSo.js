@@ -232,8 +232,8 @@ const FHoSo = () => {
                                 margin="dense"
                                 value={values.nhietDo}
                                 onChange={({ target: { value } }) => {
-                                    setValues({ ...values, nhietDo: !value ? 0 : parseInt(value) });
-                                    if (!!value && parseInt(value) > 0) {
+                                    setValues({ ...values, nhietDo: !value ? 0 : parseFloat(value) });
+                                    if (!!value && parseFloat(value) > 0) {
                                         if (!hasChangedNew) {
                                             setHasChangedNew(true);
                                         }
@@ -338,8 +338,8 @@ const FHoSo = () => {
                                 margin="dense"
                                 value={values.canNang}
                                 onChange={({ target: { value } }) => {
-                                    setValues({ ...values, canNang: !value ? 0 : parseInt(value) });
-                                    if (!!value && parseInt(value) > 0) {
+                                    setValues({ ...values, canNang: !value ? 0 : parseFloat(value) });
+                                    if (!!value && parseFloat(value) > 0) {
                                         if (!hasChangedNew) {
                                             setHasChangedNew(true);
                                         }

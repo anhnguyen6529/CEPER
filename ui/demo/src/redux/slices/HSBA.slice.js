@@ -97,23 +97,23 @@ export const initialHSBAState = {
     nguoiGiaoHoSo: '',
     nguoiNhanHoSo: '',  
     toDieuTri: {
-        data: [{ ngayGio: '', dienBienBenh: '', yLenh: '', bacSiGhi: '' }],
+        data: [] //[{ ngayGio: '', dienBienBenh: '', yLenh: '', bacSiGhi: '' }],
     },
     phieuChamSoc: {
-        data: [{ ngay: '', gio: '', theoDoiDienBien: [], thucHienYLenh: [], xacNhan: [], dieuDuongGhi: '' }],
+        data: [] //[{ ngayGio: '', theoDoiDienBien: [''], thucHienYLenh: [''], xacNhan: [''], dieuDuongGhi: '' }],
     },
     phieuTDTruyenDich: {
-        data: [{ ngayThang: '', values: [{ tenDichTruyen: '', soLuong: 0, loSanXuat: '', tocDo: 0, thoiGianBatDau: '', thoiGianKetThuc: '', BSChiDinh: '', DDThucHien: '' }] }],
+        data: [] //[{ ngayThang: '', values: [{ tenDichTruyen: '', soLuong: 0, loSanXuat: '', tocDo: 0, thoiGianBatDau: '', thoiGianKetThuc: '', BSChiDinh: '', DDThucHien: '' }] }],
     },
     phieuTDChucNangSong: {
-        data: [{ ngayGio: '', mach: 0, nhietDo: 0, huyetAp: '', nhipTho: 0, canNang: 0, dieuDuongGhi: '' }],
+        data: [] //[{ ngayGio: '', mach: 0, nhietDo: 0, huyetAp: '', nhipTho: 0, canNang: 0, dieuDuongGhi: '' }],
     },
     phieuTDDiUngThuoc: {
-        data: [{ ngayGioDungThuoc: '', thuocDiUng: [], kieuDiUng: '', bieuHienLamSang: '', bacSiXacNhan: '', ghiChu: '' }]
+        data: [] //[{ ngayGioDungThuoc: '', thuocDiUng: [''], kieuDiUng: '', bieuHienLamSang: '', bacSiXacNhan: '', ghiChu: '' }]
     },
     phieuCongKhaiThuoc: {
         ngayThang: [],
-        data: [{ tenThuoc: '', donVi: '', ngayThang: [], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }],
+        data: [] //[{ tenThuoc: '', donVi: '', ngayThang: [''], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }],
     },
     danhSachYLenh: []
 }

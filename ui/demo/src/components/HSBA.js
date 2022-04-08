@@ -173,11 +173,20 @@ const HSBA = () => {
                                 <Grid container columnSpacing={3}>
                                     <Grid item xs={6}>
                                         <Typography fontWeight="bold">Bệnh điều trị</Typography>
-                                        <Typography>{benhNhan.chanDoanBanDau}</Typography>
+                                        <Typography>
+                                            {!!benhNhan.chanDoanBanDau ? benhNhan.chanDoanBanDau
+                                                : <Typography component="span">(<i>trống</i>)</Typography>
+                                            }
+                                        </Typography>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography fontWeight="bold">Tình trạng hiện tại</Typography>
-                                        <Typography>{benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh}</Typography>
+                                        <Typography>
+                                            {benhNhan.toDieuTri.data.length > 0 
+                                                ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh 
+                                                : <Typography component="span">(<i>trống</i>)</Typography>
+                                            }
+                                        </Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>

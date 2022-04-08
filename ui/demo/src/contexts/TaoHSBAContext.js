@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 export const initialValues = {
     pid: "",
-    avatar: null,
+    avatar: "",
     ngayVaoVien: null,
     khoa: "",
     phong: "",

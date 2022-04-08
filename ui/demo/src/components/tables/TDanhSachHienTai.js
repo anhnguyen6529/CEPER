@@ -6,7 +6,7 @@ import {
 import "../../styles/index.css";
 import { Search } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
-import { UtilsTable } from "../../utils";
+import { UtilsDateTime, UtilsTable } from "../../utils";
 import { format } from "date-fns";
 import { TablePagination, StyledTableRow } from "../common";
 import UserContext from "../../contexts/UserContext";
@@ -49,7 +49,7 @@ const TDanhSachHienTai = ({ data }) => {
     const [orderBy, setOrderBy] = useState('trangThai');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [rows, setRows] = useState(data);
+    const [rows, setRows] = useState(data.map(d => ({ ...d, tuoi: UtilsDateTime.getAge(d.ngaySinh) })));
     
     const requestSearch = (searchKey, cellId) => {
         let fIndex = searchKeys.findIndex(element => element.id === cellId);

@@ -186,8 +186,8 @@ const FPhieuTDChucNangSong = () => {
                                             fullWidth
                                             value={newNhietDo}
                                             onChange={({ target: { value } }) => {
-                                                setNewNhietDo(!value ? 0 : parseInt(value));
-                                                if (!value || parseInt(value) === 0) {
+                                                setNewNhietDo(!value ? 0 : parseFloat(value));
+                                                if (!value || parseFloat(value) === 0) {
                                                     if (newMach === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
                                                         setHasChanged(false);
                                                     }
@@ -207,8 +207,8 @@ const FPhieuTDChucNangSong = () => {
                                                 fullWidth
                                                 value={newHuyetAp[0]}
                                                 onChange={({ target: { value } }) => {
-                                                    setNewHuyetAp([!value ? 0 : parseInt(value), newHuyetAp[1]]);
-                                                    if (!value || parseInt(value) === 0) {
+                                                    setNewHuyetAp([!value ? 0 : parseFloat(value), newHuyetAp[1]]);
+                                                    if (!value || parseFloat(value) === 0) {
                                                         if (newMach === 0 && newNhietDo === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
                                                             setHasChanged(false);
                                                         }
@@ -268,8 +268,8 @@ const FPhieuTDChucNangSong = () => {
                                             fullWidth
                                             value={newCanNang}
                                             onChange={({ target: { value } }) => {
-                                                setNewCanNang(!value ? 0 : parseInt(value));
-                                                if (!value || parseInt(value) === 0) {
+                                                setNewCanNang(!value ? 0 : parseFloat(value));
+                                                if (!value || parseFloat(value) === 0) {
                                                     if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0) {
                                                         setHasChanged(false);
                                                     }

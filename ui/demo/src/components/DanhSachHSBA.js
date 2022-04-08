@@ -10,6 +10,7 @@ import { FBacSiPhuTrach, FHanhChinh, FHoSo } from "./forms/creating";
 import { danhSachHSBAActions } from "../redux/slices/danhSachHSBA.slice";
 import { initialValues, initialErrors, TaoHSBAProvider } from "../contexts/TaoHSBAContext";
 import danhSachHSBAThunk from "../redux/thunks/danhSachHSBA.thunk";
+import { format } from "date-fns";
 
 const DanhSachHSBA = () => {
     const { role, name, id } = useSelector(state => state.auth.user);
@@ -52,7 +53,7 @@ const DanhSachHSBA = () => {
                 pid: values.pid, avatar: values.avatar, trangThai: "Chờ khám",
                 khoa: values.khoa, phong: values.phong, giuong: values.giuong,
                 hanhChinh: {
-                    hoTen: values.hoTen, ngaySinh: new Date(values.ngaySinh).toISOString(), gioiTinh: values.gioiTinh, ngheNghiep: values.ngheNghiep,
+                    hoTen: values.hoTen, ngaySinh: format(new Date(values.ngaySinh), "yyyy-MM-dd"), gioiTinh: values.gioiTinh, ngheNghiep: values.ngheNghiep,
                     noiLamViec: values.noiLamViec, quocTich: values.quocTich, danToc: values.danToc, soCCCD: values.soCCCD,
                     doiTuong: values.doiTuong, dienThoai: values.dienThoai, soNha: values.soNha, thonPho: values.thonPho,
                     phuongXa: values.phuongXa, quanHuyen: values.quanHuyen, tinhTP: values.tinhTP, 
@@ -134,7 +135,7 @@ const DanhSachHSBA = () => {
                             </Typography>
                         </Box>
 
-                        <Dialog open={openDialogNew}>
+                        <Dialog open={openDialogNew} disableEnforceFocus>
                             <DialogTitle>Xác nhận thoát tạo bệnh án</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>Toàn bộ nội dung đã nhập của bệnh án mới sẽ không được lưu.</DialogContentText>

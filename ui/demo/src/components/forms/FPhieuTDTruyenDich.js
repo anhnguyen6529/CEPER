@@ -347,7 +347,7 @@ const FPhieuTDTruyenDich = () => {
                                                         }
                                                     }
                                                 }}
-                                                minDate={moment(rows[rows.length - 1].values[rows[rows.length - 1].values.length - 1].thoiGianKetThuc)}
+                                                minDate={rows.length > 0 ? moment(rows[rows.length - 1].values[rows[rows.length - 1].values.length - 1].thoiGianKetThuc) : undefined}
                                                 renderInput={(params) => <TextField fullWidth {...params} />}
                                                 inputFormat="DD/MM/yyyy"
                                                 OpenPickerButtonProps={{ size: "small", sx: { px: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
@@ -393,7 +393,7 @@ const FPhieuTDTruyenDich = () => {
                                                         }
                                                     }
                                                 }}
-                                                minDate={moment(rows[rows.length - 1].values[rows[rows.length - 1].values.length - 1].thoiGianKetThuc)}
+                                                minDate={rows.length > 0 ? moment(rows[rows.length - 1].values[rows[rows.length - 1].values.length - 1].thoiGianKetThuc) : undefined}
                                                 renderInput={(params) => 
                                                     <TextField 
                                                         fullWidth 

@@ -267,8 +267,8 @@ const FPhieuCongKhaiThuoc = () => {
                                 : null}
                             </TableRow>
                         </TableHead>
-                        <TableBody>
                         
+                        <TableBody>                     
                             {(rowsPerPage > 0
                                 ? UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt")).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt"))
