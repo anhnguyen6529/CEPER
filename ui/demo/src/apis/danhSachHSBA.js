@@ -2,11 +2,11 @@ import ceperApi from "./api";
 
 const danhSachHSBAApi = {
     getNewPID: async () => 
-        ceperApi.get(`/user/danhSachHSBA/newPID`),
+        ceperApi.get(`/user/danh-sach-hsba/new-pid`),
     getDanhSachHSBA: async (apiData) =>
-        ceperApi.get(`user/danhSachHSBA`, { params: { doctorID: apiData.doctorID }}),
+        ceperApi.get(`user/danh-sach-hsba`, { params: { doctorID: apiData.doctorID }}),
     createNewHSBA: async (apiData) => 
-        ceperApi.post(`user/danhSachHSBA/createHSBA`, apiData)
+        ceperApi.post(`user/danh-sach-hsba`, apiData)
 }
 
 export default danhSachHSBAApi;
