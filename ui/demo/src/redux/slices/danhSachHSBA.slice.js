@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import danhSachHSBAThunk from "../thunks/danhSachHSBA.thunk";
+import { UtilsDateTime } from "../../utils";
 
 const initialState = {
     loading: false,
@@ -50,11 +51,14 @@ const danhSachHSBASlice = createSlice({
             }
         })
         .addCase(danhSachHSBAThunk.getDanhSachHSBA.fulfilled, (state, action) => {
+            const hienTai = [...action.payload.hienTai].map(ht => ({ ...ht, tuoi: UtilsDateTime.getAge(ht.ngaySinh) }));
+            const raVien = [...action.payload.raVien].map(rv => ({ ...rv, tuoi: UtilsDateTime.getAge(rv.ngaySinh) }));
             return {
                 ...state,
                 loading: false,
                 error: '',
-                ...action.payload
+                hienTai: hienTai, 
+                raVien: raVien
             }
         })
         .addCase(danhSachHSBAThunk.getDanhSachHSBA.rejected, (state, action) => {

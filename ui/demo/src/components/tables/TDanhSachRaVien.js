@@ -6,7 +6,7 @@ import {
 import "../../styles/index.css";
 import { Search } from "@mui/icons-material";
 import { visuallyHidden } from "@mui/utils";
-import { UtilsDateTime, UtilsTable } from "../../utils";
+import { UtilsTable } from "../../utils";
 import { format } from "date-fns";
 import { TablePagination, StyledTableRow } from "../common";
 import UserContext from "../../contexts/UserContext";
@@ -45,7 +45,7 @@ const TDanhSachRaVien = ({ data }) => {
     const [orderBy, setOrderBy] = useState('pid');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [rows, setRows] = useState(data.map(d => ({ ...d, tuoi: UtilsDateTime.getAge(d.ngaySinh) })));
+    const [rows, setRows] = useState(data);
 
     const requestSearch = (searchKey, cellId) => {
         let fIndex = searchKeys.findIndex(element => element.id === cellId);
@@ -56,7 +56,9 @@ const TDanhSachRaVien = ({ data }) => {
                     checkAll = checkAll && String(row[key]).toLowerCase().includes(searchKey.toLowerCase());
                 } else {
                     var fKey = searchKeys.find(element => element.id === key);
-                    checkAll = checkAll & String(row[key]).toLowerCase().includes(fKey.search.toLowerCase());
+                    if (typeof fKey !== "undefined") {
+                        checkAll = checkAll & String(row[key]).toLowerCase().includes(fKey.search.toLowerCase());
+                    }
                 }
             })
             return checkAll;
@@ -125,7 +127,13 @@ const TDanhSachRaVien = ({ data }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(rowsPerPage > 0
+                        {rows.length === 0 ? (
+                            <StyledTableRow>
+                                <TableCell colSpan={danhSachHSBATab.raVienColsChecked.filter(checked => checked).length} align="center">
+                                    (<i>trống</i>)
+                                </TableCell>
+                            </StyledTableRow>
+                        ) : (rowsPerPage > 0
                             ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
                         ).map((row, index) => {

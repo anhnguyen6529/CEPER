@@ -31,7 +31,6 @@ const FPhieuCongKhaiThuoc = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { role } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
-
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [ngayThang, setNgayThang] = useState(content.ngayThang);
@@ -126,7 +125,7 @@ const FPhieuCongKhaiThuoc = () => {
     const calculateTotalIntoMoney = () => {
         var total = 0;
         rows.forEach((row) => {
-            total = total + row.thanhTien;
+            total = total + parseInt(row.thanhTien);
         });
         return total === 0 ? '' : total;
     };
@@ -269,7 +268,11 @@ const FPhieuCongKhaiThuoc = () => {
                         </TableHead>
                         
                         <TableBody>                     
-                            {(rowsPerPage > 0
+                            {rows.length === 0 && role !== "DD" ? (
+                                <StyledTableRow>
+                                    <TableCell colSpan={8} align="center">(<i>trống</i>)</TableCell>
+                                </StyledTableRow>
+                            ) : (rowsPerPage > 0
                                 ? UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt")).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : UtilsTable.stableSort(rows, UtilsTable.getComparator("asc", "stt"))
                             ).map((row, index) => {
@@ -326,8 +329,8 @@ const FPhieuCongKhaiThuoc = () => {
                                             </TableCell>
                                         : null}
                                         <TableCell className="tableBodyBorderRight" align="center">{row.tongSo}</TableCell>
-                                        <TableCell className="tableBodyBorderRight" align="center">{row.donGia.toLocaleString()}</TableCell>
-                                        <TableCell className="tableBodyBorderRight" align="center">{row.thanhTien.toLocaleString()}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">{parseInt(row.donGia).toLocaleString()}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" align="center">{parseInt(row.thanhTien).toLocaleString()}</TableCell>
                                         <TableCell>{row.ghiChu}</TableCell>
                                     </StyledTableRow>
                                 );
@@ -432,36 +435,38 @@ const FPhieuCongKhaiThuoc = () => {
                                 ))
                             : null}
                             
-                            <TableRow>
-                                <TableCell className="tableBodyBorderRight" colSpan={2}>Tổng số khoản thuốc dùng</TableCell>
-                                <TableCell className="tableBodyBorderRight" />
-                                {ngayThang.length <= maxLastRows || expandAllRows ? (
-                                    <>
-                                        {ngayThang.map((_, idx) => (
-                                            <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
-                                                {calculateTotalByDate(idx)}
-                                            </TableCell>
-                                        ))}
-                                        {expandAllRows && <TableCell className="tableBodyBorderRight" />}
-                                    </>
-                                ) : (
-                                    <>
-                                        <TableCell className="tableBodyBorderRight" />
-                                        {ngayThang.slice(ngayThang.length - maxLastRows).map((_, idx) => (
-                                            <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
-                                                {calculateTotalByDate(ngayThang.length - maxLastRows + idx)}
-                                            </TableCell>
-                                        ))}
-                                    </>
-                                )}
-                                {(role === "DD" && !ngayRaVien) ? <TableCell className="tableBodyBorderRight" /> : null}
-                                <TableCell className="tableBodyBorderRight" />
-                                <TableCell className="tableBodyBorderRight" />
-                                <TableCell className="tableBodyBorderRight" align="center">
-                                    {calculateTotalIntoMoney().toLocaleString()}
-                                </TableCell>
-                                <TableCell />
-                            </TableRow>
+                            {rows.length > 0 ? 
+                                <TableRow>
+                                    <TableCell className="tableBodyBorderRight" colSpan={2}>Tổng số khoản thuốc dùng</TableCell>
+                                    <TableCell className="tableBodyBorderRight" />
+                                    {ngayThang.length <= maxLastRows || expandAllRows ? (
+                                        <>
+                                            {ngayThang.map((_, idx) => (
+                                                <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
+                                                    {calculateTotalByDate(idx)}
+                                                </TableCell>
+                                            ))}
+                                            {expandAllRows && <TableCell className="tableBodyBorderRight" />}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <TableCell className="tableBodyBorderRight" />
+                                            {ngayThang.slice(ngayThang.length - maxLastRows).map((_, idx) => (
+                                                <TableCell key={`tongSo${idx}`} className="tableBodyBorderRight" align="center">
+                                                    {calculateTotalByDate(ngayThang.length - maxLastRows + idx)}
+                                                </TableCell>
+                                            ))}
+                                        </>
+                                    )}
+                                    {(role === "DD" && !ngayRaVien) ? <TableCell className="tableBodyBorderRight" /> : null}
+                                    <TableCell className="tableBodyBorderRight" />
+                                    <TableCell className="tableBodyBorderRight" />
+                                    <TableCell className="tableBodyBorderRight" align="center">
+                                        {calculateTotalIntoMoney().toLocaleString()}
+                                    </TableCell>
+                                    <TableCell />
+                                </TableRow>
+                            : null}
                         </TableBody> 
                     </Table>
                 </TableContainer>

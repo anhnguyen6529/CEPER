@@ -167,12 +167,13 @@ def getOneHSBAByPID(pid):
         result["phieuTDDiUngThuoc"]["data"].append(dt)
 
     cursor.execute(
-        "SELECT Ngay_Thang FROM PCKT_NGAY_THANG WHERE PID = " + pid + " ;")
+        "SELECT Ngay_Thang FROM PCKT_NGAY_THANG WHERE PID =\'" + pid + "';")
     conn.commit()
     result["phieuCongKhaiThuoc"] = dict()
     result["phieuCongKhaiThuoc"]["ngayThang"] = []
-    if len(cursor.fetchall()) > 0:
-        json.loads(list(cursor.fetchall())[0][0])
+    data = list(cursor.fetchall())
+    if len(data) > 0:
+        result["phieuCongKhaiThuoc"]["ngayThang"] = json.loads(data[0][0])
     cursor.execute(
         "SELECT Ten_Thuoc, Don_Vi, Ngay_Thang, Tong_So, Don_Gia, Thanh_Tien, Ghi_Chu FROM PHIEU_CONG_KHAI_THUOC WHERE PID = " + pid + " ;")
     conn.commit()

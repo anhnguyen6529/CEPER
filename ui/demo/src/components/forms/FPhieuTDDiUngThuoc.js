@@ -135,7 +135,11 @@ const FPhieuTDDiUngThuoc = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {(rowsPerPage > 0
+                            {rows.length === 0 && role !== "BS" ? (
+                                <StyledTableRow>
+                                    <TableCell colSpan={8} align="center">(<i>trống</i>)</TableCell>
+                                </StyledTableRow>
+                            ) : (rowsPerPage > 0
                                 ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
                             ).map((row, index) => {
