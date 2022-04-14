@@ -338,7 +338,7 @@ const FHanhChinh = () => {
                                 renderValue={(select) => !select ? "-- Chọn --" : select}
                             >
                                 <MenuItem value="" disabled>-- Chọn --</MenuItem>
-                                {CLocal.sort((a, b) => { return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1) }).map((province, id) => (
+                                {CLocal.sort((a, b) => a.name.localeCompare(b.name)).map((province, id) => (
                                     <MenuItem value={province.name} key={id}>{province.name}</MenuItem>
                                 ))}
                             </Select>
@@ -369,7 +369,7 @@ const FHanhChinh = () => {
                             >
                                 <MenuItem value="" disabled>-- Chọn --</MenuItem>
                                 {!!values.tinhTP && CLocal.find((element) => element.name === values.tinhTP).districts.sort((a, b) => 
-                                { return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1) }).map((district, id) => (
+                                a.name.localeCompare(b.name)).map((district, id) => (
                                     <MenuItem value={district.name} key={id}>{district.name}</MenuItem>
                                 ))}
                             </Select>
@@ -402,7 +402,7 @@ const FHanhChinh = () => {
                                 {(!!values.tinhTP && !!values.quanHuyen) &&
                                     CLocal.find((element) => element.name === values.tinhTP).districts
                                         .find((element) => element.name === values.quanHuyen).wards.sort((a, b) => 
-                                        { return a.name === b.name ? 0 : (a.name < b.name ? -1 : 1) }).map((ward, id) => (
+                                        a.name.localeCompare(b.name)).map((ward, id) => (
                                         <MenuItem value={ward.name} key={id}>{ward.name}</MenuItem>
                                     ))
                                 }
