@@ -196,6 +196,11 @@ const HSBASlice = createSlice({
     extraReducers: (builder) => {
         builder
         .addCase(HSBAThunk.getOneHSBAByPID.fulfilled, (state, action) => {
+            if (action.payload.token) {
+                localStorage.setItem('token', action.payload.token);
+                delete action.payload.token
+            }
+            
             return {
                 ...state,
                 error: '',

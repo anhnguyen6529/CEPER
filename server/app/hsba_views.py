@@ -1,9 +1,11 @@
 from app import app, conn
 from flask import jsonify
 import json
+from flask_jwt_extended import jwt_required
 
 
 @app.route('/user/hsba/<pid>')
+@jwt_required()
 def getOneHSBAByPID(pid):
     cursor = conn.cursor()
     cursor.execute("SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Phong, Giuong, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Nghe_Nghiep, Noi_Lam_Viec, Quoc_Tich, Dan_Toc, So_CCCD, Doi_Tuong, Dien_Thoai, So_Nha, Thon_Pho, Phuong_Xa, Quan_Huyen, Tinh_TP, So_The_BHYT, Noi_Dang_Ky_KCB_Ban_Dau, Gia_Tri_Tu, Gia_Tri_Den, Ho_Ten_Nguoi_Nha, Dia_Chi_Nguoi_Nha, Dien_Thoai_Nguoi_Nha, Quan_He_Voi_Benh_Nhan, So_CCCD_Nguoi_Nha, Thoi_Gian_Lam_Benh_An, Bac_Si_Lam_Benh_An, Ly_Do_Vao_Vien, Ngay_Vao_Vien, Vao_Ngay_Thu, Chan_Doan_Noi_Gioi_Thieu, Noi_Gioi_Thieu, Qua_Trinh_Benh_Ly, Tien_Su_Ban_Than, Dac_Diem_Lien_Quan_Benh, Tien_Su_Gia_Dinh, Kham_Toan_Than, Tuan_Hoan, Ho_Hap, Tieu_Hoa, Than_Tiet_Nieu, Than_Kinh, Co_Xuong_Khop, Tai_Mui_Hong, Rang_Ham_Mat, Mat, Noi_Tiet, Tom_Tat_Benh_An, Chan_Doan_Ban_Dau, Thoi_Gian_Tong_Ket_Benh_An, Bac_Si_Dieu_Tri, Phuong_Phap_Dieu_Tri, Chan_Doan_Khi_Ra_Vien, Ngay_Ra_Vien, Tinh_Trang_Ra_Vien, Huong_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = " +

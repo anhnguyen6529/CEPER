@@ -31,8 +31,11 @@ const FHoSo = () => {
     const now = new Date();
 
     useEffect(() => {
-        dispatch(danhSachHSBAThunk.getNewPID()).unwrap().then((result) => {
-            setValues({ ...values, pid: result })
+        dispatch(danhSachHSBAThunk.getNewPID()).unwrap().then((response) => {
+            if (response.token) {
+                localStorage.setItem('token', response.token);
+            }
+            setValues({ ...values, pid: response.newPID })
         });
         // eslint-disable-next-line
     }, []);

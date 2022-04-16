@@ -6,25 +6,17 @@ import loginImg from "../images/login.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserInjured, faUserMd, faUserNurse } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import authApi from "../apis/auth";
+import { useDispatch } from "react-redux";
 import { authActions } from "../redux/slices/auth.slice";
 
 const useStyles = makeStyles(() => ({
     root: {
         minHeight: `calc(100vh - 72px)`,
     },
-    homeLink: {
-        color: '#09425A'
-    },
     loginImg: {
         width: 500,
         marginTop: 100,
-    },
-    greeting: {
-        paddingTop: 150,
-    }, 
-    buttonGroup: {
-        marginTop: 40
     },
     loginForm: {
         marginTop: 30,
@@ -44,20 +36,57 @@ const roles = [
 
 const Login = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const classes = useStyles();
     const [clickedId, setClickedId] = useState(-1);
-    
-    
-    const { login } = useSelector(state => state.auth);
-    const dispatch = useDispatch();
+    const [login, setLogin] = useState({ error: '', role: '', username: '', password: '' });
+    const [submitting, setSubmitting] = useState(false);
 
-    const onSubmit = () => {
-        dispatch(authActions.login({ username: login.username, password: login.password, role: login.role }));
+    const handleLogin = async () => {
+        setSubmitting(true);
+
+        try {
+            const apiResponse = await authApi.login({ username: login.username.trim(), password: login.password, role: login.role });
+            
+            if (apiResponse.data.token) {
+                localStorage.setItem('token', apiResponse.data.token);
+                dispatch(authActions.updateUserFields({ ...apiResponse.data.user }));
+                if (login.role === "BN") {
+                    // get user pid => api
+                    const pid = '123456';
+                    navigate(`/user/HSBA/${pid}`);
+                } else {
+                    navigate('/user/HSBA');
+                }  
+            } else {
+                setLogin({ ...login, error: "Thông tin đăng nhập không đúng. Vui lòng kiểm tra và nhập lại." });
+            }
+        } catch (error) {
+            const err = error.toJSON();
+            if (err.status === 401 || err.status === 404) {
+                setLogin({ ...login, error: "Thông tin đăng nhập không đúng. Vui lòng kiểm tra và nhập lại." });
+            } else {
+                setLogin({ ...login, error: err.message });
+            }
+        } finally {
+            setSubmitting(false);
+        }
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (!login.username || !login.password) {
+            setLogin({ ...login, error: "Vui lòng nhập đầy đủ thông tin đăng nhập" });
+        } else if (!login.role) {
+            setLogin({ ...login, error: "Vui lòng chọn vai trò để đăng nhập" });
+        } else {
+            handleLogin();
+        }
     }
 
     useEffect(() => {
-        if (!!localStorage.getItem('user')) {
+        if (!!localStorage.getItem('token')) {
             if (login.role === "BN") {
                 // get user pid => api
                 const pid = '123456';
@@ -69,41 +98,27 @@ const Login = () => {
         // eslint-disable-next-line
     }, []);
 
-    useEffect(() => {
-        if (login.success) {
-            if (login.role === "BN") {
-                // get user pid => api
-                const pid = '123456';
-                navigate(`/user/HSBA/${pid}`);
-            } else {
-                navigate('/user/HSBA');
-            }  
-            localStorage.setItem('user', login.username);
-        }
-        // eslint-disable-next-line
-    }, [login.success]);
-
     return (
         <div className={classes.root}>
             <NavBar>
                 <Link href="/" underline="none" color="inherit">
-                    <Typography fontWeight="bold" className={classes.homeLink}>Trang chủ</Typography>
+                    <Typography fontWeight="bold" color={(theme) => theme.palette.secondary.main}>Trang chủ</Typography>
                 </Link>     
             </NavBar>
             <Container>
                 <Grid container>
                     <Grid item xs={6}>
-                        <Typography fontWeight="bold" className={classes.greeting} fontSize={20}>
+                        <Typography fontWeight="bold" sx={{ pt: '150px' }} fontSize={20}>
                             CHÀO MỪNG BẠN ĐẾN VỚI CEPER
                         </Typography>
                         
-                        <div className={classes.buttonGroup}>
+                        <div style={{ marginTop: 40 }}>
                             {roles.map((role, i) => (
                                 <Button
                                     key={i}
                                     onClick={() => {
                                         setClickedId(i);
-                                        dispatch(authActions.updateLoginField({ field: 'role', value: role[2] }));
+                                        setLogin({ ...login, role: role[2] });
                                     }}
                                     style={{
                                         color: i === clickedId ? 'white' : '#09425A',
@@ -127,15 +142,12 @@ const Login = () => {
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="username"
                                 label="Tên đăng nhập"
                                 name="username"
                                 autoComplete="none"
-                                style={{ background: 'white' }}
+                                sx={{ bgcolor: 'white' }}
                                 value={login.username}
-                                onChange={(event) => {
-                                    dispatch(authActions.updateLoginField({ field: 'username', value: event.target.value }))
-                                }}
+                                onChange={({ target: { value } }) => setLogin({ ...login, username: value })}
                             />
 
                             <TextField 
@@ -145,12 +157,9 @@ const Login = () => {
                                 name="password"
                                 label="Mật khẩu"
                                 type="password"
-                                id="password"
-                                style={{ background: 'white' }}
+                                sx={{ bgcolor: 'white' }}
                                 value={login.password}
-                                onChange={(event) => {
-                                    dispatch(authActions.updateLoginField({ field: 'password', value: event.target.value }))
-                                }}
+                                onChange={({ target: { value } }) => setLogin({ ...login, password: value })}
                             />
 
                             <Link 
@@ -160,21 +169,21 @@ const Login = () => {
                                 <Typography variant="subtitle2" textAlign="right" mt={1} mb={2}>Quên mật khẩu</Typography>
                             </Link>
                                 
-                            <FormHelperText error sx={{ fontWeight: 'bold', textAlign: 'center'}}>{login.error}</FormHelperText>
+                            <FormHelperText error sx={{ fontWeight: 'bold', textAlign: 'center' }}>{login.error}</FormHelperText>
 
-                            {login.success && 
-                            <Box className="df fdc aic">
-                                <CircularProgress color="secondary" size={28}/>
-                            </Box> 
-                            }
+                            {submitting ?
+                                <Box className="df fdc aic">
+                                    <CircularProgress color="secondary" size={28}/>
+                                </Box> 
+                            : null}
 
                             <Button
                                 type="submit"
                                 fullWidth
                                 variant="contained"
                                 sx={{ height: 42, fontWeight: 'bold', mt: 2 }}
-                                onClick={onSubmit}
-                                disabled={!!login.success}
+                                onClick={handleSubmit}
+                                disabled={submitting}
                             >
                                 Đăng nhập
                             </Button>

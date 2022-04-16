@@ -1,8 +1,10 @@
 from app import app
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 
 
 @app.route('/spelling-error/process-result')
+@jwt_required()
 def getProcessResult():
     text = request.args.get('text')
     result = dict()

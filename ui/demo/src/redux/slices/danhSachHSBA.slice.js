@@ -29,6 +29,11 @@ const danhSachHSBASlice = createSlice({
             }
         })
         .addCase(danhSachHSBAThunk.createNewHSBA.fulfilled, (state, action) => {
+            if (action.payload.token) {
+                localStorage.setItem('token', action.payload.token);
+                delete action.payload.token
+            }
+            
             return {
                 ...state,
                 creatingHSBA: false,
@@ -51,6 +56,11 @@ const danhSachHSBASlice = createSlice({
             }
         })
         .addCase(danhSachHSBAThunk.getDanhSachHSBA.fulfilled, (state, action) => {
+            if (action.payload.token) {
+                localStorage.setItem('token', action.payload.token);
+                delete action.payload.token
+            }
+
             const hienTai = [...action.payload.hienTai].map(ht => ({ ...ht, tuoi: UtilsDateTime.getAge(ht.ngaySinh) }));
             const raVien = [...action.payload.raVien].map(rv => ({ ...rv, tuoi: UtilsDateTime.getAge(rv.ngaySinh) }));
             return {

@@ -19,7 +19,7 @@ const User = () => {
     const dispatch = useDispatch();
     
     useEffect(() => {
-        if (!localStorage.getItem('user')) {
+        if (!localStorage.getItem('token')) {
             navigate('/login');
         } else if (user.role === 'BN' && typeof(pid) === 'undefined') {
             navigate(`/user/HSBA/${user.id}`);

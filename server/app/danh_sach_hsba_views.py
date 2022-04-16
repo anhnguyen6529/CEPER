@@ -1,20 +1,23 @@
 from app import app, conn
 from flask import jsonify, request
+from flask_jwt_extended import jwt_required
 
 
 @app.route('/user/danh-sach-hsba/new-pid')
+@jwt_required()
 def getNewPID():
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(PID) FROM HO_SO_BENH_AN;")
-    newPID = str(int(cursor.fetchall()[0][0]) + 1).ljust(6, "0")
-    response = jsonify(newPID)
+    new_pid = str(int(cursor.fetchall()[0][0]) + 1).ljust(6, "0")
+    response = jsonify({"newPID": new_pid})
     cursor.close()
     return response
 
 
 @app.route('/user/danh-sach-hsba', methods=['GET'])
+@jwt_required()
 def getDanhSachHSBA():
-    doctorID = request.args.get('doctorID')
+    doctor_id = request.args.get('doctorID')
     cursor = conn.cursor()
     result = dict()
     result["hienTai"] = []
@@ -26,16 +29,16 @@ def getDanhSachHSBA():
     hien_tai_query = ""
     ra_vien_query = ""
 
-    if not doctorID:
+    if not doctor_id:
         hien_tai_query = "SELECT _hsba.PID, Avatar, Trang_Thai, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Khoa, Phong, Giuong, Chan_Doan_Ban_Dau, Dien_Bien_Benh, Ngay_Vao_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM (SELECT * FROM HO_SO_BENH_AN NATURAL JOIN HANH_CHINH NATURAL JOIN BENH_AN NATURAL JOIN TONG_KET_BENH_AN WHERE Trang_Thai <> 'Đã ra viện') AS _hsba LEFT JOIN (SELECT _tdt.PID, Dien_Bien_Benh FROM TO_DIEU_TRI _tdt, (SELECT PID, MAX(Ngay_Gio) AS Ngay_Gio FROM TO_DIEU_TRI GROUP BY PID) AS mx WHERE _tdt.PID = mx.PID && _tdt.Ngay_Gio = mx.Ngay_Gio) AS tdt ON _hsba.PID = tdt.PID ORDER BY Trang_Thai, _hsba.PID DESC;"
         ra_vien_query = "SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Ngay_Vao_Vien, Ngay_Ra_Vien, Chan_Doan_Khi_Ra_Vien, Tinh_Trang_Ra_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = hc.PID && hsba.PID = ba.PID && hsba.PID = tkba.PID && hsba.Trang_Thai = 'Đã ra viện' ORDER BY hsba.PID DESC;"
     else:
         hien_tai_query = "SELECT _hsba.PID, Avatar, Trang_Thai, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Khoa, Phong, Giuong, Chan_Doan_Ban_Dau, Dien_Bien_Benh, Ngay_Vao_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM (SELECT * FROM HO_SO_BENH_AN NATURAL JOIN HANH_CHINH NATURAL JOIN BENH_AN NATURAL JOIN TONG_KET_BENH_AN WHERE Trang_Thai <> 'Đã ra viện' && (SUBSTRING(Bac_Si_Lam_Benh_An, 9, 6) = " + \
-            doctorID + " || SUBSTRING(Bac_Si_Dieu_Tri, 9, 6) = " + doctorID + \
+            doctor_id + " || SUBSTRING(Bac_Si_Dieu_Tri, 9, 6) = " + doctor_id + \
             ")) AS _hsba LEFT JOIN (SELECT _tdt.PID, Dien_Bien_Benh FROM TO_DIEU_TRI _tdt, (SELECT PID, MAX(Ngay_Gio) AS Ngay_Gio FROM TO_DIEU_TRI GROUP BY PID) AS mx WHERE _tdt.PID = mx.PID && _tdt.Ngay_Gio = mx.Ngay_Gio) AS tdt ON _hsba.PID = tdt.PID ORDER BY Trang_Thai, _hsba.PID DESC;"
         ra_vien_query = "SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Ngay_Vao_Vien, Ngay_Ra_Vien, Chan_Doan_Khi_Ra_Vien, Tinh_Trang_Ra_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = hc.PID && hsba.PID = ba.PID && hsba.PID = tkba.PID && hsba.Trang_Thai = 'Đã ra viện' && (SUBSTRING(Bac_Si_Lam_Benh_An, 9, 6) = " + \
-            doctorID + " || SUBSTRING(Bac_Si_Dieu_Tri, 9, 6) = " + \
-            doctorID + ") ORDER BY hsba.PID DESC;"
+            doctor_id + " || SUBSTRING(Bac_Si_Dieu_Tri, 9, 6) = " + \
+            doctor_id + ") ORDER BY hsba.PID DESC;"
 
     cursor.execute(hien_tai_query)
     conn.commit()
@@ -59,6 +62,7 @@ def getDanhSachHSBA():
 
 
 @app.route('/user/danh-sach-hsba', methods=['POST'])
+@jwt_required()
 def createNewHSBA():
     data = request.json
     cursor = conn.cursor()

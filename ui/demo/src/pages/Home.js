@@ -68,7 +68,7 @@ const Home = () => {
     const classes = useStyles();
     const navigate = useNavigate();
     useEffect(() => {
-        if (!!localStorage.getItem('user')) {
+        if (!!localStorage.getItem('token')) {
             navigate('/user/HSBA');
         }
     });

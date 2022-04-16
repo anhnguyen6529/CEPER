@@ -59,6 +59,11 @@ const SpellingErrorSlice = createSlice({
     extraReducers: (builder) => {
         builder
         .addCase(SpellingErrorThunk.getProcessResult.fulfilled, (state, action) => {
+            if (action.payload.token) {
+                localStorage.setItem('token', action.payload.token);
+                delete action.payload.token
+            }
+
             if (!action.payload.subSection) {
                 const filter = Object.keys(sectionState).filter(key => key !== action.payload.section && !mdSections["attached"].includes(key));
                 const loadedAll = filter.every((key) => {

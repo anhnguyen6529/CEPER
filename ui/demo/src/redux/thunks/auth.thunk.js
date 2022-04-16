@@ -1,16 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+// import authApi from "../../apis/auth";
 
 const authThunk = {
-    login: createAsyncThunk(
-        'auth/login',
-        async (payload) => {
-            try {
-                return payload;
-            } catch (error) {
-                return error.message;
-            }
-        }
-    ),
     getUserInfo: createAsyncThunk(
         'auth/getUserInfo',
         async () => {
