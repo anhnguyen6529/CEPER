@@ -7,7 +7,6 @@ import "../../../styles/index.css";
 import MaskedInput from "react-text-mask";
 import TaoHSBAContext from "../../../contexts/TaoHSBAContext";
 import validator from "validator";
-import { UtilsDateTime } from "../../../utils";
 
 const MaskedInputCustom = forwardRef(function MaskedInputCustom(props, ref) {
     return (
@@ -23,11 +22,14 @@ const FHanhChinh = () => {
 
     return (
         <Paper sx={{ px: 3, pb: 2, pt: 1.5, mb: 2 }}>
-            <Typography fontWeight="bold" color="primary" sx={{ mb: 2 }}>Hành chính</Typography>
+            <Typography fontWeight="bold" color="primary" sx={{ mb: 2 }}>Thông tin hành chính</Typography>
             <Box component="form">
                 <Grid container columnSpacing={3} rowSpacing={1}>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Họ và tên*</Typography>
+                        <Typography fontWeight="bold">
+                            Họ và tên
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <TextField 
                             fullWidth
                             margin="dense"
@@ -48,7 +50,10 @@ const FHanhChinh = () => {
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Ngày sinh*</Typography>
+                        <Typography fontWeight="bold">
+                            Ngày sinh
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <DatePicker
                             value={values.ngaySinh}
                             onChange={(newValue) => {
@@ -57,11 +62,7 @@ const FHanhChinh = () => {
                                     if (!hasChangedNew) {
                                         setHasChangedNew(true);
                                     }
-                                    if (UtilsDateTime.getAge(newValue) >= 14) {
-                                        setErrors({ ...errors, ngaySinh: "", soCCCD: "Vui lòng nhập Số CMND/CCCD/hộ chiếu" });
-                                    } else {
-                                        setErrors({ ...errors, ngaySinh: "", soCCCD: "" });
-                                    }
+                                    setErrors({ ...errors, ngaySinh: "" });
                                 } else {
                                     setErrors({ ...errors, ngaySinh: "Vui lòng nhập Ngày sinh" });
                                 }
@@ -80,7 +81,10 @@ const FHanhChinh = () => {
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Giới tính*</Typography>
+                        <Typography fontWeight="bold">
+                            Giới tính
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <FormControl sx={{ width: "100%" }}>
                             <Select
                                 fullWidth
@@ -108,7 +112,7 @@ const FHanhChinh = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Nghề nghiệp*</Typography>
+                        <Typography fontWeight="bold">Nghề nghiệp</Typography>
                         <TextField 
                             fullWidth
                             margin="dense"
@@ -132,7 +136,7 @@ const FHanhChinh = () => {
                 </Grid>
                 <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Dân tộc*</Typography>
+                        <Typography fontWeight="bold">Dân tộc</Typography>
                         <TextField 
                             fullWidth
                             margin="dense"
@@ -154,7 +158,7 @@ const FHanhChinh = () => {
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Quốc tịch*</Typography>
+                        <Typography fontWeight="bold">Quốc tịch</Typography>
                         <Select
                             fullWidth
                             sx={{ mt: 1 }}
@@ -174,11 +178,7 @@ const FHanhChinh = () => {
                         </Select>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">
-                            Số CMND/CCCD/hộ chiếu
-                            {!values.ngaySinh || (!!values.ngaySinh && UtilsDateTime.getAge(values.ngaySinh) >= 14)
-                                ? <Typography component="span">*</Typography> : null}
-                        </Typography>
+                        <Typography fontWeight="bold">Số CMND/CCCD/hộ chiếu</Typography>
                         <TextField 
                             fullWidth
                             margin="dense"
@@ -192,9 +192,7 @@ const FHanhChinh = () => {
                                     }
                                     setErrors({ ...errors, soCCCD: "" });
                                 } else {
-                                    if (!values.ngaySinh || (!!values.ngaySinh && UtilsDateTime.getAge(values.ngaySinh) >= 14)) {
-                                        setErrors({ ...errors, soCCCD: "Vui lòng nhập Số CMND/CCCD/hộ chiếu" });
-                                    }
+                                    setErrors({ ...errors, soCCCD: "Vui lòng nhập Số CMND/CCCD/hộ chiếu" });
                                 }
                             }}
                             error={submitted && !!errors.soCCCD}
@@ -243,7 +241,10 @@ const FHanhChinh = () => {
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Đối tượng*</Typography>
+                        <Typography fontWeight="bold">
+                            Đối tượng
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <FormControl sx={{ width: "100%" }}>
                             <Select
                                 fullWidth
@@ -316,7 +317,10 @@ const FHanhChinh = () => {
                 </Grid>
                 <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Tỉnh/Thành phố*</Typography>
+                        <Typography fontWeight="bold">
+                            Tỉnh/Thành phố
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <FormControl sx={{ width: "100%" }}>
                             <Select
                                 fullWidth
@@ -346,7 +350,10 @@ const FHanhChinh = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Quận/Huyện*</Typography>
+                        <Typography fontWeight="bold">
+                            Quận/Huyện
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <FormControl sx={{ width: "100%" }}>
                             <Select
                                 fullWidth
@@ -377,7 +384,10 @@ const FHanhChinh = () => {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
-                        <Typography fontWeight="bold">Phường/Xã*</Typography>
+                        <Typography fontWeight="bold">
+                            Phường/Xã
+                            <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography>
+                        </Typography>
                         <FormControl sx={{ width: "100%" }}>
                             <Select
                                 fullWidth
@@ -418,7 +428,8 @@ const FHanhChinh = () => {
                     <Grid item xs={12} md={6} lg={3}>
                         <Typography fontWeight="bold">
                             Số thẻ BHYT
-                            {values.doiTuong === "BHYT" ? <Typography component="span">*</Typography> : null}
+                            {values.doiTuong === "BHYT" 
+                                ? <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography> : null}
                         </Typography>
                         <TextField 
                             fullWidth
@@ -450,7 +461,8 @@ const FHanhChinh = () => {
                     <Grid item xs={12} md={6} lg={3}>
                         <Typography fontWeight="bold">
                             Nơi đăng ký KCB ban đầu
-                            {values.doiTuong === "BHYT" ? <Typography component="span">*</Typography> : null}
+                            {values.doiTuong === "BHYT" 
+                                ? <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography> : null}
                         </Typography>
                         <TextField 
                             fullWidth
@@ -477,7 +489,8 @@ const FHanhChinh = () => {
                     <Grid item xs={12} md={6} lg={3}>
                         <Typography fontWeight="bold">
                             Giá trị từ
-                            {values.doiTuong === "BHYT" ? <Typography component="span">*</Typography> : null}
+                            {values.doiTuong === "BHYT" 
+                                ? <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography> : null}
                         </Typography>
                         <DatePicker
                             value={values.giaTriTu}
@@ -508,7 +521,8 @@ const FHanhChinh = () => {
                     <Grid item xs={12} md={6} lg={3}>
                         <Typography fontWeight="bold">
                             Giá trị đến
-                            {values.doiTuong === "BHYT" ? <Typography component="span">*</Typography> : null}
+                            {values.doiTuong === "BHYT" 
+                                ? <Typography component="span" color="error" fontWeight="bold">{' '}*</Typography> : null}
                         </Typography>
                         <DatePicker
                             value={values.giaTriDen}
@@ -545,7 +559,7 @@ const FHanhChinh = () => {
 
                 <Typography color="#999"><i>Thông tin người nhà bệnh nhân (khi cần báo tin)</i></Typography>
                 <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
-                    <Grid item xs={12} md={6} lg={3}>
+                    <Grid item xs={12} md={6}>
                         <Typography fontWeight="bold">Họ tên</Typography>
                         <TextField 
                             fullWidth
@@ -560,7 +574,7 @@ const FHanhChinh = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} lg={3}>
+                    <Grid item xs={12} md={6}>
                         <Typography fontWeight="bold">Quan hệ với bệnh nhân</Typography>
                         <TextField 
                             fullWidth
@@ -575,7 +589,10 @@ const FHanhChinh = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} lg={3}>
+                </Grid>
+
+                <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
+                <Grid item xs={12} md={6} lg={3}>
                         <Typography fontWeight="bold">Số CMND/CCCD/hộ chiếu</Typography>
                         <TextField 
                             fullWidth
@@ -614,10 +631,7 @@ const FHanhChinh = () => {
                             helperText={errors.nguoiNha.dienThoai}
                         />
                     </Grid>
-                </Grid>
-
-                <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
-                    <Grid item xs={12} md={6} lg={3}>
+                    <Grid item xs={12} md={6}>
                         <Typography fontWeight="bold">Địa chỉ</Typography>
                         <TextField 
                             fullWidth

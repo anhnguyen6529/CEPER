@@ -45,7 +45,11 @@ const FHoSo = () => {
     }
     
     return (
-        <Paper sx={{ p: 3, mb: 2 }}>
+        <Paper sx={{ px: 3, pt: 1.5, pb: 2, mb: 2 }}>
+            <Typography fontWeight="bold" color="primary" sx={{ mb: 2 }}>
+                Thông tin hồ sơ{' '}
+                <Typography component="span" color="error" fontWeight="bold">*</Typography>
+            </Typography>
             <Grid container columnSpacing={3} rowSpacing={1}>
                 <Grid item xs={12} lg={1.5}>
                     <Box className={`df fdc ${classes.boxAvatar}`}>
@@ -76,7 +80,7 @@ const FHoSo = () => {
                             />
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
-                            <Typography fontWeight="bold">Ngày vào viện*</Typography>
+                            <Typography fontWeight="bold">Ngày vào viện</Typography>
                             <DateTimePicker
                                 value={values.ngayVaoVien}
                                 onChange={(newValue) => {
@@ -107,7 +111,7 @@ const FHoSo = () => {
                             />
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
-                            <Typography fontWeight="bold">Khoa*</Typography>
+                            <Typography fontWeight="bold">Khoa</Typography>
                             <FormControl sx={{ width: "100%" }}>
                                 <Select
                                     fullWidth
@@ -137,7 +141,7 @@ const FHoSo = () => {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
-                            <Typography fontWeight="bold">Phòng*</Typography>
+                            <Typography fontWeight="bold">Phòng</Typography>
                             <FormControl sx={{ width: "100%" }}>
                                 <Select
                                     fullWidth
@@ -167,7 +171,7 @@ const FHoSo = () => {
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
-                            <Typography fontWeight="bold">Giường*</Typography>
+                            <Typography fontWeight="bold">Giường</Typography>
                             <FormControl sx={{ width: "100%" }}>
                                 <Select
                                     fullWidth
@@ -199,7 +203,7 @@ const FHoSo = () => {
     
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Mạch*{' '}
+                                Mạch{' '}
                                 <Typography component="span" fontWeight="bold">(<i>lần/phút</i>)</Typography>
                             </Typography>
                             <TextField 
@@ -225,7 +229,7 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Nhiệt độ*{' '}
+                                Nhiệt độ{' '}
                                 <Typography component="span" fontWeight="bold">(<i>°C</i>)</Typography>
                             </Typography>
                             <TextField 
@@ -251,7 +255,7 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={12} md={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Huyết áp*{' '}
+                                Huyết áp{' '}
                                 <Typography component="span" fontWeight="bold">(<i>mmHg</i>)</Typography>
                             </Typography>
                             <FormControl sx={{ width: "100%" }}>
@@ -305,7 +309,7 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Nhịp thở*{' '}
+                                Nhịp thở{' '}
                                 <Typography component="span" fontWeight="bold">(<i>lần/phút</i>)</Typography>
                             </Typography>
                             <TextField 
@@ -331,7 +335,7 @@ const FHoSo = () => {
                         </Grid>
                         <Grid item xs={6} lg={2.4}>
                             <Typography fontWeight="bold">
-                                Cân nặng*{' '}
+                                Cân nặng{' '}
                                 <Typography component="span" fontWeight="bold">(<i>kg</i>)</Typography>
                             </Typography>
                             <TextField 

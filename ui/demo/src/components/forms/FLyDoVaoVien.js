@@ -22,7 +22,6 @@ const FLyDoVaoVien = () => {
     const dispatch = useDispatch();
 
     const [lyDo, setLyDo] = useState(lyDoVaoVien.lyDo);
-    const [ngayVaoVien, setNgayVaoVien] = useState(lyDoVaoVien.ngayVaoVien);
     const [vaoNgayThu, setVaoNgayThu] = useState(lyDoVaoVien.vaoNgayThu);
     const [chanDoanNoiGioiThieu, setChanDoanNoiGioiThieu] = useState(lyDoVaoVien.chanDoanNoiGioiThieu);
     const [noiGioiThieu, setNoiGioiThieu] = useState(lyDoVaoVien.noiGioiThieu);
@@ -64,7 +63,6 @@ const FLyDoVaoVien = () => {
 
     const handleReset = () => {
         setLyDo(lyDoVaoVien.lyDo);
-        setNgayVaoVien(lyDoVaoVien.ngayVaoVien);
         setVaoNgayThu(lyDoVaoVien.vaoNgayThu);
         setChanDoanNoiGioiThieu(lyDoVaoVien.chanDoanNoiGioiThieu);
         setNoiGioiThieu(lyDoVaoVien.noiGioiThieu);
@@ -88,8 +86,7 @@ const FLyDoVaoVien = () => {
                             if (!updating) {
                                 if (value === lyDoVaoVien.lyDo) {
                                     dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: false }));
-                                    if (vaoNgayThu === lyDoVaoVien.vaoNgayThu && ngayVaoVien === lyDoVaoVien.ngayVaoVien
-                                        && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
+                                    if (vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 } else {
@@ -146,8 +143,7 @@ const FLyDoVaoVien = () => {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 } else {
-                                    if (lyDo === lyDoVaoVien.lyDo && ngayVaoVien === lyDoVaoVien.ngayVaoVien
-                                        && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
+                                    if (lyDo === lyDoVaoVien.lyDo && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 }
@@ -166,26 +162,14 @@ const FLyDoVaoVien = () => {
                 </Grid>
                 <Grid item xs={9}>
                     <DateTimePicker
-                        value={ngayVaoVien}
-                        onChange={(newValue) => {
-                            setNgayVaoVien(newValue);
-                            if (newValue !== lyDoVaoVien.ngayVaoVien) {
-                                if (!spellingError.changed) {
-                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
-                                }
-                            } else {
-                                if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu
-                                    && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
-                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
-                                }
-                            }
-                        }}
+                        value={lyDoVaoVien.ngayVaoVien}
+                        onChange={(_) => {}}
                         renderInput={(params) => <TextField {...params}/>}
                         inputFormat="DD/MM/yyyy HH:mm"
                         ampm={false}
                         leftArrowButtonText=""
                         rightArrowButtonText=""
-                        disabled={updating}
+                        disabled
                     />
                 </Grid>
             </Grid>
@@ -206,8 +190,7 @@ const FLyDoVaoVien = () => {
                             if (!updating) {
                                 if (value === lyDoVaoVien.chanDoanNoiGioiThieu) {
                                     dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
-                                    if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu 
-                                        && ngayVaoVien === lyDoVaoVien.ngayVaoVien && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
+                                    if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
                                 } else {
@@ -260,8 +243,7 @@ const FLyDoVaoVien = () => {
                                     dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                 }
                             } else {
-                                if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu 
-                                    && ngayVaoVien === lyDoVaoVien.ngayVaoVien && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
+                                if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
                                     dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                 }
                             }

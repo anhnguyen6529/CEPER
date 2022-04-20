@@ -135,7 +135,7 @@ const HSBA = () => {
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Ngày vào viện</Typography>
-                                        <Typography>{benhNhan.lyDoVaoVien.ngayVaoVien ? format(new Date(benhNhan.lyDoVaoVien.ngayVaoVien), 'dd/MM/yyyy') : benhNhan.lyDoVaoVien.ngayVaoVien}</Typography>
+                                        <Typography>{benhNhan.lyDoVaoVien.ngayVaoVien ? format(new Date(benhNhan.lyDoVaoVien.ngayVaoVien), 'dd/MM/yyyy HH:mm') : benhNhan.lyDoVaoVien.ngayVaoVien}</Typography>
                                     </Grid>
                                     <Grid item xs={3}>
                                         <Typography fontWeight="bold">Ngày điều trị thứ</Typography>
@@ -163,7 +163,7 @@ const HSBA = () => {
                                         <Typography fontWeight="bold">Ngày ra viện</Typography>
                                         <Typography>
                                             {benhNhan.chanDoanKhiRaVien.ngayRaVien 
-                                                ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy') 
+                                                ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy HH:mm') 
                                                 : <Typography component="span">(<i>trống</i>)</Typography>
                                             }
                                         </Typography>

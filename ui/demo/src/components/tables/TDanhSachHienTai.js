@@ -157,7 +157,7 @@ const TDanhSachHienTai = ({ data }) => {
                                     }
                                     {danhSachHSBATab.hienTaiColsChecked[4] && <TableCell>{row.tuoi}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[5] && <TableCell>{row.gioiTinh}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[6] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[6] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy HH:mm')}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[7] && <TableCell>{row.khoa}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[8] && <TableCell>{row.phong}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[9] && <TableCell>{row.giuong}</TableCell>}

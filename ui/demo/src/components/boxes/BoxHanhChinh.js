@@ -157,6 +157,9 @@ const BoxHanhChinh = () => {
                             : <Typography component="span">(<i>trống</i>)</Typography>}
                     </Typography>
                 </Grid>
+            </Grid>
+
+            <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
                 <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Số CMND/CCCD/hộ chiếu</Typography>
                     <Typography>
@@ -171,9 +174,6 @@ const BoxHanhChinh = () => {
                             : <Typography component="span">(<i>trống</i>)</Typography>}
                     </Typography>
                 </Grid>
-            </Grid>
-
-            <Grid container sx={{ pt: 1 }} columnSpacing={3} rowSpacing={1}>
                 <Grid item xs={12} md={6} lg={3}>
                     <Typography fontWeight="bold">Địa chỉ</Typography>
                     <Typography>

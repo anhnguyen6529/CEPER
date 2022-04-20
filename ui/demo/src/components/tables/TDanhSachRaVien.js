@@ -149,8 +149,8 @@ const TDanhSachRaVien = ({ data }) => {
                                     {danhSachHSBATab.raVienColsChecked[3] && <TableCell>{row.tuoi}</TableCell>}
                                     {danhSachHSBATab.raVienColsChecked[4] && <TableCell>{row.gioiTinh}</TableCell>}
                                     {danhSachHSBATab.raVienColsChecked[5] && <TableCell>{row.khoa}</TableCell>}
-                                    {danhSachHSBATab.raVienColsChecked[6] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy')}</TableCell>}
-                                    {danhSachHSBATab.raVienColsChecked[7] && <TableCell>{format(new Date(row.ngayRaVien), 'dd/MM/yyyy')}</TableCell>}
+                                    {danhSachHSBATab.raVienColsChecked[6] && <TableCell>{format(new Date(row.ngayVaoVien), 'dd/MM/yyyy HH:mm')}</TableCell>}
+                                    {danhSachHSBATab.raVienColsChecked[7] && <TableCell>{format(new Date(row.ngayRaVien), 'dd/MM/yyyy HH:mm')}</TableCell>}
                                     {danhSachHSBATab.raVienColsChecked[8] && <TableCell>{row.chanDoanKhiRaVien}</TableCell>}
                                     {danhSachHSBATab.raVienColsChecked[9] && <TableCell>{row.tinhTrangRaVien}</TableCell>}
                                 </StyledTableRow>
