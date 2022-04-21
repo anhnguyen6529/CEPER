@@ -59,9 +59,9 @@ const SpellingErrorSlice = createSlice({
     extraReducers: (builder) => {
         builder
         .addCase(SpellingErrorThunk.getProcessResult.fulfilled, (state, action) => {
-            if (action.payload.token) {
-                localStorage.setItem('token', action.payload.token);
-                delete action.payload.token
+            if (action.payload.result.token) {
+                localStorage.setItem('token', action.payload.result.token);
+                delete action.payload.result.token
             }
 
             if (!action.payload.subSection) {

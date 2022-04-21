@@ -39,7 +39,7 @@ UtilsText.mask = (str, pattern) => {
 UtilsText.getOriginalWordList = (text, detection) => {
     const original = text.split(' '), detected = detection.split(' '), txt = [];
     detected.forEach((word, id) => {
-        if (word.includes("<mask>")) {
+        if (word.includes("<mask>") || word.includes("<mask1>")) {
             var start = 0, endWord = word.length, endOriginal = original[id].length;
             while (word[start] === original[id][start]) start++;
             while (word[endWord - 1] === original[id][endOriginal - 1]) {

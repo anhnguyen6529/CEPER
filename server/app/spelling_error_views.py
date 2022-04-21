@@ -1,25 +1,17 @@
 from app import app
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
+from .modules.demo import getResult
 
 
 @app.route('/spelling-error/process-result')
 @jwt_required()
 def getProcessResult():
-    text = request.args.get('text')
+    input = request.args.get('text')
+    output = getResult(input)
     result = dict()
-
-    if "kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt" in text:
-        result["detection"] = "kháng sinh, men vi <mask>, <mask> ói, hạ sốt kháng sinh, men vi <mask>, <mask> ói, hạ sốt kháng sinh, men vi <mask>, <mask> ói, hạ sốt kháng sinh, men vi <mask>, <mask> ói, hạ sốt kháng sinh, men vi <mask>, <mask> ói, hạ sốt"
-        result["correction"] = [["sinh", "khuẩn"], ["chống"], ["sinh", "khuẩn"], ["chống"], [
-            "sinh", "khuẩn"], ["chống"], ["sinh", "khuẩn"], ["chống"], ["sinh", "khuẩn"], ["chống"]]
-    elif "kháng sinh, men vi snh, chốngg ói, hạ sốt kháng sinh, men vi snh, chốngg ói, hạ sốt" in text:
-        result["detection"] = "kháng sinh, men vi <mask>, <mask> ói, hạ sốt kháng sinh, men vi <mask>, <mask> ói, hạ sốt"
-        result["correction"] = [["sinh", "khuẩn"], [
-            "chống"], ["sinh", "khuẩn"], ["chống"]]
-    else:
-        result["detection"] = ""
-        result["correction"] = []
+    result["detection"] = output[0]
+    result["correction"] = output[1]
 
     response = jsonify(result)
     return response

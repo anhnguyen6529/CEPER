@@ -47,12 +47,10 @@ const HSBA = () => {
     useEffect(() => {
         if (updating && Object.keys(sectionState).some(key => spellingError[key].changed)) {
             if (!spellingError.loading) {
-                setTimeout(() => {
-                    setOpenBackdrop(false);
-                    setOpenSnackbar(true);
-                    const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
-                    document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
-                }, 2000);
+                setOpenBackdrop(false);
+                setOpenSnackbar(true);
+                const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
+                document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
             } else {
                 setOpenBackdrop(true);
             }

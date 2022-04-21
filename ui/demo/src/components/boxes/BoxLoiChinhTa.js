@@ -3,7 +3,7 @@ import { Box, Typography, Grid, Checkbox, Button as ButtonWord, Card } from "@mu
 import "../../styles/index.css";
 import { TablePagination } from "../common";
 
-const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseResult, handleChangeCheckbox, setSection }) => {
+const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, handleChangeCheckbox }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [hoverDetection, setHoverDetection] = useState(new Array(result.correction.length).fill(false));
@@ -11,10 +11,11 @@ const BoxLoiChinhTa = ({ text, result, replaced, setReplaced, useResult, setUseR
 
     const markDetection = () => {
         const detected = result.detection.split(' ');
-        let lst = [], count = 0;
+        let lst = [], count = 0, maskType = "";
         detected.forEach((word) => {
-            if (word.includes("<mask>")) {
-                lst.push({ id: count, replace: true, string: word.replace("<mask>", replaced[count].repText)});
+            if (word.includes("<mask>") || word.includes("<mask1>")) {
+                maskType = word.includes("<mask>") ? "<mask>" : "<mask1>"
+                lst.push({ id: count, replace: true, string: word.replace(maskType, replaced[count].repText)});
                 count++;
             } else {
                 lst.push({ replace: false, string: word });
