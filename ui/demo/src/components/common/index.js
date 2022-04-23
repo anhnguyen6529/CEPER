@@ -8,6 +8,8 @@ export { default as Button } from './Button';
 
 export { default as CustomAdapterMoment } from './CustomAdapterMoment';
 
+export { default as DialogConfirm } from './DialogConfirm';
+
 export { default as Drawer } from './Drawer';
 
 export { default as DrawerHeader } from './DrawerHeader';

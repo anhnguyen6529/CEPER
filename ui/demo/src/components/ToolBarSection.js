@@ -8,9 +8,12 @@ import {
     VisibilityOff
 } from "@mui/icons-material";
 import UserContext from "../contexts/UserContext";
+import mdSections from "../constants/md_sections.json";
+import { useSelector } from "react-redux";
 
-const ToolBarSection = ({ sectionId, id }) => {
-    const { appearSec, setAppearSec, openSec, setOpenSec } = useContext(UserContext);
+const ToolBarSection = ({ id, sectionId, sectionName }) => {
+    const { appearSec, setAppearSec, openSec, setOpenSec, setOpenDialog } = useContext(UserContext);
+    const { spellingError } = useSelector(state => state);
 
     return (
         <>
@@ -50,8 +53,21 @@ const ToolBarSection = ({ sectionId, id }) => {
                         fontSize="small"
                         onClick={() => {
                             var temp = [...appearSec];
-                            temp.splice(id, 1);
-                            setAppearSec(temp);
+                            if (mdSections["attached"].includes(sectionName)) {
+                                if (spellingError[sectionName].changed) {
+                                    setOpenDialog(true);
+                                } else {
+                                    temp.splice(id, 1);
+                                    setAppearSec(temp);
+                                }
+                            } else if (sectionName === "Bệnh án" || sectionName === "Tổng kết bệnh án") {
+                                if (mdSections[sectionName].some(sec => spellingError[sec].changed)) {
+                                    setOpenDialog(true);
+                                } else {
+                                    temp.splice(id, 1);
+                                    setAppearSec(temp);
+                                }
+                            }
                         }}
                     />
                 </span>

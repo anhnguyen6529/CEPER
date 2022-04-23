@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Typography, CircularProgress, Snackbar, Alert } from "@mui/material";
+import { Box, Container, Slide, Typography, CircularProgress, Snackbar, Alert } from "@mui/material";
 import "../styles/index.css";
 import { useDispatch, useSelector } from "react-redux";
 import { TDanhSachHienTai, TDanhSachRaVien } from "./tables";
-import { Button, TabPanel, Tabs } from "./common";
+import { Button, DialogConfirm, TabPanel, Tabs } from "./common";
 import UserContext from "../contexts/UserContext";
 import { ArrowBack } from "@mui/icons-material";
 import { FBacSiPhuTrach, FHanhChinh, FHoSo } from "./forms/creating";
@@ -135,32 +135,22 @@ const DanhSachHSBA = () => {
                             </Typography>
                         </Box>
 
-                        <Dialog open={openDialogNew} disableEnforceFocus>
-                            <DialogTitle>Xác nhận thoát tạo bệnh án</DialogTitle>
-                            <DialogContent>
-                                <DialogContentText>Toàn bộ nội dung đã nhập của bệnh án mới sẽ không được lưu.</DialogContentText>
-                                <DialogContentText>Bạn có chắc chắn muốn thoát?</DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button 
-                                    variant="outlined" 
-                                    sx={{ mr: 1 }} 
-                                    onClick={() => {
-                                        setSubmitted(false);
-                                        setHasChangedNew(false);
-                                        setOpenDialogNew(false);
-                                        setValues(initialValues);
-                                        setErrors(initialErrors);
-                                        dispatch(danhSachHSBAActions.setCreatingMode(false));
-                                    }}
-                                >
-                                    Thoát
-                                </Button>
-                                <Button onClick={() => setOpenDialogNew(false)}>
-                                    Tiếp tục tạo
-                                </Button>
-                            </DialogActions>
-                        </Dialog>
+                        <DialogConfirm 
+                            open={openDialogNew}
+                            title="Xác nhận thoát tạo bệnh án"
+                            contentText={"Toàn bộ nội dung đã nhập của bệnh án mới sẽ không được lưu.\nBạn có chắc chắn muốn thoát?"}
+                            cancelText="Thoát"
+                            handleCancel={() => {
+                                setSubmitted(false);
+                                setHasChangedNew(false);
+                                setOpenDialogNew(false);
+                                setValues(initialValues);
+                                setErrors(initialErrors);
+                                dispatch(danhSachHSBAActions.setCreatingMode(false));
+                            }}
+                            okText="Tiếp tục tạo"
+                            handleOk={() => setOpenDialogNew(false)}
+                        />
                     </Box>
                 </Slide>
 

@@ -14,8 +14,7 @@ import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FP
 import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
-import { HSBAActions } from "../redux/slices/HSBA.slice";
-import { sectionState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
+import { sectionState } from "../redux/slices/spellingError.slice";
 
 const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "primary", "Đã ra viện": "default" };
 
@@ -23,7 +22,7 @@ const HSBA = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { pid } = useParams();
-    const { open, today, appearSec, appearTime, setAppearTime, openSec } = useContext(UserContext); 
+    const { open, today, appearSec, appearTime, setAppearTime, openSec, openSnackbar, setOpenSnackbar, handleUpdate } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
 
     useEffect(() => {
@@ -41,7 +40,6 @@ const HSBA = () => {
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating, confirmUpdate } = benhNhan;
-    const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
     useEffect(() => {
@@ -101,17 +99,6 @@ const HSBA = () => {
                 return <FPhieuCongKhaiThuoc />
             default: 
                 return <></>
-        }
-    }
-
-    const handleUpdate = () => {
-        if (Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key)).some(key => ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
-            && mdSections[key].some(subKey => spellingError[key][subKey].changed))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed))) {
-            dispatch(HSBAActions.update());
-        } else {
-            dispatch(HSBAActions.confirmUpdate());
-            setOpenSnackbar(true);
-            dispatch(SpellingErrorActions.resetState());
         }
     }
 
@@ -266,7 +253,7 @@ const HSBA = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={3} align="right">
-                            <ToolBarSection id={id} sectionId={sectionId} />
+                            <ToolBarSection id={id} sectionId={sectionId} sectionName={mdSections["sortOrder"][role][sectionId]} />
                         </Grid>
                     </Grid>
                 

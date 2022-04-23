@@ -21,7 +21,8 @@ import { sectionState } from "../../redux/slices/spellingError.slice";
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
     const { role } = useSelector((state) => state.auth.user);
-    const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, 
+        danhSachHSBATab, setDanhSachHSBATab, setOpenDialog } = useContext(UserContext);
     const { updating } = useSelector((state) => state.HSBA);
     const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
@@ -109,9 +110,23 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                                 tOpenSec[id] = true;
                                                 setAppearTime({ ...appearTime, [section]: new Date().toISOString() });
                                             } else {
-                                                tAppearSec.splice(idx, 1);
-                                                tOpenSec[id] = false;
-                                                setAppearTime({ ...appearTime, [section]: null });
+                                                if (mdSections["attached"].includes(section)) {
+                                                    if (spellingError[section].changed) {
+                                                        setOpenDialog(true);
+                                                    } else {
+                                                        tAppearSec.splice(idx, 1);
+                                                        tOpenSec[id] = false;
+                                                        setAppearTime({ ...appearTime, [section]: null });
+                                                    }
+                                                } else if (section === "Bệnh án" || section === "Tổng kết bệnh án") {
+                                                    if (mdSections[section].some(sec => spellingError[sec].changed)) {
+                                                        setOpenDialog(true);
+                                                    } else {
+                                                        tAppearSec.splice(idx, 1);
+                                                        tOpenSec[id] = false;
+                                                        setAppearTime({ ...appearTime, [section]: null });
+                                                    }
+                                                }      
                                             }
                                             setOpenSec(tOpenSec);
                                             setAppearSec(tAppearSec);
