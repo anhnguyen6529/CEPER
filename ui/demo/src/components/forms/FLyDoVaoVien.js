@@ -5,7 +5,6 @@ import "../../styles/index.css";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import DateTimePicker from '@mui/lab/DateTimePicker';
-import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import mdSections from "../../constants/md_sections.json";
@@ -28,11 +27,9 @@ const FLyDoVaoVien = () => {
     
     const [resultLyDo, setResultLyDo] = useState('');
     const [replacedLyDo, setReplacedLyDo] = useState([]);
-    const [textLyDo, setTextLyDo] = useState([]);
     const [useResultLyDo, setUseResultLyDo] = useState(true);
     const [resultChanDoan, setResultChanDoan] = useState('');
     const [replacedChanDoan, setReplacedChanDoan] = useState([]);
-    const [textChanDoan, setTextChanDoan] = useState([]);
     const [useResultChanDoan, setUseResultChanDoan] = useState(true);
 
     useEffect(() => {
@@ -50,13 +47,11 @@ const FLyDoVaoVien = () => {
     useEffect(() => {
         if (!spellingErrorLyDo.loading) {
             setResultLyDo(spellingErrorLyDo);
-            setReplacedLyDo(spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[0] })));
-            setTextLyDo(UtilsText.getOriginalWordList(lyDo, spellingErrorLyDo.detection));
+            setReplacedLyDo(spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[1] })));
         }
         if (!spellingErrorChanDoan.loading) {
             setResultChanDoan(spellingErrorChanDoan);
-            setReplacedChanDoan(spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[0] })));
-            setTextChanDoan(UtilsText.getOriginalWordList(chanDoanNoiGioiThieu, spellingErrorChanDoan.detection));
+            setReplacedChanDoan(spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[1] })));
         }
         // eslint-disable-next-line
     }, [spellingErrorLyDo.loading, spellingErrorChanDoan.loading]);
@@ -104,7 +99,6 @@ const FLyDoVaoVien = () => {
 
                     {!!resultLyDo && !spellingErrorLyDo.loading ? 
                         <BoxLoiChinhTa
-                            text={textLyDo}
                             result={resultLyDo}
                             replaced={replacedLyDo}
                             setReplaced={setReplacedLyDo}
@@ -208,7 +202,6 @@ const FLyDoVaoVien = () => {
 
                     {!!resultChanDoan && !spellingErrorChanDoan.loading ? 
                         <BoxLoiChinhTa
-                            text={textChanDoan}
                             result={resultChanDoan}
                             replaced={replacedChanDoan}
                             setReplaced={setReplacedChanDoan}

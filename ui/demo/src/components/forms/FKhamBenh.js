@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
-import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import mdSections from "../../constants/md_sections.json";
@@ -43,7 +42,6 @@ const FKhamBenh = () => {
 
     const [result, setResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(""));
     const [replaced, setReplaced] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
-    const [text, setText] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
     const [useResult, setUseResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(true));
 
     useEffect(() => {
@@ -64,23 +62,11 @@ const FKhamBenh = () => {
     }, [updating]);
 
     useEffect(() => {
-        const tResult = [...result], tReplaced = [...replaced], tText = [...text];
+        const tResult = [...result], tReplaced = [...replaced];
         CLINICAL_SUBSECTION.forEach((subSection, id) => {
             if (!spellingError[subSection].loading) {
                 tResult[id] = spellingError[subSection]; setResult(tResult);
-                tReplaced[id] = spellingError[subSection].correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
-                if (subSection === "Khám toàn thân") tText[id] = UtilsText.getOriginalWordList(khamToanThan, spellingError[subSection].detection);
-                else if (subSection === "Tuần hoàn") tText[id] = UtilsText.getOriginalWordList(tuanHoan, spellingError[subSection].detection);
-                else if (subSection === "Hô hấp") tText[id] = UtilsText.getOriginalWordList(hoHap, spellingError[subSection].detection);
-                else if (subSection === "Tiêu hóa") tText[id] = UtilsText.getOriginalWordList(tieuHoa, spellingError[subSection].detection);
-                else if (subSection === "Thận - Tiết niệu - Sinh dục") tText[id] = UtilsText.getOriginalWordList(than, spellingError[subSection].detection);
-                else if (subSection === "Thần kinh") tText[id] = UtilsText.getOriginalWordList(thanKinh, spellingError[subSection].detection);
-                else if (subSection === "Cơ - Xương - Khớp") tText[id] = UtilsText.getOriginalWordList(coXuongKhop, spellingError[subSection].detection);
-                else if (subSection === "Tai - Mũi - Họng") tText[id] = UtilsText.getOriginalWordList(taiMuiHong, spellingError[subSection].detection);
-                else if (subSection === "Răng - Hàm - Mặt") tText[id] = UtilsText.getOriginalWordList(rangHamMat, spellingError[subSection].detection);
-                else if (subSection === "Mắt") tText[id] = UtilsText.getOriginalWordList(mat, spellingError[subSection].detection);
-                else if (subSection === "Nội tiết, dinh dưỡng và các bệnh lý khác") tText[id] = UtilsText.getOriginalWordList(noiTiet, spellingError[subSection].detection);
-                setText(tText);
+                tReplaced[id] = spellingError[subSection].correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
             }
         });
         // eslint-disable-next-line
@@ -142,7 +128,6 @@ const FKhamBenh = () => {
 
                     {!!result[0] && !spellingError[CLINICAL_SUBSECTION[0]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[0]}
                             result={result[0]}
                             replaced={replaced[0]}
                             setReplaced={(newReplaced) => {
@@ -209,7 +194,6 @@ const FKhamBenh = () => {
 
                     {!!result[1] && !spellingError[CLINICAL_SUBSECTION[1]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[1]}
                             result={result[1]}
                             replaced={replaced[1]}
                             setReplaced={(newReplaced) => {
@@ -276,7 +260,6 @@ const FKhamBenh = () => {
 
                     {!!result[2] && !spellingError[CLINICAL_SUBSECTION[2]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[2]}
                             result={result[2]}
                             replaced={replaced[2]}
                             setReplaced={(newReplaced) => {
@@ -343,7 +326,6 @@ const FKhamBenh = () => {
 
                     {!!result[3] && !spellingError[CLINICAL_SUBSECTION[3]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[3]}
                             result={result[3]}
                             replaced={replaced[3]}
                             setReplaced={(newReplaced) => {
@@ -410,7 +392,6 @@ const FKhamBenh = () => {
 
                     {!!result[4] && !spellingError[CLINICAL_SUBSECTION[4]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[4]}
                             result={result[4]}
                             replaced={replaced[4]}
                             setReplaced={(newReplaced) => {
@@ -477,7 +458,6 @@ const FKhamBenh = () => {
                     
                     {!!result[5] && !spellingError[CLINICAL_SUBSECTION[5]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[5]}
                             result={result[5]}
                             replaced={replaced[5]}
                             setReplaced={(newReplaced) => {
@@ -544,7 +524,6 @@ const FKhamBenh = () => {
 
                     {!!result[6] && !spellingError[CLINICAL_SUBSECTION[6]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[6]}
                             result={result[6]}
                             replaced={replaced[6]}
                             setReplaced={(newReplaced) => {
@@ -611,7 +590,6 @@ const FKhamBenh = () => {
 
                     {!!result[7] && !spellingError[CLINICAL_SUBSECTION[7]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[7]}
                             result={result[7]}
                             replaced={replaced[7]}
                             setReplaced={(newReplaced) => {
@@ -678,7 +656,6 @@ const FKhamBenh = () => {
 
                     {!!result[8] && !spellingError[CLINICAL_SUBSECTION[8]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[8]}
                             result={result[8]}
                             replaced={replaced[8]}
                             setReplaced={(newReplaced) => {
@@ -745,7 +722,6 @@ const FKhamBenh = () => {
 
                     {!!result[9] && !spellingError[CLINICAL_SUBSECTION[9]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[9]}
                             result={result[9]}
                             replaced={replaced[9]}
                             setReplaced={(newReplaced) => {
@@ -812,7 +788,6 @@ const FKhamBenh = () => {
 
                     {!!result[10] && !spellingError[CLINICAL_SUBSECTION[10]].loading ? 
                         <BoxLoiChinhTa
-                            text={text[10]}
                             result={result[10]}
                             replaced={replaced[10]}
                             setReplaced={(newReplaced) => {

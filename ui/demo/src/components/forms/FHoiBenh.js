@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
-import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import { CancelOutlined, Circle } from "@mui/icons-material";
@@ -48,7 +47,6 @@ const FHoiBenh = () => {
 
     const [result, setResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(""));
     const [replaced, setReplaced] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
-    const [text, setText] = useState(new Array(CLINICAL_SUBSECTION.length).fill([]));
     const [useResult, setUseResult] = useState(new Array(CLINICAL_SUBSECTION.length).fill(true));
 
     useEffect(() => {
@@ -67,21 +65,18 @@ const FHoiBenh = () => {
     }, [updating]);
 
     useEffect(() => {
-        const tResult = [...result], tReplaced = [...replaced], tText = [...text];
+        const tResult = [...result], tReplaced = [...replaced];
         if (!spellingErrorQuaTrinhBenhLy.loading) {
             tResult[0] = spellingErrorQuaTrinhBenhLy; setResult(tResult);
-            tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
-            tText[0] = UtilsText.getOriginalWordList(quaTrinhBenhLy, spellingErrorQuaTrinhBenhLy.detection); setText(tText);
+            tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
         }
         if (!spellingErrorBanThan.loading) {
             tResult[1] = spellingErrorBanThan; setResult(tResult);
-            tReplaced[1] = spellingErrorBanThan.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
-            tText[1] = UtilsText.getOriginalWordList(banThan, spellingErrorBanThan.detection); setText(tText);
+            tReplaced[1] = spellingErrorBanThan.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
         }
         if (!spellingErrorGiaDinh.loading) {
             tResult[2] = spellingErrorGiaDinh; setResult(tResult);
-            tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[0] })); setReplaced(tReplaced);
-            tText[2] = UtilsText.getOriginalWordList(giaDinh, spellingErrorGiaDinh.detection); setText(tText);
+            tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
         }
         // eslint-disable-next-line
     }, [spellingErrorQuaTrinhBenhLy.loading, spellingErrorBanThan.loading, spellingErrorGiaDinh.loading]);
@@ -132,7 +127,6 @@ const FHoiBenh = () => {
 
                     {!!result[0] && !spellingErrorQuaTrinhBenhLy.loading ? 
                         <BoxLoiChinhTa
-                            text={text[0]}
                             result={result[0]}
                             replaced={replaced[0]}
                             setReplaced={(newReplaced) => {
@@ -207,7 +201,6 @@ const FHoiBenh = () => {
 
                                     {!!result[1] && !spellingErrorBanThan.loading ? 
                                         <BoxLoiChinhTa
-                                            text={text[1]}
                                             result={result[1]}
                                             replaced={replaced[1]}
                                             setReplaced={(newReplaced) => {
@@ -307,7 +300,6 @@ const FHoiBenh = () => {
 
                                     {!!result[2] && !spellingErrorGiaDinh.loading ? 
                                         <BoxLoiChinhTa
-                                            text={text[2]}
                                             result={result[2]}
                                             replaced={replaced[2]}
                                             setReplaced={(newReplaced) => {

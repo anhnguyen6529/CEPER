@@ -13,12 +13,42 @@ from .load_BARTpho import BARTpho
 syllable_tokenizer, bartpho_syllable = BARTpho()
 
 
+def is_special_token(token):
+    if bool(re.match(
+        '([a-z0-9A-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+[\’\'\+\*\^\@\#\.\&\/-])+[a-z0-9A-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+',
+            token)):
+        return True
+    elif bool(re.match(
+        r'([0-9]+)+ml|([0-9]+)+ure|([0-9]+)+mg',
+            token)):  # example: "700ml", "3ure", "81mg"
+        return True
+    else:
+        return False
+
+
+def is_number(token):
+    if token.isnumeric():
+        return True
+    return bool(re.match('(\d+[\.,])+\d*', token))
+
+
+def is_date(token):
+    return bool(re.match('(\d+[-.\/])+\d+', token))
+
+
+def process_abbreviation(token):
+    token = token.lower()
+    with open("app/modules/phrase_reduce.json", mode='r', encoding="utf-8") as file:
+        phrase_reduce = json.load(file)
+    if token in phrase_reduce.keys():
+        return phrase_reduce[token]
+
+
 def extract_phrases(text):
     text_split = text.split()
     list_number = []
     list_date = []
-    list_special_1 = []
-    list_special_2 = []
+    list_special = []
 
     for i in range(len(text_split)):
         if is_number(text_split[i]):
@@ -27,12 +57,9 @@ def extract_phrases(text):
         elif is_date(text_split[i]):
             list_date.append(text_split[i])
             text_split[i] = "date"
-        elif is_special_token_1(text_split[i]):
-            list_special_1.append(text_split[i])
-            text_split[i] = "special1"
-        elif is_special_token_2(text_split[i]):
-            list_special_2.append(text_split[i])
-            text_split[i] = "special2"
+        elif is_special_token(text_split[i]):
+            list_special.append(text_split[i])
+            text_split[i] = "special"
 
     text = " ".join(text_split)
 
@@ -40,66 +67,59 @@ def extract_phrases(text):
 
     phrases_all = re.findall(pattern, text)
 
+    index_sent_dict = {}
     phrases_str = []
-    for phrase in phrases_all:
+    for ind, phrase in enumerate(phrases_all):
         if not re.match(r'[!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~]', phrase.strip()):
-            phrases_str.append(phrase.strip())
+            tokens = phrase.strip().split(" ")
+            for i in range(len(tokens)):
+                replace_abbreviation = process_abbreviation(tokens[i])
+                if replace_abbreviation:
+                    tokens[i] = replace_abbreviation
+            process_phrase = " ".join(tokens)
+            phrases_str.append(process_phrase)
+            index_sent_dict[ind] = phrase
     text = " ".join(phrases_str)
 
-    if len(list_number) > 0:
-        for number in list_number:
-            text = text.replace("number", number, 1)
-    if len(list_date) > 0:
-        for date in list_date:
-            text = text.replace("date", date, 1)
-    if len(list_special_1) > 0:
-        for special1 in list_special_1:
-            text = text.replace("special1", special1, 1)
-    if len(list_special_2) > 0:
-        for special2 in list_special_2:
-            text = text.replace("special2", special2, 1)
-
-    return text
+    # if len(list_number) > 0:
+    #   for number in list_number:
+    #     text = text.replace("number", number, 1)
+    # if len(list_date) > 0:
+    #   for date in list_date:
+    #     text = text.replace("date", date, 1)
+    if len(list_special) > 0:
+        for special1 in list_special:
+            text = text.replace("special", special1, 1)
+    # print("text:", text)
+    # print("list_number:", list_number)
+    # print("list_date:", list_date)
+    # print("list_special:",list_special)
+    # print("phrases_str:",phrases_str)
+    # return text, list_number, list_date, list_special
+    # print(phrases_str)
+    # print(phrases_all)
+    # print(index_sent_dict)
+    return text, phrases_str, phrases_all, index_sent_dict, list_number, list_date
 
 
 def detection(inputSentence):
-    inputSentence = inputSentence.lower()
     inputSentence = "<s> " + inputSentence + " </s>"
     token_split = inputSentence.split()
     tmp = token_split
     with open("app/modules/ngram.json", mode='r', encoding="utf-8") as file:
         data = json.load(file)
     for i in range(len(token_split)):
-        if token_split[i] == "<s>" or token_split[i] == "</s>":
+        tokenSplit = token_split[i].lower()
+        if tokenSplit == "<s>" or tokenSplit == "</s>" or tokenSplit == "number" or tokenSplit == "date" or is_special_token(tokenSplit):
             continue
 
-        elif (is_number(token_split[i]) or is_special_token_1(token_split[i]) or is_special_token_2(token_split[i]) or is_date(token_split[i])):
-            continue
-
-        elif process_abbreviation(token_split[i]):
-            tmp[i] = process_abbreviation(token_split[i])
-
-        elif token_split[i].lower() not in data.keys():
+        elif tokenSplit not in data.keys():
             tmp[i] = "<mask1>"
 
-        elif token_split[i] != "<s>" and token_split[i] != "</s>":
-            pre_word = token_split[i - 1]
-            current_word = token_split[i]
-            next_word = token_split[i + 1]
-
-            if is_number(pre_word):
-                pre_word = "number"
-            elif is_special_token_1(pre_word) or is_special_token_2(pre_word):
-                pre_word = "special"
-            elif is_date(pre_word):
-                pre_word = "date"
-
-            if is_number(next_word):
-                next_word = "number"
-            elif is_special_token_1(next_word) or is_special_token_2(next_word):
-                next_word = "special"
-            elif is_date(next_word):
-                next_word = "date"
+        elif tokenSplit != "<s>" and tokenSplit != "</s>":
+            pre_word = token_split[i - 1].lower()
+            current_word = token_split[i].lower()
+            next_word = token_split[i + 1].lower()
 
             if pre_word in data.keys() and current_word in data[pre_word].keys():
                 if data[pre_word][current_word] > 1:
@@ -118,49 +138,13 @@ def detection(inputSentence):
     return value
 
 
-def is_special_token_1(token):
-    return bool(re.match(
-        '([a-z0-9A-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+[\+\*\^\@\#\.\&\/-])+[a-z0-9A-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+',
-        token))
-
-
-def is_special_token_2(token):
-    return bool(re.match(
-        r'([0-9]+)+ml|([0-9]+)+ure|([0-9]+)+mg',
-        token))  # example: "700ml", "3ure", "81mg"
-
-
-def is_number(token):
-    if token.isnumeric():
-        return True
-    return bool(re.match('(\d+[\.,])+\d', token))
-
-
-def is_date(token):
-    return bool(re.match('(\d+[-.\/])+\d+', token))
-
-
-def process_abbreviation(token):
-    token = token.lower()
-    with open("app/modules/phrase_reduce.json", mode='r', encoding="utf-8") as file:
-        phrase_reduce = json.load(file)
-    if token in phrase_reduce.keys():
-        return phrase_reduce[token]
-
-
 """**Input for correction**"""
 
 
 def post_processing_detection(preprocessing, outputDetection):
-    split_word = preprocessing.split()
-    for i in range(len(split_word)):
-        if process_abbreviation(split_word[i]):
-            split_word[i] = process_abbreviation(split_word[i])
-
-    detection_input = " ".join(split_word)
+    detection_input = preprocessing
 
     split_word_input_detection = detection_input.split()
-
     split_outputDetection_postprocessing = outputDetection.split()
     list_2_mask = []
     for index, pair in enumerate(zip(split_outputDetection_postprocessing, split_outputDetection_postprocessing[1:])):
@@ -186,17 +170,13 @@ def post_processing_detection(preprocessing, outputDetection):
     return [detection_input_postprocessing, outputDetection_postprocessing]
 
 
-def inputText(sentence):
-    preprocessing = extract_phrases(sentence)  # bỏ dấu của câu
-    # print("preprocessing:", preprocessing)
-    outputDetection = detection(preprocessing)
+def inputText(preSentence):
+    outputDetection = detection(preSentence)
     final_output_detection = post_processing_detection(
-        preprocessing, outputDetection)
-    # print("outputDetection:", final_output_detection[1])
+        preSentence, outputDetection)
     return final_output_detection
 
-
-"""**CORRECTION**"""
+# """**CORRECTION**"""
 
 
 def check(value, init_value):
@@ -207,14 +187,15 @@ def check(value, init_value):
     init_words = init_value.split(" ")
     list_index = []
     for i in range(len(words)):
-        if words[i] == "<mask1>" or words[i] == "<mask>":
+        word = words[i].lower()
+        if word == "<mask1>" or word == "<mask>":
             list_index.append(i)
     for index in list_index:
         words = sentence.split(" ")
-        pre_word = init_words[index - 1]
-        candidate_2 = get_candidate(pre_word)
+        pre_word = init_words[index - 1].lower()
+        candidate_2 = get_candidate_next_word(pre_word)
 
-        word_search = init_words[index]
+        word_search = init_words[index].lower()
         with open("app/modules/word_spell_tu_tao_final.json", mode='r', encoding="utf-8") as file_word_spell_final:
             word_spell_tu_tao_final = json.load(file_word_spell_final)
 
@@ -222,12 +203,23 @@ def check(value, init_value):
         if word_search in word_spell_tu_tao_final.keys():
             for token_word in word_spell_tu_tao_final[word_search]:
                 candidate_1.append(token_word)
-            candidate_1.append(word_search)
 
         candidate_1 = list(dict.fromkeys(candidate_1))
+        if "<s>" in candidate_1:
+            candidate_1.remove("<s>")
+        if "</s>" in candidate_1:
+            candidate_1.remove("</s>")
         candidate_2 = list(dict.fromkeys(candidate_2))
+        if "<s>" in candidate_2:
+            candidate_2.remove("<s>")
+        if "</s>" in candidate_2:
+            candidate_2.remove("</s>")
         candidate_3 = fill_mask(" ".join(init_words[1:-1]), index - 1)
         candidate_3 = list(map(str.lower, candidate_2))
+        if "<s>" in candidate_3:
+            candidate_3.remove("<s>")
+        if "</s>" in candidate_3:
+            candidate_3.remove("</s>")
 
         final_candidate = []
 
@@ -245,62 +237,60 @@ def check(value, init_value):
                     if next_word in candidate_1:
                         final_candidate.append(next_word)
 
-        if len(final_candidate) == 0:
-            if words[index] == "<mask1>":
-                # print(word_search,":", candidate_2[0:10])
-                wordReplae = minimumEditDistance(
-                    init_words[index], candidate_2)
-                # print("wordReplae:", wordReplae)
-                # print("___________________________________________________________")
-                if wordReplae != "<s>" and wordReplae != "</s>" and wordReplae != "":
-                    words[index] = wordReplae
-                    update_final_candidate = []
-                    update_final_candidate.append(wordReplae)
-                    update_final_candidate.extend(candidate_2[0:10])
-                    list_replace.append(update_final_candidate)
-                else:
-                    # print(word_search,":", candidate_3[0:10])
-                    wordReplae = minimumEditDistance(
-                        init_words[index], candidate_3)
-                    list_replace.append(candidate_3[0:10])
-                    update_final_candidate = []
-                    update_final_candidate.append(wordReplae)
-                    update_final_candidate.extend(candidate_2[0:10])
-                    list_replace.append(update_final_candidate)
-                    # print("wordReplae:", wordReplae)
-                    # print("___________________________________________________________")
-            elif words[index] == "<mask>":
-                # print(word_search,":", final_candidate)
-                words[index] = init_words[index]
-                update_final_candidate = []
-                update_final_candidate.append(init_words[index])
-                update_final_candidate.extend(final_candidate)
-                list_replace.append(update_final_candidate)
-                # print("wordReplae:", init_words[index])
-                # print("___________________________________________________________")
+        dict_minimumEditDistance_case = minimumEditDistance(
+            init_words[index].lower(), final_candidate)
 
-        elif len(final_candidate) > 0:
-            # print(word_search,":", final_candidate)
-            wordReplae = minimumEditDistance(
-                init_words[index], final_candidate)
-            # list_replace.append(final_candidate)
-            # print("wordReplae:", wordReplae)
-            # print("___________________________________________________________")
-            if wordReplae != "<s>" and wordReplae != "</s>" and wordReplae != "":
-                words[index] = wordReplae
-                list_replace.append(final_candidate)
-            else:
+        if dict_minimumEditDistance_case == None:
+            if words[index] == "<mask1>":
+                dict_minimumEditDistance_case1 = minimumEditDistance(
+                    init_words[index].lower(), candidate_2)
+                if dict_minimumEditDistance_case1 != None:
+                    wordReplae = min(dict_minimumEditDistance_case1,
+                                     key=dict_minimumEditDistance_case1.get)
+                    if wordReplae != init_words[index].lower():
+                        words[index] = wordReplae
+                        update_final_candidate = []
+                        update_final_candidate.append(init_words[index])
+                        update_final_candidate.extend(
+                            dict_minimumEditDistance_case1)
+                        list_replace.append(
+                            min(update_final_candidate, update_final_candidate[0:10]))
+                else:
+                    dict_minimumEditDistance_case1 = minimumEditDistance(
+                        init_words[index].lower(), candidate_3)
+                    if dict_minimumEditDistance_case1 != None:
+                        wordReplae = min(
+                            dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
+                        if wordReplae != init_words[index].lower():
+                            update_final_candidate = []
+                            update_final_candidate.append(wordReplae)
+                            update_final_candidate.extend(
+                                dict_minimumEditDistance_case1)
+                            list_replace.append(
+                                min(update_final_candidate, update_final_candidate[0:10]))
+                    else:
+                        words[index] = init_words[index]
+
+            elif words[index] == "<mask>":
                 words[index] = init_words[index]
+
+        elif dict_minimumEditDistance_case != None:
+            wordReplae = min(dict_minimumEditDistance_case,
+                             key=dict_minimumEditDistance_case.get)
+            words[index] = wordReplae
+            if wordReplae != init_words[index].lower():
                 update_final_candidate = []
                 update_final_candidate.append(init_words[index])
-                update_final_candidate.extend(final_candidate)
-                list_replace.append(update_final_candidate)
+                update_final_candidate.extend(dict_minimumEditDistance_case)
+                list_replace.append(
+                    min(update_final_candidate, update_final_candidate[0:10]))
 
         sentence = " ".join(words)
     return sentence, list_replace
 
 
 def fill_mask(detection_input, index_case_1):
+    detection_input = detection_input.lower()
     TXT_tmp = detection_input.split()
     TXT_tmp[index_case_1] = "<mask>"
     TXT_tmp = " ".join(TXT_tmp)
@@ -318,7 +308,7 @@ def fill_mask(detection_input, index_case_1):
     return candidate_new
 
 
-def get_candidate(word):
+def get_candidate_next_word(word):
     input_file = open("app/modules/ngram_xac_suat.json",
                       mode="r", encoding="utf-8")
     data = json.load(input_file)
@@ -333,46 +323,26 @@ def get_candidate(word):
 
 def minimumEditDistance(word, candidate):
     word_1 = word
-    dict = {}
+    dict_candidate = {}
     for word_2 in candidate:
         tmp = damerauLevenshtein(
             word_1.lower(), word_2.lower(), similarity=False)
         if tmp < 4:
-            dict[word_2] = tmp
-    if len(dict) > 0:
-        return min(dict, key=dict.get)
+            dict_candidate[word_2] = tmp
+    if len(dict_candidate) > 0:
+        # return min(dict, key = dict.get)
+        return dict(sorted(dict_candidate.items(), key=lambda item: item[1], reverse=True))
     else:
-        return ""
-
-
-def tien_xu_ly(sentence):
-    words = sentence.split(" ")
-    for i in range(len(words)):
-        word = words[i]
-        if process_abbreviation(word):
-            words[i] = process_abbreviation(word)
-        elif is_number(word):
-            words[i] = "number"
-        elif is_date(word):
-            words[i] = "date"
-        elif is_special_token_1(word) or is_special_token_2(word):
-            words[i] = "special"
-
-    final_words = " ".join(words)
-    return final_words.lower()
+        return None
 
 
 def compareCorrection(outputDetection):
     value = outputDetection[1]
     init_value = outputDetection[0]
 
-    value = value.lower()
-    value = tien_xu_ly(value)
     value = "<s> " + value + " </s>"
     value = re.sub(r"\s+", r" ", value).strip()
 
-    init_value = init_value.lower()
-    init_value = tien_xu_ly(init_value)
     init_value = "<s> " + init_value + " </s>"
     init_value = re.sub(r"\s+", r" ", init_value).strip()
 
@@ -383,7 +353,51 @@ def compareCorrection(outputDetection):
     return TXT, listReplace
 
 
+def decode_phrases(phrases_str, correct_sentence, phrases_all, index_sent_dict, list_number, list_date):
+    # correct_phrases = ['lê văn', 'Hoàng', 'Hehe', 'g']
+    correct_phrases = []
+    index_correct_token = 0
+    tokens_correct = correct_sentence.split(" ")
+    for phrase_str in phrases_str:
+        length_phrase = len(phrase_str.split(" "))
+        correct_phrases.append(" ".join(
+            tokens_correct[index_correct_token:index_correct_token + length_phrase]))
+        index_correct_token += length_phrase
+    sentence_correct = phrases_all.copy()
+    for i, idx_sent in enumerate(index_sent_dict.keys()):
+        sentence_correct[idx_sent] = correct_phrases[i]
+
+    final_sentence = ""
+    for i in range(len(sentence_correct)):
+        pharse_sentence = sentence_correct[i]
+        if pharse_sentence in ["(", '/"', "/'"]:
+            final_sentence += " " + pharse_sentence
+        else:
+            final_sentence += pharse_sentence
+
+    if len(list_number) > 0:
+        for number in list_number:
+            final_sentence = final_sentence.replace("number", number, 1)
+    if len(list_date) > 0:
+        for date in list_date:
+            final_sentence = final_sentence.replace("date", date, 1)
+    return final_sentence
+
+
 def getResult(text):
-    outputDetection = inputText(text)
-    outputCorrection, resultCorrection = compareCorrection(outputDetection)
-    return outputDetection[1], resultCorrection
+    preprocess_inputSentence, phrases_str, phrases_all, index_sent_dict, list_number, list_date = extract_phrases(
+        text)
+    outputDetection = inputText(preprocess_inputSentence)
+    outputCorrection, listReplace = compareCorrection(outputDetection)
+    sentence_1 = preprocess_inputSentence.split(" ")
+    sentence_2 = outputCorrection.split(" ")
+    tmp = sentence_1
+    for i in range(len(sentence_1)):
+        if sentence_2[i] != sentence_1[i]:
+            tmp[i] = "<mask>"
+    resultCorrection = " ".join(tmp)
+    resultDetection = decode_phrases(
+        phrases_str, resultCorrection, phrases_all, index_sent_dict, list_number, list_date)
+    return resultDetection, listReplace
+
+# inputSentence = "bn bị bệnh 3 ngày nay từ ngày 20/11 tiêu lõng, ho, sỗ mũi đau miệng khiong ăn uống được mệt, vả mồ hôi, Nhập viện"

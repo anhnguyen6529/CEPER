@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import "../../styles/index.css";
-import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 
@@ -19,7 +18,6 @@ const FChanDoanBanDau = () => {
     const [newChanDoanBanDau, setNewChanDoanBanDau] = useState(chanDoanBanDau);
     const [result, setResult] = useState('');
     const [replaced, setReplaced] = useState([]);
-    const [text, setText] = useState([]);
     const [useResult, setUseResult] = useState(true);
 
     useEffect(() => {
@@ -32,8 +30,7 @@ const FChanDoanBanDau = () => {
     useEffect(() => {
         if (!spellingError.loading) {
             setResult(spellingError);
-            setReplaced(spellingError.correction.map(res => ({ type: "correct", repText: res[0] })));
-            setText(UtilsText.getOriginalWordList(newChanDoanBanDau, spellingError.detection));
+            setReplaced(spellingError.correction.map(res => ({ type: "correct", repText: res[1] })));
         }
         // eslint-disable-next-line
     }, [spellingError.loading]);
@@ -68,7 +65,6 @@ const FChanDoanBanDau = () => {
 
             {!!result && !spellingError.loading ? 
                 <BoxLoiChinhTa
-                    text={text}
                     result={result}
                     replaced={replaced}
                     setReplaced={setReplaced}

@@ -6,7 +6,6 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import { Button } from "../common";
 import { BoxLoiChinhTa } from "../boxes";
-import { UtilsText } from "../../utils";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import { CancelOutlined } from "@mui/icons-material";
 
@@ -22,7 +21,6 @@ const FChanDoanKhiRaVien = () => {
     const [ngayRaVien, setNgayRaVien] = useState(chanDoanKhiRaVien.ngayRaVien);
     const [result, setResult] = useState('');
     const [replaced, setReplaced] = useState([]);
-    const [text, setText] = useState([]);
     const [useResult, setUseResult] = useState(true);
 
     useEffect(() => {
@@ -35,8 +33,7 @@ const FChanDoanKhiRaVien = () => {
     useEffect(() => {
         if (!spellingError[CLINICAL_SUBSECTION].loading) {
             setResult(spellingError[CLINICAL_SUBSECTION]);
-            setReplaced(spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[0] })));
-            setText(UtilsText.getOriginalWordList(chanDoan, spellingError[CLINICAL_SUBSECTION].detection));
+            setReplaced(spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[1] })));
         }
         // eslint-disable-next-line
     }, [spellingError[CLINICAL_SUBSECTION].loading]);
@@ -79,7 +76,6 @@ const FChanDoanKhiRaVien = () => {
 
             {!!result && !spellingError[CLINICAL_SUBSECTION].loading ? 
                 <BoxLoiChinhTa
-                    text={text}
                     result={result}
                     replaced={replaced}
                     setReplaced={setReplaced}
