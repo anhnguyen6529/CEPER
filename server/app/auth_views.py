@@ -1,29 +1,6 @@
-from datetime import datetime, timedelta, timezone
 from app import app, conn
 from flask import request, jsonify
-from flask_jwt_extended import create_access_token, unset_jwt_cookies, get_jwt, get_jwt_identity
-import json
-
-
-@app.after_request
-def refresh_expiring_jwts(response):
-    if request.endpoint not in ['login', 'logout']:
-        try:
-            exp_timestamp = get_jwt()['exp']
-            now = datetime.now(timezone.utc)
-            target_timestamp = datetime.timestamp(now + timedelta(hours=3))
-            if target_timestamp > exp_timestamp:
-                access_token = create_access_token(identity=get_jwt_identity())
-                data = response.get_json()
-                if type(data) is dict:
-                    data['token'] = access_token
-                    response.data = json.dumps(data)
-            return response
-        except (RuntimeError, KeyError):
-            # Case where there is not a valid JWT. Just return the original respone
-            return response
-    else:
-        return response
+from flask_jwt_extended import create_access_token, unset_jwt_cookies
 
 
 @app.route('/login', methods=['POST'])
