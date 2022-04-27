@@ -2,13 +2,16 @@ import { CancelOutlined } from "@mui/icons-material";
 import { Box, CircularProgress, TextField, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import "../../styles/index.css";
+import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 
 const SECTION_NAME = "Tình trạng người bệnh ra viện";
+const SECTION_FIELD = "tinhTrangRaVien";
 
 const FTinhTrangRaVien = () => {
     const { updating, tinhTrangRaVien } = useSelector((state) => state.HSBA);
@@ -21,8 +24,11 @@ const FTinhTrangRaVien = () => {
     const [useResult, setUseResult] = useState(true);
 
     useEffect(() => {
-        if (updating && spellingError.changed) {
-            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newTinhTrangRaVien }));
+        if (updating) {
+            if (spellingError.changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newTinhTrangRaVien }));
+            }
+            dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: newTinhTrangRaVien }));
         }
         // eslint-disable-next-line
     }, [updating]);
@@ -30,7 +36,12 @@ const FTinhTrangRaVien = () => {
     useEffect(() => {
         if (!spellingError.loading) {
             setResult(spellingError);
-            setReplaced(spellingError.correction.map(res => ({ type: "correct", repText: res[1] })));
+            const tReplaced = spellingError.correction.map(res => ({ type: "correct", repText: res[1] }));
+            setReplaced(tReplaced);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: UtilsText.replaceMaskWord(spellingError.detection, tReplaced)
+            }));
         }
         // eslint-disable-next-line
     }, [spellingError.loading]);
@@ -58,6 +69,8 @@ const FTinhTrangRaVien = () => {
                                 dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                             }
                         }
+                    } else {
+                        dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: value }));
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
@@ -73,10 +86,14 @@ const FTinhTrangRaVien = () => {
                         setUseResult(checked);
                         if (checked) {
                             dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
-                            setTimeout(() => {
-                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newTinhTrangRaVien }));
-                            }, 2000);
+                            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newTinhTrangRaVien }));
                         }
+                    }}
+                    handleUpdateSection={(newReplaced) => {
+                        dispatch(HSBAActions.updateSection({
+                            section: SECTION_FIELD,
+                            data: UtilsText.replaceMaskWord(spellingError.detection, newReplaced)
+                        }));
                     }}
                 />
             : ( 

@@ -162,7 +162,11 @@ const TDanhSachHienTai = ({ data }) => {
                                     {danhSachHSBATab.hienTaiColsChecked[8] && <TableCell>{row.phong}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[9] && <TableCell>{row.giuong}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[10] && <TableCell>{row.benhDieuTri}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[11] && <TableCell>{row.tinhTrangHienTai}</TableCell>}
+                                    {danhSachHSBATab.hienTaiColsChecked[11] && 
+                                        <TableCell>
+                                            {Array.isArray(row.tinhTrangHienTai) ? row.tinhTrangHienTai.join('\n') : row.tinhTrangHienTai}
+                                        </TableCell>
+                                    }
                                 </StyledTableRow>
                             );
                         })}

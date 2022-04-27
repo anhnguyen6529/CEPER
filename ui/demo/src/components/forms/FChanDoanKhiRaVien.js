@@ -8,8 +8,11 @@ import { Button } from "../common";
 import { BoxLoiChinhTa } from "../boxes";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import { CancelOutlined } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { UtilsText } from "../../utils";
 
 const SECTION_NAME = "Chẩn đoán khi ra viện";
+const SECTION_FIELD = "chanDoanKhiRaVien";
 const CLINICAL_SUBSECTION = "Chẩn đoán";
 
 const FChanDoanKhiRaVien = () => {
@@ -24,8 +27,11 @@ const FChanDoanKhiRaVien = () => {
     const [useResult, setUseResult] = useState(true);
 
     useEffect(() => {
-        if (updating && spellingError[CLINICAL_SUBSECTION].changed) {
-            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
+        if (updating) {
+            if (spellingError[CLINICAL_SUBSECTION].changed) {
+                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
+            }
+            dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { chanDoan, ngayRaVien } }));
         }
         // eslint-disable-next-line
     }, [updating]);
@@ -33,7 +39,15 @@ const FChanDoanKhiRaVien = () => {
     useEffect(() => {
         if (!spellingError[CLINICAL_SUBSECTION].loading) {
             setResult(spellingError[CLINICAL_SUBSECTION]);
-            setReplaced(spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[1] })));
+            const tReplaced = spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[1] }));
+            setReplaced(tReplaced);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: {
+                    ...chanDoanKhiRaVien,
+                    chanDoan: UtilsText.replaceMaskWord(spellingError[CLINICAL_SUBSECTION].detection, tReplaced)
+                }
+            }));
         }
         // eslint-disable-next-line
     }, [spellingError[CLINICAL_SUBSECTION].loading]);
@@ -69,6 +83,8 @@ const FChanDoanKhiRaVien = () => {
                                 dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                             }
                         }
+                    } else {
+                        dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...chanDoanKhiRaVien, chanDoan: value } }));
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
@@ -84,10 +100,17 @@ const FChanDoanKhiRaVien = () => {
                         setUseResult(checked);
                         if (checked) {
                             dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION }));
-                            setTimeout(() => {
-                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
-                            }, 2000);
+                            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
                         }
+                    }}
+                    handleUpdateSection={(newReplaced) => {
+                        dispatch(HSBAActions.updateSection({
+                            section: SECTION_FIELD,
+                            data: {
+                                ...chanDoanKhiRaVien,
+                                chanDoan: UtilsText.replaceMaskWord(spellingError[CLINICAL_SUBSECTION].detection, newReplaced)
+                            }
+                        }));
                     }}
                 />
             : ( 

@@ -11,6 +11,8 @@ import mdSections from "../constants/md_sections.json";
 import { danhSachHSBAActions } from "../redux/slices/danhSachHSBA.slice";
 import { sectionState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
+import HSBAThunk from "../redux/thunks/HSBA.thunk";
+import { useSnackbar } from "notistack";
 
 const User = () => {
     const navigate = useNavigate();
@@ -20,6 +22,7 @@ const User = () => {
     const { creatingMode } = useSelector(state => state.danhSachHSBA);
     const { spellingError } = useSelector(state => state);
     const dispatch = useDispatch();
+    const { enqueueSnackbar } = useSnackbar();
     
     useEffect(() => {
         if (!localStorage.getItem('token')) {
@@ -41,7 +44,7 @@ const User = () => {
         raVienCols: [], raVienColsChecked: []
     });
     const [openDialog, setOpenDialog] = useState(false);
-    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [openBackdrop, setOpenBackdrop] = useState(false);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -75,10 +78,52 @@ const User = () => {
             dispatch(HSBAActions.update());
         } else {
             dispatch(HSBAActions.confirmUpdate());
-            setOpenSnackbar(true);
-            dispatch(SpellingErrorActions.resetState());
+            setOpenBackdrop(true);
         }
     }
+
+    const handleConfirmUpdate = () => {
+        const checkBenhAn = mdSections["Bệnh án"].some(key => spellingError[key].changed);
+        const checkTongKetBA = mdSections["Tổng kết bệnh án"].some(key => spellingError[key].changed);
+        dispatch(HSBAThunk.updateHSBA({
+            pid: selectedHSBA.pid,
+            trangThai: checkBenhAn ? "Đang điều trị" : (checkTongKetBA ? "Đã ra viện" : selectedHSBA.trangThai),
+            ...(checkBenhAn && { 
+                benhAn: { ...selectedHSBA.benhAn, thoiGian: new Date().toISOString() },
+                lyDoVaoVien: selectedHSBA.lyDoVaoVien, hoiBenh: selectedHSBA.hoiBenh, khamBenh: selectedHSBA.khamBenh, tomTatBenhAn: selectedHSBA.tomTatBenhAn, chanDoanBanDau: selectedHSBA.chanDoanBanDau,
+            }),
+            ...(checkTongKetBA && {
+                tongKetBenhAn: { thoiGian: new Date().toISOString(), bacSiDieuTri: { id: user.id, name: user.name } },
+                phuongPhapDieuTri: selectedHSBA.phuongPhapDieuTri, chanDoanKhiRaVien: selectedHSBA.chanDoanKhiRaVien, tinhTrangRaVien: selectedHSBA.tinhTrangRaVien, huongDieuTri: selectedHSBA.huongDieuTri,
+            }),            
+            danhSachYLenh: selectedHSBA.danhSachYLenh, toDieuTri: selectedHSBA.toDieuTri, phieuTDDiUngThuoc: selectedHSBA.phieuTDDiUngThuoc, 
+            phieuChamSoc: selectedHSBA.phieuChamSoc, phieuTDTruyenDich: selectedHSBA.phieuTDTruyenDich, phieuTDChucNangSong: selectedHSBA.phieuTDChucNangSong, phieuCongKhaiThuoc: selectedHSBA.phieuCongKhaiThuoc
+        }));    
+    }
+
+    useEffect(() => {
+        if (selectedHSBA.attachedSecUpdated) {
+            handleConfirmUpdate();
+        }
+        // eslint-disable-next-line
+    }, [selectedHSBA.attachedSecUpdated]);
+
+    useEffect(() => {
+        if (selectedHSBA.confirmUpdate && !selectedHSBA.setting) {
+            setOpenBackdrop(false);
+            dispatch(SpellingErrorActions.resetState());
+            localStorage.setItem('status', 'UPDATED');
+            navigate(0);    
+        }
+        // eslint-disable-next-line
+    }, [selectedHSBA.setting]);
+
+    window.onload = function() {
+        if (localStorage.getItem('status')) {
+            enqueueSnackbar("Cập nhật thông tin bệnh án thành công", { variant: "success" });
+            localStorage.removeItem('status');
+        }
+    };
     
     return (
         <UserProvider value={{
@@ -94,8 +139,9 @@ const User = () => {
             setDanhSachHSBATab,
             handleUpdate,
             setOpenDialog,
-            openSnackbar,
-            setOpenSnackbar
+            handleConfirmUpdate,
+            openBackdrop,
+            setOpenBackdrop
         }}>
             <Box sx={{ display: 'flex'}}>
                 <CssBaseline />

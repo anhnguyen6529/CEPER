@@ -52,4 +52,13 @@ UtilsText.getOriginalWordList = (text, detection) => {
     return txt;
 }
 
+UtilsText.replaceMaskWord = (detection, replaced) => {
+    let count = 0;
+    while (detection.indexOf("<mask>") !== -1) {
+        detection = detection.replace("<mask>", replaced[count].repText);
+        count++;
+    }
+    return detection;
+}
+
 export default UtilsText;

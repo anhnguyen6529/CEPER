@@ -2,7 +2,7 @@ import {
     Box, Paper, TableContainer, TableHead, TableBody, TableRow, 
     TableCell, Table, TableSortLabel, Grid, Typography, TextField, Radio
 } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Add, CancelOutlined, RadioButtonChecked, RadioButtonUnchecked } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
 import { visuallyHidden } from "@mui/utils";
@@ -11,8 +11,10 @@ import { UtilsTable } from "../../utils";
 import { TablePagination, StyledTableRow, Button, SelectThuoc } from "../common";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const SECTION_NAME = "Phiếu TD dị ứng thuốc";
+const SECTION_FIELD = "phieuTDDiUngThuoc";
 
 const headCells = [
     { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày', width: '10%', minWidth: 115 },
@@ -28,6 +30,7 @@ const headCells = [
 const FPhieuTDDiUngThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuTDDiUngThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
     const { role, name, id, position } = useSelector((state) => state.auth.user);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -46,6 +49,17 @@ const FPhieuTDDiUngThuoc = () => {
     const [hasChanged, setHasChanged] = useState(false);
 
     const [rows, setRows] = useState(content.data);
+
+    useEffect(() => {
+        if (updating || confirmUpdate) {
+            dispatch(HSBAActions.updateAttachedSection({ 
+                section: SECTION_FIELD, 
+                value: { newDataLength: rows.length - content.data.length }, 
+                newData: rows 
+            }));
+        }
+        // eslint-disable-next-line
+    }, [updating, confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';

@@ -1,7 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { 
-    Typography, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Snackbar, Alert, AlertTitle, Backdrop, Chip
-} from "@mui/material";
+import React, { useContext, useEffect } from "react";
+import { Typography, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Backdrop, Chip } from "@mui/material";
 import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
 import { format } from "date-fns";
@@ -15,6 +13,7 @@ import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
 import { sectionState } from "../redux/slices/spellingError.slice";
+import { useSnackbar } from "notistack";
 
 const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "primary", "Đã ra viện": "default" };
 
@@ -22,8 +21,9 @@ const HSBA = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { pid } = useParams();
-    const { open, today, appearSec, appearTime, setAppearTime, openSec, openSnackbar, setOpenSnackbar, handleUpdate } = useContext(UserContext); 
+    const { open, today, appearSec, appearTime, setAppearTime, openSec, handleUpdate, openBackdrop, setOpenBackdrop } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if ((id === pid && role === "BN") || role !== "BN") {
@@ -40,13 +40,15 @@ const HSBA = () => {
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, updating, confirmUpdate } = benhNhan;
-    const [openBackdrop, setOpenBackdrop] = useState(false);
 
     useEffect(() => {
         if (updating && Object.keys(sectionState).some(key => spellingError[key].changed)) {
             if (!spellingError.loading) {
                 setOpenBackdrop(false);
-                setOpenSnackbar(true);
+                enqueueSnackbar("Thông tin bệnh án đã được xử lý!\n Xem kết quả ở \"Danh sách mục - Xử lý lỗi\".", { 
+                    variant: "success",
+                    style: { whiteSpace: "pre-line" }
+                });
                 const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
                 document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
             } else {
@@ -168,7 +170,8 @@ const HSBA = () => {
                                         <Typography fontWeight="bold">Tình trạng hiện tại</Typography>
                                         <Typography>
                                             {benhNhan.toDieuTri.data.length > 0 
-                                                ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh 
+                                                ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh.map((dbb, i) =>
+                                                    i > 0 ? dbb.toLowerCase() : dbb).join(", ")
                                                 : <Typography component="span">(<i>trống</i>)</Typography>
                                             }
                                         </Typography>
@@ -286,19 +289,11 @@ const HSBA = () => {
                 : null
             : null} 
 
-            <Snackbar open={openSnackbar} autoHideDuration={5000} onClose={() => setOpenSnackbar(false)}>
-                <Alert elevation={6} variant="filled" severity="success">
-                    {updating ? 
-                        <>
-                            <AlertTitle>Thông tin bệnh án đã được xử lý!</AlertTitle>
-                            Vui lòng di chuyển đến các mục trong "<i>Danh sách mục - Xử lý lỗi</i>" để xem kết quả.
-                        </> 
-                    : (confirmUpdate ? "Cập nhật thông tin bệnh án thành công" : "")}
-                </Alert>
-            </Snackbar>
-
             <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-                <CircularProgress color="inherit" />
+                <div className="df fdc aic jcc">
+                    <CircularProgress color="inherit" sx={{ mt: 3, mb: 1 }}/>
+                    <Typography color="inherit">{confirmUpdate ? "Đang cập nhật bệnh án..." : "Đang xử lý thông tin bệnh án..."}</Typography>
+                </div>
             </Backdrop>
         </Container>
     )

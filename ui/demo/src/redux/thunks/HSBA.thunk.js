@@ -17,6 +17,22 @@ const HSBAThunk = {
                 return error.message;
             }
         }
+    ),
+    updateHSBA: createAsyncThunk(
+        'HSBA/updateHSBA',
+        async (apiData) => {
+            try {
+                const apiResponse = await HSBAApi.updateHSBA(apiData);
+
+                if (apiResponse.status !== 200) {
+                    throw new Error(apiResponse.statusText);
+                }
+
+                return apiResponse.data;
+            } catch (error) {
+                return error.message;
+            }
+        }
     )
 }
 

@@ -1,8 +1,13 @@
 from datetime import timedelta
+from os.path import join, dirname
 from flask import Flask
 from flaskext.mysql import MySQL
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
+
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 mysql = MySQL()
 app = Flask(__name__)

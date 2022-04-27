@@ -3,7 +3,7 @@ import {
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem
 } from "@mui/material";
 import { Add, CancelOutlined, DoneAll, Loop } from "@mui/icons-material";
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useSelector , useDispatch } from "react-redux";
@@ -12,8 +12,10 @@ import "../../styles/index.css";
 import { TablePagination, Button, SelectYLenh, StyledTableRow } from "../common";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const SECTION_NAME = "Phiếu chăm sóc";
+const SECTION_FIELD = "phieuChamSoc";
 
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
@@ -27,10 +29,10 @@ const headCells = [
 const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { updating, confirmUpdate, danhSachYLenh } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
-    const { danhSachYLenh } = useSelector((state) => state.HSBA);
 
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('ngayGio');
@@ -43,8 +45,23 @@ const FPhieuChamSoc = () => {
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
 
-    const [filterDanhSachYLenh, setFilterDanhSachYLenh] = useState(danhSachYLenh);
+    const [newDanhSachYLenh, setNewDanhSachYLenh] = useState(danhSachYLenh);
     const [rows, setRows] = useState(content.data);
+
+    useEffect(() => {
+        if (updating || confirmUpdate) {
+            dispatch(HSBAActions.updateSection({
+                section: 'danhSachYLenh',
+                data: newDanhSachYLenh
+            }));
+            dispatch(HSBAActions.updateAttachedSection({ 
+                section: SECTION_FIELD, 
+                value: { newDataLength: rows.length - content.data.length }, 
+                newData: rows 
+            }));
+        }
+        // eslint-disable-next-line
+    }, [updating, confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -76,10 +93,10 @@ const FPhieuChamSoc = () => {
             setNewNgayGio(now);
            
             newThucHienYLenh.forEach((thyl) => {
-                const findIdx = filterDanhSachYLenh.findIndex(dsyl => dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...filterDanhSachYLenh];
+                const findIdx = newDanhSachYLenh.findIndex(dsyl => dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...newDanhSachYLenh];
                 if (findIdx !== -1) {
                     tFilterDSYL[findIdx] = { ...tFilterDSYL[findIdx], xacNhan: thyl.xacNhan };
-                    setFilterDanhSachYLenh(tFilterDSYL);
+                    setNewDanhSachYLenh(tFilterDSYL);
                 }
             })
             clearData();
@@ -229,11 +246,11 @@ const FPhieuChamSoc = () => {
                                                         }
                                                     }}
                                                     existValue={newThucHienYLenh}
-                                                    danhSachYLenh={filterDanhSachYLenh}
+                                                    danhSachYLenh={newDanhSachYLenh}
                                                 />
 
                                                 {newThucHienYLenh.length === 1
-                                                    && filterDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                    && newDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
                                                     ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
                                                     : null}
                                             </Box>         
@@ -298,11 +315,11 @@ const FPhieuChamSoc = () => {
                                                             }
                                                         }}
                                                         existValue={newThucHienYLenh}
-                                                        danhSachYLenh={filterDanhSachYLenh}
+                                                        danhSachYLenh={newDanhSachYLenh}
                                                     />
 
                                                     {idx + 1 === newThucHienYLenh.length - 1 
-                                                        && filterDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                        && newDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
                                                         ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
                                                         : null}
                                                 </Box>         

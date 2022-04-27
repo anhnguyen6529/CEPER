@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {  
     Box, Table, TableRow, TableContainer, TableBody, TextField,
     TableHead, TableCell, TableSortLabel, Paper, Grid, Typography, Autocomplete
@@ -15,8 +15,10 @@ import drugList from "../../constants/drug_list.json";
 import { DatePicker, TimePicker } from "@mui/lab";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import moment from "moment";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const SECTION_NAME = "Phiếu TD truyền dịch";
+const SECTION_FIELD = "phieuTDTruyenDich";
 
 const headCells = [
     { id: 'ngayThang', align: 'left', label: 'Ngày tháng', unit: '', width: '10%', minWidth: 100 },
@@ -41,6 +43,7 @@ const setTimetoDate = (date, time) => {
 const FPhieuTDTruyenDich = () => {
     const content = useSelector((state) => state.HSBA.phieuTDTruyenDich);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
 
@@ -65,6 +68,17 @@ const FPhieuTDTruyenDich = () => {
             return 0;
         }
     });
+
+    useEffect(() => {
+        if (updating || confirmUpdate) {
+            dispatch(HSBAActions.updateAttachedSection({ 
+                section: SECTION_FIELD, 
+                value: { newDataLength: rows.length - content.data.length }, 
+                newData: rows 
+            }));
+        }
+        // eslint-disable-next-line
+    }, [updating, confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';

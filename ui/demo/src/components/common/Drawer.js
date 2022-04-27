@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
 import { 
-    Drawer as MuiDrawer, IconButton, Box, List, Divider, Tooltip,
+    Drawer as MuiDrawer, IconButton, Box, List, Divider,
     ListItem, ListItemIcon, ListItemText, Typography, Grid, Avatar, ListSubheader
 } from "@mui/material";
 import logo from "../../images/logo.png";
 import { faFileMedicalAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ChevronLeft, EditLocationOutlined, InfoOutlined } from "@mui/icons-material";
+import { ChevronLeft, EditLocationOutlined } from "@mui/icons-material";
 import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
 import UserContext from "../../contexts/UserContext";
@@ -22,7 +22,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
     const { role } = useSelector((state) => state.auth.user);
     const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, 
-        danhSachHSBATab, setDanhSachHSBATab, setOpenDialog } = useContext(UserContext);
+        danhSachHSBATab, setDanhSachHSBATab, setOpenDialog, handleConfirmUpdate } = useContext(UserContext);
     const { updating } = useSelector((state) => state.HSBA);
     const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
@@ -88,7 +88,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                         : null
                                     )}
                                     <ListItem>
-                                        <Button sx={{ width: "100%" }} variant="primary-dark" onClick={() => {}}>
+                                        <Button sx={{ width: "100%" }} variant="primary-dark" onClick={handleConfirmUpdate}>
                                             Xác nhận cập nhật
                                         </Button>
                                     </ListItem>
@@ -131,21 +131,6 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                             setOpenSec(tOpenSec);
                                             setAppearSec(tAppearSec);
                                         }}
-                                        secondaryAction={
-                                            section === "Bệnh án" 
-                                                ? (
-                                                    <Tooltip placement="right" title="Những thông tin về quá trình bệnh lý, bệnh sử, thăm khám người bệnh, tóm tắt bệnh án và chẩn đoán tức thời" >
-                                                        <InfoOutlined fontSize="small"/>
-                                                    </Tooltip>
-                                                )
-                                                : (section === "Tổng kết bệnh án"
-                                                    ? (
-                                                        <Tooltip placement="right" title="Những thông tin về phương pháp điều trị, chẩn đoán ra viện, tình trạng người bệnh khi ra viện, hướng điều trị và các chế độ tiếp theo" >
-                                                            <InfoOutlined fontSize="small"/>
-                                                        </Tooltip>
-                                                    ) : null
-                                                )
-                                        }
                                     >
                                         <ListItemIcon sx={{ minWidth: 32 }}>
                                             <FontAwesomeIcon color='#48B0F7' icon={faFileMedicalAlt} />

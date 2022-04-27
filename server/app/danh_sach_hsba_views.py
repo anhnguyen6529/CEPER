@@ -1,3 +1,4 @@
+import json
 from app import app, conn
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
@@ -45,7 +46,10 @@ def getDanhSachHSBA():
     for dt in cursor.fetchall():
         data = dict()
         for i in range(0, len(hien_tai_key)):
-            data[hien_tai_key[i]] = dt[i]
+            if hien_tai_key[i] == "tinhTrangHienTai" and isinstance(dt[i], str):
+                data[hien_tai_key[i]] = json.loads(dt[i])
+            else:
+                data[hien_tai_key[i]] = dt[i]
         result["hienTai"].append(data)
 
     cursor.execute(ra_vien_query)

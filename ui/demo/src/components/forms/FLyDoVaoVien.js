@@ -2,15 +2,18 @@ import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import DateTimePicker from '@mui/lab/DateTimePicker';
+import { UtilsText } from "../../utils";
 import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import mdSections from "../../constants/md_sections.json";
 import { CancelOutlined } from "@mui/icons-material";
 
 const SECTION_NAME = "Lý do vào viện";
+const SECTION_FIELD = "lyDoVaoVien";
 const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const FLyDoVaoVien = () => {
@@ -40,6 +43,10 @@ const FLyDoVaoVien = () => {
             if (spellingErrorChanDoan.changed) {
                 dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
             }
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...lyDoVaoVien, lyDo, vaoNgayThu, chanDoanNoiGioiThieu, noiGioiThieu }
+            }));
         }
         // eslint-disable-next-line
     }, [updating]);
@@ -47,11 +54,21 @@ const FLyDoVaoVien = () => {
     useEffect(() => {
         if (!spellingErrorLyDo.loading) {
             setResultLyDo(spellingErrorLyDo);
-            setReplacedLyDo(spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[1] })));
+            const tReplacedLyDo = spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[1] }));
+            setReplacedLyDo(tReplacedLyDo);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...lyDoVaoVien, lyDo: UtilsText.replaceMaskWord(spellingErrorLyDo.detection, tReplacedLyDo) }
+            }));
         }
         if (!spellingErrorChanDoan.loading) {
             setResultChanDoan(spellingErrorChanDoan);
-            setReplacedChanDoan(spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[1] })));
+            const tReplacedChanDoan = spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[1] }));
+            setReplacedChanDoan(tReplacedChanDoan);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: UtilsText.replaceMaskWord(spellingErrorChanDoan.detection, tReplacedChanDoan) }
+            }));
         }
         // eslint-disable-next-line
     }, [spellingErrorLyDo.loading, spellingErrorChanDoan.loading]);
@@ -68,9 +85,9 @@ const FLyDoVaoVien = () => {
 
     return (
         <Box component="form" noValidate>
+            {(updating && !!resultLyDo) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
             <Grid container>
                 <Grid item xs={9}>
-                    {(updating && !!resultLyDo) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
@@ -92,38 +109,15 @@ const FLyDoVaoVien = () => {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
+                            } else {
+                                dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...lyDoVaoVien, lyDo: value } }));
                             }
                         }}
                         disabled={updating && (useResultLyDo || !spellingErrorLyDo.changed)}
                     />
-
-                    {!!resultLyDo && !spellingErrorLyDo.loading ? 
-                        <BoxLoiChinhTa
-                            result={resultLyDo}
-                            replaced={replacedLyDo}
-                            setReplaced={setReplacedLyDo}
-                            useResult={useResultLyDo}
-                            handleChangeCheckbox={(checked) => {
-                                setUseResultLyDo(checked);
-                                if (checked) {
-                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
-                                    setTimeout(() => {
-                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
-                                    }, 2000);
-                                }
-                            }}
-                        />
-                    : ( 
-                        !!resultLyDo ? 
-                            <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
-                            </div> 
-                        : null
-                    )}
                 </Grid>
                 <Grid item xs={3}>
-                    <Box className="df aic jcfe" sx={{ mr: 2 }}>
+                    <Box className="df aic jcfe" sx={{ mr: 2, mt: (updating && !!resultLyDo) ? 1 : 0 }}>
                         <Typography>Vào ngày thứ</Typography>
                         <TextField 
                             type="number"
@@ -146,6 +140,37 @@ const FLyDoVaoVien = () => {
                         />
                         <Typography>của bệnh</Typography>
                     </Box>           
+                </Grid>
+
+                <Grid xs={12}>
+                    {!!resultLyDo && !spellingErrorLyDo.loading ? 
+                        <BoxLoiChinhTa
+                            result={resultLyDo}
+                            replaced={replacedLyDo}
+                            setReplaced={setReplacedLyDo}
+                            useResult={useResultLyDo}
+                            handleChangeCheckbox={(checked) => {
+                                setUseResultLyDo(checked);
+                                if (checked) {
+                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
+                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
+                                }
+                            }}
+                            handleUpdateSection={(newReplaced) => {
+                                dispatch(HSBAActions.updateSection({
+                                    section: SECTION_FIELD,
+                                    data: { ...lyDoVaoVien, lyDo: UtilsText.replaceMaskWord(spellingErrorLyDo.detection, newReplaced) }
+                                }));
+                            }}
+                        />
+                    : ( 
+                        !!resultLyDo ? 
+                            <div className="df fdc aic jcc">
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
+                            </div> 
+                        : null
+                    )}
                 </Grid>
             </Grid>
             <Divider sx={{ my: 2 }}/>
@@ -195,6 +220,8 @@ const FLyDoVaoVien = () => {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
+                            } else {
+                                dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: value } }));
                             }
                         }}
                         disabled={updating && (useResultChanDoan || !spellingErrorChanDoan.changed)}
@@ -210,10 +237,14 @@ const FLyDoVaoVien = () => {
                                 setUseResultChanDoan(checked);
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
-                                    setTimeout(() => {
-                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
-                                    }, 2000);
+                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
                                 }
+                            }}
+                            handleUpdateSection={(newReplaced) => {
+                                dispatch(HSBAActions.updateSection({
+                                    section: SECTION_FIELD,
+                                    data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: UtilsText.replaceMaskWord(spellingErrorChanDoan.detection, newReplaced) }
+                                }));
                             }}
                         />
                     : ( 

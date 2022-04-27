@@ -2,7 +2,7 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,8 +12,10 @@ import { TablePagination, Button, StyledTableRow } from "../common";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
 import { Add, CancelOutlined } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const SECTION_NAME = "Tờ điều trị";
+const SECTION_FIELD = "toDieuTri";
 
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
@@ -40,6 +42,7 @@ const removeHashAndSpaces = (arrStr) => {
 const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { updating, confirmUpdate, danhSachYLenh } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -56,6 +59,28 @@ const FToDieuTri = () => {
     const [hasChanged, setHasChanged] = useState(false);
 
     const [rows, setRows] = useState(content.data);
+
+    useEffect(() => {
+        if (updating || confirmUpdate) {
+            const newDanhSachYLenh = [];
+            rows.slice(content.data.length).forEach((row) => {
+                newDanhSachYLenh.push({
+                    yLenh: format(new Date(row.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + row.yLenh.join('; ') + ' - BS: ' + name,
+                    xacNhan: 'Chưa thực hiện'
+                });
+            });
+            dispatch(HSBAActions.updateSection({
+                section: 'danhSachYLenh',
+                data: [...danhSachYLenh, ...newDanhSachYLenh]
+            }));
+            dispatch(HSBAActions.updateAttachedSection({ 
+                section: SECTION_FIELD, 
+                value: { newDataLength: rows.length - content.data.length }, 
+                newData: rows 
+            }));
+        }
+        // eslint-disable-next-line
+    }, [updating, confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -144,13 +169,13 @@ const FToDieuTri = () => {
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
                                         <TableCell className="tableBodyBorderRight">
-                                            {(Array.isArray(row.dienBienBenh) && row.dienBienBenh.length > 1) 
+                                            {row.dienBienBenh.length > 1
                                                 ? row.dienBienBenh.map(dbb => '- ' + dbb).join('\n') 
                                                 : row.dienBienBenh
                                             }
                                         </TableCell>
                                         <TableCell className="tableBodyBorderRight">
-                                            {(Array.isArray(row.yLenh) && row.yLenh.length > 1) 
+                                            {row.yLenh.length > 1
                                                 ? row.yLenh.map(yl => '- ' + yl).join('\n') 
                                                 : row.yLenh
                                             }

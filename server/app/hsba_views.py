@@ -1,10 +1,10 @@
 from app import app, conn
-from flask import jsonify
+from flask import jsonify, request
 import json
 from flask_jwt_extended import jwt_required
 
 
-@app.route('/user/hsba/<pid>')
+@app.route('/user/hsba/<pid>', methods=['GET'])
 @jwt_required()
 def getOneHSBAByPID(pid):
     cursor = conn.cursor()
@@ -93,8 +93,8 @@ def getOneHSBAByPID(pid):
     for d in cursor.fetchall():
         dt = dict()
         dt["ngayGio"] = d[0]
-        dt["dienBienBenh"] = d[1]
-        dt["yLenh"] = d[2]
+        dt["dienBienBenh"] = json.loads(d[1])
+        dt["yLenh"] = json.loads(d[2])
         dt["bacSiGhi"] = d[3]
         result["toDieuTri"]["data"].append(dt)
 
@@ -203,4 +203,98 @@ def getOneHSBAByPID(pid):
 
     cursor.close()
     response = jsonify(result)
+    return response
+
+
+@app.route('/user/hsba/<pid>', methods=['PUT'])
+@jwt_required()
+def updateHSBA(pid):
+    data = request.json
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE HO_SO_BENH_AN SET Trang_Thai = %s WHERE PID = %s;",
+                   (data["trangThai"], pid))
+    conn.commit()
+
+    if "benhAn" in data:
+        ddlqb = data["hoiBenh"]["tienSu"]["dacDiemLienQuanBenh"]
+        ddlqb_query = "JSON_ARRAY(JSON_OBJECT('tt', '" + ddlqb[0]["tt"] + "', 'benh', '" + ddlqb[0]["benh"] + "', 'kyHieu', " + str(ddlqb[0]["kyHieu"]) + ", 'diNguyen', JSON_ARRAY(" + str(ddlqb[0]["diNguyen"])[1:-1] + "), 'thoiGian', JSON_ARRAY(" + str(ddlqb[0]["thoiGian"])[1:-1] + ")), JSON_OBJECT('tt', '" + ddlqb[1]["tt"] + "', 'benh', '" + ddlqb[1]["benh"] + "', 'kyHieu', " + str(ddlqb[1]["kyHieu"]) + ", 'thoiGian', " + str(ddlqb[1]["thoiGian"]) + "), JSON_OBJECT('tt', '" + ddlqb[2]["tt"] + \
+            "', 'benh', '" + ddlqb[2]["benh"] + "', 'kyHieu', " + str(ddlqb[2]["kyHieu"]) + ", 'thoiGian', " + str(ddlqb[2]["thoiGian"]) + "), JSON_OBJECT('tt', '" + ddlqb[3]["tt"] + "', 'benh', '" + ddlqb[3]["benh"] + "', 'kyHieu', " + str(
+            ddlqb[3]["kyHieu"]) + ", 'thoiGian', " + str(ddlqb[3]["thoiGian"]) + "), JSON_OBJECT('tt', '" + ddlqb[4]["tt"] + "', 'benh', '" + ddlqb[4]["benh"] + "', 'kyHieu', " + str(ddlqb[4]["kyHieu"]) + ", 'thoiGian', " + str(ddlqb[4]["thoiGian"]) + "), JSON_OBJECT('tt', '" + ddlqb[5]["tt"] + "', 'benh', JSON_ARRAY(" + str(ddlqb[5]["benh"])[1:-1] + "), 'kyHieu', " + str(ddlqb[5]["kyHieu"]) + ", 'thoiGian', JSON_ARRAY(" + str(ddlqb[5]["thoiGian"])[1:-1] + ")))"
+        cursor.execute("UPDATE BENH_AN SET Ly_Do_Vao_Vien = \'" + data["lyDoVaoVien"]["lyDo"] + "', Vao_Ngay_Thu = \'" + str(data["lyDoVaoVien"]["vaoNgayThu"]) + "', Chan_Doan_Noi_Gioi_Thieu = '" + data["lyDoVaoVien"]["chanDoanNoiGioiThieu"] + "', Noi_Gioi_Thieu = '" + data["lyDoVaoVien"]["noiGioiThieu"] + "', Qua_Trinh_Benh_Ly = '" + data["hoiBenh"]["quaTrinhBenhLy"] + "', Tien_Su_Ban_Than = '" + data["hoiBenh"]["tienSu"]["banThan"] + "', Tien_Su_Gia_Dinh = '" + data["hoiBenh"]["tienSu"]["giaDinh"] + "', Dac_Diem_Lien_Quan_Benh = " + ddlqb_query + ", Kham_Toan_Than = \'" + data["khamBenh"]["khamToanThan"] + "', Tuan_Hoan = '" + data["khamBenh"]["tuanHoan"] +
+                       "', Ho_Hap = '" + data["khamBenh"]["hoHap"] + "', Tieu_Hoa = '" + data["khamBenh"]["tieuHoa"] + "', Than_Tiet_Nieu = '" + data["khamBenh"]["than"] + "', Than_Kinh = '" + data["khamBenh"]["thanKinh"] + "', Co_Xuong_Khop = '" + data["khamBenh"]["coXuongKhop"] + "', Tai_Mui_Hong = '" + data["khamBenh"]["taiMuiHong"] + "', Rang_Ham_Mat = '" + data["khamBenh"]["rangHamMat"] + "', Mat = '" + data["khamBenh"]["mat"] + "', Noi_Tiet = '" + data["khamBenh"]["noiTiet"] + "', Tom_Tat_Benh_An = '" + data["tomTatBenhAn"] + "', Chan_Doan_Ban_Dau = '" + data["chanDoanBanDau"] + "', Thoi_Gian_Lam_Benh_An = \'" + data["benhAn"]["thoiGian"] + "' WHERE PID = '" + pid + "';")
+        conn.commit()
+
+    if "tongKetBenhAn" in data:
+        cursor.execute("UPDATE TONG_KET_BENH_AN SET Phuong_Phap_Dieu_Tri = \'" + data["phuongPhapDieuTri"] + "', Chan_Doan_Khi_Ra_Vien = '" + data["chanDoanKhiRaVien"]["chanDoan"] + "', Ngay_Ra_Vien = '" + data["chanDoanKhiRaVien"]["ngayRaVien"] + "', Tinh_Trang_Ra_Vien = '" + data["tinhTrangRaVien"] +
+                       "', Huong_Dieu_Tri = '" + data["huongDieuTri"] + "', Thoi_Gian_Tong_Ket_Benh_An = '" + data["tongKetBenhAn"]["thoiGian"] + "', Bac_Si_Dieu_Tri = JSON_OBJECT('id', '" + data["tongKetBenhAn"]["bacSiDieuTri"]["id"] + "', 'name', '" + data["tongKetBenhAn"]["bacSiDieuTri"]["name"] + "') WHERE PID = '" + pid + "';")
+        conn.commit()
+
+    tdt = data["toDieuTri"]["data"]
+    if "newDataLength" in data["toDieuTri"] and data["toDieuTri"]["newDataLength"] > 0:
+        tdt = tdt[-data["toDieuTri"]["newDataLength"]:]
+        for row in tdt:
+            cursor.execute("INSERT INTO TO_DIEU_TRI (PID, Ngay_Gio, Dien_Bien_Benh, Y_Lenh, Bac_Si_Ghi) VALUES (\'" + pid + "', '" +
+                           row["ngayGio"] + "', JSON_ARRAY(" + str(row["dienBienBenh"])[1:-1] + "), JSON_ARRAY(" + str(row["yLenh"])[1:-1] + "), '" + row["bacSiGhi"] + "');")
+            conn.commit()
+
+    pcs = data["phieuChamSoc"]["data"]
+    if "newDataLength" in data["phieuChamSoc"] and data["phieuChamSoc"]["newDataLength"] > 0:
+        pcs = pcs[-data["phieuChamSoc"]["newDataLength"]:]
+        for row in pcs:
+            cursor.execute("INSERT INTO PHIEU_CHAM_SOC (PID, Ngay_Gio, Theo_Doi_Dien_Bien, Thuc_Hien_Y_Lenh, Xac_Nhan, Dieu_Duong_Ghi) VALUES (\'" + pid + "', '" + row["ngayGio"] + "', JSON_ARRAY(" + str(
+                row["theoDoiDienBien"])[1:-1] + "), JSON_ARRAY(" + str(row["thucHienYLenh"])[1:-1] + "), JSON_ARRAY(" + str(row["xacNhan"])[1:-1] + "), \'" + row["dieuDuongGhi"] + "');")
+            conn.commit()
+
+    ptdtd = data["phieuTDTruyenDich"]["data"]
+    if "newDataLength" in data["phieuTDTruyenDich"] and data["phieuTDTruyenDich"]["newDataLength"] > 0:
+        ptdtd = ptdtd[-data["phieuTDTruyenDich"]["newDataLength"]:]
+        for row in ptdtd:
+            for value in row["values"]:
+                cursor.execute("INSERT INTO PHIEU_TD_TRUYEN_DICH (PID, Ngay_Thang, Ten_Dich_Truyen, So_Luong, Lo_San_Xuat, Toc_Do, Thoi_Gian_Bat_Dau, Thoi_Gian_Ket_Thuc, Bac_Si_Chi_Dinh, Dieu_Duong_Thuc_Hien) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+                               (pid, row["ngayThang"], value["tenDichTruyen"], str(value["soLuong"]), value["loSanXuat"], str(value["tocDo"]), value["thoiGianBatDau"], value["thoiGianKetThuc"], value["BSChiDinh"], value["DDThucHien"]))
+                conn.commit()
+
+    ptdcns = data["phieuTDChucNangSong"]["data"]
+    if "newDataLength" in data["phieuTDChucNangSong"] and data["phieuTDChucNangSong"]["newDataLength"] > 0:
+        ptdcns = ptdcns[-data["phieuTDChucNangSong"]["newDataLength"]:]
+        for row in ptdcns:
+            cursor.execute("INSERT INTO PHIEU_TD_CHUC_NANG_SONG (PID, Ngay_Gio, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
+                           (pid, row["ngayGio"], str(row["mach"]), str(row["nhietDo"]), row["huyetAp"], str(row["nhipTho"]), str(row["canNang"]), row["dieuDuongGhi"]))
+            conn.commit()
+
+    ptddut = data["phieuTDDiUngThuoc"]["data"]
+    if "newDataLength" in data["phieuTDDiUngThuoc"] and data["phieuTDDiUngThuoc"]["newDataLength"] > 0:
+        ptddut = ptddut[-data["phieuTDDiUngThuoc"]["newDataLength"]:]
+        for row in ptddut:
+            cursor.execute("INSERT INTO PHIEU_TD_DI_UNG_THUOC (PID, Ngay_Gio_Dung_Thuoc, Thuoc_Di_Ung, Kieu_Di_Ung, Bieu_Hien_Lam_Sang, Bac_Si_Xac_Nhan, Ghi_Chu) VALUES (\'" + pid + "', '" +
+                           row["ngayGioDungThuoc"] + "', JSON_ARRAY(" + str(row["thuocDiUng"])[1:-1] + "), '" + row["kieuDiUng"] + "', '" + row["bieuHienLamSang"] + "', '" + row["bacSiXacNhan"] + "', '" + row["ghiChu"] + "');")
+            conn.commit()
+
+    ngay_thang = data["phieuCongKhaiThuoc"]["ngayThang"]
+    pckt = data["phieuCongKhaiThuoc"]["data"]
+    cursor.execute("UPDATE PCKT_NGAY_THANG SET Ngay_Thang = JSON_ARRAY(" +
+                   str(ngay_thang)[1:-1] + ") WHERE PID = \'" + pid + "';")
+    conn.commit()
+    for row in pckt:
+        cursor.execute("UPDATE PHIEU_CONG_KHAI_THUOC SET Ngay_Thang = JSON_ARRAY(" + str(row["ngayThang"])[1:-1] + "), Tong_So = '" + str(
+            row["tongSo"]) + "', Thanh_Tien = '" + str(row["thanhTien"]) + "' WHERE PID = '" + pid + "' AND Ten_Thuoc = '" + row["tenThuoc"] + "';")
+        conn.commit()
+
+        cursor.execute("INSERT INTO PHIEU_CONG_KHAI_THUOC (PID, Ten_Thuoc, Don_Vi, Ngay_Thang, Tong_So, Don_Gia, Thanh_Tien, Ghi_Chu) SELECT \'" + pid + "', '" + row["tenThuoc"] + "', '" + row["donVi"] + "', JSON_ARRAY(" + str(row["ngayThang"])[1:-1] + "), '" + str(
+            row["tongSo"]) + "', '" + str(row["donGia"]) + "', '" + str(row["thanhTien"]) + "', '" + row["ghiChu"] + "' WHERE NOT EXISTS (SELECT 1 FROM PHIEU_CONG_KHAI_THUOC WHERE PID = '" + pid + "' AND Ten_Thuoc = '" + row["tenThuoc"] + "');")
+        conn.commit()
+
+    dsyl = data["danhSachYLenh"]
+    for yl in dsyl:
+        cursor.execute("UPDATE DANH_SACH_Y_LENH SET Xac_Nhan = %s WHERE PID = %s AND Y_Lenh = %s;",
+                       (yl["xacNhan"], pid, yl["yLenh"]))
+        conn.commit()
+
+        cursor.execute("INSERT INTO DANH_SACH_Y_LENH (PID, Y_Lenh, Xac_Nhan) SELECT %s, %s, %s WHERE NOT EXISTS (SELECT 1 FROM DANH_SACH_Y_LENH WHERE PID = %s AND Y_Lenh = %s);",
+                       (pid, yl["yLenh"], yl["xacNhan"], pid, yl["yLenh"]))
+        conn.commit()
+
+    cursor.close()
+    response = jsonify({"msg": "Update successfully"})
     return response

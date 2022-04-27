@@ -3,7 +3,7 @@ import { Box, Typography, Grid, Checkbox, Button as ButtonWord, Card } from "@mu
 import "../../styles/index.css";
 import { TablePagination } from "../common";
 
-const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeCheckbox }) => {
+const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeCheckbox, handleUpdateSection }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const text = result.correction.map(correct => correct[0]);
@@ -65,81 +65,87 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                     </Typography>
                 ) : mark.string.concat(" "))}
             </Typography>
-            <Typography fontWeight="bold" fontStyle="italic" sx={{ mt: 1.5, mb: 0.5 }}>Nhận diện và sửa lỗi</Typography>
-            {(rowsPerPage > 0
-                ? result.correction.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                : result.correction
-            ).map((correction, id) => (
-                <Card key={id} variant="outlined" sx={{ p: 1, mt: 1, borderColor: hoverCorrection[page * rowsPerPage + id] ? "#09425A" : "rgba(0, 0, 0, 0.12)" }}>
-                    <Grid container>
-                        <Grid item xs={3}>
-                            <Box className="df aic">
-                                <Typography sx={{ mr: 1 }}>{page * rowsPerPage + (id + 1)}) Từ gốc:</Typography>
-                                <ButtonWord 
-                                    variant={text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
-                                        && replaced[page * rowsPerPage + id].type === "text" ? "contained" : "outlined"} 
-                                    color="warning"
-                                    onClick={() => {
-                                        const tReplaced = [...replaced];
-                                        tReplaced[page * rowsPerPage + id] = { type: "text", repText: text[page * rowsPerPage + id] };
-                                        setReplaced(tReplaced);
-                                    }}
-                                    sx={{ cursor: text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
-                                        && replaced[page * rowsPerPage + id].type === "text" ? "help" : "pointer" }}
-                                    onMouseEnter={() => {
-                                        const tHoverDetection = [...hoverDetection];
-                                        tHoverDetection[page * rowsPerPage + id] = true;
-                                        setHoverDetection(tHoverDetection);
-                                    }}
-                                    onMouseLeave={() => {
-                                        const tHoverDetection = [...hoverDetection];
-                                        tHoverDetection[page * rowsPerPage + id] = false;
-                                        setHoverDetection(tHoverDetection);
-                                    }}
-                                >
-                                    {text[page * rowsPerPage + id]}
-                                </ButtonWord>
-                            </Box>
-                        </Grid>
+            {result.correction.length > 0 ? 
+                <>
+                    <Typography fontWeight="bold" fontStyle="italic" sx={{ mt: 1.5, mb: 0.5 }}>Nhận diện và sửa lỗi</Typography>
+                    {(rowsPerPage > 0
+                        ? result.correction.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        : result.correction
+                    ).map((correction, id) => (
+                        <Card key={id} variant="outlined" sx={{ p: 1, mt: 1, borderColor: hoverCorrection[page * rowsPerPage + id] ? "#09425A" : "rgba(0, 0, 0, 0.12)" }}>
+                            <Grid container>
+                                <Grid item xs={3}>
+                                    <Box className="df aic">
+                                        <Typography sx={{ mr: 1 }}>{page * rowsPerPage + (id + 1)}) Từ gốc:</Typography>
+                                        <ButtonWord 
+                                            variant={text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
+                                                && replaced[page * rowsPerPage + id].type === "text" ? "contained" : "outlined"} 
+                                            color="warning"
+                                            onClick={() => {
+                                                const tReplaced = [...replaced];
+                                                tReplaced[page * rowsPerPage + id] = { type: "text", repText: text[page * rowsPerPage + id] };
+                                                setReplaced(tReplaced);
+                                                handleUpdateSection(tReplaced);
+                                            }}
+                                            sx={{ cursor: text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
+                                                && replaced[page * rowsPerPage + id].type === "text" ? "help" : "pointer" }}
+                                            onMouseEnter={() => {
+                                                const tHoverDetection = [...hoverDetection];
+                                                tHoverDetection[page * rowsPerPage + id] = true;
+                                                setHoverDetection(tHoverDetection);
+                                            }}
+                                            onMouseLeave={() => {
+                                                const tHoverDetection = [...hoverDetection];
+                                                tHoverDetection[page * rowsPerPage + id] = false;
+                                                setHoverDetection(tHoverDetection);
+                                            }}
+                                        >
+                                            {text[page * rowsPerPage + id]}
+                                        </ButtonWord>
+                                    </Box>
+                                </Grid>
 
-                        <Grid item xs={9}>
-                            <Box className="df aic">
-                                <Typography sx={{ mr: 1 }}>Từ gợi ý:</Typography>
-                                {correction.map((correct, idx) => (
-                                    <ButtonWord
-                                        key={idx}
-                                        color="success"
-                                        variant={correct === replaced[page * rowsPerPage + id].repText 
-                                            && replaced[page * rowsPerPage + id].type === "correct" ? "contained" : "outlined"}
-                                        sx={{ 
-                                            mr: 1, 
-                                            cursor: correct === replaced[page * rowsPerPage + id].repText 
-                                                && replaced[page * rowsPerPage + id].type === "correct" ? "help" : "pointer"
-                                        }}
-                                        onClick={() => {
-                                            const tReplaced = [...replaced];
-                                            tReplaced[page * rowsPerPage + id] = { type: "correct", repText: correct };
-                                            setReplaced(tReplaced);
-                                        }}
-                                        onMouseEnter={() => {
-                                            const tHoverDetection = [...hoverDetection];
-                                            tHoverDetection[page * rowsPerPage + id] = true;
-                                            setHoverDetection(tHoverDetection);
-                                        }}
-                                        onMouseLeave={() => {
-                                            const tHoverDetection = [...hoverDetection];
-                                            tHoverDetection[page * rowsPerPage + id] = false;
-                                            setHoverDetection(tHoverDetection);
-                                        }}
-                                    >
-                                        {correct}
-                                    </ButtonWord>
-                                ))}
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </Card>
-            ))}
+                                <Grid item xs={9}>
+                                    <Box className="df aic">
+                                        <Typography sx={{ mr: 1, minWidth: 60 }}>Từ gợi ý:</Typography>
+                                        {correction.map((correct, idx) => (
+                                            <ButtonWord
+                                                key={idx}
+                                                color="success"
+                                                variant={correct === replaced[page * rowsPerPage + id].repText 
+                                                    && replaced[page * rowsPerPage + id].type === "correct" ? "contained" : "outlined"}
+                                                sx={{ 
+                                                    mr: 1, 
+                                                    cursor: correct === replaced[page * rowsPerPage + id].repText 
+                                                        && replaced[page * rowsPerPage + id].type === "correct" ? "help" : "pointer"
+                                                }}
+                                                onClick={() => {
+                                                    const tReplaced = [...replaced];
+                                                    tReplaced[page * rowsPerPage + id] = { type: "correct", repText: correct };
+                                                    setReplaced(tReplaced);
+                                                    handleUpdateSection(tReplaced);
+                                                }}
+                                                onMouseEnter={() => {
+                                                    const tHoverDetection = [...hoverDetection];
+                                                    tHoverDetection[page * rowsPerPage + id] = true;
+                                                    setHoverDetection(tHoverDetection);
+                                                }}
+                                                onMouseLeave={() => {
+                                                    const tHoverDetection = [...hoverDetection];
+                                                    tHoverDetection[page * rowsPerPage + id] = false;
+                                                    setHoverDetection(tHoverDetection);
+                                                }}
+                                            >
+                                                {correct}
+                                            </ButtonWord>
+                                        ))}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                        </Card>
+                    ))}
+                </>
+            : null}
             
             {result.correction.length > 5 ?
                 <TablePagination 

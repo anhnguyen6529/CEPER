@@ -2,7 +2,7 @@ import {
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
 } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import { UtilsTable } from "../../utils";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,8 +12,10 @@ import { TablePagination, Button, StyledTableRow } from "../common";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
 import { Add, CancelOutlined } from "@mui/icons-material";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const SECTION_NAME = "Phiếu TD chức năng sống";
+const SECTION_FIELD = "phieuTDChucNangSong";
 
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', unit: '', width: '10%', minWidth: 115 },
@@ -29,6 +31,7 @@ const headCells = [
 const FPhieuTDChucNangSong = () => {
     const content = useSelector((state) => state.HSBA.phieuTDChucNangSong);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -48,6 +51,17 @@ const FPhieuTDChucNangSong = () => {
     const [hasChanged, setHasChanged] = useState(false);
 
     const [rows, setRows] = useState(content.data);
+    
+    useEffect(() => {
+        if (updating || confirmUpdate) {
+            dispatch(HSBAActions.updateAttachedSection({ 
+                section: SECTION_FIELD, 
+                value: { newDataLength: rows.length - content.data.length }, 
+                newData: rows 
+            }));
+        }
+        // eslint-disable-next-line
+    }, [updating, confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';

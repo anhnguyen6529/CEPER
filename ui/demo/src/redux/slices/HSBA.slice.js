@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import HSBAThunk from "../thunks/HSBA.thunk";
 
+const ATTACHED_FIELDS = ["toDieuTri", "phieuChamSoc", "phieuTDTruyenDich", "phieuTDChucNangSong", "phieuTDDiUngThuoc", "phieuCongKhaiThuoc"];
+
 export const initialHSBAState = {
     pid: '',
     avatar: '',
@@ -122,6 +124,7 @@ const initialState = {
     loading: true,
     updating: false,
     confirmUpdate: false,
+    attachedSecUpdated: false, 
     setting: false,
     error: '',
     ...initialHSBAState
@@ -131,25 +134,17 @@ const HSBASlice = createSlice({
     name: 'HSBASlice',
     initialState,
     reducers: {
-        updateBenhNhanSection: (state, action) => {
-            action.payload.map((field) => {
-                return state.hanhChinh[field.name] = field.value;
-            })
-        },
-        updateBacSiSection: (state, action) => {
+        updateSection: (state, action) => {
             return {
                 ...state,
                 [action.payload.section]: action.payload.data
             }
         },
-        updateDinhKemSection: (state, action) => {
-            return {
-                ...state,
-                [action.payload.section]: {
-                    ...state[action.payload.section],
-                    ...action.payload.value,
-                    ...(!!action.payload.newData && { data: [...state[action.payload.section].data, action.payload.newData] } ),
-                }
+        updateAttachedSection: (state, action) => {
+            state[action.payload.section] = { ...state[action.payload.section], ...action.payload.value, data: action.payload.newData, updated: true };
+            if (ATTACHED_FIELDS.filter(field => field !== action.payload.section).every(section => 
+                typeof state[section].updated === 'undefined' || state[section].updated)) {
+                state.attachedSecUpdated = true;
             }
         },
         updatePhieuCongKhaiThuoc: (state, action) => { 
@@ -176,9 +171,6 @@ const HSBASlice = createSlice({
                 danhSachYLenh: [...state.danhSachYLenh, ...action.payload]
             }
         },
-        updateDanhSachYLenh: (state, action) => {
-            state.danhSachYLenh[action.payload.index] = { ...state.danhSachYLenh[action.payload.index], ...action.payload.value }
-        },
         update: (state) => {
             return {
                 ...state,
@@ -190,6 +182,14 @@ const HSBASlice = createSlice({
                 ...state,
                 updating: false, 
                 confirmUpdate: true
+            }
+        },
+        resetState: (state) => {
+            return {
+                ...state, 
+                updating: false,
+                confirmUpdate: false,
+                setting: false
             }
         }
     },
@@ -218,6 +218,26 @@ const HSBASlice = createSlice({
             return {
                 ...state,
                 loading: false,
+                error: action.payload
+            }
+        })
+        .addCase(HSBAThunk.updateHSBA.pending, (state) => {
+            return {
+                ...state,
+                setting: true
+            }
+        })
+        .addCase(HSBAThunk.updateHSBA.fulfilled, (state) => {
+            return {
+                ...state,
+                setting: false,
+                error: ''
+            }
+        })
+        .addCase(HSBAThunk.updateHSBA.rejected, (state, action) => {
+            return {
+                ...state,
+                setting: false,
                 error: action.payload
             }
         })

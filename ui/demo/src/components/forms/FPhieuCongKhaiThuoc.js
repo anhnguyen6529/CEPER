@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
     TableHead, TableCell, Paper, Grid, Typography, TextField, Tooltip
@@ -12,8 +12,10 @@ import { format } from "date-fns";
 import drugList from "../../constants/drug_list.json";
 import { DatePicker } from "@mui/lab";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const SECTION_NAME = "Phiếu công khai thuốc";
+const SECTION_FIELD = "phieuCongKhaiThuoc";
 
 const headCells = [
     { id: 'stt', label: 'STT', unit: '', width: '5%', minWidth: 65 },
@@ -29,8 +31,10 @@ const headCells = [
 const FPhieuCongKhaiThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuCongKhaiThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [ngayThang, setNgayThang] = useState(content.ngayThang);
@@ -43,6 +47,18 @@ const FPhieuCongKhaiThuoc = () => {
     const [newDataList, setNewDataList] = useState([EMPTY_NEW_DATA]);
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
+
+    useEffect(() => {
+        if (updating || confirmUpdate) {
+            dispatch(HSBAActions.updateAttachedSection({ 
+                section: SECTION_FIELD, 
+                value: { ngayThang }, 
+                newData: rows 
+            }));
+        }
+        // eslint-disable-next-line
+    }, [updating, confirmUpdate]);
+
 
     const clearData = (soLuongLength) => {
         setNewNgay({ ngay: null, soLuong: new Array(soLuongLength).fill(0) });

@@ -9,8 +9,11 @@ import { Button } from "../common";
 import { CancelOutlined, Circle } from "@mui/icons-material";
 import { TDacDiemLienQuanBenh } from "../tables";
 import mdSections from "../../constants/md_sections.json";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import { UtilsText } from "../../utils";
 
 const SECTION_NAME = "Hỏi bệnh";
+const SECTION_FIELD = "hoiBenh";
 const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const equalsTo = (arr1, arr2) => {
@@ -60,6 +63,10 @@ const FHoiBenh = () => {
             if (spellingErrorGiaDinh.changed) {
                 dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
             }
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...hoiBenh, quaTrinhBenhLy, tienSu: { ...hoiBenh.tienSu, banThan, dacDiemLienQuanBenh: dacDiemLienQuan, giaDinh } }
+            }));
         }
         // eslint-disable-next-line
     }, [updating]);
@@ -69,14 +76,26 @@ const FHoiBenh = () => {
         if (!spellingErrorQuaTrinhBenhLy.loading) {
             tResult[0] = spellingErrorQuaTrinhBenhLy; setResult(tResult);
             tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...hoiBenh, quaTrinhBenhLy: UtilsText.replaceMaskWord(spellingErrorQuaTrinhBenhLy.detection, tReplaced[0]) }
+            }));
         }
         if (!spellingErrorBanThan.loading) {
             tResult[1] = spellingErrorBanThan; setResult(tResult);
             tReplaced[1] = spellingErrorBanThan.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: UtilsText.replaceMaskWord(spellingErrorBanThan.detection, tReplaced[1]) } }
+            }));
         }
         if (!spellingErrorGiaDinh.loading) {
             tResult[2] = spellingErrorGiaDinh; setResult(tResult);
             tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
+            dispatch(HSBAActions.updateSection({
+                section: SECTION_FIELD,
+                data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh: UtilsText.replaceMaskWord(spellingErrorGiaDinh.detection, tReplaced[2]) } }
+            }));
         }
         // eslint-disable-next-line
     }, [spellingErrorQuaTrinhBenhLy.loading, spellingErrorBanThan.loading, spellingErrorGiaDinh.loading]);
@@ -120,6 +139,8 @@ const FHoiBenh = () => {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
                                 }
+                            } else {
+                                dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...hoiBenh, quaTrinhBenhLy: value } }));
                             }
                         }}
                         disabled={updating && (useResult[0] || !spellingErrorQuaTrinhBenhLy.changed)}
@@ -141,10 +162,14 @@ const FHoiBenh = () => {
                                 setUseResult(tUseResult);
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
-                                    setTimeout(() => {
-                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
-                                    }, 2000);
+                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
                                 }
+                            }}
+                            handleUpdateSection={(newReplaced) => {
+                                dispatch(HSBAActions.updateSection({
+                                    section: SECTION_FIELD,
+                                    data: { ...hoiBenh, quaTrinhBenhLy: UtilsText.replaceMaskWord(spellingErrorQuaTrinhBenhLy.detection, newReplaced) } 
+                                }));
                             }}
                         />
                     : ( 
@@ -194,6 +219,11 @@ const FHoiBenh = () => {
                                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                                     }
                                                 }
+                                            } else {
+                                                dispatch(HSBAActions.updateSection({
+                                                    section: SECTION_FIELD,
+                                                    data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: value } }
+                                                }));
                                             }
                                         }}
                                         disabled={updating && (useResult[1] || !spellingErrorBanThan.changed)}
@@ -215,10 +245,14 @@ const FHoiBenh = () => {
                                                 setUseResult(tUseResult);
                                                 if (checked) {
                                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
-                                                    setTimeout(() => {
-                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
-                                                    }, 2000);
+                                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
                                                 }
+                                            }}
+                                            handleUpdateSection={(newReplaced) => {
+                                                dispatch(HSBAActions.updateSection({
+                                                    section: SECTION_FIELD,
+                                                    data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: UtilsText.replaceMaskWord(spellingErrorBanThan.detection, newReplaced) } }
+                                                }));
                                             }}
                                         />
                                     : ( 
@@ -293,6 +327,11 @@ const FHoiBenh = () => {
                                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                                     }
                                                 }
+                                            } else {
+                                                dispatch(HSBAActions.updateSection({
+                                                    section: SECTION_FIELD,
+                                                    data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh: value } }
+                                                }));
                                             }
                                         }}
                                         disabled={updating && (useResult[2] || !spellingErrorGiaDinh.changed)}
@@ -314,10 +353,14 @@ const FHoiBenh = () => {
                                                 setUseResult(tUseResult);
                                                 if (checked) {
                                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2] }));
-                                                    setTimeout(() => {
-                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
-                                                    }, 2000);
+                                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
                                                 }
+                                            }}
+                                            handleUpdateSection={(newReplaced) => {
+                                                dispatch(HSBAActions.updateSection({
+                                                    section: SECTION_FIELD,
+                                                    data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh: UtilsText.replaceMaskWord(spellingErrorGiaDinh.detection, newReplaced) } }
+                                                }));
                                             }}
                                         />
                                     : ( 
