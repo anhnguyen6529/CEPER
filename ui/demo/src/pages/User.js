@@ -13,19 +13,22 @@ import { sectionState, SpellingErrorActions } from "../redux/slices/spellingErro
 import { HSBAActions } from "../redux/slices/HSBA.slice";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
 import { useSnackbar } from "notistack";
+import useToken from "../hooks/useToken";
 
 const User = () => {
     const navigate = useNavigate();
     const { pid } = useParams();
+    const dispatch = useDispatch();
+    const { enqueueSnackbar } = useSnackbar();
+
     const { user } = useSelector(state => state.auth);
     const selectedHSBA = useSelector(state => state.HSBA);
     const { creatingMode } = useSelector(state => state.danhSachHSBA);
     const { spellingError } = useSelector(state => state);
-    const dispatch = useDispatch();
-    const { enqueueSnackbar } = useSnackbar();
+    const { token } = useToken();
     
     useEffect(() => {
-        if (!localStorage.getItem('token')) {
+        if (!token) {
             navigate('/login');
         } else if (user.role === 'BN' && typeof(pid) === 'undefined') {
             navigate(`/user/HSBA/${user.id}`);

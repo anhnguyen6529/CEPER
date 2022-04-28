@@ -4,9 +4,12 @@ import { Settings, Help, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 import store from "../../redux/store";
 import authApi from "../../apis/auth";
+import useToken from "../../hooks/useToken";
 
 const DropDownMenu = ({ anchorEl, open, onClose }) => {
     const navigate = useNavigate();
+	const { removeToken } = useToken();
+
 
 	const handleLogout = async () => {
 		try {
@@ -17,7 +20,7 @@ const DropDownMenu = ({ anchorEl, open, onClose }) => {
 			}
 
 			store.dispatch({ type: 'LOG_OUT'});
-			localStorage.removeItem('token');
+			removeToken();
 			navigate('/login');
 		} catch (error) {
 			console.log(error.message);

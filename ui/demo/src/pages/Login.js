@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import authApi from "../apis/auth";
 import { useDispatch } from "react-redux";
 import { authActions } from "../redux/slices/auth.slice";
+import useToken from "../hooks/useToken";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -37,8 +38,9 @@ const roles = [
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
     const classes = useStyles();
+
+    const { token, setToken } = useToken();
     const [clickedId, setClickedId] = useState(-1);
     const [login, setLogin] = useState({ error: '', role: '', username: '', password: '' });
     const [submitting, setSubmitting] = useState(false);
@@ -50,7 +52,7 @@ const Login = () => {
             const apiResponse = await authApi.login({ username: login.username.trim(), password: login.password, role: login.role });
             
             if (apiResponse.data.token) {
-                localStorage.setItem('token', apiResponse.data.token);
+                setToken(apiResponse.data.token);
                 dispatch(authActions.updateUserFields({ ...apiResponse.data.user }));
                 if (login.role === "BN") {
                     // get user pid => api
@@ -86,7 +88,7 @@ const Login = () => {
     }
 
     useEffect(() => {
-        if (!!localStorage.getItem('token')) {
+        if (!!token) {
             if (login.role === "BN") {
                 // get user pid => api
                 const pid = '123456';

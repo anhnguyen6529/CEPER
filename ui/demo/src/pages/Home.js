@@ -6,6 +6,7 @@ import { makeStyles } from '@mui/styles';
 import landingImg from '../images/landing_01.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileMedical, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
+import useToken from '../hooks/useToken';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -67,12 +68,13 @@ const BoxFeature = ({ icon, title, subtitle }) => {
 const Home = () => {
     const classes = useStyles();
     const navigate = useNavigate();
+    const { token } = useToken();
+
     useEffect(() => {
-        if (!!localStorage.getItem('token')) {
+        if (!!token) {
             navigate('/user/HSBA');
         }
     });
-
 
     return (
         <div className={classes.root}>

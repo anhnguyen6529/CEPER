@@ -142,7 +142,7 @@ const FLyDoVaoVien = () => {
                     </Box>           
                 </Grid>
 
-                <Grid xs={12}>
+                <Grid item xs={12}>
                     {!!resultLyDo && !spellingErrorLyDo.loading ? 
                         <BoxLoiChinhTa
                             result={resultLyDo}
