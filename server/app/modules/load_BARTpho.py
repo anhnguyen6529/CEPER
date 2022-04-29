@@ -5,7 +5,7 @@ from transformers import MBartForConditionalGeneration
 
 def BARTpho():
     syllable_tokenizer = AutoTokenizer.from_pretrained(
-        "vinai/bartpho-syllable", use_fast=False)
+        "vinai/bartpho-syllable", use_fast=True)
     bartpho_syllable = MBartForConditionalGeneration.from_pretrained(
         "vinai/bartpho-syllable")
     return syllable_tokenizer, bartpho_syllable

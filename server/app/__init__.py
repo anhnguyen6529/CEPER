@@ -5,6 +5,7 @@ from flaskext.mysql import MySQL
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
+from .modules.demo import AutoCorrection
 
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
@@ -21,6 +22,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['JWT_SECRET_KEY'] = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=8)
 jwt = JWTManager(app)
+correction = AutoCorrection()
 mysql.init_app(app)
 conn = mysql.connect()
 

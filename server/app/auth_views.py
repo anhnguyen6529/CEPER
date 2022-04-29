@@ -28,7 +28,7 @@ def login():
             return {"msg": "Wrong username or password"}, 401
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET'])
 def logout():
     response = jsonify(dict())
     unset_jwt_cookies(response)
