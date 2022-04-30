@@ -5,7 +5,7 @@ import { initialHSBAState } from "../slices/HSBA.slice";
 const danhSachHSBAThunk = {
     getDanhSachHSBA: createAsyncThunk(
         'danhSachHSBA/getDanhSachHSBA', 
-        async ({ role, doctorID }) => {
+        async ({ role, doctorID }, { rejectWithValue }) => {
             try {
                 const apiResponse = await danhSachHSBAApi.getDanhSachHSBA({ doctorID });
 
@@ -15,13 +15,13 @@ const danhSachHSBAThunk = {
 
                 return apiResponse.data;
             } catch (error) {
-                return error.message;
+                return rejectWithValue(error.response.data.msg);
             }
         }
     ),
     getNewPID: createAsyncThunk(
         'danhSachHSBA/getNewPID',
-        async () => {
+        async (_, { rejectWithValue }) => {
             try {
                 const apiResponse = await danhSachHSBAApi.getNewPID();
 
@@ -31,13 +31,13 @@ const danhSachHSBAThunk = {
 
                 return apiResponse.data;
             } catch (error) {
-                return error.message;
+                return rejectWithValue(error.response.data.msg);
             }
         }
     ),
     createNewHSBA: createAsyncThunk(
         'danhSachHSBA/createNewHSBA',
-        async (apiData) => {
+        async (apiData, { rejectWithValue }) => {
             try {
                 const newFullHSBA = { ...initialHSBAState, ...apiData };
                 const newHSBA = {
@@ -62,7 +62,7 @@ const danhSachHSBAThunk = {
 
                 return newHSBA;
             } catch (error) {
-                return error.message;
+                return rejectWithValue(error.response.data.msg);
             }
         }
     )

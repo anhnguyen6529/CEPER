@@ -16,6 +16,7 @@ const SECTION_FIELD = "phuongPhapDieuTri";
 const FPhuongPhapDieuTri = () => {
     const { updating, phuongPhapDieuTri } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
+    const { loadingError } = useSelector((state) => state.spellingError);
     const dispatch = useDispatch();
 
     const [newPhuongPhapDieuTri, setNewPhuongPhapDieuTri] = useState(phuongPhapDieuTri);
@@ -25,16 +26,16 @@ const FPhuongPhapDieuTri = () => {
 
     useEffect(() => {
         if (updating) {
-            if (spellingError.changed) {
+            if (spellingError.changed && !loadingError) {
                 dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newPhuongPhapDieuTri }));
             }
             dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: newPhuongPhapDieuTri }));
         }
         // eslint-disable-next-line
-    }, [updating]);
+    }, [updating, loadingError]);
 
     useEffect(() => {
-        if (!spellingError.loading) {
+        if (!spellingError.loading && !spellingError.error) {
             setResult(spellingError);
             const tReplaced = spellingError.correction.map(res => ({ type: "correct", repText: res[1] }));
             setReplaced(tReplaced);

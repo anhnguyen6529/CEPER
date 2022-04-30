@@ -4,7 +4,7 @@ import { UtilsDateTime } from "../../utils";
 
 const initialState = {
     loading: false,
-    error: '',
+    loadingError: '',
     hienTai: [],
     raVien: [],
     creatingMode: false,
@@ -66,7 +66,7 @@ const danhSachHSBASlice = createSlice({
             return {
                 ...state,
                 loading: false,
-                error: '',
+                loadingError: '',
                 hienTai: hienTai, 
                 raVien: raVien
             }
@@ -75,7 +75,7 @@ const danhSachHSBASlice = createSlice({
             return {
                 ...state,
                 loading: false,
-                error: action.payload
+                loadingError: action.payload
             }
         })
     }

@@ -35,6 +35,8 @@ const roles = [
     [<FontAwesomeIcon icon={faUserInjured} />, "Bệnh nhân", "BN"]
 ];
 
+const initialLogin = { error: '', role: '', username: '', password: '' };
+
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -42,7 +44,7 @@ const Login = () => {
 
     const { token, setToken } = useToken();
     const [clickedId, setClickedId] = useState(-1);
-    const [login, setLogin] = useState({ error: '', role: '', username: '', password: '' });
+    const [login, setLogin] = useState(initialLogin);
     const [submitting, setSubmitting] = useState(false);
 
     const handleLogin = async () => {
@@ -96,6 +98,9 @@ const Login = () => {
             } else {
                 navigate('/user/HSBA');
             } 
+        }
+        return () => { 
+            setLogin(initialLogin); 
         }
         // eslint-disable-next-line
     }, []);

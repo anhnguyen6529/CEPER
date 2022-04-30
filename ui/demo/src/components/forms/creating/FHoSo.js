@@ -12,6 +12,7 @@ import danhSachHSBAThunk from "../../../redux/thunks/danhSachHSBA.thunk";
 import TaoHSBAContext from "../../../contexts/TaoHSBAContext";
 import { makeStyles } from "@mui/styles";
 import moment from "moment";
+import UserContext from "../../../contexts/UserContext";
 
 const useStyles = makeStyles((theme) => ({
     boxAvatar: {
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FHoSo = () => {
     const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
+    const { setOpenDialogRelogin } = useContext(UserContext);
     const dispatch = useDispatch();
     const classes = useStyles();
     const now = new Date();
@@ -36,6 +38,10 @@ const FHoSo = () => {
                 localStorage.setItem('token', response.token);
             }
             setValues({ ...values, pid: response.newPID })
+        }).catch((error) => {
+            if (error === "Token has expired") {
+                setOpenDialogRelogin(true);
+            }
         });
         // eslint-disable-next-line
     }, []);

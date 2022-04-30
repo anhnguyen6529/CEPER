@@ -18,6 +18,7 @@ const CLINICAL_SUBSECTION = "Chẩn đoán";
 const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien, updating } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
+    const { loadingError } = useSelector((state) => state.spellingError);
     const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
@@ -28,16 +29,16 @@ const FChanDoanKhiRaVien = () => {
 
     useEffect(() => {
         if (updating) {
-            if (spellingError[CLINICAL_SUBSECTION].changed) {
+            if (spellingError[CLINICAL_SUBSECTION].changed && !loadingError) {
                 dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
             }
             dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { chanDoan, ngayRaVien } }));
         }
         // eslint-disable-next-line
-    }, [updating]);
+    }, [updating, loadingError]);
 
     useEffect(() => {
-        if (!spellingError[CLINICAL_SUBSECTION].loading) {
+        if (!spellingError[CLINICAL_SUBSECTION].loading && !spellingError[CLINICAL_SUBSECTION].error) {
             setResult(spellingError[CLINICAL_SUBSECTION]);
             const tReplaced = spellingError[CLINICAL_SUBSECTION].correction.map(res => ({ type: "correct", repText: res[1] }));
             setReplaced(tReplaced);

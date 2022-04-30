@@ -4,7 +4,7 @@ import spellingErrorApi from "../../apis/spellingError";
 const SpellingErrorThunk = {
     getProcessResult: createAsyncThunk(
         'SpellingError/getProcessResult',
-        async ({ section, subSection, text }) => {
+        async ({ section, subSection, text }, { rejectWithValue }) => {
             try {
                 const apiResponse = await spellingErrorApi.getProcessResult(text);
 
@@ -18,11 +18,11 @@ const SpellingErrorThunk = {
                     result: apiResponse.data
                 }
             } catch (error) {
-                return {
+                return rejectWithValue({
                     section,
                     subSection,
-                    error: error.message
-                }
+                    error: error.response.data.msg
+                })
             }
         }
     )

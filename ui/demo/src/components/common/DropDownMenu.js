@@ -1,31 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Menu, MenuItem, ListItemIcon } from "@mui/material";
 import { Settings, Help, Logout } from "@mui/icons-material";
-import { useNavigate } from "react-router";
-import store from "../../redux/store";
-import authApi from "../../apis/auth";
-import useToken from "../../hooks/useToken";
+import UserContext from "../../contexts/UserContext";
 
 const DropDownMenu = ({ anchorEl, open, onClose }) => {
-    const navigate = useNavigate();
-	const { removeToken } = useToken();
-
-
-	const handleLogout = async () => {
-		try {
-			const apiResponse = await authApi.logout();
-
-			if (apiResponse.status !== 200) {
-				throw new Error(apiResponse.statusText);
-			}
-
-			store.dispatch({ type: 'LOG_OUT'});
-			removeToken();
-			navigate('/login');
-		} catch (error) {
-			console.log(error.message);
-		}
-	}
+    const { handleLogout } = useContext(UserContext);
 
     return (
         <Menu

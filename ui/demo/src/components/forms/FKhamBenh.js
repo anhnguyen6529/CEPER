@@ -18,6 +18,7 @@ const SUBSECTION_FIELD = ["khamToanThan", "tuanHoan", "hoHap", "tieuHoa", "than"
 
 const FKhamBenh = () => {
     const { updating, khamBenh } = useSelector((state) => state.HSBA);
+    const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const spellingErrorKhamToanThan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
     const spellingErrorTuanHoan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
@@ -50,29 +51,31 @@ const FKhamBenh = () => {
 
     useEffect(() => {
         if (updating) {
-            if (spellingError[CLINICAL_SUBSECTION[0]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: khamToanThan }));
-            if (spellingError[CLINICAL_SUBSECTION[1]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: tuanHoan }));
-            if (spellingError[CLINICAL_SUBSECTION[2]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: hoHap }));
-            if (spellingError[CLINICAL_SUBSECTION[3]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[3], text: tieuHoa }));
-            if (spellingError[CLINICAL_SUBSECTION[4]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[4], text: than }));
-            if (spellingError[CLINICAL_SUBSECTION[5]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[5], text: thanKinh }));
-            if (spellingError[CLINICAL_SUBSECTION[6]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[6], text: coXuongKhop }));
-            if (spellingError[CLINICAL_SUBSECTION[7]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[7], text: taiMuiHong }));
-            if (spellingError[CLINICAL_SUBSECTION[8]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[8], text: rangHamMat }));
-            if (spellingError[CLINICAL_SUBSECTION[9]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[9], text: mat }));
-            if (spellingError[CLINICAL_SUBSECTION[10]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[10], text: noiTiet }));
+            if (!loadingError) {
+                if (spellingError[CLINICAL_SUBSECTION[0]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: khamToanThan }));
+                if (spellingError[CLINICAL_SUBSECTION[1]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: tuanHoan }));
+                if (spellingError[CLINICAL_SUBSECTION[2]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: hoHap }));
+                if (spellingError[CLINICAL_SUBSECTION[3]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[3], text: tieuHoa }));
+                if (spellingError[CLINICAL_SUBSECTION[4]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[4], text: than }));
+                if (spellingError[CLINICAL_SUBSECTION[5]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[5], text: thanKinh }));
+                if (spellingError[CLINICAL_SUBSECTION[6]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[6], text: coXuongKhop }));
+                if (spellingError[CLINICAL_SUBSECTION[7]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[7], text: taiMuiHong }));
+                if (spellingError[CLINICAL_SUBSECTION[8]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[8], text: rangHamMat }));
+                if (spellingError[CLINICAL_SUBSECTION[9]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[9], text: mat }));
+                if (spellingError[CLINICAL_SUBSECTION[10]].changed) dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[10], text: noiTiet }));
+            }
             dispatch(HSBAActions.updateSection({
                 section: SECTION_FIELD,
                 data: { ...khamBenh, khamToanThan, tuanHoan, hoHap, tieuHoa, than, thanKinh, coXuongKhop, taiMuiHong, rangHamMat, mat, noiTiet }
             }));
         }
         // eslint-disable-next-line
-    }, [updating]);
+    }, [updating, loadingError]);
 
     useEffect(() => {
         const tResult = [...result], tReplaced = [...replaced];
         CLINICAL_SUBSECTION.forEach((subSection, id) => {
-            if (!spellingError[subSection].loading) {
+            if (!spellingError[subSection].loading && !spellingError[subSection].error) {
                 tResult[id] = spellingError[subSection]; setResult(tResult);
                 tReplaced[id] = spellingError[subSection].correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
                 dispatch(HSBAActions.updateSection({

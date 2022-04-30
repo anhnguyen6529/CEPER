@@ -21,7 +21,8 @@ const HSBA = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { pid } = useParams();
-    const { open, today, appearSec, appearTime, setAppearTime, openSec, handleUpdate, openBackdrop, setOpenBackdrop } = useContext(UserContext); 
+    const { open, today, appearSec, appearTime, setAppearTime, openSec, handleUpdate, 
+        openBackdrop, setOpenBackdrop, setOpenDialogRelogin } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
     const { enqueueSnackbar } = useSnackbar();
 
@@ -39,11 +40,18 @@ const HSBA = () => {
 
     const { spellingError } = useSelector((state) => state);
     const benhNhan = useSelector(state => state.HSBA);
-    const { loading, updating, confirmUpdate } = benhNhan;
+    const { loading, loadingError, updating, confirmUpdate } = benhNhan;
+
+    useEffect(() => {
+        if (loadingError === "Token has expired") {
+            setOpenDialogRelogin(true);
+        }
+        // eslint-disable-next-line 
+    }, [loadingError]);
 
     useEffect(() => {
         if (updating && Object.keys(sectionState).some(key => spellingError[key].changed)) {
-            if (!spellingError.loading) {
+            if (!spellingError.loading && !spellingError.loadingError) {
                 setOpenBackdrop(false);
                 enqueueSnackbar("Thông tin bệnh án đã được xử lý!\n Xem kết quả ở \"Danh sách mục - Xử lý lỗi\".", { 
                     variant: "success",
@@ -52,20 +60,18 @@ const HSBA = () => {
                 const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
                 document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
             } else {
-                setOpenBackdrop(true);
+                if (spellingError.loading) {
+                    setOpenBackdrop(true);
+                } else {
+                    if (spellingError.loadingError === "Token has expired") {
+                        setOpenBackdrop(false);
+                        setOpenDialogRelogin(true);
+                    }
+                }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updating, spellingError.loading]);
-
-    if (loading) {
-        return (
-            <div className="df fdc aic jcc">
-                <CircularProgress sx={{ mt: 3, mb: 1 }} />
-                <Typography color="primary">Đang tải...</Typography>
-            </div>
-        )
-    }
+    }, [updating, spellingError.loading, spellingError.loadingError]);
 
     var dauHieuSinhTon = [...benhNhan.phieuTDChucNangSong.data];
     dauHieuSinhTon.sort(function(a, b) {
@@ -106,195 +112,204 @@ const HSBA = () => {
 
     return (
         <Container sx={{ mt: 3 }} maxWidth={false}>
-            <Grid container spacing={5} sx={{ mb: 3 }}>
-                <Grid item xs={9}>
-                    <Paper sx={{ width: '100%', p: 3, pt: 2.5 }}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={2}>
-                                <Avatar src="/images/avatar_default.png" sx={{ width: 100, height: 100 }} />
-                            </Grid>
-                            <Grid item xs={10}>
-                                <Typography variant="h5" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>{benhNhan.hanhChinh.hoTen}</Typography>
-                                <Grid container columnSpacing={3}>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Mã BN</Typography>
-                                        <Typography>{benhNhan.pid}</Typography>
+            {!loading && !loadingError ? 
+                <>
+                    <Grid container spacing={5} sx={{ mb: 3 }}>
+                        <Grid item xs={9}>
+                            <Paper sx={{ width: '100%', p: 3, pt: 2.5 }}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={2}>
+                                        <Avatar src="/images/avatar_default.png" sx={{ width: 100, height: 100 }} />
                                     </Grid>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Ngày vào viện</Typography>
-                                        <Typography>{benhNhan.lyDoVaoVien.ngayVaoVien ? format(new Date(benhNhan.lyDoVaoVien.ngayVaoVien), 'dd/MM/yyyy HH:mm') : benhNhan.lyDoVaoVien.ngayVaoVien}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Ngày điều trị thứ</Typography>
-                                        <Typography>{Math.ceil((today - new Date(String(benhNhan.lyDoVaoVien.ngayVaoVien))) / (1000 * 60 * 60 * 24))}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Trạng thái</Typography>
-                                        <Chip size="small" label={benhNhan.trangThai} color={colorTrangThai[benhNhan.trangThai]} />
+                                    <Grid item xs={10}>
+                                        <Typography variant="h5" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>{benhNhan.hanhChinh.hoTen}</Typography>
+                                        <Grid container columnSpacing={3}>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Mã BN</Typography>
+                                                <Typography>{benhNhan.pid}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Ngày vào viện</Typography>
+                                                <Typography>{benhNhan.lyDoVaoVien.ngayVaoVien ? format(new Date(benhNhan.lyDoVaoVien.ngayVaoVien), 'dd/MM/yyyy HH:mm') : benhNhan.lyDoVaoVien.ngayVaoVien}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Ngày điều trị thứ</Typography>
+                                                <Typography>{Math.ceil((today - new Date(String(benhNhan.lyDoVaoVien.ngayVaoVien))) / (1000 * 60 * 60 * 24))}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Trạng thái</Typography>
+                                                <Chip size="small" label={benhNhan.trangThai} color={colorTrangThai[benhNhan.trangThai]} />
+                                            </Grid>
+                                        </Grid>
+                                        <Grid container columnSpacing={3}>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Khoa</Typography>
+                                                <Typography>{benhNhan.khoa}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Phòng</Typography>
+                                                <Typography>{benhNhan.phong}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Giường</Typography>
+                                                <Typography>{benhNhan.giuong}</Typography>
+                                            </Grid>
+                                            <Grid item xs={3}>
+                                                <Typography fontWeight="bold">Ngày ra viện</Typography>
+                                                <Typography>
+                                                    {benhNhan.chanDoanKhiRaVien.ngayRaVien 
+                                                        ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy HH:mm') 
+                                                        : <Typography component="span">(<i>trống</i>)</Typography>
+                                                    }
+                                                </Typography>
+                                            </Grid>
+                                            
+                                        </Grid>
+                                        <Grid container columnSpacing={3}>
+                                            <Grid item xs={6}>
+                                                <Typography fontWeight="bold">Bệnh điều trị</Typography>
+                                                <Typography>
+                                                    {!!benhNhan.chanDoanBanDau ? benhNhan.chanDoanBanDau
+                                                        : <Typography component="span">(<i>trống</i>)</Typography>
+                                                    }
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography fontWeight="bold">Tình trạng hiện tại</Typography>
+                                                <Typography>
+                                                    {benhNhan.toDieuTri.data.length > 0 
+                                                        ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh.map((dbb, i) =>
+                                                            i > 0 ? dbb.toLowerCase() : dbb).join(", ")
+                                                        : <Typography component="span">(<i>trống</i>)</Typography>
+                                                    }
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
-                                <Grid container columnSpacing={3}>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Khoa</Typography>
-                                        <Typography>{benhNhan.khoa}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Phòng</Typography>
-                                        <Typography>{benhNhan.phong}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Giường</Typography>
-                                        <Typography>{benhNhan.giuong}</Typography>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <Typography fontWeight="bold">Ngày ra viện</Typography>
-                                        <Typography>
-                                            {benhNhan.chanDoanKhiRaVien.ngayRaVien 
-                                                ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy HH:mm') 
-                                                : <Typography component="span">(<i>trống</i>)</Typography>
-                                            }
-                                        </Typography>
-                                    </Grid>
-                                    
-                                </Grid>
-                                <Grid container columnSpacing={3}>
-                                    <Grid item xs={6}>
-                                        <Typography fontWeight="bold">Bệnh điều trị</Typography>
-                                        <Typography>
-                                            {!!benhNhan.chanDoanBanDau ? benhNhan.chanDoanBanDau
-                                                : <Typography component="span">(<i>trống</i>)</Typography>
-                                            }
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography fontWeight="bold">Tình trạng hiện tại</Typography>
-                                        <Typography>
-                                            {benhNhan.toDieuTri.data.length > 0 
-                                                ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh.map((dbb, i) =>
-                                                    i > 0 ? dbb.toLowerCase() : dbb).join(", ")
-                                                : <Typography component="span">(<i>trống</i>)</Typography>
-                                            }
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+                            </Paper>
                         </Grid>
-                    </Paper>
-                </Grid>
-                <Grid item xs={3}>
-                    <Paper sx={{ height: '100%', width: '100%', px: 3, py: 2 }}>
-                        <Grid container direction="column" sx={{ height: '100%' }}>
-                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
-                                <Grid item xs={6}>
-                                    <Typography fontWeight="bold">Mạch</Typography>
+                        <Grid item xs={3}>
+                            <Paper sx={{ height: '100%', width: '100%', px: 3, py: 2 }}>
+                                <Grid container direction="column" sx={{ height: '100%' }}>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                        <Grid item xs={6}>
+                                            <Typography fontWeight="bold">Mạch</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} align="right">
+                                            <Typography variant="h6" color="primary">
+                                                {mach}{' '}
+                                                <Typography color="#000" component="span">lần/phút</Typography>
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                        <Grid item xs={6}>
+                                            <Typography fontWeight="bold">Nhiệt độ</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} align="right">
+                                            <Typography variant="h6" color="primary">
+                                                {nhietDo}{' '}
+                                                <Typography color="#000" component="span">°C</Typography>
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                        <Grid item xs={6}>
+                                            <Typography fontWeight="bold">Huyết áp</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} align="right">
+                                            <Typography variant="h6" color="primary">
+                                                {huyetAp}{' '}
+                                                <Typography color="#000" component="span">mmHg</Typography>
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
+                                        <Grid item xs={6}>
+                                            <Typography fontWeight="bold">Nhịp thở</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} align="right">
+                                            <Typography variant="h6" color="primary">
+                                                {nhipTho}{' '}
+                                                <Typography color="#000" component="span">lần/phút</Typography>
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container item xs={2.4} alignItems="center">
+                                        <Grid item xs={6}>
+                                            <Typography fontWeight="bold">Cân nặng</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} align="right">
+                                            <Typography variant="h6" color="primary">
+                                                {canNang}{' '}
+                                                <Typography color="#000" component="span">kg</Typography>
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
-                                <Grid item xs={6} align="right">
-                                    <Typography variant="h6" color="primary">
-                                        {mach}{' '}
-                                        <Typography color="#000" component="span">lần/phút</Typography>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
-                                <Grid item xs={6}>
-                                    <Typography fontWeight="bold">Nhiệt độ</Typography>
-                                </Grid>
-                                <Grid item xs={6} align="right">
-                                    <Typography variant="h6" color="primary">
-                                        {nhietDo}{' '}
-                                        <Typography color="#000" component="span">°C</Typography>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
-                                <Grid item xs={6}>
-                                    <Typography fontWeight="bold">Huyết áp</Typography>
-                                </Grid>
-                                <Grid item xs={6} align="right">
-                                    <Typography variant="h6" color="primary">
-                                        {huyetAp}{' '}
-                                        <Typography color="#000" component="span">mmHg</Typography>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: '2px solid #D9EFFE' }}>
-                                <Grid item xs={6}>
-                                    <Typography fontWeight="bold">Nhịp thở</Typography>
-                                </Grid>
-                                <Grid item xs={6} align="right">
-                                    <Typography variant="h6" color="primary">
-                                        {nhipTho}{' '}
-                                        <Typography color="#000" component="span">lần/phút</Typography>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid container item xs={2.4} alignItems="center">
-                                <Grid item xs={6}>
-                                    <Typography fontWeight="bold">Cân nặng</Typography>
-                                </Grid>
-                                <Grid item xs={6} align="right">
-                                    <Typography variant="h6" color="primary">
-                                        {canNang}{' '}
-                                        <Typography color="#000" component="span">kg</Typography>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </Grid>
-            </Grid>
-
-            {appearSec.map((sectionId, id) => (
-                <Paper 
-                    key={mdSections["sortOrder"][role][sectionId]}
-                    sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1 }} 
-                >  
-                    <Grid container>
-                        <Grid item xs={9}> 
-                            <Typography fontWeight="bold" color={openSec[sectionId] ? "primary" : "inherit"} >
-                                {mdSections["sortOrder"][role][sectionId]}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={3} align="right">
-                            <ToolBarSection id={id} sectionId={sectionId} sectionName={mdSections["sortOrder"][role][sectionId]} />
+                            </Paper>
                         </Grid>
                     </Grid>
-                
-                    <Collapse in={openSec[sectionId]} timeout="auto" unmountOnExit sx={{ py: 2 }}>
-                        {renderSwitch(sectionId)}
-                    </Collapse>
-                </Paper>
-            ))} 
 
-            {Object.keys(sectionState).some(key => spellingError[key].changed) ?
-                !updating && !confirmUpdate ? 
-                    <Box 
-                        className="df aic" 
-                        sx={{ 
-                            bgcolor: "white", 
-                            width: "100%", 
-                            position: "fixed", 
-                            left: open ? 240 : 0, 
-                            bottom: 0, 
-                            px: 3, 
-                            py: 1.5, 
-                            borderTop: (theme) => `1px solid ${theme.palette.divider}`, 
-                            zIndex: (theme) => theme.zIndex.drawer + 1
-                        }}
-                    >
-                        <Button variant="primary-dark" onClick={handleUpdate}>
-                            Cập nhật
-                        </Button>
-                    </Box>
-                : null
-            : null} 
+                    {appearSec.map((sectionId, id) => (
+                        <Paper 
+                            key={mdSections["sortOrder"][role][sectionId]}
+                            sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1 }} 
+                        >  
+                            <Grid container>
+                                <Grid item xs={9}> 
+                                    <Typography fontWeight="bold" color={openSec[sectionId] ? "primary" : "inherit"} >
+                                        {mdSections["sortOrder"][role][sectionId]}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={3} align="right">
+                                    <ToolBarSection id={id} sectionId={sectionId} sectionName={mdSections["sortOrder"][role][sectionId]} />
+                                </Grid>
+                            </Grid>
+                        
+                            <Collapse in={openSec[sectionId]} timeout="auto" unmountOnExit sx={{ py: 2 }}>
+                                {renderSwitch(sectionId)}
+                            </Collapse>
+                        </Paper>
+                    ))} 
 
-            <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                    {Object.keys(sectionState).some(key => spellingError[key].changed) ?
+                        !updating && !confirmUpdate ? 
+                            <Box 
+                                className="df aic" 
+                                sx={{ 
+                                    bgcolor: "white", 
+                                    width: "100%", 
+                                    position: "fixed", 
+                                    left: open ? 240 : 0, 
+                                    bottom: 0, 
+                                    px: 3, 
+                                    py: 1.5, 
+                                    borderTop: (theme) => `1px solid ${theme.palette.divider}`, 
+                                    zIndex: (theme) => theme.zIndex.drawer + 1
+                                }}
+                            >
+                                <Button variant="primary-dark" onClick={handleUpdate}>
+                                    Cập nhật
+                                </Button>
+                            </Box>
+                        : null
+                    : null} 
+
+                    <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                        <div className="df fdc aic jcc">
+                            <CircularProgress color="inherit" sx={{ mt: 3, mb: 1 }}/>
+                            <Typography color="inherit">{confirmUpdate ? "Đang cập nhật bệnh án..." : "Đang xử lý thông tin bệnh án..."}</Typography>
+                        </div>
+                    </Backdrop>
+                </>
+            : (
                 <div className="df fdc aic jcc">
-                    <CircularProgress color="inherit" sx={{ mt: 3, mb: 1 }}/>
-                    <Typography color="inherit">{confirmUpdate ? "Đang cập nhật bệnh án..." : "Đang xử lý thông tin bệnh án..."}</Typography>
+                    <CircularProgress sx={{ mt: 3, mb: 1 }} />
+                    <Typography color="primary">Đang tải...</Typography>
                 </div>
-            </Backdrop>
+            )}
         </Container>
     )
 }

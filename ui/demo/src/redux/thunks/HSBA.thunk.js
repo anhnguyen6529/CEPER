@@ -4,7 +4,7 @@ import HSBAApi from "../../apis/HSBA";
 const HSBAThunk = {
     getOneHSBAByPID: createAsyncThunk(
         'HSBA/getOneHSBA',
-        async (pid) => {
+        async (pid, { rejectWithValue }) => {
             try {
                 const apiResponse = await HSBAApi.getOneHSBAByPID({ pid });
 
@@ -14,13 +14,13 @@ const HSBAThunk = {
 
                 return apiResponse.data;
             } catch (error) {
-                return error.message;
+                return rejectWithValue(error.response.data.msg);
             }
         }
     ),
     updateHSBA: createAsyncThunk(
         'HSBA/updateHSBA',
-        async (apiData) => {
+        async (apiData, { rejectWithValue }) => {
             try {
                 const apiResponse = await HSBAApi.updateHSBA(apiData);
 
@@ -30,7 +30,7 @@ const HSBAThunk = {
 
                 return apiResponse.data;
             } catch (error) {
-                return error.message;
+                return rejectWithValue(error.response.data.msg);
             }
         }
     )

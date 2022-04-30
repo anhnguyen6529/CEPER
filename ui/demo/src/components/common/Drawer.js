@@ -14,18 +14,20 @@ import '../../styles/index.css';
 import { useParams } from "react-router";
 import { ListSwitchColumn } from "../lists";
 import DrawerHeader from "./DrawerHeader";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "./Button";
 import { sectionState } from "../../redux/slices/spellingError.slice";
+import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
     const { role } = useSelector((state) => state.auth.user);
     const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, 
-        danhSachHSBATab, setDanhSachHSBATab, setOpenDialog, handleConfirmUpdate } = useContext(UserContext);
+        danhSachHSBATab, setDanhSachHSBATab, setOpenDialog, setOpenBackdrop } = useContext(UserContext);
     const { updating } = useSelector((state) => state.HSBA);
     const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
+    const dispatch = useDispatch();
 
     return (
         <MuiDrawer 
@@ -88,7 +90,14 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                         : null
                                     )}
                                     <ListItem>
-                                        <Button sx={{ width: "100%" }} variant="primary-dark" onClick={handleConfirmUpdate}>
+                                        <Button 
+                                            sx={{ width: "100%" }} 
+                                            variant="primary-dark" 
+                                            onClick={() => {
+                                                dispatch(HSBAActions.confirmUpdate());
+                                                setOpenBackdrop(true);
+                                            }}
+                                        >
                                             Xác nhận cập nhật
                                         </Button>
                                     </ListItem>

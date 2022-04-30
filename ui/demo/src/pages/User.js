@@ -14,6 +14,8 @@ import { HSBAActions } from "../redux/slices/HSBA.slice";
 import HSBAThunk from "../redux/thunks/HSBA.thunk";
 import { useSnackbar } from "notistack";
 import useToken from "../hooks/useToken";
+import authApi from "../apis/auth";
+import store from "../redux/store";
 
 const User = () => {
     const navigate = useNavigate();
@@ -25,7 +27,7 @@ const User = () => {
     const selectedHSBA = useSelector(state => state.HSBA);
     const { creatingMode } = useSelector(state => state.danhSachHSBA);
     const { spellingError } = useSelector(state => state);
-    const { token } = useToken();
+    const { token, removeToken } = useToken();
     
     useEffect(() => {
         if (!token) {
@@ -47,6 +49,7 @@ const User = () => {
         raVienCols: [], raVienColsChecked: []
     });
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialogRelogin, setOpenDialogRelogin] = useState(false);
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
     const toggleDrawer = () => {
@@ -105,21 +108,27 @@ const User = () => {
     }
 
     useEffect(() => {
-        if (selectedHSBA.attachedSecUpdated) {
+        if (selectedHSBA.confirmUpdate && selectedHSBA.attachedSecUpdated) {
             handleConfirmUpdate();
         }
         // eslint-disable-next-line
-    }, [selectedHSBA.attachedSecUpdated]);
+    }, [selectedHSBA.attachedSecUpdated, selectedHSBA.confirmUpdate]);
 
     useEffect(() => {
         if (selectedHSBA.confirmUpdate && !selectedHSBA.setting) {
             setOpenBackdrop(false);
-            dispatch(SpellingErrorActions.resetState());
-            localStorage.setItem('status', 'UPDATED');
-            navigate(0);    
+            if (!selectedHSBA.settingError) {
+                dispatch(SpellingErrorActions.resetState());
+                localStorage.setItem('status', 'UPDATED');
+                navigate(0);
+            } else {
+                if (selectedHSBA.settingError === "Token has expired") {
+                    setOpenDialogRelogin(true);
+                }
+            }  
         }
         // eslint-disable-next-line
-    }, [selectedHSBA.setting]);
+    }, [selectedHSBA.setting, selectedHSBA.settingError]);
 
     window.onload = function() {
         if (localStorage.getItem('status')) {
@@ -127,6 +136,24 @@ const User = () => {
             localStorage.removeItem('status');
         }
     };
+
+    const handleLogout = async () => {
+		try {
+			await authApi.logout().then(() => {
+                store.dispatch({ type: 'LOG_OUT'});
+                removeToken();
+                navigate('/login');
+            });    
+		} catch (error) {
+            if (error.response) {
+                console.log(error.response);
+            } else if (error.request) {
+                console.log(error.request);
+            } else if (error.message) {
+                console.log(error.message);
+            }
+		}
+	}
     
     return (
         <UserProvider value={{
@@ -142,9 +169,10 @@ const User = () => {
             setDanhSachHSBATab,
             handleUpdate,
             setOpenDialog,
-            handleConfirmUpdate,
             openBackdrop,
-            setOpenBackdrop
+            setOpenBackdrop,
+            handleLogout,
+            setOpenDialogRelogin
         }}>
             <Box sx={{ display: 'flex'}}>
                 <CssBaseline />
@@ -228,6 +256,17 @@ const User = () => {
                     }}
                     okText="Tiếp tục chỉnh sửa"
                     handleOk={() => setOpenDialog(false)}
+                />
+
+                <DialogConfirm 
+                    open={openDialogRelogin}
+                    title="Phiên đăng nhập đã hết hạn"
+                    contentText="Vui lòng đăng nhập lại để sử dụng hệ thống."
+                    okText="Đăng nhập"
+                    handleOk={() => {
+                        handleLogout();
+                        setOpenDialogRelogin(false);
+                    }}
                 />
             </Box>
         </UserProvider>

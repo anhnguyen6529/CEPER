@@ -18,6 +18,7 @@ const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const FLyDoVaoVien = () => {
     const { updating, lyDoVaoVien } = useSelector((state) => state.HSBA);
+    const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const spellingErrorLyDo = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
     const spellingErrorChanDoan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
@@ -37,11 +38,13 @@ const FLyDoVaoVien = () => {
 
     useEffect(() => {
         if (updating) {
-            if (spellingErrorLyDo.changed) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
-            }
-            if (spellingErrorChanDoan.changed) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+            if (!loadingError) {
+                if (spellingErrorLyDo.changed) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
+                }
+                if (spellingErrorChanDoan.changed) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+                }
             }
             dispatch(HSBAActions.updateSection({
                 section: SECTION_FIELD,
@@ -49,10 +52,10 @@ const FLyDoVaoVien = () => {
             }));
         }
         // eslint-disable-next-line
-    }, [updating]);
+    }, [updating, loadingError]);
 
     useEffect(() => {
-        if (!spellingErrorLyDo.loading) {
+        if (!spellingErrorLyDo.loading && !spellingErrorLyDo.error) {
             setResultLyDo(spellingErrorLyDo);
             const tReplacedLyDo = spellingErrorLyDo.correction.map(res => ({ type: "correct", repText: res[1] }));
             setReplacedLyDo(tReplacedLyDo);
@@ -61,7 +64,7 @@ const FLyDoVaoVien = () => {
                 data: { ...lyDoVaoVien, lyDo: UtilsText.replaceMaskWord(spellingErrorLyDo.detection, tReplacedLyDo) }
             }));
         }
-        if (!spellingErrorChanDoan.loading) {
+        if (!spellingErrorChanDoan.loading && !spellingErrorChanDoan.error) {
             setResultChanDoan(spellingErrorChanDoan);
             const tReplacedChanDoan = spellingErrorChanDoan.correction.map(res => ({ type: "correct", repText: res[1] }));
             setReplacedChanDoan(tReplacedChanDoan);
@@ -226,7 +229,29 @@ const FLyDoVaoVien = () => {
                         }}
                         disabled={updating && (useResultChanDoan || !spellingErrorChanDoan.changed)}
                     />
-
+                </Grid>
+                <Grid item xs={2}>
+                    <RadioGroup 
+                        row 
+                        value={noiGioiThieu}
+                        onChange={({ target: { value } }) => {
+                            setNoiGioiThieu(value); 
+                            if (value !== lyDoVaoVien.noiGioiThieu) {
+                                if (!spellingError.changed) {
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+                                }
+                            } else {
+                                if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
+                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+                                }
+                            }
+                        }}
+                    >
+                        <FormControlLabel disabled={updating} value="Y tế" control={<Radio />} label="Y tế" />
+                        <FormControlLabel disabled={updating} value="Tự đến" control={<Radio />} label="Tự đến" />
+                    </RadioGroup>
+                </Grid>
+                <Grid item xs={12}>
                     {!!resultChanDoan && !spellingErrorChanDoan.loading ? 
                         <BoxLoiChinhTa
                             result={resultChanDoan}
@@ -255,27 +280,6 @@ const FLyDoVaoVien = () => {
                             </div> 
                         : null
                     )}
-                </Grid>
-                <Grid item xs={2}>
-                    <RadioGroup 
-                        row 
-                        value={noiGioiThieu}
-                        onChange={({ target: { value } }) => {
-                            setNoiGioiThieu(value); 
-                            if (value !== lyDoVaoVien.noiGioiThieu) {
-                                if (!spellingError.changed) {
-                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
-                                }
-                            } else {
-                                if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
-                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
-                                }
-                            }
-                        }}
-                    >
-                        <FormControlLabel disabled={updating} value="Y tế" control={<Radio />} label="Y tế" />
-                        <FormControlLabel disabled={updating} value="Tự đến" control={<Radio />} label="Tự đến" />
-                    </RadioGroup>
                 </Grid>
             </Grid>
 

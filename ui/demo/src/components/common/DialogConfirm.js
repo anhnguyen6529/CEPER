@@ -10,15 +10,22 @@ const DialogConfirm = ({ open, title, contentText, cancelText, handleCancel, okT
                 <DialogContentText>{contentText}</DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button variant="outlined" sx={{ mr: 1 }} onClick={handleCancel}>
-                    {cancelText}
-                </Button>
+                {!!cancelText ? 
+                    <Button variant="outlined" sx={{ mr: 1 }} onClick={handleCancel}>
+                        {cancelText}
+                    </Button>
+                : null}
                 <Button onClick={handleOk}>
                     {okText}
                 </Button>
             </DialogActions>
         </Dialog>
     )
+}
+
+DialogConfirm.defaultProps = {
+    cancelText: "",
+    handleCancel: () => {}
 }
 
 export default DialogConfirm;

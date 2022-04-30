@@ -126,7 +126,8 @@ const initialState = {
     confirmUpdate: false,
     attachedSecUpdated: false, 
     setting: false,
-    error: '',
+    loadingError: '',
+    settingError: '',
     ...initialHSBAState
 }
 
@@ -145,30 +146,6 @@ const HSBASlice = createSlice({
             if (ATTACHED_FIELDS.filter(field => field !== action.payload.section).every(section => 
                 typeof state[section].updated === 'undefined' || state[section].updated)) {
                 state.attachedSecUpdated = true;
-            }
-        },
-        updatePhieuCongKhaiThuoc: (state, action) => { 
-            state.phieuCongKhaiThuoc.ngayThang = action.payload.value.ngayThang;
-            action.payload.newData.forEach((data) => {
-                const index = state.phieuCongKhaiThuoc.data.map(d => d.tenThuoc).findIndex(d => d === data.tenThuoc);
-                if (index === -1) {
-                    state.phieuCongKhaiThuoc.data = [...state.phieuCongKhaiThuoc.data, data];
-                } else {
-                    state.phieuCongKhaiThuoc.data[index] = { 
-                        ...state.phieuCongKhaiThuoc.data[index],
-                        ngayThang: data.ngayThang.map((nth, id) => id < state.phieuCongKhaiThuoc.data[index].ngayThang.length
-                            ? nth + state.phieuCongKhaiThuoc.data[index].ngayThang[id] : nth),
-                        tongSo: data.tongSo + state.phieuCongKhaiThuoc.data[index].tongSo, 
-                        thanhTien: data.thanhTien + state.phieuCongKhaiThuoc.data[index].thanhTien,
-                        ghiChu: state.phieuCongKhaiThuoc.data[index].ghiChu.concat(`\n${data.ghiChu}`)
-                    };
-                }
-            });
-        },
-        addDanhSachYLenh: (state, action) => {
-            return {
-                ...state, 
-                danhSachYLenh: [...state.danhSachYLenh, ...action.payload]
             }
         },
         update: (state) => {
@@ -203,7 +180,7 @@ const HSBASlice = createSlice({
             
             return {
                 ...state,
-                error: '',
+                loadingError: '',
                 loading: false,
                 ...action.payload
             }
@@ -218,7 +195,7 @@ const HSBASlice = createSlice({
             return {
                 ...state,
                 loading: false,
-                error: action.payload
+                loadingError: action.payload
             }
         })
         .addCase(HSBAThunk.updateHSBA.pending, (state) => {
@@ -231,14 +208,14 @@ const HSBASlice = createSlice({
             return {
                 ...state,
                 setting: false,
-                error: ''
+                settingError: ''
             }
         })
         .addCase(HSBAThunk.updateHSBA.rejected, (state, action) => {
             return {
                 ...state,
                 setting: false,
-                error: action.payload
+                settingError: action.payload
             }
         })
     }

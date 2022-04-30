@@ -37,6 +37,7 @@ const equalsTo = (arr1, arr2) => {
 
 const FHoiBenh = () => {
     const { updating, hoiBenh } = useSelector((state) => state.HSBA);
+    const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const spellingErrorQuaTrinhBenhLy = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
     const spellingErrorBanThan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
@@ -54,14 +55,16 @@ const FHoiBenh = () => {
 
     useEffect(() => {
         if (updating) {
-            if (spellingErrorQuaTrinhBenhLy.changed) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
-            }
-            if (spellingErrorBanThan.changed) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
-            }
-            if (spellingErrorGiaDinh.changed) {
-                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
+            if (!loadingError) {
+                if (spellingErrorQuaTrinhBenhLy.changed) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
+                }
+                if (spellingErrorBanThan.changed) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
+                }
+                if (spellingErrorGiaDinh.changed) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
+                }
             }
             dispatch(HSBAActions.updateSection({
                 section: SECTION_FIELD,
@@ -73,7 +76,7 @@ const FHoiBenh = () => {
 
     useEffect(() => {
         const tResult = [...result], tReplaced = [...replaced];
-        if (!spellingErrorQuaTrinhBenhLy.loading) {
+        if (!spellingErrorQuaTrinhBenhLy.loading && !spellingErrorQuaTrinhBenhLy.error) {
             tResult[0] = spellingErrorQuaTrinhBenhLy; setResult(tResult);
             tReplaced[0] = spellingErrorQuaTrinhBenhLy.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
             dispatch(HSBAActions.updateSection({
@@ -81,7 +84,7 @@ const FHoiBenh = () => {
                 data: { ...hoiBenh, quaTrinhBenhLy: UtilsText.replaceMaskWord(spellingErrorQuaTrinhBenhLy.detection, tReplaced[0]) }
             }));
         }
-        if (!spellingErrorBanThan.loading) {
+        if (!spellingErrorBanThan.loading && !spellingErrorBanThan.error) {
             tResult[1] = spellingErrorBanThan; setResult(tResult);
             tReplaced[1] = spellingErrorBanThan.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
             dispatch(HSBAActions.updateSection({
@@ -89,7 +92,7 @@ const FHoiBenh = () => {
                 data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: UtilsText.replaceMaskWord(spellingErrorBanThan.detection, tReplaced[1]) } }
             }));
         }
-        if (!spellingErrorGiaDinh.loading) {
+        if (!spellingErrorGiaDinh.loading && !spellingErrorGiaDinh.error) {
             tResult[2] = spellingErrorGiaDinh; setResult(tResult);
             tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
             dispatch(HSBAActions.updateSection({

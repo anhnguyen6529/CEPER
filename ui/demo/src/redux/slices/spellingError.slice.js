@@ -32,7 +32,33 @@ export const sectionState = [...mdSections["clinicalSection"], ...mdSections["at
 
 const initialState = {
     ...sectionState,
-    loading: true
+    loading: true,
+    loadingError: ''
+}
+
+const checkAllWithoutSubSection = (state, section, fieldCheck) => {
+    const filter = Object.keys(sectionState).filter(key => key !== section && !mdSections["attached"].includes(key));
+    return filter.every((key) => {
+        if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
+            return Object.keys(state[key]).filter(subKey => subKey !== "changed").every(subKey => !state[key][subKey].changed 
+                || (state[key][subKey].changed && !state[key][subKey][fieldCheck]));
+        } else {
+            return !state[key].changed || (state[key].changed && !state[key][fieldCheck]);
+        }
+    });
+}
+
+const checkAllWithSubSection = (state, subSection, fieldCheck) => {
+    const filter = Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key));
+    return filter.every((key) => {
+        if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
+            return Object.keys(state[key]).filter(subKey => subKey !== "changed" 
+                && subKey !== subSection).every(subKey => !state[key][subKey].changed 
+                || (state[key][subKey].changed && !state[key][subKey][fieldCheck]));
+        } else {
+            return !state[key].changed || (state[key].changed && !state[key][fieldCheck]);
+        }
+    });
 }
 
 const SpellingErrorSlice = createSlice({
@@ -65,29 +91,16 @@ const SpellingErrorSlice = createSlice({
             }
 
             if (!action.payload.subSection) {
-                const filter = Object.keys(sectionState).filter(key => key !== action.payload.section && !mdSections["attached"].includes(key));
-                const loadedAll = filter.every((key) => {
-                    if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
-                        return Object.keys(state[key]).filter(subKey => subKey !== "changed").every(subKey => !state[key][subKey].changed 
-                            || (state[key][subKey].changed && !state[key][subKey].loading));
-                    } else {
-                        return !state[key].changed || (state[key].changed && !state[key].loading);
-                    }
-                });
+                const loadedAll = checkAllWithoutSubSection(state, action.payload.section, "loading");
+                const noErrorAll = checkAllWithoutSubSection(state, action.payload.section, "error");
                 if (loadedAll) state.loading = false;
+                if (noErrorAll) state.loadingError = "";
                 state[action.payload.section] = { ...state[action.payload.section], ...action.payload.result, loading: false, error: "" };
             } else {
-                const filter = Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key));
-                const loadedAll = filter.every((key) => {
-                    if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
-                        return Object.keys(state[key]).filter(subKey => subKey !== "changed" 
-                            && subKey !== action.payload.subSection).every(subKey => !state[key][subKey].changed 
-                            || (state[key][subKey].changed && !state[key][subKey].loading));
-                    } else {
-                        return !state[key].changed || (state[key].changed && !state[key].loading);
-                    }
-                });
+                const loadedAll = checkAllWithSubSection(state, action.payload.subSection, "loading");
+                const noErrorAll = checkAllWithSubSection(state, action.payload.subSection, "error");
                 if (loadedAll) state.loading = false;
+                if (noErrorAll) state.loadingError = "";
                 state[action.payload.section][action.payload.subSection] = {
                     ...state[action.payload.section][action.payload.subSection],
                     ...action.payload.result,
@@ -98,9 +111,15 @@ const SpellingErrorSlice = createSlice({
         })
         .addCase(SpellingErrorThunk.getProcessResult.rejected, (state, action) => {
             if (!action.payload.subSection) {
+                const loadedAll = checkAllWithoutSubSection(state, action.payload.section, "loading");
+                if (loadedAll) state.loading = false;
+                state.loadingError = action.payload.error;
                 state[action.payload.section].loading = false;
                 state[action.payload.section].error = action.payload.error;
             } else {
+                const loadedAll = checkAllWithSubSection(state, action.payload.subSection, "loading");
+                if (loadedAll) state.loading = false;
+                state.loadingError = action.payload.error;
                 state[action.payload.section][action.payload.subSection].loading = false;
                 state[action.payload.section][action.payload.subSection].error = action.payload.error;
             }
