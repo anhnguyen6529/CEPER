@@ -199,87 +199,89 @@ const FLyDoVaoVien = () => {
                 <Grid item xs={3}>
                     <Typography fontWeight="bold">Chẩn đoán của nơi giới thiệu</Typography>
                 </Grid>
-                <Grid item xs={7}>
-                    {(updating && !!resultChanDoan) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
-                    <TextField 
-                        multiline
-                        fullWidth
-                        margin={(updating && !!resultChanDoan) ? "dense" : "none"}
-                        sx={{ width: '90%' }}
-                        value={chanDoanNoiGioiThieu}
-                        onChange={({ target: { value } }) => {
-                            setChanDoanNoiGioiThieu(value);
-                            if (!updating) {
-                                if (value === lyDoVaoVien.chanDoanNoiGioiThieu) {
-                                    dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
-                                    if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
-                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+                <Grid item container xs={9}>
+                    <Grid item xs={9}>
+                        {(updating && !!resultChanDoan) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+                        <TextField 
+                            multiline
+                            fullWidth
+                            margin={(updating && !!resultChanDoan) ? "dense" : "none"}
+                            sx={{ width: '90%' }}
+                            value={chanDoanNoiGioiThieu}
+                            onChange={({ target: { value } }) => {
+                                setChanDoanNoiGioiThieu(value);
+                                if (!updating) {
+                                    if (value === lyDoVaoVien.chanDoanNoiGioiThieu) {
+                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
+                                        if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
+                                            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+                                        }
+                                    } else {
+                                        if (!spellingErrorChanDoan.changed) {
+                                            dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: true }));
+                                        }
+                                        if (!spellingError.changed) {
+                                            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+                                        }
                                     }
                                 } else {
-                                    if (!spellingErrorChanDoan.changed) {
-                                        dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: true }));
-                                    }
+                                    dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: value } }));
+                                }
+                            }}
+                            disabled={updating && (useResultChanDoan || !spellingErrorChanDoan.changed)}
+                        />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <RadioGroup 
+                            row 
+                            value={noiGioiThieu}
+                            onChange={({ target: { value } }) => {
+                                setNoiGioiThieu(value); 
+                                if (value !== lyDoVaoVien.noiGioiThieu) {
                                     if (!spellingError.changed) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
-                                }
-                            } else {
-                                dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: value } }));
-                            }
-                        }}
-                        disabled={updating && (useResultChanDoan || !spellingErrorChanDoan.changed)}
-                    />
-                </Grid>
-                <Grid item xs={2}>
-                    <RadioGroup 
-                        row 
-                        value={noiGioiThieu}
-                        onChange={({ target: { value } }) => {
-                            setNoiGioiThieu(value); 
-                            if (value !== lyDoVaoVien.noiGioiThieu) {
-                                if (!spellingError.changed) {
-                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
-                                }
-                            } else {
-                                if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
-                                    dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
-                                }
-                            }
-                        }}
-                    >
-                        <FormControlLabel disabled={updating} value="Y tế" control={<Radio />} label="Y tế" />
-                        <FormControlLabel disabled={updating} value="Tự đến" control={<Radio />} label="Tự đến" />
-                    </RadioGroup>
-                </Grid>
-                <Grid item xs={12}>
-                    {!!resultChanDoan && !spellingErrorChanDoan.loading ? 
-                        <BoxLoiChinhTa
-                            result={resultChanDoan}
-                            replaced={replacedChanDoan}
-                            setReplaced={setReplacedChanDoan}
-                            useResult={useResultChanDoan}
-                            handleChangeCheckbox={(checked) => {
-                                setUseResultChanDoan(checked);
-                                if (checked) {
-                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
-                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+                                } else {
+                                    if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
+                                        dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+                                    }
                                 }
                             }}
-                            handleUpdateSection={(newReplaced) => {
-                                dispatch(HSBAActions.updateSection({
-                                    section: SECTION_FIELD,
-                                    data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: UtilsText.replaceMaskWord(spellingErrorChanDoan.detection, newReplaced) }
-                                }));
-                            }}
-                        />
-                    : ( 
-                        !!resultChanDoan ? 
-                            <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
-                            </div> 
-                        : null
-                    )}
+                        >
+                            <FormControlLabel disabled={updating} value="Y tế" control={<Radio />} label="Y tế" />
+                            <FormControlLabel disabled={updating} value="Tự đến" control={<Radio />} label="Tự đến" />
+                        </RadioGroup>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {!!resultChanDoan && !spellingErrorChanDoan.loading ? 
+                            <BoxLoiChinhTa
+                                result={resultChanDoan}
+                                replaced={replacedChanDoan}
+                                setReplaced={setReplacedChanDoan}
+                                useResult={useResultChanDoan}
+                                handleChangeCheckbox={(checked) => {
+                                    setUseResultChanDoan(checked);
+                                    if (checked) {
+                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+                                    }
+                                }}
+                                handleUpdateSection={(newReplaced) => {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: UtilsText.replaceMaskWord(spellingErrorChanDoan.detection, newReplaced) }
+                                    }));
+                                }}
+                            />
+                        : ( 
+                            !!resultChanDoan ? 
+                                <div className="df fdc aic jcc">
+                                    <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
+                                    <Typography color="primary">Đang xử lý...</Typography>
+                                </div> 
+                            : null
+                        )}
+                    </Grid>
                 </Grid>
             </Grid>
 

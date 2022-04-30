@@ -1,4 +1,5 @@
 module.exports = {
+    mode: 'development',
     entry: './src/index.js', // file jsx của entry point 
     output: {
       filename: 'bundle.js' // file sẽ xuất ra
