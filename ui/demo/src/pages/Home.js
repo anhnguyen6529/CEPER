@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import React from 'react';
 import { Container, Grid, Typography, Link, Box } from '@mui/material';
 import { NavBar, Button, Footer } from '../components/common';
 import { makeStyles } from '@mui/styles';
@@ -7,6 +6,7 @@ import landingImg from '../images/landing_01.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileMedical, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import useToken from '../hooks/useToken';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -67,21 +67,17 @@ const BoxFeature = ({ icon, title, subtitle }) => {
 
 const Home = () => {
     const classes = useStyles();
-    const navigate = useNavigate();
+    const { name, role, id } = useSelector((state) => state.auth.user);
     const { token } = useToken();
-
-    useEffect(() => {
-        if (!!token) {
-            navigate('/user/HSBA');
-        }
-    });
 
     return (
         <div className={classes.root}>
             <NavBar>
-                <Link href="/login" underline="none">
-                    <Button variant="outlined">Đăng nhập</Button>
-                </Link>
+                {!token ? 
+                    <Link href="/login" underline="none">
+                        <Button variant="outlined">Đăng nhập</Button>
+                    </Link>
+                : <Typography color="primary" fontWeight="bold">{name}</Typography>}
             </NavBar>
 
             <Container sx={{ pt: '150px' }}>
@@ -100,7 +96,7 @@ const Home = () => {
                             cho phép bác sĩ, điều dưỡng và bệnh nhân có thể xem lại quá trình điều trị một cách <b>nhanh chóng và chính xác</b>.
                         </Typography>
 
-                        <Link href="/login" underline="none">
+                        <Link href={!token ? "/login" : (role === "BN" ? `user/HSBA/${id}` : "user/HSBA")} underline="none">
                             <Button variant="primary">Sử dụng ngay</Button>
                         </Link>
                     </Grid>

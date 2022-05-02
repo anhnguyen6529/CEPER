@@ -1,6 +1,5 @@
 import React from "react";
 import { AppBar, Toolbar, Container, Grid, Link } from "@mui/material";
-// import { makeStyles } from "@mui/styles";
 import logo from "../../images/logo.svg";
 
 const NavBar = ({ children }) => {
@@ -11,9 +10,9 @@ const NavBar = ({ children }) => {
             position="fixed"
             elevation={0}
         >
-            <Toolbar style={{background: 'white', height: 72}}>
+            <Toolbar style={{ background: 'white', height: 72 }}>
                 <Container>
-                    <Grid container spacing={0}>
+                    <Grid container spacing={0} alignItems="center">
                         <Grid item xs={8}>
                             <Link href="/">
                                 <img src={logo} alt="logo" style={{ maxWidth: 150 }}/>

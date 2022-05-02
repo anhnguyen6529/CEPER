@@ -22,7 +22,7 @@ const HSBA = () => {
     const navigate = useNavigate();
     const { pid } = useParams();
     const { open, today, appearSec, appearTime, setAppearTime, openSec, handleUpdate, 
-        openBackdrop, setOpenBackdrop, setOpenDialogRelogin } = useContext(UserContext); 
+        openBackdrop, setOpenBackdrop, handleLogout } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
     const { enqueueSnackbar } = useSnackbar();
 
@@ -44,7 +44,7 @@ const HSBA = () => {
 
     useEffect(() => {
         if (loadingError === "Token has expired") {
-            setOpenDialogRelogin(true);
+            handleLogout();
         }
         // eslint-disable-next-line 
     }, [loadingError]);
@@ -65,7 +65,7 @@ const HSBA = () => {
                 } else {
                     if (spellingError.loadingError === "Token has expired") {
                         setOpenBackdrop(false);
-                        setOpenDialogRelogin(true);
+                        handleLogout();
                     }
                 }
             }

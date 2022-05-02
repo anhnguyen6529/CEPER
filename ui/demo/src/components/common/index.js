@@ -22,6 +22,8 @@ export { default as LeftSideBar } from './LeftSideBar';
 
 export { default as Main } from './Main';
 
+export { default as Menu } from './Menu';
+
 export { default as NavBar } from './NavBar';
 
 export { default as ScrollToTop } from './ScrollToTop';

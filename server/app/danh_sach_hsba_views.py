@@ -1,5 +1,5 @@
 import json
-from app import app, conn
+from app import app, mysql
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required
 
@@ -7,11 +7,13 @@ from flask_jwt_extended import jwt_required
 @app.route('/user/danh-sach-hsba/new-pid')
 @jwt_required()
 def getNewPID():
+    conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(PID) FROM HO_SO_BENH_AN;")
     new_pid = str(int(cursor.fetchall()[0][0]) + 1).ljust(6, "0")
     response = jsonify({"newPID": new_pid})
     cursor.close()
+    conn.close()
     return response
 
 
@@ -19,6 +21,7 @@ def getNewPID():
 @jwt_required()
 def getDanhSachHSBA():
     doctor_id = request.args.get('doctorID')
+    conn = mysql.connect()
     cursor = conn.cursor()
     result = dict()
     result["hienTai"] = []
@@ -61,6 +64,7 @@ def getDanhSachHSBA():
         result["raVien"].append(data)
 
     cursor.close()
+    conn.close()
     response = jsonify(result)
     return response
 
@@ -69,6 +73,7 @@ def getDanhSachHSBA():
 @jwt_required()
 def createNewHSBA():
     data = request.json
+    conn = mysql.connect()
     cursor = conn.cursor()
 
     cursor.execute("INSERT INTO HO_SO_BENH_AN VALUES (%s, %s, %s, %s, %s, %s);",
@@ -98,4 +103,6 @@ def createNewHSBA():
     conn.commit()
 
     response = jsonify({"result": True})
+    cursor.close()
+    conn.close()
     return response

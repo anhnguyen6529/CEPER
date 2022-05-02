@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { 
     Drawer as MuiDrawer, IconButton, Box, List, Divider,
-    ListItem, ListItemIcon, ListItemText, Typography, Grid, Avatar, ListSubheader
+    ListItem, ListItemIcon, ListItemText, Typography, Grid, Avatar, ListSubheader, Link
 } from "@mui/material";
 import logo from "../../images/logo.png";
 import { faFileMedicalAlt } from "@fortawesome/free-solid-svg-icons";
@@ -45,7 +45,9 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             open={open}
         >
             <DrawerHeader>
-                <img src={logo} alt="logo" style={{ maxWidth: 150 }}/>
+                <Link href="/">
+                    <img src={logo} alt="logo" style={{ maxWidth: 150 }} />
+                </Link>
                 <IconButton onClick={toggleDrawer}>
                     <ChevronLeft />
                 </IconButton>      

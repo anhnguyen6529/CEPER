@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
-import { Menu, MenuItem, ListItemIcon } from "@mui/material";
+import { MenuItem, ListItemIcon } from "@mui/material";
 import { Settings, Help, Logout } from "@mui/icons-material";
 import UserContext from "../../contexts/UserContext";
+import Menu from "./Menu";
 
 const DropDownMenu = ({ anchorEl, open, onClose }) => {
     const { handleLogout } = useContext(UserContext);
@@ -12,28 +13,6 @@ const DropDownMenu = ({ anchorEl, open, onClose }) => {
 			open={open}
 			onClose={onClose}
 			onClick={onClose}
-			PaperProps={{
-				elevation: 0,
-				sx: {
-					overflow: 'visible',
-					filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-					mt: 1.5,
-					'&:before': {
-						content: '""',
-						display: 'block',
-						position: 'absolute',
-						top: 0,
-						right: 14,
-						width: 10,
-						height: 10,
-						bgcolor: 'background.paper',
-						transform: 'translateY(-50%) rotate(45deg)',
-						zIndex: 0,
-					},
-				},
-			}}
-			transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-			anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 		>
 			<MenuItem>
 				<ListItemIcon>
@@ -47,7 +26,7 @@ const DropDownMenu = ({ anchorEl, open, onClose }) => {
 				</ListItemIcon>
 				Trợ giúp & hỗ trợ
 			</MenuItem>
-			<MenuItem onClick={handleLogout}>
+			<MenuItem onClick={() => handleLogout(false)}>
 				<ListItemIcon>
 					<Logout fontSize="small" />
 				</ListItemIcon>

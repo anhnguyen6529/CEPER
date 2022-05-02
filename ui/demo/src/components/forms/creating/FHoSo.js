@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FHoSo = () => {
     const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
-    const { setOpenDialogRelogin } = useContext(UserContext);
+    const { handleLogout } = useContext(UserContext);
     const dispatch = useDispatch();
     const classes = useStyles();
     const now = new Date();
@@ -40,7 +40,7 @@ const FHoSo = () => {
             setValues({ ...values, pid: response.newPID })
         }).catch((error) => {
             if (error === "Token has expired") {
-                setOpenDialogRelogin(true);
+                handleLogout();
             }
         });
         // eslint-disable-next-line

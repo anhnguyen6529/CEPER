@@ -49,7 +49,6 @@ const User = () => {
         raVienCols: [], raVienColsChecked: []
     });
     const [openDialog, setOpenDialog] = useState(false);
-    const [openDialogRelogin, setOpenDialogRelogin] = useState(false);
     const [openBackdrop, setOpenBackdrop] = useState(false);
 
     const toggleDrawer = () => {
@@ -123,7 +122,7 @@ const User = () => {
                 navigate(0);
             } else {
                 if (selectedHSBA.settingError === "Token has expired") {
-                    setOpenDialogRelogin(true);
+                    handleLogout();
                 }
             }  
         }
@@ -137,20 +136,20 @@ const User = () => {
         }
     };
 
-    const handleLogout = async () => {
+    const handleLogout = async (reLogin=true) => {
 		try {
-			await authApi.logout().then(() => {
-                store.dispatch({ type: 'LOG_OUT'});
-                removeToken();
-                navigate('/login');
-            });    
+			await authApi.logout();
+            
+            store.dispatch({ type: 'LOG_OUT'});
+            removeToken();
+            navigate(reLogin ? '/login' : '/');
 		} catch (error) {
             if (error.response) {
-                console.log(error.response);
+                console.log('Response:', error.response);
             } else if (error.request) {
-                console.log(error.request);
+                console.log('Request:', error.request);
             } else if (error.message) {
-                console.log(error.message);
+                console.log('Message:', error.message);
             }
 		}
 	}
@@ -171,8 +170,7 @@ const User = () => {
             setOpenDialog,
             openBackdrop,
             setOpenBackdrop,
-            handleLogout,
-            setOpenDialogRelogin
+            handleLogout
         }}>
             <Box sx={{ display: 'flex'}}>
                 <CssBaseline />
@@ -256,17 +254,6 @@ const User = () => {
                     }}
                     okText="Tiếp tục chỉnh sửa"
                     handleOk={() => setOpenDialog(false)}
-                />
-
-                <DialogConfirm 
-                    open={openDialogRelogin}
-                    title="Phiên đăng nhập đã hết hạn"
-                    contentText="Vui lòng đăng nhập lại để sử dụng hệ thống."
-                    okText="Đăng nhập"
-                    handleOk={() => {
-                        handleLogout();
-                        setOpenDialogRelogin(false);
-                    }}
                 />
             </Box>
         </UserProvider>

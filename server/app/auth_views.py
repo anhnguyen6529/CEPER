@@ -1,4 +1,4 @@
-from app import app, conn
+from app import app, mysql
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, unset_jwt_cookies
 
@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token, unset_jwt_cookies
 @app.route('/login', methods=['POST'])
 def login():
     params = request.json
+    conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(
         "SELECT ID, Username, Password, Role, Name, Position FROM USERS WHERE Username = %s AND Role = %s;", (params["username"], params["role"]))
@@ -19,6 +20,7 @@ def login():
                           "role": data[0][3], "name": data[0][4], "position": data[0][5]}
         response = jsonify(result)
         cursor.close()
+        conn.close()
         return response
     else:
         cursor.close()

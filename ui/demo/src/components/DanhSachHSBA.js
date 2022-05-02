@@ -23,7 +23,7 @@ const DanhSachHSBA = () => {
         // eslint-disable-next-line 
     }, []);
 
-    const { danhSachHSBATab, setDanhSachHSBATab, setOpenDialogRelogin } = useContext(UserContext);
+    const { danhSachHSBATab, setDanhSachHSBATab, handleLogout } = useContext(UserContext);
     const { hienTai, raVien, creatingMode, loading, loadingError, creatingHSBA, creatingHSBAError } = useSelector(state => state.danhSachHSBA);
     
     const [values, setValues] = useState(initialValues);
@@ -34,7 +34,7 @@ const DanhSachHSBA = () => {
 
     useEffect(() => {
         if (loadingError === "Token has expired") {
-            setOpenDialogRelogin(true);
+            handleLogout();
         }
         // eslint-disable-next-line 
     }, [loadingError]);
@@ -90,7 +90,7 @@ const DanhSachHSBA = () => {
                 enqueueSnackbar("Tạo bệnh án thành công", { variant: "success" });
             } else {
                 if (creatingHSBAError === "Token has expired") {
-                    setOpenDialogRelogin(true);
+                    handleLogout();
                 }
             }
         }
