@@ -63,6 +63,9 @@ const FLyDoVaoVien = () => {
                 section: SECTION_FIELD,
                 data: { ...lyDoVaoVien, lyDo: UtilsText.replaceMaskWord(spellingErrorLyDo.detection, tReplacedLyDo) }
             }));
+        } else if (spellingErrorLyDo.loading) {
+            setResultLyDo('');
+            setReplacedLyDo([]);
         }
         if (!spellingErrorChanDoan.loading && !spellingErrorChanDoan.error) {
             setResultChanDoan(spellingErrorChanDoan);
@@ -167,7 +170,7 @@ const FLyDoVaoVien = () => {
                             }}
                         />
                     : ( 
-                        !!resultLyDo ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -274,7 +277,7 @@ const FLyDoVaoVien = () => {
                                 }}
                             />
                         : ( 
-                            !!resultChanDoan ? 
+                            updating ? 
                                 <div className="df fdc aic jcc">
                                     <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                     <Typography color="primary">Đang xử lý...</Typography>

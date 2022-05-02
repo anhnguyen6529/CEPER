@@ -83,6 +83,9 @@ const FHoiBenh = () => {
                 section: SECTION_FIELD,
                 data: { ...hoiBenh, quaTrinhBenhLy: UtilsText.replaceMaskWord(spellingErrorQuaTrinhBenhLy.detection, tReplaced[0]) }
             }));
+        } else if (spellingErrorQuaTrinhBenhLy.loading) {
+            tResult[0] = ''; setResult(tResult);
+            tReplaced[0] = []; setReplaced(tReplaced);
         }
         if (!spellingErrorBanThan.loading && !spellingErrorBanThan.error) {
             tResult[1] = spellingErrorBanThan; setResult(tResult);
@@ -91,7 +94,11 @@ const FHoiBenh = () => {
                 section: SECTION_FIELD,
                 data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: UtilsText.replaceMaskWord(spellingErrorBanThan.detection, tReplaced[1]) } }
             }));
+        } else if (spellingErrorBanThan.loading) {
+            tResult[1] = ''; setResult(tResult);
+            tReplaced[1] = []; setReplaced(tReplaced);
         }
+
         if (!spellingErrorGiaDinh.loading && !spellingErrorGiaDinh.error) {
             tResult[2] = spellingErrorGiaDinh; setResult(tResult);
             tReplaced[2] = spellingErrorGiaDinh.correction.map(res => ({ type: "correct", repText: res[1] })); setReplaced(tReplaced);
@@ -99,6 +106,9 @@ const FHoiBenh = () => {
                 section: SECTION_FIELD,
                 data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh: UtilsText.replaceMaskWord(spellingErrorGiaDinh.detection, tReplaced[2]) } }
             }));
+        } else if (spellingErrorGiaDinh.loading) {
+            tResult[2] = ''; setResult(tResult);
+            tReplaced[2] = []; setReplaced(tReplaced);
         }
         // eslint-disable-next-line
     }, [spellingErrorQuaTrinhBenhLy.loading, spellingErrorBanThan.loading, spellingErrorGiaDinh.loading]);
@@ -176,7 +186,7 @@ const FHoiBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[0] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -259,7 +269,7 @@ const FHoiBenh = () => {
                                             }}
                                         />
                                     : ( 
-                                        !!result[1] ? 
+                                        updating ? 
                                             <div className="df fdc aic jcc">
                                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -367,7 +377,7 @@ const FHoiBenh = () => {
                                             }}
                                         />
                                     : ( 
-                                        !!result[2] ? 
+                                        updating ? 
                                             <div className="df fdc aic jcc">
                                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                                 <Typography color="primary">Đang xử lý...</Typography>

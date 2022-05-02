@@ -49,6 +49,9 @@ const FChanDoanKhiRaVien = () => {
                     chanDoan: UtilsText.replaceMaskWord(spellingError[CLINICAL_SUBSECTION].detection, tReplaced)
                 }
             }));
+        } else if (spellingError[CLINICAL_SUBSECTION].loading) {
+            setResult('');
+            setReplaced([]);
         }
         // eslint-disable-next-line
     }, [spellingError[CLINICAL_SUBSECTION].loading]);
@@ -115,7 +118,7 @@ const FChanDoanKhiRaVien = () => {
                     }}
                 />
             : ( 
-                !!result ? 
+                updating ? 
                     <div className="df fdc aic jcc">
                         <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                         <Typography color="primary">Đang xử lý...</Typography>

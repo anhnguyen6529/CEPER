@@ -43,6 +43,9 @@ const FChanDoanBanDau = () => {
                 section: SECTION_FIELD,
                 data: UtilsText.replaceMaskWord(spellingError.detection, tReplaced)
             }));
+        } else if (spellingError.loading) {
+            setResult('');
+            setReplaced([]);
         }
         // eslint-disable-next-line
     }, [spellingError.loading]);
@@ -98,7 +101,7 @@ const FChanDoanBanDau = () => {
                     }}
                 />
             : ( 
-                !!result ? 
+                updating ? 
                     <div className="df fdc aic jcc">
                         <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                         <Typography color="primary">Đang xử lý...</Typography>

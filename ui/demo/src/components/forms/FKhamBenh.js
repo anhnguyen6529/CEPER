@@ -82,6 +82,9 @@ const FKhamBenh = () => {
                     section: SECTION_FIELD,
                     data: { ...khamBenh, [SUBSECTION_FIELD[id]]: UtilsText.replaceMaskWord(spellingError[subSection].detection, tReplaced[id]) }
                 }));
+            } else if (spellingError[subSection].loading) {
+                tResult[id] = ''; setResult(tResult);
+                tReplaced[id] = []; setReplaced(tReplaced);
             }
         });
         // eslint-disable-next-line
@@ -170,7 +173,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[0] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -242,7 +245,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     :  ( 
-                        !!result[1] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -314,7 +317,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[2] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -386,7 +389,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[3] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -458,7 +461,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[4] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -530,7 +533,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[5] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -602,7 +605,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[6] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -674,7 +677,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[7] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -746,7 +749,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[8] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -818,7 +821,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[9] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -890,7 +893,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        !!result[10] ? 
+                        updating ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>

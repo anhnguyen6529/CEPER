@@ -86,11 +86,9 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                 && replaced[page * rowsPerPage + id].type === "text" ? "contained" : "outlined"} 
                                             color="warning"
                                             onClick={() => {
-                                                const tReplaced = [...replaced], tEnter = [...enter];
+                                                const tReplaced = [...replaced];
                                                 tReplaced[page * rowsPerPage + id] = { type: "text", repText: text[page * rowsPerPage + id] };
-                                                tEnter[id] = "";
                                                 setReplaced(tReplaced);
-                                                setEnter(tEnter);
                                                 handleUpdateSection(tReplaced);
                                             }}
                                             sx={{ cursor: text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
@@ -128,11 +126,9 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                                 && replaced[page * rowsPerPage + id].type === "correct" ? "help" : "pointer"
                                                         }}
                                                         onClick={() => {
-                                                            const tReplaced = [...replaced], tEnter = [...enter];
+                                                            const tReplaced = [...replaced];
                                                             tReplaced[page * rowsPerPage + id] = { type: "correct", repText: correct };
-                                                            tEnter[id] = "";
                                                             setReplaced(tReplaced);
-                                                            setEnter(tEnter);
                                                             handleUpdateSection(tReplaced);
                                                         }}
                                                         onMouseEnter={() => {
@@ -156,6 +152,12 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                             <Typography sx={{ mr: 1, minWidth: 100 }}>Thay thế bằng:</Typography>
                                             <TextField 
                                                 value={enter[id]}
+                                                sx={{ 
+                                                    '.MuiOutlinedInput-root': { 
+                                                        bgcolor: (theme) => replaced[page * rowsPerPage + id].type === "enter" ? theme.palette.success.main : "white",
+                                                        color: replaced[page * rowsPerPage + id].type === "enter" ? "white" : "black"
+                                                    } 
+                                                }}
                                                 onChange={({ target: { value }}) => {
                                                     const tEnter = [...enter], tReplaced = [...replaced];
                                                     tEnter[id] = value;
@@ -167,6 +169,14 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                     }
                                                     setReplaced(tReplaced);
                                                     handleUpdateSection(tReplaced);
+                                                }}
+                                                onClick={() => {
+                                                    if (replaced[page * rowsPerPage + id].type !== "enter" && !!enter[id]) {
+                                                        const tReplaced = [...replaced];
+                                                        tReplaced[page * rowsPerPage + id] = { type: "enter", repText: enter[id] };
+                                                        setReplaced(tReplaced);
+                                                        handleUpdateSection(tReplaced);
+                                                    }
                                                 }}
                                             />
                                         </Box>
