@@ -24,6 +24,5 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=8)
 jwt = JWTManager(app)
 correction = AutoCorrection()
 mysql.init_app(app)
-conn = mysql.connect()
 
 from app import auth_views, index_views, hsba_views, danh_sach_hsba_views, spelling_error_views

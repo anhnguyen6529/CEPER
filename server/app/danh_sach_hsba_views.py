@@ -102,6 +102,10 @@ def createNewHSBA():
                    (data["pid"], ptdcns["ngayGio"], str(ptdcns["mach"]), str(ptdcns["nhietDo"]), ptdcns["huyetAp"], str(ptdcns["nhipTho"]), str(ptdcns["canNang"]), ptdcns["dieuDuongGhi"]))
     conn.commit()
 
+    cursor.execute("INSERT INTO NOTIFICATIONS (User_ID, Type, Content, Status, Time_Created, Time_Seen) VALUES (\'" +
+                   data["benhAn"]["bacSiLamBenhAn"]["id"] + "', 'Created', JSON_OBJECT('hoTen', '" + data["hanhChinh"]["hoTen"] + "', 'pid', '" + data["pid"] + "'), 'Chưa đọc', '" + data["lyDoVaoVien"]["ngayVaoVien"] + "', '');")
+    conn.commit()
+
     response = jsonify({"result": True})
     cursor.close()
     conn.close()

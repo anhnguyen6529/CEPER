@@ -4,7 +4,10 @@ const HSBAApi = {
     getOneHSBAByPID: async (apiData) => 
         ceperApi.get(`/user/hsba/${apiData.pid}`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} }),
     updateHSBA: async (apiData) => 
-        ceperApi.put(`user/hsba/${apiData.pid}`, apiData, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} })
+        ceperApi.post(`user/hsba/${apiData.pid}`, apiData, { headers: { 
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json;charset=UTF-8',
+        } })
 }
 
 export default HSBAApi;

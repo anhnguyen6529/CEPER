@@ -1,23 +1,65 @@
-import React, { useContext, useState } from "react";
-import { Toolbar, IconButton, Typography, Badge } from "@mui/material";
-import { Menu, Notifications, ArrowDropDown } from "@mui/icons-material";
+import React, { useContext, useEffect, useState } from "react";
+import { Toolbar, IconButton, Typography, Badge, MenuItem, Divider } from "@mui/material";
+import { Menu as MenuIcon, Notifications, ArrowDropDown } from "@mui/icons-material";
 import AppBar from "./AppBar";
 import DropDownMenu from "./DropDownMenu";
 import dayOfWeek from "../../constants/day_of_week.json";
 import { format } from "date-fns";
 import UserContext from "../../contexts/UserContext";
+import { useDispatch, useSelector } from "react-redux";
+import Menu from "./Menu";
+import authThunk from "../../redux/thunks/auth.thunk";
+import { useNavigate } from "react-router";
+import { UtilsDateTime } from "../../utils";
 
 const ToolBar = ({ open, toggleDrawer }) => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const openMenu = Boolean(anchorEl);
-    const user = useContext(UserContext);
+    const { notifications, id, errorNoti } = useSelector((state) => state.auth.user);
+    const { today, handleLogout } = useContext(UserContext);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
+    const [anchorElMenu, setAnchorElMenu] = useState(null);
+    const [anchorElNoti, setAnchorElNoti] = useState(null);
+    const openMenu = Boolean(anchorElMenu);
+    const openNoti = Boolean(anchorElNoti);
+    
     const onClickMenu = (event) => {
-        setAnchorEl(event.currentTarget);
+        setAnchorElMenu(event.currentTarget);
     }
 
     const onCloseMenu = () => {
-        setAnchorEl(null);
+        setAnchorElMenu(null);
+    }
+
+    const onClickNoti = (event) => {
+        setAnchorElNoti(event.currentTarget);
+    }
+
+    const onCloseNoti = () => {
+        setAnchorElNoti(null);
+    }
+    
+    useEffect(() => {
+        const timer = setInterval(() => {
+            if (!errorNoti) { 
+                dispatch(authThunk.getNotifications(id));
+            }
+        }, 5000);
+        return () => {
+            clearInterval(timer);
+        }
+        // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
+        if (errorNoti === "Token has expired") {
+            handleLogout();
+        }
+        // eslint-disable-next-line
+    }, [errorNoti]);
+
+    const handleSeen = (notificationID) => {
+        dispatch(authThunk.markNotificationSeen({ userID: id, notificationID }));
     }
 
     return (
@@ -32,23 +74,56 @@ const ToolBar = ({ open, toggleDrawer }) => {
                     }}
                     onClick={toggleDrawer}
                 >
-                    <Menu />
+                    <MenuIcon />
                 </IconButton>
 
                 <Typography textAlign="right" sx={{ flexGrow: 1 }}>
-                    {format(user.today, "HH:mm")} | {dayOfWeek[user.today.getDay().toString()]}, {format(user.today, "dd/MM/yyyy")}
+                    {format(today, "HH:mm")} | {dayOfWeek[today.getDay().toString()]}, {format(today, "dd/MM/yyyy")}
                 </Typography>
 
-                <IconButton sx={{ background: 'white', ml: 4, '&:hover': { background: 'white' } }}>
-                    <Badge badgeContent={0} color="primary" >
+                <IconButton onClick={onClickNoti} sx={{ background: 'white', ml: 4, '&:hover': { background: 'white' } }}>
+                    <Badge badgeContent={notifications.length} color="primary" >
                         <Notifications />
                     </Badge>
                 </IconButton>
+                <Menu anchorEl={anchorElNoti} open={openNoti} onClose={onCloseNoti}>
+                    {notifications.length > 0 ?
+                        [...notifications.map((notification, id) => [
+                            (notification.type === "Created" &&
+                                <MenuItem 
+                                    key={id} 
+                                    onClick={() => {
+                                        handleSeen(notification.id);
+                                        navigate(`/user/HSBA/${notification.content.pid}`)
+                                    }}
+                                    sx={{ flexDirection: "column", alignItems: "flex-start" }}
+                                >
+                                    <Typography>
+                                        Bệnh nhân{' '}
+                                        <Typography component="span" fontWeight="bold">{notification.content.name}</Typography>
+                                    </Typography>
+                                    <Typography>
+                                        Vào viện lúc{' '}
+                                        <Typography component="span" color="primary">
+                                            {format(new Date(notification.timeCreated), 'dd/MM/yyyy hh:mm')}
+                                        </Typography>
+                                        <Typography component="span" color="text.secondary">
+                                            {' '}•{' '}
+                                            {!UtilsDateTime.timeSince(notification.timeCreated) 
+                                                ? "Mới" : `Cách đây ${UtilsDateTime.timeSince(notification.timeCreated)}`}
+                                        </Typography>
+                                    </Typography>
+                                </MenuItem>
+                            ), 
+                            (id < notifications.length - 1 && <Divider />)
+                        ])]
+                    : <MenuItem sx={{ color: "#999" }}>Không có thông báo</MenuItem>}
+                </Menu>
 
                 <IconButton onClick={onClickMenu} sx={{ background: 'white', ml: 2, '&:hover': { background: 'white' } }}>
                     <ArrowDropDown />
                 </IconButton>
-                <DropDownMenu anchorEl={anchorEl} open={openMenu} onClose={onCloseMenu} />
+                <DropDownMenu anchorEl={anchorElMenu} open={openMenu} onClose={onCloseMenu} />
             </Toolbar>
         </AppBar>
     )

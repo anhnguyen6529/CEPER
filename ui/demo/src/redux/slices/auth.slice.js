@@ -18,7 +18,10 @@ const initialState = {
         speciality: '',
         position: '', // Trưởng khoa, Phó khoa, Bác sĩ điều trị, Điều dưỡng
         medicalLicenseNo: '',
-        signature: ''
+        signature: '',
+        notifications: [],
+        gettingNoti: false, 
+        errorNoti: ''
     }
 }
 
@@ -57,13 +60,43 @@ const authSlice = createSlice({
                 }
             }
         })
-        .addCase(authThunk.getUserInfo, (state, action) => {
+        .addCase(authThunk.getUserInfo.rejected, (state, action) => {
             return {
                 ...state,
                 user: {
                     ...state.user,
                     getting: false,
                     error: action.payload
+                }
+            }
+        })
+        .addCase(authThunk.getNotifications.fulfilled, (state, action) => {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    notifications: action.payload.notifications,
+                    gettingNoti: false, 
+                    errorNoti: ''
+                }
+            }
+        })
+        .addCase(authThunk.getNotifications.pending, (state) => {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    gettingNoti: true
+                }
+            }
+        })
+        .addCase(authThunk.getNotifications.rejected, (state, action) => {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    gettingNoti: false,
+                    errorNoti: action.payload
                 }
             }
         })

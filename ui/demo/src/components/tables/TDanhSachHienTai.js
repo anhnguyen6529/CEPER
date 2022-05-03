@@ -11,6 +11,8 @@ import { format } from "date-fns";
 import { TablePagination, StyledTableRow } from "../common";
 import UserContext from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import authThunk from "../../redux/thunks/auth.thunk";
 
 const headCells = [
     { id: 'avatar', label: 'Ảnh đại diện', width: 88, show: true },
@@ -32,6 +34,9 @@ const colorTrangThai = { 'Chờ khám': 'warning', 'Đang điều trị': 'prima
 const TDanhSachHienTai = ({ data }) => {
     const navigate = useNavigate();
     const { danhSachHSBATab, setDanhSachHSBATab } = useContext(UserContext);
+    const { notifications, id } = useSelector((state) => state.auth.user);
+    const dispatch = useDispatch();
+
     useEffect(() => {
         setDanhSachHSBATab({
             ...danhSachHSBATab,
@@ -78,6 +83,14 @@ const TDanhSachHienTai = ({ data }) => {
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
+
+    const handleClickRow = (pid) => {
+        const index = notifications.findIndex(notification => notification.type === 'Created' && notification.content.pid === pid);
+        if (index !== -1) {
+            dispatch(authThunk.markNotificationSeen({ userID: id, notificationID: notifications[index].id }));
+        }
+        navigate(`/user/HSBA/${pid}`);
+    }
 
     return (
         <>
@@ -142,7 +155,7 @@ const TDanhSachHienTai = ({ data }) => {
                             : UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy))
                         ).map((row, index) => {
                             return (
-                                <StyledTableRow hover key={index} sx={{ height: 90, cursor: 'pointer' }} onClick={() => navigate(`/user/HSBA/${row.pid}`)}>
+                                <StyledTableRow hover key={index} sx={{ height: 90, cursor: 'pointer' }} onClick={() => handleClickRow(row.pid)}>
                                     {danhSachHSBATab.hienTaiColsChecked[0] && 
                                         <TableCell>
                                             <Avatar src="/images/avatar_default.png" sx={{ width: 56, height: 56 }} />
