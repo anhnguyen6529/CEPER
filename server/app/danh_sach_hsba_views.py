@@ -10,7 +10,7 @@ def getNewPID():
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(PID) FROM HO_SO_BENH_AN;")
-    new_pid = str(int(cursor.fetchall()[0][0]) + 1).ljust(6, "0")
+    new_pid = str(int(cursor.fetchall()[0][0]) + 1).zfill(6)
     response = jsonify({"newPID": new_pid})
     cursor.close()
     conn.close()

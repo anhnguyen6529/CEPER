@@ -1,5 +1,6 @@
 """**DETECTION**"""
 import time
+# import torch
 import re
 import ujson
 import fnmatch
@@ -7,27 +8,25 @@ import os
 from fastDamerauLevenshtein import damerauLevenshtein
 import tokenize
 from .load_BARTpho import BARTpho
+import nltk
+nltk.download('punkt')
+from nltk import sent_tokenize
 
 
 class AutoCorrection:
     def __init__(self):
-        start_time = time.time()
         self.syllable_tokenizer, self.bartpho_syllable = BARTpho()
-        print("timeloadBARTpho:", time.time() - start_time)
-        start_time_2 = time.time()
-        with open("app/modules/phrase_reduce.json", mode='r', encoding="utf-8") as file:
-            self.phrase_reduce = ujson.load(file)
-        with open("app/modules/ngram.json", mode='r', encoding="utf-8") as file:
-            self.data = ujson.load(file)
-        with open("app/modules/word_spell_tu_tao_final.json", mode='r', encoding="utf-8") as file_word_spell_final:
-            self.word_spell_tu_tao_final = ujson.load(file_word_spell_final)
-        input_file = open("app/modules/trigram.json",
-                          mode="r", encoding="utf-8")
-        self.data_trigram = ujson.load(input_file)
-        input_file = open("app/modules/pre_ngram.json",
-                          mode="r", encoding="utf-8")
-        self.data_pre_ngram = ujson.load(input_file)
-        print("time_load_JSON:", time.time() - start_time_2)
+
+        with open("app/modules/phrase_reduce.json", mode='r', encoding="utf-8") as phrase_reduce:
+            self.phrase_reduce = ujson.load(phrase_reduce)
+        with open("app/modules/next_word.json", mode='r', encoding="utf-8") as next_word:
+            self.data = ujson.load(next_word)
+        with open("app/modules/word_true.json", mode='r', encoding="utf-8") as word_true:
+            self.word_true = ujson.load(word_true)
+        with open("app/modules/trigram.json", mode="r", encoding="utf-8") as trigram_file:
+            self.data_trigram = ujson.load(trigram_file)
+        with open("app/modules/pre_word.json", mode="r", encoding="utf-8") as preWord_file:
+            self.pre_word = ujson.load(preWord_file)
 
     def is_special_token(self, token):
         if bool(re.match(
@@ -68,10 +67,8 @@ class AutoCorrection:
             elif self.is_date(text_split[i]):
                 list_date.append(text_split[i])
                 text_split[i] = "date"
-            elif self.is_special_token(text_split[i]):
+            elif self.is_special_token(text_split[i].lower()):
                 list_special.append(text_split[i])
-                text_split[i] = "special"
-                text_split[i] = "special"
                 text_split[i] = "special"
 
         text = " ".join(text_split)
@@ -125,8 +122,7 @@ class AutoCorrection:
                     continue
 
                 else:
-                    # lớn hơn 1% một tí để bắt từ "giản" :5343
-                    if data[current_word]["sum"] < 5344:
+                    if data[current_word]["sum"] < 5400:
                         tmp[i] = "<mask>"
 
         value = " ".join(tmp[1:-1])
@@ -179,7 +175,7 @@ class AutoCorrection:
         init_words = init_value.split(" ")
         list_index = []
         for i in range(len(words)):
-            word = words[i].lower()
+            word = words[i]
             if word == "<mask1>" or word == "<mask>":
                 list_index.append(i)
         for index in list_index:
@@ -188,137 +184,44 @@ class AutoCorrection:
             current_word = init_words[index].lower()
             next_word = init_words[index + 1].lower()
 
-            word_spell_tu_tao_final = self.word_spell_tu_tao_final
+            word_true = self.word_true
 
-            candidate_1 = []
-            if current_word in word_spell_tu_tao_final.keys():
-                candidate_1 = word_spell_tu_tao_final[current_word]
+            candidate_1 = []  # word_true
+            if current_word in word_true.keys():
+                candidate_1 = word_true[current_word]
 
-            candidate_3 = self.fill_mask(" ".join(init_words[1:-1]), index - 1)
+            candidate_2 = self.fill_mask(
+                " ".join(init_words[1:-1]), index - 1)  # BARTpho
+            candidate_3 = self.get_candidate_middleWord(
+                pre_word, next_word)  # middle_word
+            candidate_proposal = []
 
-            final_candidate = []
-            candidate_trigram = self.get_candidate_trigram(pre_word, next_word)
             if len(candidate_1) > 0:
-                if len(candidate_trigram) > 0:
-                    candidate_2 = candidate_trigram
-                    for middle_word_propose in candidate_2:
-                        if middle_word_propose in candidate_1 and middle_word_propose in candidate_3:
-                            final_candidate.append(middle_word_propose)
+                if len(candidate_3) > 0:
+                    for middle_word_propose in candidate_3:
+                        if middle_word_propose in candidate_1 and middle_word_propose in candidate_2:
+                            candidate_proposal.append(middle_word_propose)
 
-                    if len(final_candidate) == 0:
-                        for middle_word_propose in candidate_2:
+                    if len(candidate_proposal) == 0:
+                        for middle_word_propose in candidate_3:
                             if middle_word_propose in candidate_1:
-                                final_candidate.append(middle_word_propose)
+                                candidate_proposal.append(middle_word_propose)
 
-                if len(candidate_trigram) == 0 or len(final_candidate) == 0:
+                if len(candidate_3) == 0 or len(candidate_proposal) == 0:
                     candidate_pre_word = self.get_candidate_pre_word(next_word)
-                    candidate_2 = candidate_pre_word
-                    if len(candidate_2) > 0:
-                        for pre_word_propose in candidate_2:
-                            if pre_word_propose in candidate_1 and pre_word_propose in candidate_3:
-                                final_candidate.append(pre_word_propose)
+                    candidate_next_word = self.get_candidate_next_word(
+                        pre_word)
+                    candidate_4 = candidate_pre_word  # pre_next_word
+                    candidate_4.extend(candidate_next_word)
+                    if len(candidate_4) > 0:
+                        for pre_next_word_propose in candidate_4:
+                            if pre_next_word_propose in candidate_1 and pre_next_word_propose in candidate_2:
+                                candidate_proposal.append(
+                                    pre_next_word_propose)
 
-                    if len(candidate_2) == 0 or len(final_candidate) == 0:
-                        candidate_next_word = self.get_candidate_next_word(
-                            pre_word)
-                        candidate_2 = candidate_next_word
-                        if len(candidate_2) > 0:
-                            for next_word_propose in candidate_2:
-                                if next_word_propose in candidate_1 and next_word_propose in candidate_3:
-                                    final_candidate.append(next_word_propose)
-
-            if len(final_candidate) == 0:
-                dict_minimumEditDistance_case = None
-            else:
+            if len(candidate_proposal) > 0:
                 dict_minimumEditDistance_case = self.minimumEditDistance(
-                    init_words[index].lower(), final_candidate)
-
-            if dict_minimumEditDistance_case == None:
-                if words[index] == "<mask1>":
-                    flag_1 = 0
-                    flag = 0
-                    if len(candidate_1) > 0:
-                        for candidate_2 in [candidate_pre_word, candidate_next_word]:
-                            if len(candidate_2) == 0:
-                                dict_minimumEditDistance_case1 = None
-                            else:
-                                de_xuat = []
-                                for word_propose in candidate_1:
-                                    if word_propose in candidate_2:
-                                        de_xuat.append(word_propose)
-                                dict_minimumEditDistance_case1 = self.minimumEditDistance(
-                                    init_words[index].lower(), de_xuat)
-
-                            if dict_minimumEditDistance_case1 != None:
-                                wordReplae = min(
-                                    dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
-                                words[index] = wordReplae
-                                if wordReplae != init_words[index].lower():
-                                    update_final_candidate = []
-                                    update_final_candidate.append(
-                                        init_words[index])
-                                    update_final_candidate.extend(
-                                        dict_minimumEditDistance_case1)
-                                    list_replace.append(
-                                        update_final_candidate[0:10])
-                                flag_1 = 1
-                                flag = 1
-                                break
-
-                    if len(candidate_1) == 0 or flag_1 == 0:
-                        for check in [1, 2, 3]:
-                            if check == 1:
-                                candidate_2 = self.get_candidate_trigram(
-                                    pre_word, next_word)
-                            elif check == 2:
-                                candidate_2 = self.get_candidate_next_word(
-                                    next_word)
-                            elif check == 3:
-                                candidate_2 = self.get_candidate_pre_word(
-                                    pre_word)
-
-                            if len(candidate_2) == 0:
-                                dict_minimumEditDistance_case1 = None
-                            else:
-                                dict_minimumEditDistance_case1 = self.minimumEditDistance(
-                                    init_words[index].lower(), candidate_2)
-
-                            if dict_minimumEditDistance_case1 != None:
-                                wordReplae = min(
-                                    dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
-                                words[index] = wordReplae
-                                flag = 1
-                                if wordReplae != init_words[index].lower():
-                                    update_final_candidate = []
-                                    update_final_candidate.append(
-                                        init_words[index])
-                                    update_final_candidate.extend(
-                                        dict_minimumEditDistance_case1)
-                                    list_replace.append(
-                                        update_final_candidate[0:10])
-                                break
-
-                    if flag == 0:
-                        dict_minimumEditDistance_case1 = self.minimumEditDistance(
-                            init_words[index].lower(), self.clean(candidate_3))
-                        if dict_minimumEditDistance_case1 != None:
-                            wordReplae = min(
-                                dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
-                            words[index] = wordReplae
-                            if wordReplae != init_words[index].lower():
-                                update_final_candidate = []
-                                update_final_candidate.append(wordReplae)
-                                update_final_candidate.extend(
-                                    dict_minimumEditDistance_case1)
-                                list_replace.append(
-                                    update_final_candidate[0:10])
-                        else:
-                            words[index] = init_words[index]
-
-                elif words[index] == "<mask>":
-                    words[index] = init_words[index]
-
-            elif dict_minimumEditDistance_case != None:
+                    init_words[index].lower(), candidate_proposal)
                 wordReplae = min(dict_minimumEditDistance_case,
                                  key=dict_minimumEditDistance_case.get)
                 words[index] = wordReplae
@@ -328,6 +231,85 @@ class AutoCorrection:
                     update_final_candidate.extend(
                         dict_minimumEditDistance_case)
                     list_replace.append(update_final_candidate[0:10])
+
+            else:
+                flag = 0
+                flag_1 = 0
+                if words[index] == "<mask1>":
+                    if len(candidate_1) > 0 and len(candidate_4) > 0:
+                        for pre_next_word_propose in candidate_4:
+                            if pre_next_word_propose in candidate_1:
+                                candidate_proposal.append(
+                                    pre_next_word_propose)
+                        if len(candidate_proposal) > 0:
+                            dict_minimumEditDistance_case1 = self.minimumEditDistance(
+                                init_words[index].lower(), candidate_proposal)
+                            wordReplae = min(
+                                dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
+                            words[index] = wordReplae
+                            flag_1 = 1
+                            flag = 1
+                            if wordReplae != init_words[index].lower():
+                                update_final_candidate = []
+                                update_final_candidate.append(
+                                    init_words[index])
+                                update_final_candidate.extend(
+                                    dict_minimumEditDistance_case1)
+                                list_replace.append(
+                                    update_final_candidate[0:10])
+
+                    if flag_1 == 0:
+                        candidate_4 = []
+                        candidate_4.extend(
+                            self.get_candidate_pre_word(next_word))
+                        candidate_4.extend(
+                            self.get_candidate_next_word(pre_word))
+                        for pre_next_word_propose in candidate_4:
+                            if pre_next_word_propose in candidate_2:
+                                candidate_proposal.append(
+                                    pre_next_word_propose)
+                        if len(candidate_proposal) == 0:
+                            candidate_proposal = candidate_4
+
+                        if len(candidate_proposal) == 0:
+                            dict_minimumEditDistance_case1 = None
+                        else:
+                            dict_minimumEditDistance_case1 = self.minimumEditDistance(
+                                init_words[index].lower(), candidate_proposal)
+                            wordReplae = min(
+                                dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
+                            words[index] = wordReplae
+                            flag = 1
+                            if wordReplae != init_words[index].lower():
+                                update_final_candidate = []
+                                update_final_candidate.append(
+                                    init_words[index])
+                                update_final_candidate.extend(
+                                    dict_minimumEditDistance_case1)
+                                list_replace.append(
+                                    update_final_candidate[0:10])
+
+                    if flag == 0:
+                        candidate_2 = self.clean(candidate_2)
+                        if len(candidate_2) > 0:
+                            dict_minimumEditDistance_case1 = self.minimumEditDistance(
+                                init_words[index].lower(), candidate_2)
+                            wordReplae = min(
+                                dict_minimumEditDistance_case1, key=dict_minimumEditDistance_case1.get)
+                            words[index] = wordReplae
+                            if wordReplae != init_words[index].lower():
+                                update_final_candidate = []
+                                update_final_candidate.append(
+                                    init_words[index])
+                                update_final_candidate.extend(
+                                    dict_minimumEditDistance_case1)
+                                list_replace.append(
+                                    update_final_candidate[0:10])
+                        else:
+                            words[index] = init_words[index]
+
+                elif words[index] == "<mask>":
+                    words[index] = init_words[index]
 
             sentence = " ".join(words)
         return sentence, list_replace
@@ -357,37 +339,37 @@ class AutoCorrection:
         candidate = self.syllable_tokenizer.decode(predictions).split()
         candidate_new = []
         for word in candidate:
-            candidate_new.append(re.sub(r'[^\w\s]', '', word))
+            candidate_new.append(re.sub(r'[^\w\s]|<s>', '', word))
         return candidate_new
 
-    def get_candidate_next_word(self, word):
+    def get_candidate_next_word(self, preWord):
         data = self.data
         list_candidate = []
-        if word in data.keys():
-            keys = data[word].keys()
+        if preWord in data.keys():
+            keys = data[preWord].keys()
             for key in keys:
-                if key != "</s>" and key != "sum" and data[word][key] > 1:
+                if key != "</s>" and key != "sum" and data[preWord][key] > 2:
                     list_candidate.append(key)
         return list_candidate
 
-    def get_candidate_trigram(self, preWord, nextWord):
+    def get_candidate_middleWord(self, preWord, nextWord):
         data = self.data_trigram
         list_candidate = []
         if preWord in data.keys():
             keys = data[preWord].keys()
             for key in keys:
                 token_key = key.split(" ")
-                if key != "sum" and data[preWord][key] > 1 and token_key[-1] == nextWord:
+                if key != "sum" and data[preWord][key] > 2 and token_key[-1] == nextWord:
                     list_candidate.append(token_key[0])
         return list_candidate
 
-    def get_candidate_pre_word(self, currentWord):
-        data = self.data_pre_ngram
+    def get_candidate_pre_word(self, nextWord):
+        data = self.pre_word
         list_candidate = []
-        if currentWord in data.keys():
-            keys = data[currentWord].keys()
+        if nextWord in data.keys():
+            keys = data[nextWord].keys()
             for key in keys:
-                if key != "<s>" and key != "sum" and data[currentWord][key] > 1:
+                if key != "<s>" and key != "sum" and data[nextWord][key] > 2:
                     list_candidate.append(key)
         return list_candidate
 
@@ -398,11 +380,7 @@ class AutoCorrection:
             tmp = damerauLevenshtein(
                 word_1.lower(), word_2.lower(), similarity=False)
             dict_candidate[word_2] = tmp
-        if len(dict_candidate) > 0:
-            # return min(dict, key = dict.get)
-            return dict(sorted(dict_candidate.items(), key=lambda item: item[1], reverse=False))
-        else:
-            return None
+        return dict(sorted(dict_candidate.items(), key=lambda item: item[1], reverse=False))
 
     def compareCorrection(self, outputDetection):
         value = outputDetection[1]
@@ -435,11 +413,11 @@ class AutoCorrection:
 
         final_sentence = ""
         for i in range(len(sentence_correct)):
-            pharse_sentence = sentence_correct[i]
-            if pharse_sentence in ["(", '/"', "/'"]:
-                final_sentence += " " + pharse_sentence
-            else:
+            pharse_sentence = sentence_correct[i].strip()
+            if pharse_sentence in ["!", ",", ".", "/", ":", ";", "?", "_", "|"]:
                 final_sentence += pharse_sentence
+            else:
+                final_sentence += " " + pharse_sentence
 
         if len(list_number) > 0:
             for number in list_number:
@@ -450,20 +428,30 @@ class AutoCorrection:
         return final_sentence
 
     def getResult(self, text):
-        preprocess_inputSentence, phrases_str, phrases_all, index_sent_dict, list_number, list_date = self.extract_phrases(
-            text)
-        outputDetection = self.inputText(preprocess_inputSentence)
-        outputCorrection, listReplace = self.compareCorrection(outputDetection)
-        sentence_1 = outputDetection[0].split(" ")
-        sentence_2 = outputCorrection.split(" ")
-        tmp = sentence_1
-        for i in range(len(sentence_1)):
-            if sentence_2[i] != sentence_1[i]:
-                tmp[i] = "<mask>"
-        resultCorrection = " ".join(tmp)
-        resultDetection = self.decode_phrases(
-            phrases_str, resultCorrection, phrases_all, index_sent_dict, list_number, list_date)
-        return resultDetection, listReplace
+        final_detection = ""
+        final_listReplace = []
+
+        for input in sent_tokenize(text):
+            if len(input) > 0:
+                preprocess_inputSentence, phrases_str, phrases_all, index_sent_dict, list_number, list_date = self.extract_phrases(
+                    input)
+                outputDetection = self.inputText(preprocess_inputSentence)
+                outputCorrection, listReplace = self.compareCorrection(
+                    outputDetection)
+                final_listReplace.extend(listReplace)
+                sentence_1 = outputDetection[0].split(" ")
+                sentence_2 = outputCorrection.split(" ")
+                tmp = sentence_1
+
+                for i in range(len(sentence_1)):
+                    if sentence_2[i] != sentence_1[i]:
+                        tmp[i] = "<mask>"
+                resultCorrection = " ".join(tmp)
+                resultDetection = self.decode_phrases(
+                    phrases_str, resultCorrection, phrases_all, index_sent_dict, list_number, list_date)
+                final_detection += " " + resultDetection
+        return final_detection, final_listReplace
 
 
-# inputSentence = "bn bị bệnh 3 ngày nay từ ngày 20/11 tiêu lõng, ho, sỗ mũi đau miệng khiong ăn uống được mệt, vả mồ hôi  23 lần/phút, Nhập viện"
+# bn bị bệnh 3 ngày nay từ ngày 20/11 tiêu lõng, ho, sỗ mũi đau miệng khiong ăn uống được mệt, vả mồ hôi  23 lần/phút. Nhập viện (P)
+# bệnh nhân bị bệnh 3 ngày nay từ ngày 20/11 tiêu lõng, ho, sỗ mũi đau miệng khiong ăn uống được mệt, vả mồ hôi  23 lần/phút. Nhập viện (P)

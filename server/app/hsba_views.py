@@ -120,7 +120,7 @@ def getOneHSBAByPID(pid):
     result["phieuTDTruyenDich"]["data"] = []
     preNgayThang = None
     values_key = ["tenDichTruyen", "soLuong", "loSanXuat", "tocDo",
-                  "thoiGianBatDau", "thoiGianKetThuc", "bacSiChiDinh", "dieuDuongThucHien"]
+                  "thoiGianBatDau", "thoiGianKetThuc", "BSChiDinh", "DDThucHien"]
     data = list(cursor.fetchall())
     dt = dict()
     for index in range(0, len(data)):
