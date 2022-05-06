@@ -163,6 +163,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: khamToanThan }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, khamToanThan }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -173,7 +178,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[0]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -235,6 +240,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: tuanHoan }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, tuanHoan }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -245,7 +255,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     :  ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[1]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -307,6 +317,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: hoHap }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, hoHap }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -317,7 +332,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[2]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -379,6 +394,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[3] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[3], text: tieuHoa }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, tieuHoa }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -389,7 +409,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[3]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -451,6 +471,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[4] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[4], text: than }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, than }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -461,7 +486,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[4]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -523,6 +548,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[5] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[5], text: thanKinh }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, thanKinh }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -533,7 +563,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[5]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -595,6 +625,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[6] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[6], text: coXuongKhop }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, coXuongKhop }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -605,7 +640,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[6]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -667,6 +702,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[7] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[7], text: taiMuiHong }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, taiMuiHong }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -677,7 +717,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[7]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -739,6 +779,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[8] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[8], text: rangHamMat }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, rangHamMat }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -749,7 +794,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[8]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -811,6 +856,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[9] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[9], text: mat }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, mat }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -821,7 +871,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[9]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -883,6 +933,11 @@ const FKhamBenh = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[10] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[10], text: noiTiet }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...khamBenh, noiTiet }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -893,7 +948,7 @@ const FKhamBenh = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingError[CLINICAL_SUBSECTION[10]].changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>

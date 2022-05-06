@@ -59,7 +59,7 @@ const BoxFeature = ({ icon, title, subtitle }) => {
             <Box sx={{ pb: 6, pt: 8, zIndex: 1, bgcolor: 'white', borderRadius: '8px' }} className="df aic jcc fdc" >
                 {icon} 
                 <Typography variant="h6" fontWeight="bold" sx={{ my: 3 }}>{title}</Typography>
-                <Typography align="center" sx={{ width: 150 }}>{subtitle}</Typography>
+                <Typography align="center" sx={{ width: 150, whiteSpace: "pre-wrap" }}>{subtitle}</Typography>
             </Box>
         </Box>
     )
@@ -93,7 +93,7 @@ const Home = () => {
                         <Typography variant="h6" sx={{ width: 580, mt: 3, mb: 5 }}>
                             <b>CEPER</b> mang đến công cụ <b>hỗ trợ cho công tác khám chữa bệnh</b> của các bác sĩ 
                             <b> cũng như công tác theo dõi, chăm sóc bệnh nhân</b> của các nhân viên y tế. Hệ thống 
-                            cho phép bác sĩ, điều dưỡng và bệnh nhân có thể xem lại quá trình điều trị một cách <b>nhanh chóng và chính xác</b>.
+                            cho phép bác sĩ, điều dưỡng và bệnh nhân có thể truy cập thông tin bệnh án một cách <b>nhanh chóng và chính xác</b>.
                         </Typography>
 
                         <Link href={!token ? "/login" : (role === "BN" ? `user/HSBA/${id}` : "user/HSBA")} underline="none">
@@ -118,21 +118,21 @@ const Home = () => {
                             <BoxFeature 
                                 icon={<FontAwesomeIcon icon={faFileMedical} size="3x" />}
                                 title="Tạo bệnh án"
-                                subtitle="Hỗ trợ bác sĩ, điều dưỡng tạo bệnh án tiện lợi, nhanh chóng"
+                                subtitle={"Hỗ trợ điều dưỡng\ntạo bệnh án tiện lợi,\n nhanh chóng"}
                             />
                         </Grid>
                         <Grid item xs={4} >
                             <BoxFeature 
                                 icon={<FontAwesomeIcon icon={faSearch} size="3x" />}
                                 title="Xem bệnh án"
-                                subtitle="Hỗ trợ xem và tra cứu hồ sơ bệnh án bằng tìm kiếm nâng cao"
+                                subtitle={"Hỗ trợ xem và tra cứu hồ sơ bệnh án bằng \n tìm kiếm nâng cao"}
                             />
                         </Grid>
                         <Grid item xs={4} >
                             <BoxFeature 
                                 icon={<FontAwesomeIcon icon={faPencilAlt} size="3x" />}
                                 title="Cập nhật bệnh án"
-                                subtitle="Hỗ trợ cập nhật hồ sơ bệnh án thủ công và nhập từ file"
+                                subtitle="Hỗ trợ cập nhật hồ sơ bệnh án với công cụ kiểm tra văn bản"
                             />
                         </Grid>
                     </Grid>

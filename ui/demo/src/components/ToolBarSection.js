@@ -58,16 +58,17 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
                                     setOpenDialog(true);
                                 } else {
                                     temp.splice(id, 1);
-                                    setAppearSec(temp);
                                 }
                             } else if (sectionName === "Bệnh án" || sectionName === "Tổng kết bệnh án") {
                                 if (mdSections[sectionName].some(sec => spellingError[sec].changed)) {
                                     setOpenDialog(true);
                                 } else {
                                     temp.splice(id, 1);
-                                    setAppearSec(temp);
                                 }
+                            } else {
+                                temp.splice(id, 1);
                             }
+                            setAppearSec(temp);
                         }}
                     />
                 </span>

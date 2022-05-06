@@ -91,6 +91,8 @@ const FChanDoanBanDau = () => {
                         if (checked) {
                             dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
                             dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newChanDoanBanDau }));
+                        } else {
+                            dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: newChanDoanBanDau }));
                         }
                     }}
                     handleUpdateSection={(newReplaced) => {
@@ -101,7 +103,7 @@ const FChanDoanBanDau = () => {
                     }}
                 />
             : ( 
-                updating ? 
+                updating && spellingError.changed ? 
                     <div className="df fdc aic jcc">
                         <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                         <Typography color="primary">Đang xử lý...</Typography>

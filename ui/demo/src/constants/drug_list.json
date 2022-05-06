@@ -44,6 +44,17 @@
         "don_gia": 1500
     },
     {
+        "ten_hoat_chat": "Paracetamol",
+        "ten_thuong_mai": "TATANOL",
+        "nong_do_ham_luong": "500mg",
+        "duong_dung": "Viên nén bao phim",
+        "don_vi_tinh_nho_nhat": "viên",
+        "co_so_san_xuat": "Pymepharco",
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["1148-03", "1148-04"],
+        "don_gia": 1000
+    },
+    {
         "ten_hoat_chat": "Ibuprofen",
         "ten_thuong_mai": "Antarene",
         "nong_do_ham_luong": "200mg",
@@ -196,5 +207,49 @@
         "nuoc_san_xuat": "Việt Nam",
         "lo_san_xuat": ["2111003", "2211003"],
         "don_gia": 12500
+    },
+    {
+        "ten_hoat_chat": "Carvedilol",
+        "ten_thuong_mai": "PERUZI-12,5",
+        "nong_do_ham_luong": "12.5mg",
+        "duong_dung": "Viên nén",
+        "don_vi_tinh_nho_nhat": "viên",
+        "co_so_san_xuat": "Công ty TNHH dược phẩm Đạt Vi Phú",
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["42385", "42386", "42372"],
+        "don_gia": 3000
+    },
+    {
+        "ten_hoat_chat": "Encorate Chrono",
+        "ten_thuong_mai": "Encorate",
+        "nong_do_ham_luong": "200mg",
+        "duong_dung": "Viên nén bao phim",
+        "don_vi_tinh_nho_nhat": "viên",
+        "co_so_san_xuat": "",
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["385"],
+        "don_gia": 14000
+    },
+    {
+        "ten_hoat_chat": "Pyzacar",
+        "ten_thuong_mai": "Pyzacar",
+        "nong_do_ham_luong": "50mg",
+        "duong_dung": "Viên nén",
+        "don_vi_tinh_nho_nhat": "viên",
+        "co_so_san_xuat": "",
+        "nuoc_san_xuat": "Việt Nam",
+        "lo_san_xuat": ["1385", "2098"],
+        "don_gia": 2800
+    },
+    {
+        "ten_hoat_chat": "Seduxen",
+        "ten_thuong_mai": "Diazepam 5mg",
+        "nong_do_ham_luong": "5mg",
+        "duong_dung": "Viên nén",
+        "don_vi_tinh_nho_nhat": "viên",
+        "co_so_san_xuat": "Công ty Cổ phần Dược phẩm Trung ương",
+        "nuoc_san_xuat": "Hungary",
+        "lo_san_xuat": ["6385", "5098"],
+        "don_gia": 4000
     }
 ]

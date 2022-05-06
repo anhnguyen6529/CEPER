@@ -11,9 +11,13 @@ import Menu from "./Menu";
 import authThunk from "../../redux/thunks/auth.thunk";
 import { useNavigate } from "react-router";
 import { UtilsDateTime } from "../../utils";
+import { sectionState } from "../../redux/slices/spellingError.slice";
+import mdSections from "../../constants/md_sections.json";
 
 const ToolBar = ({ open, toggleDrawer }) => {
     const { notifications, id, errorNoti } = useSelector((state) => state.auth.user);
+    const { updating } = useSelector((state) => state.HSBA);
+    const { spellingError } = useSelector((state) => state);
     const { today, handleLogout } = useContext(UserContext);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -41,8 +45,13 @@ const ToolBar = ({ open, toggleDrawer }) => {
     
     useEffect(() => {
         const timer = setInterval(() => {
-            if (!errorNoti) { 
-                dispatch(authThunk.getNotifications(id));
+            if ((updating && Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key)).some(key => 
+            (["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => 
+            spellingError[key][subKey].loading)) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+            && spellingError[key].loading))) || !updating) {
+                if (!errorNoti) { 
+                    dispatch(authThunk.getNotifications(id));
+                }
             }
         }, 5000);
         return () => {

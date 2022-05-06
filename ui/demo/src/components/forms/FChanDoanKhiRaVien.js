@@ -32,7 +32,10 @@ const FChanDoanKhiRaVien = () => {
             if (spellingError[CLINICAL_SUBSECTION].changed && !loadingError) {
                 dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
             }
-            dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { chanDoan, ngayRaVien } }));
+            dispatch(HSBAActions.updateSection({ 
+                section: SECTION_FIELD, 
+                data: { ...chanDoanKhiRaVien, chanDoan, ngayRaVien } 
+            }));
         }
         // eslint-disable-next-line
     }, [updating, loadingError]);
@@ -105,6 +108,11 @@ const FChanDoanKhiRaVien = () => {
                         if (checked) {
                             dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION }));
                             dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
+                        } else {
+                            dispatch(HSBAActions.updateSection({ 
+                                section: SECTION_FIELD, 
+                                data: { ...chanDoanKhiRaVien, chanDoan } 
+                            }));
                         }
                     }}
                     handleUpdateSection={(newReplaced) => {
@@ -118,7 +126,7 @@ const FChanDoanKhiRaVien = () => {
                     }}
                 />
             : ( 
-                updating ? 
+                updating && spellingError[CLINICAL_SUBSECTION].changed ? 
                     <div className="df fdc aic jcc">
                         <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                         <Typography color="primary">Đang xử lý...</Typography>

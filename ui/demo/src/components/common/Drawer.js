@@ -137,7 +137,10 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                                         tOpenSec[id] = false;
                                                         setAppearTime({ ...appearTime, [section]: null });
                                                     }
-                                                }      
+                                                } else {
+                                                    tAppearSec.splice(idx, 1);
+                                                    tOpenSec[id] = false;
+                                                }
                                             }
                                             setOpenSec(tOpenSec);
                                             setAppearSec(tAppearSec);

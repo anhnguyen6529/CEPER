@@ -160,6 +160,11 @@ const FLyDoVaoVien = () => {
                                 if (checked) {
                                     dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
                                     dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
+                                } else {
+                                    dispatch(HSBAActions.updateSection({
+                                        section: SECTION_FIELD,
+                                        data: { ...lyDoVaoVien, lyDo }
+                                    }));
                                 }
                             }}
                             handleUpdateSection={(newReplaced) => {
@@ -170,7 +175,7 @@ const FLyDoVaoVien = () => {
                             }}
                         />
                     : ( 
-                        updating ? 
+                        updating && spellingErrorLyDo.changed ? 
                             <div className="df fdc aic jcc">
                                 <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                 <Typography color="primary">Đang xử lý...</Typography>
@@ -267,6 +272,11 @@ const FLyDoVaoVien = () => {
                                     if (checked) {
                                         dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
                                         dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+                                    } else {
+                                        dispatch(HSBAActions.updateSection({
+                                            section: SECTION_FIELD,
+                                            data: { ...lyDoVaoVien, chanDoanNoiGioiThieu }
+                                        }));
                                     }
                                 }}
                                 handleUpdateSection={(newReplaced) => {
@@ -277,7 +287,7 @@ const FLyDoVaoVien = () => {
                                 }}
                             />
                         : ( 
-                            updating ? 
+                            updating && spellingErrorChanDoan.changed ? 
                                 <div className="df fdc aic jcc">
                                     <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
                                     <Typography color="primary">Đang xử lý...</Typography>
