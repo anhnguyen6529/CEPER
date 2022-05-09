@@ -102,6 +102,10 @@ def createNewHSBA():
                    (data["pid"], ptdcns["ngayGio"], str(ptdcns["mach"]), str(ptdcns["nhietDo"]), ptdcns["huyetAp"], str(ptdcns["nhipTho"]), str(ptdcns["canNang"]), ptdcns["dieuDuongGhi"]))
     conn.commit()
 
+    cursor.execute("INSERT INTO USERS (ID, Username, Password, Role, Name, Position) VALUES (%s, %s, %s, %s, %s, %s);",
+                   (data["pid"], "user." + data["pid"], "123456", "BN", data["hanhChinh"]["hoTen"], "Bệnh nhân"))
+    conn.commit()
+
     cursor.execute("INSERT INTO NOTIFICATIONS (User_ID, Type, Content, Status, Time_Created, Time_Seen) VALUES (\'" +
                    data["benhAn"]["bacSiLamBenhAn"]["id"] + "', 'Created', JSON_OBJECT('hoTen', '" + data["hanhChinh"]["hoTen"] + "', 'pid', '" + data["pid"] + "'), 'Chưa đọc', '" + data["lyDoVaoVien"]["ngayVaoVien"] + "', '');")
     conn.commit()

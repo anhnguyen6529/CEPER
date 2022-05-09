@@ -70,7 +70,7 @@ const DanhSachHSBA = () => {
                     data: [{ 
                         ngayGio: new Date(values.ngayVaoVien).toISOString(), mach: values.mach, nhietDo: values.nhietDo, 
                         huyetAp: String(values.huyetAp[0]).concat('/').concat(String(values.huyetAp[1])), 
-                        nhipTho: values.nhipTho, canNang: values.canNang, dieuDuongGhi: name 
+                        nhipTho: values.nhipTho, canNang: values.canNang, dieuDuongGhi: `${id} - ${name}` 
                     }]
                 }
             }));
