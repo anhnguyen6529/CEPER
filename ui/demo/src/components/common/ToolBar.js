@@ -18,6 +18,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
     const { notifications, id, errorNoti } = useSelector((state) => state.auth.user);
     const { updating } = useSelector((state) => state.HSBA);
     const { spellingError } = useSelector((state) => state);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { today, handleLogout } = useContext(UserContext);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
             spellingError[key][subKey].loading)) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
             && spellingError[key].loading))) || !updating) {
                 if (!errorNoti) { 
-                    dispatch(authThunk.getNotifications(id));
+                    // dispatch(authThunk.getNotifications(id));
                 }
             }
         }, 5000);
@@ -73,7 +74,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
 
     return (
         <AppBar position="fixed" open={open}>
-            <Toolbar sx={{ pr: 24, background: '#09425A'}}>
+            <Toolbar sx={{ pr: 24, bgcolor: (theme) => theme.palette[accentColor].dark }}>
                 <IconButton 
                     edge="start"
                     sx={{

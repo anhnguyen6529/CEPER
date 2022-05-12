@@ -7,7 +7,29 @@ const theme = createTheme({
           default: "#F0F4F5"
         },
         primary: {
-          main: "#009ABB"
+          main: "#009ABB",
+          light: "#D9EFFE",
+          dark: "#09425A"
+        },
+        primaryGreen: {
+          main: "#00BB9A",
+          light: "#D9FEEF",
+          dark: "#095A42"
+        },
+        primaryRed: {
+          main: "#BB090A",
+          light: "#FF604D",
+          dark: "#8C1515"
+        },
+        primaryOrange: {
+          main: "#FF9100",
+          light: "#FEEFD9",
+          dark: "#B26500"
+        },
+        primaryPurple: {
+          main: "#BB009A",
+          light: "#FED9EF",
+          dark: "#82006B"
         },
         secondary: {
           main: "#09425A"

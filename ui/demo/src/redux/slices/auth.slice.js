@@ -22,6 +22,14 @@ const initialState = {
         notifications: [],
         gettingNoti: false, 
         errorNoti: ''
+    },
+    settings: {
+        appearance: {
+            accentColor: "primary"
+        },
+        functionality: {
+            autoUpdateWithProcessResult: false
+        }
     }
 }
 
@@ -38,6 +46,30 @@ const authSlice = createSlice({
                 }
             }
         },
+        updateAppearanceField: (state, action) => {
+            return { 
+                ...state,
+                settings: {
+                    ...state.settings,
+                    appearance: {
+                        ...state.settings.appearance,
+                        [action.payload.field]: action.payload.value
+                    }
+                }
+            }
+        },
+        updateFunctionalityField: (state, action) => {
+            return { 
+                ...state,
+                settings: {
+                    ...state.settings,
+                    functionality: {
+                        ...state.settings.functionality,
+                        [action.payload.field]: action.payload.value
+                    }
+                }
+            }
+        }
     },
     extraReducers: (builder) => {
         builder

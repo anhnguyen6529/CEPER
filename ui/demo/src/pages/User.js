@@ -3,10 +3,10 @@ import { Box, CssBaseline, Typography, Divider, Breadcrumbs, Link, Container, Gr
 import { Add, NavigateNext } from "@mui/icons-material";
 import "../styles/index.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { Drawer, ToolBar, Main, DrawerHeader, ScrollToTop, Button, DialogConfirm } from "../components/common";
 import { UserProvider } from "../contexts/UserContext";
-import { DanhSachHSBA, HSBA } from "../components";
+import { DanhSachHSBA, HSBA, Settings } from "../components";
 import mdSections from "../constants/md_sections.json";
 import { danhSachHSBAActions } from "../redux/slices/danhSachHSBA.slice";
 import { sectionState, SpellingErrorActions } from "../redux/slices/spellingError.slice";
@@ -19,6 +19,7 @@ import store from "../redux/store";
 
 const User = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { pid } = useParams();
     const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
@@ -32,7 +33,7 @@ const User = () => {
     useEffect(() => {
         if (!token) {
             navigate('/login');
-        } else if (user.role === 'BN' && typeof(pid) === 'undefined') {
+        } else if (user.role === 'BN' && location.pathname.includes('HSBA')) {
             navigate(`/user/HSBA/${user.id}`);
         }
         // eslint-disable-next-line
@@ -56,6 +57,9 @@ const User = () => {
     };
 
     const getUserContent = (role) => {
+        if (location.pathname.includes('settings')) {
+            return <Settings />
+        }
         switch (role) {
             case "BN":
                 return <HSBA />;
@@ -90,8 +94,13 @@ const User = () => {
     const handleConfirmUpdate = () => {
         const checkBenhAn = mdSections["Bệnh án"].some(key => spellingError[key].changed);
         const checkTongKetBA = mdSections["Tổng kết bệnh án"].some(key => spellingError[key].changed);
+        const khoaDieuTri = selectedHSBA.toDieuTri.data.length > 0 
+            ? selectedHSBA.toDieuTri.data[selectedHSBA.toDieuTri.data.length - 1].khoaDieuTri : null; 
         dispatch(HSBAThunk.updateHSBA({
-            pid: selectedHSBA.pid,
+            pid: selectedHSBA.pid, 
+            ...(!!khoaDieuTri && khoaDieuTri !== selectedHSBA.khoa 
+                ? { khoa: khoaDieuTri, phong: "", giuong: "" }
+                : { khoa: selectedHSBA.khoa, phong: selectedHSBA.phong, giuong: selectedHSBA.giuong }),
             trangThai: checkBenhAn ? "Đang điều trị" : (checkTongKetBA ? "Đã ra viện" : selectedHSBA.trangThai),
             ...(checkBenhAn && { 
                 benhAn: { ...selectedHSBA.benhAn, thoiGian: new Date().toISOString() },
@@ -187,7 +196,7 @@ const User = () => {
                     <ScrollToTop />
                     <DrawerHeader />
                 
-                    {user.role !== "BN" ?
+                    {location.pathname.includes('HSBA') && user.role !== "BN" ?
                         <>
                             <Divider color="#007C92" sx={{ mt: 3 }} />
                             <Container maxWidth={false}>
@@ -224,7 +233,7 @@ const User = () => {
                         
                     {getUserContent(user.role)}
 
-                    {user.role !== "BN" ? 
+                    {location.pathname.includes('HSBA') && user.role !== "BN" ? 
                         <Container maxWidth={false}>
                             {(typeof(pid) !== 'undefined' || creatingMode) ?
                                 <Breadcrumbs sx={{ mt: 3, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>

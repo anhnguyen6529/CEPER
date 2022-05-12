@@ -25,8 +25,7 @@ const headCells = [
     { id: 'khoa', label: 'Khoa', width: 120, show: true },
     { id: 'phong', label: 'Phòng', width: 120, show: false },
     { id: 'giuong', label: 'Giường', width: 120, show: false },
-    { id: 'benhDieuTri', label: 'Bệnh điều trị', width: 200, show: true },
-    { id: 'tinhTrangHienTai', label: 'Tình trạng hiện tại', width: 200, show: true }
+    { id: 'benhDieuTri', label: 'Bệnh điều trị', width: 200, show: true }
 ];
 
 const colorTrangThai = { 'Chờ khám': 'warning', 'Đang điều trị': 'primary' };
@@ -175,11 +174,6 @@ const TDanhSachHienTai = ({ data }) => {
                                     {danhSachHSBATab.hienTaiColsChecked[8] && <TableCell>{row.phong}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[9] && <TableCell>{row.giuong}</TableCell>}
                                     {danhSachHSBATab.hienTaiColsChecked[10] && <TableCell>{row.benhDieuTri}</TableCell>}
-                                    {danhSachHSBATab.hienTaiColsChecked[11] && 
-                                        <TableCell>
-                                            {Array.isArray(row.tinhTrangHienTai) ? row.tinhTrangHienTai.join('\n') : row.tinhTrangHienTai}
-                                        </TableCell>
-                                    }
                                 </StyledTableRow>
                             );
                         })}

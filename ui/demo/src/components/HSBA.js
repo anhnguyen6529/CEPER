@@ -14,6 +14,7 @@ import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
 import { BoxHanhChinh } from "./boxes";
 import { sectionState } from "../redux/slices/spellingError.slice";
 import { useSnackbar } from "notistack";
+import { HSBAActions } from "../redux/slices/HSBA.slice";
 
 const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "primary", "Đã ra viện": "default" };
 
@@ -24,6 +25,7 @@ const HSBA = () => {
     const { open, today, appearSec, appearTime, setAppearTime, openSec, handleUpdate, 
         openBackdrop, setOpenBackdrop, handleLogout } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
+    const { autoUpdateWithProcessResult } = useSelector(state => state.auth.settings.functionality);
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -52,13 +54,20 @@ const HSBA = () => {
     useEffect(() => {
         if (updating && Object.keys(sectionState).some(key => spellingError[key].changed)) {
             if (!spellingError.loading && !spellingError.loadingError) {
-                setOpenBackdrop(false);
-                enqueueSnackbar("Thông tin bệnh án đã được xử lý!\n Xem kết quả ở \"Danh sách mục - Xử lý lỗi\".", { 
-                    variant: "success",
-                    style: { whiteSpace: "pre-line" }
-                });
-                const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
-                document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
+                if (autoUpdateWithProcessResult) {
+                    setTimeout(() => {
+                        dispatch(HSBAActions.confirmUpdate());
+                        setOpenBackdrop(true);
+                    }, 2000);
+                } else {
+                    setOpenBackdrop(false);
+                    enqueueSnackbar("Thông tin bệnh án đã được xử lý!\n Xem kết quả ở \"Danh sách mục - Xử lý lỗi\".", { 
+                        variant: "success",
+                        style: { whiteSpace: "pre-line" }
+                    });
+                    const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
+                    document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
+                }
             } else {
                 if (spellingError.loading) {
                     setOpenBackdrop(true);
@@ -166,20 +175,11 @@ const HSBA = () => {
                                             
                                         </Grid>
                                         <Grid container columnSpacing={3}>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={12}>
                                                 <Typography fontWeight="bold">Bệnh điều trị</Typography>
                                                 <Typography>
-                                                    {!!benhNhan.chanDoanBanDau ? benhNhan.chanDoanBanDau
-                                                        : <Typography component="span">(<i>trống</i>)</Typography>
-                                                    }
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography fontWeight="bold">Tình trạng hiện tại</Typography>
-                                                <Typography>
-                                                    {benhNhan.toDieuTri.data.length > 0 
-                                                        ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].dienBienBenh.map((dbb, i) =>
-                                                            i > 0 ? dbb.toLowerCase() : dbb).join(", ")
+                                                    {!!benhNhan.toDieuTri.data.length > 0 
+                                                        ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].chanDoan
                                                         : <Typography component="span">(<i>trống</i>)</Typography>
                                                     }
                                                 </Typography>

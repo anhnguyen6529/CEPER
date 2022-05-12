@@ -11,7 +11,7 @@ import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
 import UserContext from "../../contexts/UserContext";
 import '../../styles/index.css';
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { ListSwitchColumn } from "../lists";
 import DrawerHeader from "./DrawerHeader";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,6 +21,7 @@ import { HSBAActions } from "../../redux/slices/HSBA.slice";
 
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
+    const location = useLocation();
     const { role } = useSelector((state) => state.auth.user);
     const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, 
         danhSachHSBATab, setDanhSachHSBATab, setOpenDialog, setOpenBackdrop } = useContext(UserContext);
@@ -67,7 +68,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                 </Grid>
             </Box>
             
-            {(content.role === "BN" || typeof(pid) !== 'undefined') &&
+            {(location.pathname.includes("HSBA") && (content.role === "BN" || typeof(pid) !== 'undefined')) &&
                 <>
                     <Divider sx={{ mt: 0.5 }} />
                     <Box sx={{ overflowY: 'auto' }}>     
@@ -160,7 +161,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                 </>
             }
 
-            {typeof(pid) === 'undefined' && content.role !== 'BN' && !creatingMode ?
+            {location.pathname.includes("HSBA") && typeof(pid) === 'undefined' && content.role !== 'BN' && !creatingMode ?
                 <>
                     <Divider sx={{ mt: 0.5 }} />
                     {danhSachHSBATab.value === 0 &&

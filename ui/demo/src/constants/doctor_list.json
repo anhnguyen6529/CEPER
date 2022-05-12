@@ -2,51 +2,76 @@
     {
         "id": "000001",
         "ho_ten": "Phạm Hoàng Vũ",
-        "chuyen_khoa": "Nội tổng quát"
+        "chuyen_khoa": "Khám bệnh đa khoa và điều trị ngoại trú"
     },
     {
         "id": "000002",
         "ho_ten": "Trần Quốc Anh",
-        "chuyen_khoa": "Răng hàm mặt"
+        "chuyen_khoa": "Nội"
     },
     {
         "id": "000003",
         "ho_ten": "Vũ Thu Tiên",
-        "chuyen_khoa": "Nội tiết"
+        "chuyen_khoa": "Phụ sản"
     },
     {
         "id": "000004",
         "ho_ten": "Nguyễn Duy",
-        "chuyen_khoa": "Nội thần kinh"
+        "chuyen_khoa": "Ngoại"
     },
     {
         "id": "000005",
         "ho_ten": "Nguyễn Văn An",
-        "chuyen_khoa": "Ngoại thần kinh"
+        "chuyen_khoa": "Phẫu thuật - gây mê hồi sức"
     },
     {
         "id": "000006",
         "ho_ten": "Nguyễn Quang Hiệu",
-        "chuyen_khoa": "Nhi khoa"
+        "chuyen_khoa": "Nhi"
     },
     {
         "id": "000007",
         "ho_ten": "Lương Xuân Thu",
-        "chuyen_khoa": "Nội nhiễm"
+        "chuyen_khoa": "Nội soi"
     },
     {
         "id": "000008",
         "ho_ten": "Phan Văn Dương",
-        "chuyen_khoa": "Mắt"
+        "chuyen_khoa": "Giải phẫu bệnh"
     },
     {
         "id": "000009",
         "ho_ten": "Đinh Thị Quỳnh Phương",
-        "chuyen_khoa": "Chấn thương chỉnh hình"
+        "chuyen_khoa": "Vật lý trị liệu - phục hồi chức năng"
     },
     {
         "id": "000010",
-        "ho_ten": "Dương Phương Thanh Qúy",
-        "chuyen_khoa": "Da liễu"
+        "ho_ten": "Dương Phương Thanh Quý",
+        "chuyen_khoa": "Thăm dò chức năng"
+    },
+    {
+        "id": "000011",
+        "ho_ten": "Trang Hoài Nam",
+        "chuyen_khoa": "Truyền nhiễm"
+    },
+    {
+        "id": "000012",
+        "ho_ten": "Lê Phương Dung",
+        "chuyen_khoa": "Cấp cứu"
+    },
+    {
+        "id": "000013",
+        "ho_ten": "Bùi Duy Phú",
+        "chuyen_khoa": "Hồi sức tích cực và chống độc"
+    },
+    {
+        "id": "000014",
+        "ho_ten": "Nguyễn Thanh Huyền",
+        "chuyen_khoa": "Y học cổ truyền"
+    },
+    {
+        "id": "000015",
+        "ho_ten": "Ngô Tiểu Ân",
+        "chuyen_khoa": "Ung bướu"
     }
 ]

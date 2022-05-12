@@ -11,15 +11,19 @@ def login():
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT ID, Username, Password, Role, Name, Position FROM USERS WHERE Username = %s AND Role = %s;", (params["username"], params["role"]))
+        "SELECT * FROM USERS WHERE Username = %s AND Role = %s;", (params["username"], params["role"]))
     conn.commit()
+    user_key = ["id", "username", "", "avatar", "role", "name", "dateOfBirth", "gender",
+                "address", "email", "speciality", "medicalLicenseNo", "signature", "position"]
     data = list(cursor.fetchall())
     if len(data) > 0 and params["password"] == data[0][2]:
         access_token = create_access_token(identity=data[0][0])
         result = dict()
         result["token"] = access_token
-        result["user"] = {"id": data[0][0], "username": data[0][1],
-                          "role": data[0][3], "name": data[0][4], "position": data[0][5]}
+        result["user"] = dict()
+        for i in range(0, len(user_key)):
+            if i != 2:
+                result["user"][user_key[i]] = data[0][i]
         response = jsonify(result)
         cursor.close()
         conn.close()

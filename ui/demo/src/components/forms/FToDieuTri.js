@@ -20,9 +20,11 @@ const SECTION_FIELD = "toDieuTri";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', width: '5%', minWidth: 85 },
-    { id: 'dienBienBenh', numeric: true, label: 'DIỄN BIẾN BỆNH', width: '35%', minWidth: 250 },
-    { id: 'yLenh', numeric: true, label: 'Y LỆNH', width: '35%', minWidth: 250 },
-    { id: 'bacSiGhi', label: 'Bác sĩ ghi', width: '15%', minWidth: 170 },
+    { id: 'khoaDieuTri', label: 'Khoa điều trị', width: '10%', minWidth: 115 },
+    { id: 'chanDoan', label: 'CHẨN ĐOÁN', width: '15%', minWidth: 170 },
+    { id: 'dienBienBenh', numeric: true, label: 'DIỄN BIẾN BỆNH', width: '25%', minWidth: 250 },
+    { id: 'yLenh', numeric: true, label: 'Y LỆNH', width: '25%', minWidth: 250 },
+    { id: 'bacSiGhi', label: 'Bác sĩ ghi', width: '10%', minWidth: 120 },
 ];
 
 const removeHashAndSpaces = (arrStr) => {
@@ -43,7 +45,7 @@ const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { updating, confirmUpdate, danhSachYLenh } = useSelector((state) => state.HSBA);
-    const { role, name, id } = useSelector(state => state.auth.user);
+    const { role, name, id, speciality } = useSelector(state => state.auth.user);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
 
@@ -53,6 +55,7 @@ const FToDieuTri = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
+    const [newChanDoan, setNewChanDoan] = useState('');
     const [newDienBienBenh, setNewDienBienBenh] = useState('');
     const [newYLenh, setNewYLenh] = useState('');
     const [errors, setErrors] = useState([]);
@@ -89,6 +92,7 @@ const FToDieuTri = () => {
     };   
 
     const clearData = () => {
+        setNewChanDoan('');
         setNewDienBienBenh('');
         setNewYLenh('');
         setErrors([]);
@@ -100,10 +104,12 @@ const FToDieuTri = () => {
     };
 
     const handleAdd = () => {
-        if (!!newDienBienBenh && !!newYLenh) {
+        if (!!newChanDoan && !!newDienBienBenh && !!newYLenh) {
             const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n')), now = new Date().toISOString();
             setRows([...rows, {
                 ngayGio: now,
+                khoaDieuTri: speciality,
+                chanDoan: newChanDoan,
                 dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
                 yLenh: tYLenh,
                 bacSiGhi: `${id} - ${name}`
@@ -115,6 +121,7 @@ const FToDieuTri = () => {
             setHasChanged(false);
         } else {
             let errs = [];
+            if (!newChanDoan) errs.push('CHẨN ĐOÁN');
             if (!newDienBienBenh) errs.push('DIỄN BIẾN BỆNH');
             if (!newYLenh) errs.push('Y LỆNH');
             setErrors(errs);
@@ -168,6 +175,8 @@ const FToDieuTri = () => {
                                     <StyledTableRow hover key={index}>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.khoaDieuTri}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.chanDoan}</TableCell>
                                         <TableCell className="tableBodyBorderRight">
                                             {row.dienBienBenh.length > 1
                                                 ? row.dienBienBenh.map(dbb => '- ' + dbb).join('\n') 
@@ -189,6 +198,26 @@ const FToDieuTri = () => {
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{speciality}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">
+                                        <TextField
+                                            multiline
+                                            fullWidth
+                                            value={newChanDoan}
+                                            onChange={({ target: { value } }) => {
+                                                setNewChanDoan(value);
+                                                if (!value) {
+                                                    if (!newChanDoan) {
+                                                        setHasChanged(false);
+                                                    }
+                                                } else {
+                                                    if (!hasChanged) {
+                                                        setHasChanged(true);
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             multiline

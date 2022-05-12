@@ -10,22 +10,22 @@ import { BoxChanDoanKhiRaVien } from "../boxes";
 
 const GroupTongKetBA = () => {
     const { tongKetBenhAn, phuongPhapDieuTri, tinhTrangRaVien, huongDieuTri } = useSelector(state => state.HSBA);
-    const { role, position } = useSelector(state => state.auth.user);
+    const { role } = useSelector(state => state.auth.user);
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Tổng kết bệnh án"][sectionId]) {
             case "Phương pháp điều trị": 
-                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" 
+                return !tongKetBenhAn.thoiGian && role === "BS" 
                     ? <FPhuongPhapDieuTri />
                     : <Typography>{!!phuongPhapDieuTri ? phuongPhapDieuTri : <i>(trống)</i>}</Typography>
             case "Chẩn đoán khi ra viện":
-                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
+                return !tongKetBenhAn.thoiGian && role === "BS" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
             case "Tình trạng người bệnh ra viện":
-                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" 
+                return !tongKetBenhAn.thoiGian && role === "BS"  
                     ? <FTinhTrangRaVien /> 
                     : <Typography>{!!tinhTrangRaVien ? tinhTrangRaVien : <i>(trống)</i>}</Typography>
             case "Hướng điều trị và các chế độ tiếp theo":
-                return !tongKetBenhAn.thoiGian && role === "BS" && position === "Bác sĩ điều trị" 
+                return !tongKetBenhAn.thoiGian && role === "BS" 
                     ? <FHuongDieuTri /> 
                     : <Typography>{!!huongDieuTri ? huongDieuTri : <i>(trống)</i>}</Typography>
             default: 

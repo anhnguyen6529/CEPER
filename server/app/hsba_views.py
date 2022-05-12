@@ -86,7 +86,7 @@ def getOneHSBAByPID(pid):
     result["tinhTrangRaVien"] = data[length]
     result["huongDieuTri"] = data[length + 1]
 
-    cursor.execute("SELECT Ngay_Gio, Dien_Bien_Benh, Y_Lenh, Bac_Si_Ghi FROM TO_DIEU_TRI WHERE PID = " +
+    cursor.execute("SELECT Ngay_Gio, Khoa_Dieu_Tri, Chan_Doan, Dien_Bien_Benh, Y_Lenh, Bac_Si_Ghi FROM TO_DIEU_TRI WHERE PID = " +
                    pid + " ORDER BY Ngay_Gio;")
     conn.commit()
     result["toDieuTri"] = dict()
@@ -94,9 +94,11 @@ def getOneHSBAByPID(pid):
     for d in cursor.fetchall():
         dt = dict()
         dt["ngayGio"] = d[0]
-        dt["dienBienBenh"] = json.loads(d[1])
-        dt["yLenh"] = json.loads(d[2])
-        dt["bacSiGhi"] = d[3]
+        dt["khoaDieuTri"] = d[1]
+        dt["chanDoan"] = d[2]
+        dt["dienBienBenh"] = json.loads(d[3])
+        dt["yLenh"] = json.loads(d[4])
+        dt["bacSiGhi"] = d[5]
         result["toDieuTri"]["data"].append(dt)
 
     cursor.execute("SELECT Ngay_Gio, Theo_Doi_Dien_Bien, Thuc_Hien_Y_Lenh, Xac_Nhan, Dieu_Duong_Ghi FROM PHIEU_CHAM_SOC WHERE PID = " +
@@ -215,8 +217,8 @@ def updateHSBA(pid):
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute("UPDATE HO_SO_BENH_AN SET Trang_Thai = %s WHERE PID = %s;",
-                   (data["trangThai"], pid))
+    cursor.execute("UPDATE HO_SO_BENH_AN SET Trang_Thai = %s, Khoa = %s, Phong = %s, Giuong = %s WHERE PID = %s;",
+                   (data["trangThai"], data["khoa"], data["phong"], data["giuong"], pid))
     conn.commit()
 
     if "benhAn" in data:
@@ -237,8 +239,8 @@ def updateHSBA(pid):
     if "newDataLength" in data["toDieuTri"] and data["toDieuTri"]["newDataLength"] > 0:
         tdt = tdt[-data["toDieuTri"]["newDataLength"]:]
         for row in tdt:
-            cursor.execute("INSERT INTO TO_DIEU_TRI (PID, Ngay_Gio, Dien_Bien_Benh, Y_Lenh, Bac_Si_Ghi) VALUES (\'" + pid + "', '" +
-                           row["ngayGio"] + "', JSON_ARRAY(" + str(row["dienBienBenh"])[1:-1] + "), JSON_ARRAY(" + str(row["yLenh"])[1:-1] + "), '" + row["bacSiGhi"] + "');")
+            cursor.execute("INSERT INTO TO_DIEU_TRI (PID, Ngay_Gio, Khoa_Dieu_Tri, Chan_Doan, Dien_Bien_Benh, Y_Lenh, Bac_Si_Ghi) VALUES (\'" + pid + "', '" +
+                           row["ngayGio"] + "', '" + row["khoaDieuTri"] + "', '" + row["chanDoan"] + "', JSON_ARRAY(" + str(row["dienBienBenh"])[1:-1] + "), JSON_ARRAY(" + str(row["yLenh"])[1:-1] + "), '" + row["bacSiGhi"] + "');")
             conn.commit()
 
     pcs = data["phieuChamSoc"]["data"]

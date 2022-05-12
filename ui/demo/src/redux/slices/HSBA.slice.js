@@ -99,7 +99,7 @@ export const initialHSBAState = {
     nguoiGiaoHoSo: '',
     nguoiNhanHoSo: '',  
     toDieuTri: {
-        data: [] //[{ ngayGio: '', dienBienBenh: '', yLenh: '', bacSiGhi: '' }],
+        data: [] //[{ ngayGio: '', khoaDieuTri: '', chanDoan: '', dienBienBenh: '', yLenh: '', bacSiGhi: '' }],
     },
     phieuChamSoc: {
         data: [] //[{ ngayGio: '', theoDoiDienBien: [''], thucHienYLenh: [''], xacNhan: [''], dieuDuongGhi: '' }],
