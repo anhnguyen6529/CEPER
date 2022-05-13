@@ -179,11 +179,12 @@ const FHoSo = () => {
                     <TextField 
                         type="number"
                         InputProps={{ inputProps: { min: 0 } }}
+                        placeholder="0"
                         fullWidth
                         margin="dense"
                         value={values.mach}
                         onChange={({ target: { value } }) => {
-                            setValues({ ...values, mach: !value ? 0 : parseInt(value) });
+                            setValues({ ...values, mach: value });
                             if (!!value && parseInt(value) > 0) {
                                 if (!hasChangedNew) {
                                     setHasChangedNew(true);
@@ -205,11 +206,12 @@ const FHoSo = () => {
                     <TextField 
                         type="number"
                         InputProps={{ inputProps: { min: 0 } }}
+                        placeholder="0"
                         fullWidth
                         margin="dense"
                         value={values.nhietDo}
                         onChange={({ target: { value } }) => {
-                            setValues({ ...values, nhietDo: !value ? 0 : parseFloat(value) });
+                            setValues({ ...values, nhietDo: value });
                             if (!!value && parseFloat(value) > 0) {
                                 if (!hasChangedNew) {
                                     setHasChangedNew(true);
@@ -233,11 +235,12 @@ const FHoSo = () => {
                             <TextField 
                                 type="number"
                                 InputProps={{ inputProps: { min: 0 } }}
+                                placeholder="0"
                                 fullWidth
                                 margin="dense"
                                 value={values.huyetAp[0]}
                                 onChange={({ target: { value } }) => {
-                                    setValues({ ...values, huyetAp: [!value ? 0 : parseInt(value), values.huyetAp[1]] });
+                                    setValues({ ...values, huyetAp: [value, values.huyetAp[1]] });
                                     if (!!value && parseInt(value) > 0) {
                                         if (!hasChangedNew) {
                                             setHasChangedNew(true);
@@ -255,11 +258,12 @@ const FHoSo = () => {
                             <TextField 
                                 type="number"
                                 InputProps={{ inputProps: { min: 0 } }}
+                                placeholder="0"
                                 fullWidth
                                 margin="dense"
                                 value={values.huyetAp[1]}
                                 onChange={({ target: { value } }) => {
-                                    setValues({ ...values, huyetAp: [values.huyetAp[0], !value ? 0 : parseInt(value)] });
+                                    setValues({ ...values, huyetAp: [values.huyetAp[0], value] });
                                     if (!!value && parseInt(value) > 0) {
                                         if (!hasChangedNew) {
                                             setHasChangedNew(true);
@@ -285,11 +289,12 @@ const FHoSo = () => {
                     <TextField 
                         type="number"
                         InputProps={{ inputProps: { min: 0 } }}
+                        placeholder="0"
                         fullWidth
                         margin="dense"
                         value={values.nhipTho}
                         onChange={({ target: { value } }) => {
-                            setValues({ ...values, nhipTho: !value ? 0 : parseInt(value) });
+                            setValues({ ...values, nhipTho: value });
                             if (!!value && parseInt(value) > 0) {
                                 if (!hasChangedNew) {
                                     setHasChangedNew(true);
@@ -311,11 +316,12 @@ const FHoSo = () => {
                     <TextField 
                         type="number"
                         InputProps={{ inputProps: { min: 0 } }}
+                        placeholder="0"
                         fullWidth
                         margin="dense"
                         value={values.canNang}
                         onChange={({ target: { value } }) => {
-                            setValues({ ...values, canNang: !value ? 0 : parseFloat(value) });
+                            setValues({ ...values, canNang: value });
                             if (!!value && parseFloat(value) > 0) {
                                 if (!hasChangedNew) {
                                     setHasChangedNew(true);

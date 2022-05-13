@@ -118,41 +118,43 @@ const Settings = () => {
                     </Box>
                 </Box>
 
-                <Box sx={{ mt: 3, mb: 2 }}>
-                    <Grid container alignItems="center">
-                        <Grid item xs={10}>
-                            <Typography color={`${settings.appearance.accentColor}.main`} fontWeight="bold">Tính năng</Typography>
-                            <Typography color="text.secondary">Thay đổi một số cài đặt cho các tính năng của hệ thống</Typography>
+                {user.role === "BS" ?
+                    <Box sx={{ mt: 3, mb: 2 }}>
+                        <Grid container alignItems="center">
+                            <Grid item xs={10}>
+                                <Typography color={`${settings.appearance.accentColor}.main`} fontWeight="bold">Tính năng</Typography>
+                                <Typography color="text.secondary">Thay đổi một số cài đặt cho các tính năng của hệ thống</Typography>
+                            </Grid>
+                            <Grid item xs={2} align="right">
+                                {hasChangedFunctionality && settings.functionality.changing
+                                    ? <CircularProgress size={18} sx={{ color: (theme) => theme.palette[settings.appearance.accentColor].main }} />
+                                    : (hasChangedFunctionality ? <Check color="success" /> : null)
+                                }
+                            </Grid>
                         </Grid>
-                        <Grid item xs={2} align="right">
-                            {hasChangedFunctionality && settings.functionality.changing
-                                ? <CircularProgress size={18} sx={{ color: (theme) => theme.palette[settings.appearance.accentColor].main }} />
-                                : (hasChangedFunctionality ? <Check color="success" /> : null)
-                            }
-                        </Grid>
-                    </Grid>
-                    <Divider sx={{ mt: 1, mb: 2 }} />
+                        <Divider sx={{ mt: 1, mb: 2 }} />
 
-                    <Grid container>
-                        <Grid item xs={9}>
-                            <Typography>Tự động cập nhật bệnh án với kết quả xử lý lỗi chính tả</Typography>
-                            <Typography variant="subtitle2" color="text.secondary"></Typography>
+                        <Grid container>
+                            <Grid item xs={9}>
+                                <Typography>Tự động cập nhật bệnh án với kết quả xử lý lỗi chính tả</Typography>
+                                <Typography variant="subtitle2" color="text.secondary"></Typography>
+                            </Grid>
+                            <Grid item xs={3} align="right">
+                                <Switch 
+                                    edge="end" 
+                                    color={settings.appearance.accentColor}
+                                    checked={settings.functionality.autoUpdateWithProcessResult}
+                                    onChange={({ target: { checked }}) => {
+                                        if (!hasChangedFunctionality) {
+                                            setHasChangedFunctionality(true);
+                                        }
+                                        dispatch(authThunk.toggleAutoUpdateWithProcessResult({ userID: user.id }));
+                                    }} 
+                                />
+                            </Grid>
                         </Grid>
-                        <Grid item xs={3} align="right">
-                            <Switch 
-                                edge="end" 
-                                color={settings.appearance.accentColor}
-                                checked={settings.functionality.autoUpdateWithProcessResult}
-                                onChange={({ target: { checked }}) => {
-                                    if (!hasChangedFunctionality) {
-                                        setHasChangedFunctionality(true);
-                                    }
-                                    dispatch(authThunk.toggleAutoUpdateWithProcessResult({ userID: user.id }));
-                                }} 
-                            />
-                        </Grid>
-                    </Grid>
-                </Box>
+                    </Box>
+                : null}
             </Paper>
         </Container>
     )

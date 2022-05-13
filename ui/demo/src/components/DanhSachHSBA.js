@@ -58,7 +58,7 @@ const DanhSachHSBA = () => {
                     noiLamViec: values.noiLamViec, quocTich: values.quocTich, danToc: values.danToc, soCCCD: values.soCCCD,
                     doiTuong: values.doiTuong, dienThoai: values.dienThoai, soNha: values.soNha, thonPho: values.thonPho,
                     phuongXa: values.phuongXa, quanHuyen: values.quanHuyen, tinhTP: values.tinhTP, 
-                    soTheBHYT: values.soTheBHYT.replace(" ", ""), 
+                    soTheBHYT: values.soTheBHYT.replaceAll(" ", ""), 
                     noiDangKyKCBBanDau: values.noiDangKyKCBBanDau, giaTriTu: !!values.giaTriTu ? new Date(values.giaTriTu).toISOString() : "", 
                     giaTriDen: !!values.giaTriDen ? new Date(values.giaTriDen).toISOString() : "", nguoiNha: values.nguoiNha
                 },

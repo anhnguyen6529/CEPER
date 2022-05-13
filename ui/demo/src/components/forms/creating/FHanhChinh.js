@@ -122,17 +122,10 @@ const FHanhChinh = () => {
                             value={values.ngheNghiep}
                             onChange={({ target: { value } }) => {
                                 setValues({ ...values, ngheNghiep: value.replace(/[0-9]/g, '') });
-                                if (!!value) {
-                                    if (!hasChangedNew) {
-                                        setHasChangedNew(true);
-                                    }
-                                    setErrors({ ...errors, ngheNghiep: "" });
-                                } else {
-                                    setErrors({ ...errors, ngheNghiep: "Vui lòng nhập Nghề nghiệp" });
+                                if (!!value && !hasChangedNew) {
+                                    setHasChangedNew(true);
                                 }
                             }}
-                            error={submitted && !!errors.ngheNghiep}
-                            helperText={submitted ? errors.ngheNghiep : ""}
                         />
                     </Grid>
                 </Grid>
@@ -146,17 +139,10 @@ const FHanhChinh = () => {
                             value={values.danToc}
                             onChange={({ target: { value } }) => {
                                 setValues({ ...values, danToc: value.replace(/[0-9]/g, '') });
-                                if (!!value) {
-                                    if (!hasChangedNew) {
-                                        setHasChangedNew(true);
-                                    }
-                                    setErrors({ ...errors, danToc: "" });
-                                } else {
-                                    setErrors({ ...errors, danToc: "Vui lòng nhập Dân tộc" });
+                                if (!!value && !hasChangedNew) {
+                                    setHasChangedNew(true);
                                 }
                             }}
-                            error={submitted && !!errors.danToc}
-                            helperText={submitted ? errors.danToc : ""}
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -188,17 +174,10 @@ const FHanhChinh = () => {
                             value={values.soCCCD}
                             onChange={({ target: { value } }) => {
                                 setValues({ ...values, soCCCD: value.replace(/[^0-9]/g, '') });
-                                if (!!value) {
-                                    if (!hasChangedNew) {
-                                        setHasChangedNew(true);
-                                    }
-                                    setErrors({ ...errors, soCCCD: "" });
-                                } else {
-                                    setErrors({ ...errors, soCCCD: "Vui lòng nhập Số CMND/CCCD/hộ chiếu" });
+                                if (!!value && !hasChangedNew) {
+                                    setHasChangedNew(true);
                                 }
                             }}
-                            error={submitted && !!errors.soCCCD}
-                            helperText={submitted ? errors.soCCCD : ""}
                         />
                     </Grid>
                     <Grid item xs={12} md={6} lg={3}>
@@ -513,6 +492,7 @@ const FHanhChinh = () => {
                                 <TextField 
                                     {...params} 
                                     fullWidth 
+                                    margin="dense"
                                     error={submitted && !!errors.giaTriTu}
                                     helperText={submitted ? errors.giaTriTu : ""}
                                 />
@@ -549,6 +529,7 @@ const FHanhChinh = () => {
                                 <TextField 
                                     {...params} 
                                     fullWidth 
+                                    margin="dense"
                                     error={submitted && !!errors.giaTriDen}
                                     helperText={submitted ? errors.giaTriDen : ""}
                                 />
@@ -623,9 +604,9 @@ const FHanhChinh = () => {
                                         setHasChangedNew(true);
                                     }
                                     if (!validator.isMobilePhone(value, "vi-VN")) {
-                                        setErrors({ ...errors, nguoiNha: { ...values.nguoiNha, dienThoai: "Điện thoại không hợp lệ" } });
+                                        setErrors({ ...errors, nguoiNha: { ...errors.nguoiNha, dienThoai: "Điện thoại không hợp lệ" } });
                                     } else {
-                                        setErrors({ ...errors, nguoiNha: { ...values.nguoiNha, dienThoai: "" } });
+                                        setErrors({ ...errors, nguoiNha: { ...errors.nguoiNha, dienThoai: "" } });
                                     }
                                 }
                             }}

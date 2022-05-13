@@ -29,6 +29,12 @@ const headCells = [
     { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '14%', minWidth: 0 }
 ];
 
+const parseNumber = (str, type="int") => {
+    const parseVal = type === "int" ? parseInt(str) : parseFloat(str);
+    if (isNaN(parseVal)) { return 0; }
+    return parseVal;
+}
+
 const FPhieuTDChucNangSong = () => {
     const content = useSelector((state) => state.HSBA.phieuTDChucNangSong);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
@@ -44,11 +50,11 @@ const FPhieuTDChucNangSong = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
-    const [newMach, setNewMach] = useState(0);
-    const [newNhietDo, setNewNhietDo] = useState(0);
-    const [newHuyetAp, setNewHuyetAp] = useState([0, 0]);
-    const [newNhipTho, setNewNhipTho] = useState(0);
-    const [newCanNang, setNewCanNang] = useState(0);
+    const [newMach, setNewMach] = useState("");
+    const [newNhietDo, setNewNhietDo] = useState("");
+    const [newHuyetAp, setNewHuyetAp] = useState(["", ""]);
+    const [newNhipTho, setNewNhipTho] = useState("");
+    const [newCanNang, setNewCanNang] = useState("");
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
 
@@ -72,11 +78,11 @@ const FPhieuTDChucNangSong = () => {
     };
 
     const clearData = () => {
-        setNewMach(0); 
-        setNewNhietDo(0); 
-        setNewHuyetAp([0, 0]); 
-        setNewNhipTho(0); 
-        setNewCanNang(0);
+        setNewMach(""); 
+        setNewNhietDo(""); 
+        setNewHuyetAp(["", ""]); 
+        setNewNhipTho(""); 
+        setNewCanNang("");
         setErrors([]);
     }
 
@@ -86,7 +92,8 @@ const FPhieuTDChucNangSong = () => {
     };
 
     const handleAdd = () => {
-        if (newMach > 0 && newNhietDo > 0 && newHuyetAp[0] > 0 && newHuyetAp[1] > 0 && newNhipTho > 0 && newCanNang > 0) {
+        if (parseNumber(newMach) > 0 && parseNumber(newNhietDo, "float") > 0 && parseNumber(newHuyetAp[0]) > 0 
+        && parseNumber(newHuyetAp[1]) > 0 && parseNumber(newNhipTho) > 0 && parseNumber(newCanNang, "float") > 0) {
             const now = new Date().toISOString();
             setRows([...rows, {
                 ngayGio: now, 
@@ -105,11 +112,11 @@ const FPhieuTDChucNangSong = () => {
             setHasChanged(false);
         } else {
             let errs = [];
-            if (newMach === 0) errs.push('MẠCH');
-            if (newNhietDo === 0) errs.push('NHIỆT ĐỘ');
-            if (newHuyetAp[0] === 0 || newHuyetAp[1] === 0) errs.push('HUYẾT ÁP');
-            if (newNhipTho === 0) errs.push('NHỊP THỞ');
-            if (newCanNang === 0) errs.push('CÂN NẶNG');
+            if (parseNumber(newMach) === 0) errs.push('MẠCH');
+            if (parseNumber(newNhietDo, "float") === 0) errs.push('NHIỆT ĐỘ');
+            if (parseNumber(newHuyetAp[0]) === 0 || parseNumber(newHuyetAp[1]) === 0) errs.push('HUYẾT ÁP');
+            if (parseNumber(newNhipTho) === 0) errs.push('NHỊP THỞ');
+            if (parseNumber(newCanNang, "float") === 0) errs.push('CÂN NẶNG');
             setErrors(errs);
         }
     };
@@ -186,12 +193,13 @@ const FPhieuTDChucNangSong = () => {
                                         <TextField
                                             type="number"
                                             InputProps={{ inputProps: { min: 0 } }}
+                                            placeholder="0"
                                             fullWidth
                                             value={newMach}
                                             onChange={({ target: { value } }) => {
-                                                setNewMach(!value ? 0 : parseInt(value));
-                                                if (!value || parseInt(value) === 0) {
-                                                    if (newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                setNewMach(value);
+                                                if (!value) {
+                                                    if (!newNhietDo && !newHuyetAp[0] && !newHuyetAp[1] && !newNhipTho && !newCanNang) {
                                                         setHasChanged(false);
                                                     }
                                                 } else {
@@ -206,12 +214,13 @@ const FPhieuTDChucNangSong = () => {
                                         <TextField
                                             type="number"
                                             InputProps={{ inputProps: { min: 0 } }}
+                                            placeholder="0"
                                             fullWidth
                                             value={newNhietDo}
                                             onChange={({ target: { value } }) => {
-                                                setNewNhietDo(!value ? 0 : parseFloat(value));
-                                                if (!value || parseFloat(value) === 0) {
-                                                    if (newMach === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                setNewNhietDo(value);
+                                                if (!value) {
+                                                    if (!newMach && !newHuyetAp[0] && !newHuyetAp[1] && !newNhipTho && !newCanNang) {
                                                         setHasChanged(false);
                                                     }
                                                 } else {
@@ -227,12 +236,13 @@ const FPhieuTDChucNangSong = () => {
                                             <TextField
                                                 type="number"
                                                 InputProps={{ inputProps: { min: 0 } }}
+                                                placeholder="0"
                                                 fullWidth
                                                 value={newHuyetAp[0]}
                                                 onChange={({ target: { value } }) => {
-                                                    setNewHuyetAp([!value ? 0 : parseFloat(value), newHuyetAp[1]]);
-                                                    if (!value || parseFloat(value) === 0) {
-                                                        if (newMach === 0 && newNhietDo === 0 && newHuyetAp[1] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                    setNewHuyetAp([value, newHuyetAp[1]]);
+                                                    if (!value) {
+                                                        if (!newMach && !newNhietDo && !newHuyetAp[1] && !newNhipTho && !newCanNang) {
                                                             setHasChanged(false);
                                                         }
                                                     } else {
@@ -246,12 +256,13 @@ const FPhieuTDChucNangSong = () => {
                                             <TextField
                                                 type="number"
                                                 InputProps={{ inputProps: { min: 0 } }}
+                                                placeholder="0"
                                                 fullWidth
                                                 value={newHuyetAp[1]}
                                                 onChange={({ target: { value } }) => {
-                                                    setNewHuyetAp([newHuyetAp[0], !value ? 0 : parseInt(value)]);
-                                                    if (!value || parseInt(value) === 0) {
-                                                        if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newNhipTho === 0 && newCanNang === 0) {
+                                                    setNewHuyetAp([newHuyetAp[0], value]);
+                                                    if (!value) {
+                                                        if (!newMach && !newNhietDo && !newHuyetAp[0] && !newNhipTho && !newCanNang) {
                                                             setHasChanged(false);
                                                         }
                                                     } else {
@@ -268,12 +279,13 @@ const FPhieuTDChucNangSong = () => {
                                         <TextField
                                             type="number"
                                             InputProps={{ inputProps: { min: 0 } }}
+                                            placeholder="0"
                                             fullWidth
                                             value={newNhipTho}
                                             onChange={({ target: { value } }) => {
-                                                setNewNhipTho(!value ? 0 : parseInt(value));
-                                                if (!value || parseInt(value) === 0) {
-                                                    if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newCanNang === 0) {
+                                                setNewNhipTho(value);
+                                                if (!value) {
+                                                    if (!newMach && !newNhietDo && !newHuyetAp[0] && !newHuyetAp[1] && !newCanNang) {
                                                         setHasChanged(false);
                                                     }
                                                 } else {
@@ -288,12 +300,13 @@ const FPhieuTDChucNangSong = () => {
                                         <TextField
                                             type="number"
                                             InputProps={{ inputProps: { min: 0 } }}
+                                            placeholder="0"
                                             fullWidth
                                             value={newCanNang}
                                             onChange={({ target: { value } }) => {
-                                                setNewCanNang(!value ? 0 : parseFloat(value));
-                                                if (!value || parseFloat(value) === 0) {
-                                                    if (newMach === 0 && newNhietDo === 0 && newHuyetAp[0] === 0 && newHuyetAp[1] === 0 && newNhipTho === 0) {
+                                                setNewCanNang(value);
+                                                if (!value) {
+                                                    if (!newMach && !newNhietDo && !newHuyetAp[0] && !newHuyetAp[1] && !newNhipTho) {
                                                         setHasChanged(false);
                                                     }
                                                 } else {
@@ -323,7 +336,7 @@ const FPhieuTDChucNangSong = () => {
             {hasChanged && 
                 <Grid container sx={{ mt: 2 }}>
                     <Grid item xs={8}>
-                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin: <b>{errors.join('; ')}</b>.</Typography>}
+                        {errors.length > 0 && <Typography color="error">Vui lòng nhập đầy đủ thông tin và hợp lệ: <b>{errors.join(', ')}</b>.</Typography>}
                     </Grid>
                     <Grid item xs={4} align="right">
                         <>
