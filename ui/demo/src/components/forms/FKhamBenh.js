@@ -31,6 +31,7 @@ const FKhamBenh = () => {
     const spellingErrorRangHamMat = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[8]]);
     const spellingErrorMat = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[9]]);
     const spellingErrorNoiTiet = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[10]]);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
 
     const [khamToanThan, setKhamToanThan] = useState(khamBenh.khamToanThan);
@@ -180,8 +181,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[0]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -257,8 +258,8 @@ const FKhamBenh = () => {
                     :  ( 
                         updating && spellingError[CLINICAL_SUBSECTION[1]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -334,8 +335,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[2]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -411,8 +412,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[3]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -488,8 +489,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[4]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -565,8 +566,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[5]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -642,8 +643,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[6]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -719,8 +720,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[7]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -796,8 +797,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[8]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -873,8 +874,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[9]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -950,8 +951,8 @@ const FKhamBenh = () => {
                     : ( 
                         updating && spellingError[CLINICAL_SUBSECTION[10]].changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                                <Typography color="primary">Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}

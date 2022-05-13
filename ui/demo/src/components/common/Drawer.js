@@ -29,6 +29,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
     const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
     const dispatch = useDispatch();
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     return (
         <MuiDrawer 
@@ -57,7 +58,9 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             <Box sx={{ mt: 3, mb: 3 }}>
                 <Grid container spacing={1.5}>
                     <Grid item xs={4} align="right">
-                        <Avatar src="/images/avatar_default.png" sx={{ width: 48, height: 48, border: '3px solid #009ABB' }} />
+                        <Avatar 
+                            src="/images/avatar_default.png" 
+                            sx={{ width: 48, height: 48, border: (theme) => `3px solid ${theme.palette[accentColor].main}` }} />
                     </Grid>
                     <Grid item xs={8}>
                         <div sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -86,7 +89,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                                 onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth" })}
                                             >
                                                 <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
-                                                    <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
+                                                    <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette[accentColor].main, mt: 0.5 }} />
                                                 </ListItemIcon>
                                                 <ListItemText primary={key} />
                                             </ListItem>
@@ -147,10 +150,10 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                             setAppearSec(tAppearSec);
                                         }}
                                     >
-                                        <ListItemIcon sx={{ minWidth: 32 }}>
-                                            <FontAwesomeIcon color='#48B0F7' icon={faFileMedicalAlt} />
+                                        <ListItemIcon sx={{ minWidth: 32, color: (theme) => theme.palette[accentColor].main }}>
+                                            <FontAwesomeIcon color="inherit" icon={faFileMedicalAlt} />
                                         </ListItemIcon>
-                                        <ListItemText sx={{ color: appearSec.indexOf(id) === -1 ? 'black' : '#009ABB' }}>
+                                        <ListItemText sx={{ color: (theme) => appearSec.indexOf(id) === -1 ? 'black' : theme.palette[accentColor].main }}>
                                             {section}
                                         </ListItemText>
                                     </ListItem>

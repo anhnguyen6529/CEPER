@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const ScrollToTop = () => {
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const [showTopBtn, setShowTopBtn] = useState(false);
 
     const scrollFunction = () => {
@@ -36,10 +38,10 @@ const ScrollToTop = () => {
                         right: 20, 
                         bottom: 12, 
                         zIndex: (theme) => theme.zIndex.drawer + 2, 
-                        bgcolor: "#09425A", 
+                        bgcolor: (theme) => theme.palette[accentColor].dark, 
                         color: "white",
                         '&:hover': {
-                            bgcolor: "#09425A", 
+                            bgcolor: (theme) => theme.palette[accentColor].dark, 
                             color: "white"
                         }
                     }} 

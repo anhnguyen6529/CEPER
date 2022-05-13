@@ -7,6 +7,7 @@ import "../../../styles/index.css";
 import MaskedInput from "react-text-mask";
 import TaoHSBAContext from "../../../contexts/TaoHSBAContext";
 import validator from "validator";
+import { useSelector } from "react-redux";
 
 const MaskedInputCustom = forwardRef(function MaskedInputCustom(props, ref) {
     return (
@@ -19,10 +20,11 @@ const MaskedInputCustom = forwardRef(function MaskedInputCustom(props, ref) {
 
 const FHanhChinh = () => {
     const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     return (
         <Paper sx={{ px: 3, pb: 2, pt: 1.5, mb: 2 }}>
-            <Typography fontWeight="bold" color="primary" sx={{ mb: 2 }}>Thông tin hành chính</Typography>
+            <Typography fontWeight="bold" color={`${accentColor}.main`} sx={{ mb: 2 }}>Thông tin hành chính</Typography>
             <Box component="form">
                 <Grid container columnSpacing={3} rowSpacing={1}>
                     <Grid item xs={12} md={6} lg={3}>

@@ -14,14 +14,18 @@ import { useSelector } from "react-redux";
 const ToolBarSection = ({ id, sectionId, sectionName }) => {
     const { appearSec, setAppearSec, openSec, setOpenSec, setOpenDialog } = useContext(UserContext);
     const { spellingError } = useSelector(state => state);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     return (
         <>
             <Tooltip title="Di chuyển lên trên" placement="top">
                 <span>
                     <ArrowUpward 
-                        color={id === 0 ? 'disabled' : 'secondary'}
-                        sx={{ cursor: 'pointer', mx: 0.75 }}
+                        sx={{ 
+                            cursor: 'pointer', 
+                            mx: 0.75, 
+                            color: (theme) => id === 0 ? theme.palette.action.disabled : theme.palette[accentColor].dark 
+                        }}
                         fontSize="small"
                         onClick={() => {
                             var temp = [...appearSec];
@@ -34,8 +38,11 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
             <Tooltip title="Di chuyển xuống dưới" placement="top">
                 <span>
                     <ArrowDownward 
-                        color={id === appearSec.length - 1 ? 'disabled' : 'secondary'}
-                        sx={{ cursor: 'pointer', mx: 0.75 }}
+                        sx={{ 
+                            cursor: 'pointer',
+                            mx: 0.75,
+                            color: (theme) => id === appearSec.length - 1 ? theme.palette.action.disabled : theme.palette[accentColor].dark
+                        }}
                         fontSize="small"
                         onClick={() => {
                             var temp = [...appearSec];
@@ -48,8 +55,7 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
             <Tooltip title="Ẩn mục" placement="top">
                 <span>
                     <VisibilityOff 
-                        color='secondary'
-                        sx={{ cursor: 'pointer', mx: 0.75 }}
+                        sx={{ cursor: 'pointer', mx: 0.75, color: (theme) => theme.palette[accentColor].dark }}
                         fontSize="small"
                         onClick={() => {
                             var temp = [...appearSec];
@@ -76,8 +82,11 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
             <Tooltip title="Thu gọn mục" placement="top">
                 <span>
                     <CloseFullscreen 
-                        color={!openSec[sectionId] ? 'disabled' : 'secondary'}
-                        sx={{ cursor: 'pointer', mx: 0.75 }}
+                        sx={{ 
+                            cursor: 'pointer', 
+                            mx: 0.75,
+                            color: (theme) => !openSec[sectionId] ? theme.palette.action.disabled : theme.palette[accentColor].dark
+                        }}
                         fontSize="small"
                         onClick={() => {
                             var temp = [...openSec];
@@ -90,9 +99,12 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
             <Tooltip title="Mở rộng mục" placement="top">
                 <span>
                     <OpenInFull 
-                        color={openSec[sectionId] ? 'disabled' : 'secondary'}
                         fontSize="small"
-                        sx={{ cursor: 'pointer', mx: 0.75 }}
+                        sx={{ 
+                            cursor: 'pointer', 
+                            mx: 0.75,
+                            color: (theme) => openSec[sectionId] ? theme.palette.action.disabled : theme.palette[accentColor].dark
+                        }}
                         onClick={() => {
                             var temp = [...openSec];
                             temp[sectionId] = true;

@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserInjured, faUserMd, faUserNurse } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import authApi from "../apis/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../redux/slices/auth.slice";
 import useToken from "../hooks/useToken";
 
@@ -41,6 +41,7 @@ const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const classes = useStyles();
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     const { token, setToken } = useToken();
     const [clickedId, setClickedId] = useState(-1);
@@ -55,7 +56,7 @@ const Login = () => {
             
             if (apiResponse.data.token) {
                 setToken(apiResponse.data.token);
-                dispatch(authActions.updateUserFields({ ...apiResponse.data.user }));
+                dispatch(authActions.updateUserFields({ user: apiResponse.data.user, settings: apiResponse.data.settings }));
                 if (login.role === "BN") {
                     // get user pid => api
                     const pid = '123456';
@@ -109,7 +110,7 @@ const Login = () => {
         <div className={classes.root}>
             <NavBar>
                 <Link href="/" underline="none" color="inherit">
-                    <Typography fontWeight="bold" color={(theme) => theme.palette.secondary.main}>Trang chủ</Typography>
+                    <Typography fontWeight="bold" color="white">Trang chủ</Typography>
                 </Link>     
             </NavBar>
             <Container>
@@ -127,14 +128,18 @@ const Login = () => {
                                         setClickedId(i);
                                         setLogin({ ...login, role: role[2] });
                                     }}
-                                    style={{
-                                        color: i === clickedId ? 'white' : '#09425A',
-                                        background: i === clickedId ? '#09425A' : 'white',
+                                    sx={{
+                                        color: (theme) => i === clickedId ? 'white' : theme.palette[accentColor].dark,
+                                        bgcolor: (theme) => i === clickedId ? theme.palette[accentColor].dark : 'white',
+                                        '&:hover': {
+                                            color: (theme) => i === clickedId ? 'white' : theme.palette[accentColor].dark,
+                                            bgcolor: (theme) => i === clickedId ? theme.palette[accentColor].dark : 'white',
+                                        },
                                         textTransform: 'none',
                                         width: '25%',
                                         height: 40,
-                                        border: i === clickedId ? 'none' : '1px solid #09425A',
-                                        marginRight: 16,
+                                        border: (theme) => i === clickedId ? 'none' : `1px solid ${theme.palette[accentColor].dark}`,
+                                        mr: 2,
                                         boxShadow: '0px 4px 4px 0px rgb(0, 0, 0, 0.25)'
                                     }}
                                     startIcon={role[0]}
@@ -171,7 +176,7 @@ const Login = () => {
 
                             <Link 
                                 href="#" 
-                                style={{ color: "#009ABB", textDecoration: 'none' }}
+                                sx={{ color: (theme) => theme.palette[accentColor].main, textDecoration: 'none' }}
                             >
                                 <Typography variant="subtitle2" textAlign="right" mt={1} mb={2}>Quên mật khẩu</Typography>
                             </Link>
@@ -180,7 +185,7 @@ const Login = () => {
 
                             {submitting ?
                                 <Box className="df fdc aic">
-                                    <CircularProgress color="secondary" size={28}/>
+                                    <CircularProgress color={accentColor} size={28}/>
                                 </Box> 
                             : null}
 
@@ -188,6 +193,7 @@ const Login = () => {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
+                                color={accentColor}
                                 sx={{ height: 42, fontWeight: 'bold', mt: 2 }}
                                 onClick={handleSubmit}
                                 disabled={submitting}

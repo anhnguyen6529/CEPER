@@ -29,6 +29,7 @@ const User = () => {
     const { creatingMode } = useSelector(state => state.danhSachHSBA);
     const { spellingError } = useSelector(state => state);
     const { token, removeToken } = useToken();
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     
     useEffect(() => {
         if (!token) {
@@ -149,9 +150,9 @@ const User = () => {
 		try {
 			await authApi.logout();
             
-            store.dispatch({ type: 'LOG_OUT'});
             removeToken();
             navigate(reLogin ? '/login' : '/');
+            store.dispatch({ type: 'LOG_OUT'});
 		} catch (error) {
             if (error.response) {
                 console.log('Response:', error.response);
@@ -198,11 +199,11 @@ const User = () => {
                 
                     {location.pathname.includes('HSBA') && user.role !== "BN" ?
                         <>
-                            <Divider color="#007C92" sx={{ mt: 3 }} />
+                            <Divider sx={{ mt: 3, bgcolor: (theme) => theme.palette[accentColor].dark }} />
                             <Container maxWidth={false}>
                                 <Grid container alignItems="center">
                                     <Grid item xs={9}>
-                                        <Breadcrumbs sx={{ my: 1.5, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
+                                        <Breadcrumbs sx={{ my: 1.5, color: (theme) => theme.palette[accentColor].dark }} separator={<NavigateNext fontSize="small" />}>
                                             <Link underline="none" key="1" color="inherit" href="/user/HSBA">
                                                 Danh sách bệnh án
                                             </Link>
@@ -227,7 +228,7 @@ const User = () => {
                                     </Grid>
                                 </Grid>
                             </Container>
-                            <Divider color="#007C92" />
+                            <Divider sx={{ bgcolor: (theme) => theme.palette[accentColor].dark }} />
                         </>
                     : null}
                         
@@ -236,7 +237,7 @@ const User = () => {
                     {location.pathname.includes('HSBA') && user.role !== "BN" ? 
                         <Container maxWidth={false}>
                             {(typeof(pid) !== 'undefined' || creatingMode) ?
-                                <Breadcrumbs sx={{ mt: 3, color: "#007C92" }} separator={<NavigateNext fontSize="small" />}>
+                                <Breadcrumbs sx={{ mt: 3, color: (theme) => theme.palette[accentColor].dark }} separator={<NavigateNext fontSize="small" />}>
                                     <Link underline="none" key="1" color="inherit" href="/user/HSBA">
                                         Danh sách bệnh án
                                     </Link>

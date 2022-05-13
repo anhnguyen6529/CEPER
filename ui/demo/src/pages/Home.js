@@ -24,14 +24,13 @@ const useStyles = makeStyles(() => ({
         marginBottom: 100
     },
     featuresLine: {
-        background: '#007C92',
         width: 150,
         height: 8,
         borderRadius: 20
     },
 }))
 
-const BoxFeature = ({ icon, title, subtitle }) => {    
+const BoxFeature = ({ color, icon, title, subtitle }) => {    
     return (
         <Box 
             sx={{ 
@@ -48,14 +47,14 @@ const BoxFeature = ({ icon, title, subtitle }) => {
                         boxShadow: '0px 0px 4px 0px rgba(0, 0, 0, 0.25)',
                         mt: -1,
                         '& > svg': {
-                            color: '#009ABB'
+                            color: color
                         }        
                     },
                     
                 }
             }}
         >    
-            <Box sx={{ width: '100%', height: 0, background: '#009ABB', borderRadius: '8px 8px 0px 0px', zIndex: 2 }} />  
+            <Box sx={{ width: '100%', height: 0, bgcolor: (theme) => theme.palette[color].main, borderRadius: '8px 8px 0px 0px', zIndex: 2 }} />  
             <Box sx={{ pb: 6, pt: 8, zIndex: 1, bgcolor: 'white', borderRadius: '8px' }} className="df aic jcc fdc" >
                 {icon} 
                 <Typography variant="h6" fontWeight="bold" sx={{ my: 3 }}>{title}</Typography>
@@ -68,6 +67,7 @@ const BoxFeature = ({ icon, title, subtitle }) => {
 const Home = () => {
     const classes = useStyles();
     const { name, role, id } = useSelector((state) => state.auth.user);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { token } = useToken();
 
     return (
@@ -77,7 +77,7 @@ const Home = () => {
                     <Link href="/login" underline="none">
                         <Button variant="outlined">Đăng nhập</Button>
                     </Link>
-                : <Typography color="primary" fontWeight="bold">{name}</Typography>}
+                : <Typography color="white" fontWeight="bold">{name}</Typography>}
             </NavBar>
 
             <Container sx={{ pt: '150px' }}>
@@ -85,7 +85,7 @@ const Home = () => {
                     <Grid item xs={8}>
                         <Typography fontSize={42} fontWeight="bold" sx={{ width: 600 }}>
                             Giải pháp quản lý  
-                            <Typography component="span" fontSize={42} fontWeight="bold" color="primary">
+                            <Typography component="span" fontSize={42} fontWeight="bold" color={`${accentColor}.main`}>
                                 {' '}hồ sơ bệnh án
                             </Typography>
                         </Typography>
@@ -107,7 +107,7 @@ const Home = () => {
                 </Grid>
 
                 <Box className={classes.featuresBox}>
-                    <Box className={classes.featuresLine}></Box>
+                    <Box className={classes.featuresLine} sx={{ bgcolor: (theme) => theme.palette[accentColor].main }} />
 
                     <Typography fontSize={28} fontWeight="bold" sx={{ mt: 2, mb: 8 }}>
                         Các tính năng và dịch vụ
@@ -116,6 +116,7 @@ const Home = () => {
                     <Grid container spacing={7.5} maxWidth="md">
                         <Grid item xs={4} >
                             <BoxFeature 
+                                color={accentColor}
                                 icon={<FontAwesomeIcon icon={faFileMedical} size="3x" />}
                                 title="Tạo bệnh án"
                                 subtitle={"Hỗ trợ điều dưỡng\ntạo bệnh án tiện lợi,\n nhanh chóng"}
@@ -123,6 +124,7 @@ const Home = () => {
                         </Grid>
                         <Grid item xs={4} >
                             <BoxFeature 
+                                color={accentColor}
                                 icon={<FontAwesomeIcon icon={faSearch} size="3x" />}
                                 title="Xem bệnh án"
                                 subtitle={"Hỗ trợ xem và tra cứu hồ sơ bệnh án bằng \n tìm kiếm nâng cao"}
@@ -130,6 +132,7 @@ const Home = () => {
                         </Grid>
                         <Grid item xs={4} >
                             <BoxFeature 
+                                color={accentColor}
                                 icon={<FontAwesomeIcon icon={faPencilAlt} size="3x" />}
                                 title="Cập nhật bệnh án"
                                 subtitle="Hỗ trợ cập nhật hồ sơ bệnh án với công cụ kiểm tra văn bản"
@@ -137,7 +140,6 @@ const Home = () => {
                         </Grid>
                     </Grid>
                 </Box>
-
             </Container>
 
             <Footer />

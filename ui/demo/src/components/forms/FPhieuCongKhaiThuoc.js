@@ -33,6 +33,7 @@ const FPhieuCongKhaiThuoc = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
 
     const [page, setPage] = useState(0);
@@ -158,7 +159,7 @@ const FPhieuCongKhaiThuoc = () => {
             <Paper>
                 <TableContainer>
                     <Table stickyHeader> 
-                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: '#D9EFFE' } }}>
+                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette[accentColor].light } }}>
                             <TableRow>
                                 {headCells.map((headCell, id) => (
                                     headCell.id !== 'ngayThang'

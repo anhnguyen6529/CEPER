@@ -1,8 +1,10 @@
 import React from "react";
 import { AppBar, Toolbar, Container, Grid, Link } from "@mui/material";
-import logo from "../../images/logo.svg";
+import logo from "../../images/logo_white.svg";
+import { useSelector } from "react-redux";
 
 const NavBar = ({ children }) => {
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     return (
         <AppBar 
@@ -10,7 +12,7 @@ const NavBar = ({ children }) => {
             position="fixed"
             elevation={0}
         >
-            <Toolbar style={{ background: 'white', height: 72 }}>
+            <Toolbar sx={{ bgcolor: (theme) => theme.palette[accentColor].main, height: 72 }}>
                 <Container>
                     <Grid container spacing={0} alignItems="center">
                         <Grid item xs={8}>

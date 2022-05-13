@@ -19,6 +19,7 @@ const FChanDoanKhiRaVien = () => {
     const { chanDoanKhiRaVien, updating } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { loadingError } = useSelector((state) => state.spellingError);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
 
     const [chanDoan, setChanDoan] = useState(chanDoanKhiRaVien.chanDoan);
@@ -128,8 +129,8 @@ const FChanDoanKhiRaVien = () => {
             : ( 
                 updating && spellingError[CLINICAL_SUBSECTION].changed ? 
                     <div className="df fdc aic jcc">
-                        <CircularProgress size={20} sx={{ mt: 2, mb: 1 }} />
-                        <Typography color="primary">Đang xử lý...</Typography>
+                        <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                        <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
                     </div> 
                 : null
             )}

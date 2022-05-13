@@ -24,6 +24,13 @@ def login():
         for i in range(0, len(user_key)):
             if i != 2:
                 result["user"][user_key[i]] = data[0][i]
+        result["settings"] = dict()
+        result["settings"]["appearance"] = dict()
+        result["settings"]["appearance"]["accentColor"] = data[0][len(
+            user_key)]
+        result["settings"]["functionality"] = dict()
+        result["settings"]["functionality"]["autoUpdateWithProcessResult"] = bool(
+            data[0][len(user_key) + 1])
         response = jsonify(result)
         cursor.close()
         conn.close()
@@ -43,7 +50,7 @@ def logout():
     return response
 
 
-@app.route('/users/<id>/notifications', methods=['GET'])
+@app.route('/user/<id>/notifications', methods=['GET'])
 @jwt_required()
 def getNotifications(id):
     result = dict()
@@ -70,7 +77,7 @@ def getNotifications(id):
     return response
 
 
-@app.route('/users/<uid>/notifications/<nid>')
+@app.route('/user/<uid>/notifications/<nid>')
 @jwt_required()
 def markNotificationSeen(uid, nid):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -80,6 +87,35 @@ def markNotificationSeen(uid, nid):
         "UPDATE NOTIFICATIONS SET Status = \'Đã đọc\', Time_Seen = %s WHERE User_ID = %s AND ID = %s;", (now, uid, nid))
     conn.commit()
     response = jsonify({"msg": "Successfully!"})
+    cursor.close()
+    conn.close()
+    return response
+
+
+@app.route('/user/<uid>/settings/appearance/accent-color/<color>')
+@jwt_required()
+def changeAccentColor(uid, color):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE USERS SET Accent_Color = %s WHERE ID = %s;", (color, uid))
+    conn.commit()
+    response = jsonify({"msg": "Change accent color succesfully!"})
+    cursor.close()
+    conn.close()
+    return response
+
+
+@app.route('/user/<uid>/settings/functionality/auto-update-with-process-result')
+@jwt_required()
+def toggleAutoUpdateWithProcessResult(uid):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE USERS SET Auto_Update_With_Process_Result = NOT Auto_Update_With_Process_Result WHERE ID = %s;", (uid))
+    conn.commit()
+    response = jsonify(
+        {"msg": "Change auto update with process result succesfully!"})
     cursor.close()
     conn.close()
     return response

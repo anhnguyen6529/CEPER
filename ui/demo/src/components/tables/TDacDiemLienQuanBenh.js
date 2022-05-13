@@ -16,6 +16,7 @@ headCells.push(...headCells);
 
 const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChange }) => {
     const { updating } = useSelector((state) => state.HSBA);
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const data = dacDiemLienQuan;
 
     const handleChangeCheckbox = (checked, id) => {
@@ -89,6 +90,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                     checked={data[idx].kyHieu} 
                                     onChange={({ target: { checked }}) => handleChangeCheckbox(checked, idx)} 
                                     disabled={updating} 
+                                    color={accentColor}
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight">
@@ -179,6 +181,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                     checked={data[idx + 3].kyHieu} 
                                     onChange={({ target: { checked }}) => handleChangeCheckbox(checked, idx + 3)} 
                                     disabled={updating} 
+                                    color={accentColor}
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight" sx={{ verticalAlign: data[idx + 3].tt === "06" ? "top" : "middle" }}>

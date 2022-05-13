@@ -25,9 +25,13 @@ const initialState = {
     },
     settings: {
         appearance: {
+            changing: false,
+            changingError: '',
             accentColor: "primary"
         },
         functionality: {
+            changing: false,
+            changingError: '',
             autoUpdateWithProcessResult: false
         }
     }
@@ -42,7 +46,11 @@ const authSlice = createSlice({
                 ...state,
                 user: {
                     ...state.user,
-                    ...action.payload
+                    ...action.payload.user
+                },
+                settings: {
+                    ...state.settings,
+                    ...action.payload.settings
                 }
             }
         },
@@ -131,6 +139,30 @@ const authSlice = createSlice({
                     errorNoti: action.payload
                 }
             }
+        })
+        .addCase(authThunk.changeAccentColor.pending, (state) => {
+            state.settings.appearance.changing = true;
+        })
+        .addCase(authThunk.changeAccentColor.fulfilled, (state, action) => {
+            state.settings.appearance.changing = false;
+            state.settings.appearance.changingError = '';
+            state.settings.appearance.accentColor = action.payload
+        })
+        .addCase(authThunk.changeAccentColor.rejected, (state, action) => {
+            state.settings.appearance.changing = false;
+            state.settings.appearance.changingError = action.payload;
+        })
+        .addCase(authThunk.toggleAutoUpdateWithProcessResult.pending, (state) => {
+            state.settings.functionality.changing = true;
+        })
+        .addCase(authThunk.toggleAutoUpdateWithProcessResult.fulfilled, (state) => {
+            state.settings.functionality.changing = false;
+            state.settings.functionality.changingError = '';
+            state.settings.functionality.autoUpdateWithProcessResult = !state.settings.functionality.autoUpdateWithProcessResult;
+        })
+        .addCase(authThunk.toggleAutoUpdateWithProcessResult.rejected, (state, action) => {
+            state.settings.functionality.changing = false;
+            state.settings.functionality.changingError = action.payload;
         })
     }
 })

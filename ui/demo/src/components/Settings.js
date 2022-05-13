@@ -1,14 +1,19 @@
-import { Circle } from "@mui/icons-material";
-import { Box, Container, Divider, Grid, IconButton, Paper, Switch, Typography } from "@mui/material";
+import { Check, Circle } from "@mui/icons-material";
+import { Box, CircularProgress, Container, Divider, Grid, IconButton, Paper, Switch, Typography } from "@mui/material";
 import { format } from "date-fns";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../redux/slices/auth.slice";
+import UserContext from "../contexts/UserContext";
+import authThunk from "../redux/thunks/auth.thunk";
 import "../styles/index.css";
 
 const Settings = () => {
+    const { handleLogout } = useContext(UserContext);
     const { user, settings } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    
+    const [hasChangedAppearance, setHasChangedAppearance] = useState(false);
+    const [hasChangedFunctionality, setHasChangedFunctionality] = useState(false);
 
     const ButtonColor = ({ color, ...others }) => {
         return (
@@ -19,7 +24,10 @@ const Settings = () => {
                     mr: 2
                 }} 
                 onClick={() => {
-                    dispatch(authActions.updateAppearanceField({ field: "accentColor", value: color }));
+                    if (!hasChangedAppearance) {
+                        setHasChangedAppearance(true);
+                    }
+                    dispatch(authThunk.changeAccentColor({ userID: user.id, color }));
                 }}
                 {...others}
             >
@@ -27,6 +35,13 @@ const Settings = () => {
             </IconButton>
         )
     }
+
+    useEffect(() => {
+        if (settings.appearance.changingError === "Token has expired" || settings.functionality.changingError === "Token has expired") {
+            handleLogout();
+        }
+        // eslint-disable-next-line
+    }, [settings.appearance.changingError, settings.functionality.changingError]);
 
     return (
         <Container maxWidth={false} sx={{ pt: 3 }}>
@@ -79,8 +94,18 @@ const Settings = () => {
                 </Box>
 
                 <Box sx={{ mt: 3, mb: 2 }}>
-                    <Typography color={`${settings.appearance.accentColor}.main`} fontWeight="bold">Giao diện</Typography>
-                    <Typography color="text.secondary">Thay đổi màu sắc giao diện hệ thống</Typography>
+                    <Grid container alignItems="center">
+                        <Grid item xs={10}>
+                            <Typography color={`${settings.appearance.accentColor}.main`} fontWeight="bold">Giao diện</Typography>
+                            <Typography color="text.secondary">Thay đổi màu sắc giao diện hệ thống</Typography>
+                        </Grid>
+                        <Grid item xs={2} align="right">
+                            {hasChangedAppearance && settings.appearance.changing
+                                ? <CircularProgress size={18} sx={{ color: (theme) => theme.palette[settings.appearance.accentColor].main }} />
+                                : (hasChangedAppearance ? <Check color="success" /> : null)
+                            }
+                        </Grid>
+                    </Grid>
                     <Divider sx={{ mt: 1, mb: 2 }} />
 
                     <Typography>Chọn màu chủ đề</Typography>
@@ -94,8 +119,18 @@ const Settings = () => {
                 </Box>
 
                 <Box sx={{ mt: 3, mb: 2 }}>
-                    <Typography color={`${settings.appearance.accentColor}.main`} fontWeight="bold">Tính năng</Typography>
-                    <Typography color="text.secondary">Thay đổi một số cài đặt cho các tính năng của hệ thống</Typography>
+                    <Grid container alignItems="center">
+                        <Grid item xs={10}>
+                            <Typography color={`${settings.appearance.accentColor}.main`} fontWeight="bold">Tính năng</Typography>
+                            <Typography color="text.secondary">Thay đổi một số cài đặt cho các tính năng của hệ thống</Typography>
+                        </Grid>
+                        <Grid item xs={2} align="right">
+                            {hasChangedFunctionality && settings.functionality.changing
+                                ? <CircularProgress size={18} sx={{ color: (theme) => theme.palette[settings.appearance.accentColor].main }} />
+                                : (hasChangedFunctionality ? <Check color="success" /> : null)
+                            }
+                        </Grid>
+                    </Grid>
                     <Divider sx={{ mt: 1, mb: 2 }} />
 
                     <Grid container>
@@ -109,7 +144,10 @@ const Settings = () => {
                                 color={settings.appearance.accentColor}
                                 checked={settings.functionality.autoUpdateWithProcessResult}
                                 onChange={({ target: { checked }}) => {
-                                    dispatch(authActions.updateFunctionalityField({ field: "autoUpdateWithProcessResult", value: checked }));
+                                    if (!hasChangedFunctionality) {
+                                        setHasChangedFunctionality(true);
+                                    }
+                                    dispatch(authThunk.toggleAutoUpdateWithProcessResult({ userID: user.id }));
                                 }} 
                             />
                         </Grid>

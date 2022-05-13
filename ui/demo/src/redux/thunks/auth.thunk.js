@@ -49,7 +49,39 @@ const authThunk = {
                 return rejectWithValue(error.response.data.msg);
             }
         }
-    )
+    ),
+    changeAccentColor: createAsyncThunk(
+        'auth/changeAccentColor',
+        async ({ userID, color }, { rejectWithValue }) => {
+            try {
+                const apiResponse = await authApi.changeAccentColor({ userID, color });
+
+                if (apiResponse.status !== 200) {
+                    throw new Error(apiResponse.statusText);
+                }
+
+                return color;
+            } catch (error) {
+                return rejectWithValue(error.response.data.msg);
+            }
+        }
+    ),
+    toggleAutoUpdateWithProcessResult: createAsyncThunk(
+        'auth/toggleAutoUpdateWithProcessResult',
+        async ({ userID }, { rejectWithValue }) => {
+            try {
+                const apiResponse = await authApi.toggleAutoUpdateWithProcessResult({ userID });
+
+                if (apiResponse.status !== 200) {
+                    throw new Error(apiResponse.statusText);
+                }
+
+                return apiResponse.data;
+            } catch (error) {
+                return rejectWithValue(error.response.data.msg);
+            }
+        }
+    ),
 }
 
 export default authThunk;

@@ -9,19 +9,21 @@ import UserContext from "../../contexts/UserContext";
 import { useDispatch, useSelector } from "react-redux";
 import Menu from "./Menu";
 import authThunk from "../../redux/thunks/auth.thunk";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { UtilsDateTime } from "../../utils";
 import { sectionState } from "../../redux/slices/spellingError.slice";
 import mdSections from "../../constants/md_sections.json";
 
 const ToolBar = ({ open, toggleDrawer }) => {
-    const { notifications, id, errorNoti } = useSelector((state) => state.auth.user);
-    const { updating } = useSelector((state) => state.HSBA);
-    const { spellingError } = useSelector((state) => state);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
+    const { notifications, id, errorNoti, getting } = useSelector((state) => state.auth.user);
+    const { updating, setting, loading } = useSelector((state) => state.HSBA);
+    const { spellingError, danhSachHSBA } = useSelector((state) => state);
+    const { accentColor, changing } = useSelector((state) => state.auth.settings.appearance);
+    const { functionality } = useSelector((state) => state.auth.settings);
     const { today, handleLogout } = useContext(UserContext);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { pid } = useParams();
 
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const [anchorElNoti, setAnchorElNoti] = useState(null);
@@ -46,12 +48,13 @@ const ToolBar = ({ open, toggleDrawer }) => {
     
     useEffect(() => {
         const timer = setInterval(() => {
-            if ((updating && Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key)).some(key => 
-            (["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => 
-            spellingError[key][subKey].loading)) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
-            && spellingError[key].loading))) || !updating) {
+            if (!getting && !danhSachHSBA.loading && !danhSachHSBA.creatingHSBA && (!loading || typeof(pid) === "undefined") && !changing
+            && !functionality.changing && !setting && (!updating || (updating && !spellingError.loading && Object.keys(sectionState).filter(key =>
+            !mdSections["attached"].includes(key)).every(key => (typeof(spellingError[key].loading) === "undefined" 
+            && !mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].loading)) ||
+            (typeof(spellingError[key].loading) !== "undefined" && !(spellingError[key].changed && spellingError[key].loading)))))) {
                 if (!errorNoti) { 
-                    // dispatch(authThunk.getNotifications(id));
+                    dispatch(authThunk.getNotifications(id));
                 }
             }
         }, 5000);
@@ -59,7 +62,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
             clearInterval(timer);
         }
         // eslint-disable-next-line
-    }, []);
+    }, [getting, danhSachHSBA.loading, danhSachHSBA.creatingHSBA, loading, setting, updating, spellingError]);
 
     useEffect(() => {
         if (errorNoti === "Token has expired") {
@@ -92,7 +95,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                 </Typography>
 
                 <IconButton onClick={onClickNoti} sx={{ background: 'white', ml: 4, '&:hover': { background: 'white' } }}>
-                    <Badge badgeContent={notifications.length} color="primary" >
+                    <Badge badgeContent={notifications.length} color={accentColor} >
                         <Notifications />
                     </Badge>
                 </IconButton>
@@ -114,7 +117,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                                     </Typography>
                                     <Typography>
                                         Vào viện lúc{' '}
-                                        <Typography component="span" color="primary">
+                                        <Typography component="span" color={`${accentColor}.main`}>
                                             {format(new Date(notification.timeCreated), 'dd/MM/yyyy hh:mm')}
                                         </Typography>
                                         <Typography component="span" color="text.secondary">

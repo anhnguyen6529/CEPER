@@ -1,5 +1,6 @@
 import React from "react";
-import { Button as MuiButton } from "@mui/material";
+import { Button as MuiButton, darken } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const ROOT = {
     minWidth: 120,
@@ -8,17 +9,16 @@ const ROOT = {
 }
 
 const Button = ({ children, variant, sx, ...other }) => {
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
+
     return (
         <>
         {variant === "primary" &&
             <MuiButton
+                variant="contained"
+                color={accentColor}
                 sx={{ 
                     ...ROOT,
-                    background: '#009ABB', 
-                    color: 'white',
-                    '&:hover': {
-                        background: '#48B0F7', 
-                    },
                     ...sx
                 }} 
                 {...other}
@@ -30,10 +30,10 @@ const Button = ({ children, variant, sx, ...other }) => {
             <MuiButton
                 sx={{ 
                     ...ROOT,
-                    background: '#09425A', 
+                    bgcolor: (theme) => theme.palette[accentColor].dark, 
                     color: 'white',
                     '&:hover': {
-                        background: '#276078', 
+                        bgcolor: (theme) => theme.palette[accentColor].darker, 
                     },
                     ...sx
                 }} 
@@ -46,10 +46,10 @@ const Button = ({ children, variant, sx, ...other }) => {
             <MuiButton
                 sx={{ 
                     ...ROOT,
-                    background: '#D9EFFE', 
-                    color: '#009ABB',
+                    bgcolor: (theme) => theme.palette[accentColor].light, 
+                    color: (theme) => theme.palette[accentColor].main,
                     '&:hover': {
-                        background: '#D2E8F7'
+                        bgcolor: (theme) => darken(theme.palette[accentColor].light, 0.05)
                     },
                     ...sx
                 }} 
@@ -60,16 +60,9 @@ const Button = ({ children, variant, sx, ...other }) => {
         }
         {variant === "outlined" &&
             <MuiButton
-                sx={{ 
-                    ...ROOT,
-                    background: 'white', 
-                    color: '#009ABB',
-                    border: '1px solid #009ABB',
-                    '&:hover': {
-                        background: '#F0F4F5', 
-                    },
-                    ...sx
-                }} 
+                variant="outlined"
+                color={accentColor}
+                sx={{ ...ROOT, bgcolor: 'white', '&:hover': { bgcolor: darken('#FFF', 0.05) },  ...sx }} 
                 {...other}
             >
                 {children}

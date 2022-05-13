@@ -2,8 +2,11 @@ import React from "react";
 import { List, ListSubheader, ListItem, ListItemText, Switch } from "@mui/material";
 import { Button } from "../common";
 import { Visibility } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll, ...other }) => {
+    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
+
     return (
         <List 
             subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1 }} component="div">Danh sách cột</ListSubheader>}
@@ -17,7 +20,7 @@ const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll
                     onClick={() => onClickItem(id)}
                 >
                     <ListItemText>{columns[id]}</ListItemText>
-                    <Switch edge="end" size="small" checked={columnsChecked[id]} />
+                    <Switch edge="end" size="small" color={accentColor} checked={columnsChecked[id]} />
                 </ListItem>
             ))}
 
