@@ -77,7 +77,7 @@ const Home = () => {
                     <Link href="/login" underline="none">
                         <Button variant="outlined">Đăng nhập</Button>
                     </Link>
-                : <Typography color="white" fontWeight="bold">{name}</Typography>}
+                : <Typography color={`${accentColor}.main`} fontWeight="bold">{name}</Typography>}
             </NavBar>
 
             <Container sx={{ pt: '150px' }}>

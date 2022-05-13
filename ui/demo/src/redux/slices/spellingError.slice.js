@@ -37,7 +37,7 @@ const initialState = {
 }
 
 const checkAllWithoutSubSection = (state, section, fieldCheck) => {
-    const filter = Object.keys(sectionState).filter(key => key !== section && !mdSections["attached"].includes(key));
+    const filter = Object.keys(sectionState).filter(key => key !== section && key !== "Tóm tắt bệnh án" && !mdSections["attached"].includes(key));
     return filter.every((key) => {
         if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
             return Object.keys(state[key]).filter(subKey => subKey !== "changed").every(subKey => !state[key][subKey].changed 
@@ -49,7 +49,7 @@ const checkAllWithoutSubSection = (state, section, fieldCheck) => {
 }
 
 const checkAllWithSubSection = (state, subSection, fieldCheck) => {
-    const filter = Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key));
+    const filter = Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key) && key !== "Tóm tắt bệnh án");
     return filter.every((key) => {
         if (key === "Lý do vào viện" || key === "Hỏi bệnh" || key === "Khám bệnh" || key === "Chẩn đoán khi ra viện") {
             return Object.keys(state[key]).filter(subKey => subKey !== "changed" 

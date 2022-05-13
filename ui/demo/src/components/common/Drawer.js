@@ -11,7 +11,7 @@ import mdSections from "../../constants/md_sections.json";
 import { UtilsRole } from "../../utils";
 import UserContext from "../../contexts/UserContext";
 import '../../styles/index.css';
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { ListSwitchColumn } from "../lists";
 import DrawerHeader from "./DrawerHeader";
 import { useSelector, useDispatch } from "react-redux";
@@ -22,7 +22,8 @@ import { HSBAActions } from "../../redux/slices/HSBA.slice";
 const Drawer = ({ open, toggleDrawer, content }) => {
     const { pid } = useParams();
     const location = useLocation();
-    const { role } = useSelector((state) => state.auth.user);
+    const navigate = useNavigate();
+    const { role, id } = useSelector((state) => state.auth.user);
     const { appearSec, setAppearSec, appearTime, setAppearTime, openSec, setOpenSec, 
         danhSachHSBATab, setDanhSachHSBATab, setOpenDialog, setOpenBackdrop } = useContext(UserContext);
     const { updating } = useSelector((state) => state.HSBA);
@@ -31,6 +32,14 @@ const Drawer = ({ open, toggleDrawer, content }) => {
     const dispatch = useDispatch();
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
+    const handleClickUser = () => {
+        if (role === "BN") {
+            navigate(`/user/HSBA/${id}`);
+        } else {
+            navigate('/user/HSBA');
+        }
+    }
+        
     return (
         <MuiDrawer 
             sx={{
@@ -55,7 +64,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                 </IconButton>      
             </DrawerHeader>              
             
-            <Box sx={{ mt: 3, mb: 3 }}>
+            <Box sx={{ mt: 3, mb: 3, cursor: "pointer" }} onClick={handleClickUser}>
                 <Grid container spacing={1.5}>
                     <Grid item xs={4} align="right">
                         <Avatar 
@@ -78,7 +87,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                         {(content.role !== "BN" && updating) ?
                             <>
                                 <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xử lý lỗi</ListSubheader>}>
-                                    {Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key)).map((key, id) =>
+                                    {Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key) && key !== "Tóm tắt bệnh án").map((key, id) =>
                                         ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
                                         || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed) ?
                                             <ListItem 

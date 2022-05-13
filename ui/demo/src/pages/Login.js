@@ -110,7 +110,7 @@ const Login = () => {
         <div className={classes.root}>
             <NavBar>
                 <Link href="/" underline="none" color="inherit">
-                    <Typography fontWeight="bold" color="white">Trang chủ</Typography>
+                    <Typography fontWeight="bold" color={`${accentColor}.dark`}>Trang chủ</Typography>
                 </Link>     
             </NavBar>
             <Container>
@@ -160,6 +160,11 @@ const Login = () => {
                                 sx={{ bgcolor: 'white' }}
                                 value={login.username}
                                 onChange={({ target: { value } }) => setLogin({ ...login, username: value })}
+                                onKeyDown={(event) => {
+                                    if (event.code === "Enter") {
+                                        handleSubmit(event);
+                                    }
+                                }}
                             />
 
                             <TextField 
@@ -172,6 +177,11 @@ const Login = () => {
                                 sx={{ bgcolor: 'white' }}
                                 value={login.password}
                                 onChange={({ target: { value } }) => setLogin({ ...login, password: value })}
+                                onKeyDown={(event) => {
+                                    if (event.code === "Enter") {
+                                        handleSubmit(event);
+                                    }
+                                }}
                             />
 
                             <Link 

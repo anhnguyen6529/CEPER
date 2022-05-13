@@ -92,8 +92,8 @@ def createNewHSBA():
     conn.commit()
 
     ptdcns = data["phieuTDChucNangSong"]["data"][0]
-    cursor.execute("INSERT INTO PHIEU_TD_CHUC_NANG_SONG (PID, Ngay_Gio, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
-                   (data["pid"], ptdcns["ngayGio"], str(ptdcns["mach"]), str(ptdcns["nhietDo"]), ptdcns["huyetAp"], str(ptdcns["nhipTho"]), str(ptdcns["canNang"]), ptdcns["dieuDuongGhi"]))
+    cursor.execute("INSERT INTO PHIEU_TD_CHUC_NANG_SONG (PID, Ngay_Gio, Khoa, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);",
+                   (data["pid"], ptdcns["ngayGio"], data["khoa"], str(ptdcns["mach"]), str(ptdcns["nhietDo"]), ptdcns["huyetAp"], str(ptdcns["nhipTho"]), str(ptdcns["canNang"]), ptdcns["dieuDuongGhi"]))
     conn.commit()
 
     cursor.execute("INSERT INTO USERS (ID, Username, Password, Role, Name, Position, Gender, Date_Of_Birth) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
