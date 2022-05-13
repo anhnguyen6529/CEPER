@@ -101,7 +101,7 @@ def getOneHSBAByPID(pid):
         dt["bacSiGhi"] = d[5]
         result["toDieuTri"]["data"].append(dt)
 
-    cursor.execute("SELECT Ngay_Gio, Theo_Doi_Dien_Bien, Thuc_Hien_Y_Lenh, Xac_Nhan, Dieu_Duong_Ghi FROM PHIEU_CHAM_SOC WHERE PID = " +
+    cursor.execute("SELECT Ngay_Gio, Khoa, Theo_Doi_Dien_Bien, Thuc_Hien_Y_Lenh, Xac_Nhan, Dieu_Duong_Ghi FROM PHIEU_CHAM_SOC WHERE PID = " +
                    pid + " ORDER BY Ngay_Gio;")
     conn.commit()
     result["phieuChamSoc"] = dict()
@@ -109,13 +109,14 @@ def getOneHSBAByPID(pid):
     for d in cursor.fetchall():
         dt = dict()
         dt["ngayGio"] = d[0]
-        dt["theoDoiDienBien"] = json.loads(d[1])
-        dt["thucHienYLenh"] = json.loads(d[2])
-        dt["xacNhan"] = json.loads(d[3])
-        dt["dieuDuongGhi"] = d[4]
+        dt["khoa"] = d[1]
+        dt["theoDoiDienBien"] = json.loads(d[2])
+        dt["thucHienYLenh"] = json.loads(d[3])
+        dt["xacNhan"] = json.loads(d[4])
+        dt["dieuDuongGhi"] = d[5]
         result["phieuChamSoc"]["data"].append(dt)
 
-    cursor.execute("SELECT Ngay_Thang, Ten_Dich_Truyen, So_Luong, Lo_San_Xuat, Toc_Do, Thoi_Gian_Bat_Dau, Thoi_Gian_Ket_Thuc, Bac_Si_Chi_Dinh, Dieu_Duong_Thuc_Hien FROM PHIEU_TD_TRUYEN_DICH WHERE PID = " +
+    cursor.execute("SELECT Ngay_Thang, Khoa, Ten_Dich_Truyen, So_Luong, Lo_San_Xuat, Toc_Do, Thoi_Gian_Bat_Dau, Thoi_Gian_Ket_Thuc, Bac_Si_Chi_Dinh, Dieu_Duong_Thuc_Hien FROM PHIEU_TD_TRUYEN_DICH WHERE PID = " +
                    pid + " ORDER BY Ngay_Thang, Thoi_Gian_Bat_Dau;")
     conn.commit()
     result["phieuTDTruyenDich"] = dict()
@@ -128,12 +129,13 @@ def getOneHSBAByPID(pid):
     for index in range(0, len(data)):
         value = dict()
         for i in range(0, len(values_key)):
-            value[values_key[i]] = data[index][1 + i]
+            value[values_key[i]] = data[index][2 + i]
         if data[index][0] != preNgayThang:
             if dt != dict():
                 result["phieuTDTruyenDich"]["data"].append(dt)
                 dt = dict()
             dt["ngayThang"] = data[index][0]
+            dt["khoa"] = data[index][1]
             dt["values"] = []
             preNgayThang = data[index][0]
             dt["values"].append(value)
@@ -142,12 +144,12 @@ def getOneHSBAByPID(pid):
         else:
             dt["values"].append(value)
 
-    cursor.execute("SELECT Ngay_Gio, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi FROM PHIEU_TD_CHUC_NANG_SONG WHERE PID = " +
+    cursor.execute("SELECT Ngay_Gio, Khoa, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi FROM PHIEU_TD_CHUC_NANG_SONG WHERE PID = " +
                    pid + " ORDER BY Ngay_Gio;")
     conn.commit()
     result["phieuTDChucNangSong"] = dict()
     result["phieuTDChucNangSong"]["data"] = []
-    data_key = ["ngayGio", "mach", "nhietDo",
+    data_key = ["ngayGio", "khoa", "mach", "nhietDo",
                 "huyetAp", "nhipTho", "canNang", "dieuDuongGhi"]
     for d in cursor.fetchall():
         dt = dict()
@@ -155,12 +157,12 @@ def getOneHSBAByPID(pid):
             dt[data_key[i]] = d[i]
         result["phieuTDChucNangSong"]["data"].append(dt)
 
-    cursor.execute("SELECT Ngay_Gio_Dung_Thuoc, Thuoc_Di_Ung, Kieu_Di_Ung, Bieu_Hien_Lam_Sang, Bac_Si_Xac_Nhan, Ghi_Chu FROM PHIEU_TD_DI_UNG_THUOC WHERE PID = " +
+    cursor.execute("SELECT Ngay_Gio_Dung_Thuoc, Khoa, Thuoc_Di_Ung, Kieu_Di_Ung, Bieu_Hien_Lam_Sang, Bac_Si_Xac_Nhan, Ghi_Chu FROM PHIEU_TD_DI_UNG_THUOC WHERE PID = " +
                    pid + " ORDER BY Ngay_Gio_Dung_Thuoc;")
     conn.commit()
     result["phieuTDDiUngThuoc"] = dict()
     result["phieuTDDiUngThuoc"]["data"] = []
-    data_key = ["ngayGioDungThuoc", "thuocDiUng", "kieuDiUng",
+    data_key = ["ngayGioDungThuoc", "khoa", "thuocDiUng", "kieuDiUng",
                 "bieuHienLamSang", "bacSiXacNhan", "ghiChu"]
     for d in cursor.fetchall():
         dt = dict()
@@ -217,8 +219,8 @@ def updateHSBA(pid):
     conn = mysql.connect()
     cursor = conn.cursor()
 
-    cursor.execute("UPDATE HO_SO_BENH_AN SET Trang_Thai = %s, Khoa = %s, Phong = %s, Giuong = %s WHERE PID = %s;",
-                   (data["trangThai"], data["khoa"], data["phong"], data["giuong"], pid))
+    cursor.execute("UPDATE HO_SO_BENH_AN SET Trang_Thai = %s WHERE PID = %s;",
+                   (data["trangThai"], pid))
     conn.commit()
 
     if "benhAn" in data:
@@ -247,7 +249,7 @@ def updateHSBA(pid):
     if "newDataLength" in data["phieuChamSoc"] and data["phieuChamSoc"]["newDataLength"] > 0:
         pcs = pcs[-data["phieuChamSoc"]["newDataLength"]:]
         for row in pcs:
-            cursor.execute("INSERT INTO PHIEU_CHAM_SOC (PID, Ngay_Gio, Theo_Doi_Dien_Bien, Thuc_Hien_Y_Lenh, Xac_Nhan, Dieu_Duong_Ghi) VALUES (\'" + pid + "', '" + row["ngayGio"] + "', JSON_ARRAY(" + str(
+            cursor.execute("INSERT INTO PHIEU_CHAM_SOC (PID, Ngay_Gio, Khoa, Theo_Doi_Dien_Bien, Thuc_Hien_Y_Lenh, Xac_Nhan, Dieu_Duong_Ghi) VALUES (\'" + pid + "', '" + row["ngayGio"] + "', '" + row["khoa"] + "', JSON_ARRAY(" + str(
                 row["theoDoiDienBien"])[1:-1] + "), JSON_ARRAY(" + str(row["thucHienYLenh"])[1:-1] + "), JSON_ARRAY(" + str(row["xacNhan"])[1:-1] + "), \'" + row["dieuDuongGhi"] + "');")
             conn.commit()
 
@@ -256,24 +258,24 @@ def updateHSBA(pid):
         ptdtd = ptdtd[-data["phieuTDTruyenDich"]["newDataLength"]:]
         for row in ptdtd:
             for value in row["values"]:
-                cursor.execute("INSERT INTO PHIEU_TD_TRUYEN_DICH (PID, Ngay_Thang, Ten_Dich_Truyen, So_Luong, Lo_San_Xuat, Toc_Do, Thoi_Gian_Bat_Dau, Thoi_Gian_Ket_Thuc, Bac_Si_Chi_Dinh, Dieu_Duong_Thuc_Hien) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
-                               (pid, row["ngayThang"], value["tenDichTruyen"], str(value["soLuong"]), value["loSanXuat"], str(value["tocDo"]), value["thoiGianBatDau"], value["thoiGianKetThuc"], value["BSChiDinh"], value["DDThucHien"]))
+                cursor.execute("INSERT INTO PHIEU_TD_TRUYEN_DICH (PID, Ngay_Thang, Khoa, Ten_Dich_Truyen, So_Luong, Lo_San_Xuat, Toc_Do, Thoi_Gian_Bat_Dau, Thoi_Gian_Ket_Thuc, Bac_Si_Chi_Dinh, Dieu_Duong_Thuc_Hien) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);",
+                               (pid, row["ngayThang"], row["khoa"], value["tenDichTruyen"], str(value["soLuong"]), value["loSanXuat"], str(value["tocDo"]), value["thoiGianBatDau"], value["thoiGianKetThuc"], value["BSChiDinh"], value["DDThucHien"]))
                 conn.commit()
 
     ptdcns = data["phieuTDChucNangSong"]["data"]
     if "newDataLength" in data["phieuTDChucNangSong"] and data["phieuTDChucNangSong"]["newDataLength"] > 0:
         ptdcns = ptdcns[-data["phieuTDChucNangSong"]["newDataLength"]:]
         for row in ptdcns:
-            cursor.execute("INSERT INTO PHIEU_TD_CHUC_NANG_SONG (PID, Ngay_Gio, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
-                           (pid, row["ngayGio"], str(row["mach"]), str(row["nhietDo"]), row["huyetAp"], str(row["nhipTho"]), str(row["canNang"]), row["dieuDuongGhi"]))
+            cursor.execute("INSERT INTO PHIEU_TD_CHUC_NANG_SONG (PID, Ngay_Gio, Khoa, Mach, Nhiet_Do, Huyet_Ap, Nhip_Tho, Can_Nang, Dieu_Duong_Ghi) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);",
+                           (pid, row["ngayGio"], row["khoa"], str(row["mach"]), str(row["nhietDo"]), row["huyetAp"], str(row["nhipTho"]), str(row["canNang"]), row["dieuDuongGhi"]))
             conn.commit()
 
     ptddut = data["phieuTDDiUngThuoc"]["data"]
     if "newDataLength" in data["phieuTDDiUngThuoc"] and data["phieuTDDiUngThuoc"]["newDataLength"] > 0:
         ptddut = ptddut[-data["phieuTDDiUngThuoc"]["newDataLength"]:]
         for row in ptddut:
-            cursor.execute("INSERT INTO PHIEU_TD_DI_UNG_THUOC (PID, Ngay_Gio_Dung_Thuoc, Thuoc_Di_Ung, Kieu_Di_Ung, Bieu_Hien_Lam_Sang, Bac_Si_Xac_Nhan, Ghi_Chu) VALUES (\'" + pid + "', '" +
-                           row["ngayGioDungThuoc"] + "', JSON_ARRAY(" + str(row["thuocDiUng"])[1:-1] + "), '" + row["kieuDiUng"] + "', '" + row["bieuHienLamSang"] + "', '" + row["bacSiXacNhan"] + "', '" + row["ghiChu"] + "');")
+            cursor.execute("INSERT INTO PHIEU_TD_DI_UNG_THUOC (PID, Ngay_Gio_Dung_Thuoc, Khoa, Thuoc_Di_Ung, Kieu_Di_Ung, Bieu_Hien_Lam_Sang, Bac_Si_Xac_Nhan, Ghi_Chu) VALUES (\'" + pid + "', '" +
+                           row["ngayGioDungThuoc"] + "', '" + row["khoa"] + "', JSON_ARRAY(" + str(row["thuocDiUng"])[1:-1] + "), '" + row["kieuDiUng"] + "', '" + row["bieuHienLamSang"] + "', '" + row["bacSiXacNhan"] + "', '" + row["ghiChu"] + "');")
             conn.commit()
 
     ngay_thang = data["phieuCongKhaiThuoc"]["ngayThang"]
@@ -303,4 +305,21 @@ def updateHSBA(pid):
     cursor.close()
     conn.close()
     response = jsonify({"msg": "Update successfully"})
+    return response
+
+
+@app.route('/user/hsba/<pid>/transfer-faculty', methods=['POST'])
+@jwt_required()
+def transferFaculty(pid):
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE HO_SO_BENH_AN SET Khoa = %s, Phong = %s, Giuong = %s WHERE PID = %s;",
+                   (data["khoa"], data["phong"], data["giuong"], pid))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+    response = jsonify({"msg": "Transfer faculty successfully"})
     return response

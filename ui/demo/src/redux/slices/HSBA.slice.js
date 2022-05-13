@@ -102,16 +102,16 @@ export const initialHSBAState = {
         data: [] //[{ ngayGio: '', khoaDieuTri: '', chanDoan: '', dienBienBenh: '', yLenh: '', bacSiGhi: '' }],
     },
     phieuChamSoc: {
-        data: [] //[{ ngayGio: '', theoDoiDienBien: [''], thucHienYLenh: [''], xacNhan: [''], dieuDuongGhi: '' }],
+        data: [] //[{ ngayGio: '', khoa: '', theoDoiDienBien: [''], thucHienYLenh: [''], xacNhan: [''], dieuDuongGhi: '' }],
     },
     phieuTDTruyenDich: {
-        data: [] //[{ ngayThang: '', values: [{ tenDichTruyen: '', soLuong: 0, loSanXuat: '', tocDo: 0, thoiGianBatDau: '', thoiGianKetThuc: '', BSChiDinh: '', DDThucHien: '' }] }],
+        data: [] //[{ ngayThang: '', khoa: '', values: [{ tenDichTruyen: '', soLuong: 0, loSanXuat: '', tocDo: 0, thoiGianBatDau: '', thoiGianKetThuc: '', BSChiDinh: '', DDThucHien: '' }] }],
     },
     phieuTDChucNangSong: {
-        data: [] //[{ ngayGio: '', mach: 0, nhietDo: 0, huyetAp: '', nhipTho: 0, canNang: 0, dieuDuongGhi: '' }],
+        data: [] //[{ ngayGio: '', khoa: '', mach: 0, nhietDo: 0, huyetAp: '', nhipTho: 0, canNang: 0, dieuDuongGhi: '' }],
     },
     phieuTDDiUngThuoc: {
-        data: [] //[{ ngayGioDungThuoc: '', thuocDiUng: [''], kieuDiUng: '', bieuHienLamSang: '', bacSiXacNhan: '', ghiChu: '' }]
+        data: [] //[{ ngayGioDungThuoc: '', khoa: '', thuocDiUng: [''], kieuDiUng: '', bieuHienLamSang: '', bacSiXacNhan: '', ghiChu: '' }]
     },
     phieuCongKhaiThuoc: {
         ngayThang: [],
@@ -128,6 +128,8 @@ const initialState = {
     setting: false,
     loadingError: '',
     settingError: '',
+    transfering: false,
+    transferingError: '',
     ...initialHSBAState
 }
 
@@ -216,6 +218,30 @@ const HSBASlice = createSlice({
                 ...state,
                 setting: false,
                 settingError: action.payload
+            }
+        })
+        .addCase(HSBAThunk.transferFaculty.pending, (state) => {
+            return {
+                ...state,
+                transfering: true
+            }
+        })
+        .addCase(HSBAThunk.transferFaculty.fulfilled, (state, action) => {
+            const { khoa, phong, giuong } = action.payload
+            return {
+                ...state,
+                transfering: false,
+                transferingError: '',
+                khoa: khoa,
+                phong: phong,
+                giuong: giuong
+            }
+        })
+        .addCase(HSBAThunk.transferFaculty.rejected, (state, action) => {
+            return {
+                ...state,
+                transfering: false,
+                transferingError: action.payload
             }
         })
     }

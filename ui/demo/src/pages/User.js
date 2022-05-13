@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, CssBaseline, Typography, Divider, Breadcrumbs, Link, Container, Grid } from "@mui/material";
-import { Add, NavigateNext } from "@mui/icons-material";
+import { Add, MoveDown, NavigateNext } from "@mui/icons-material";
 import "../styles/index.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router";
@@ -16,6 +16,7 @@ import { useSnackbar } from "notistack";
 import useToken from "../hooks/useToken";
 import authApi from "../apis/auth";
 import store from "../redux/store";
+import DialogChuyenKhoa from "../components/dialogs/DialogChuyenKhoa";
 
 const User = () => {
     const navigate = useNavigate();
@@ -52,6 +53,7 @@ const User = () => {
     });
     const [openDialog, setOpenDialog] = useState(false);
     const [openBackdrop, setOpenBackdrop] = useState(false);
+    const [openDialogChuyenKhoa, setOpenDialogChuyenKhoa] = useState(false);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -95,13 +97,8 @@ const User = () => {
     const handleConfirmUpdate = () => {
         const checkBenhAn = mdSections["Bệnh án"].some(key => spellingError[key].changed);
         const checkTongKetBA = mdSections["Tổng kết bệnh án"].some(key => spellingError[key].changed);
-        const khoaDieuTri = selectedHSBA.toDieuTri.data.length > 0 
-            ? selectedHSBA.toDieuTri.data[selectedHSBA.toDieuTri.data.length - 1].khoaDieuTri : null; 
         dispatch(HSBAThunk.updateHSBA({
             pid: selectedHSBA.pid, 
-            ...(!!khoaDieuTri && khoaDieuTri !== selectedHSBA.khoa 
-                ? { khoa: khoaDieuTri, phong: "", giuong: "" }
-                : { khoa: selectedHSBA.khoa, phong: selectedHSBA.phong, giuong: selectedHSBA.giuong }),
             trangThai: checkBenhAn ? "Đang điều trị" : (checkTongKetBA ? "Đã ra viện" : selectedHSBA.trangThai),
             ...(checkBenhAn && { 
                 benhAn: { ...selectedHSBA.benhAn, thoiGian: new Date().toISOString() },
@@ -209,7 +206,7 @@ const User = () => {
                                             </Link>
                                             {typeof(pid) !== 'undefined' && 
                                                 <Typography key="2">
-                                                    Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
+                                                    Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã BN: {selectedHSBA.pid})
                                                 </Typography>
                                             }
                                             {creatingMode && <Typography key="2">Tạo bệnh án mới</Typography>}
@@ -223,6 +220,15 @@ const User = () => {
                                                     onClick={() => dispatch(danhSachHSBAActions.setCreatingMode(true))}
                                                 >
                                                     Tạo bệnh án mới
+                                                </Button>
+                                            : null}
+                                            {typeof(pid) !== 'undefined' && user.role === "DD" ? 
+                                                <Button
+                                                    variant="primary-dark"
+                                                    startIcon={<MoveDown />}
+                                                    onClick={() => setOpenDialogChuyenKhoa(true)}
+                                                >
+                                                    Chuyển khoa
                                                 </Button>
                                             : null}
                                     </Grid>
@@ -243,7 +249,7 @@ const User = () => {
                                     </Link>
                                     {typeof(pid) !== 'undefined' && 
                                         <Typography key="2">
-                                            Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã: {selectedHSBA.pid})
+                                            Bệnh nhân {selectedHSBA.hanhChinh.hoTen} (Mã BN: {selectedHSBA.pid})
                                         </Typography>
                                     }
                                     {creatingMode && <Typography key="2">Tạo bệnh án mới</Typography>}
@@ -252,6 +258,8 @@ const User = () => {
                         </Container>
                     : null}
                 </Main>
+
+                <DialogChuyenKhoa open={openDialogChuyenKhoa} setOpen={setOpenDialogChuyenKhoa} />
 
                 <DialogConfirm
                     open={openDialog}

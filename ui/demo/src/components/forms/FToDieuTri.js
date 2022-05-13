@@ -44,8 +44,8 @@ const removeHashAndSpaces = (arrStr) => {
 const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { updating, confirmUpdate, danhSachYLenh } = useSelector((state) => state.HSBA);
-    const { role, name, id, speciality } = useSelector(state => state.auth.user);
+    const { updating, confirmUpdate, danhSachYLenh, khoa } = useSelector((state) => state.HSBA);
+    const { role, name, id } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -109,7 +109,7 @@ const FToDieuTri = () => {
             const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n')), now = new Date().toISOString();
             setRows([...rows, {
                 ngayGio: now,
-                khoaDieuTri: speciality,
+                khoaDieuTri: khoa,
                 chanDoan: newChanDoan,
                 dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
                 yLenh: tYLenh,
@@ -199,7 +199,7 @@ const FToDieuTri = () => {
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
-                                    <TableCell className="tableBodyBorderRight">{speciality}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{khoa}</TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             multiline

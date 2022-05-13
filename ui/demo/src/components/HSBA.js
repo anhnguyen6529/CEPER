@@ -43,7 +43,7 @@ const HSBA = () => {
     const { spellingError } = useSelector((state) => state);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const benhNhan = useSelector(state => state.HSBA);
-    const { loading, loadingError, updating, confirmUpdate } = benhNhan;
+    const { loading, loadingError, updating, confirmUpdate, transfering } = benhNhan;
 
     useEffect(() => {
         if (loadingError === "Token has expired") {
@@ -301,7 +301,11 @@ const HSBA = () => {
                     <Backdrop open={openBackdrop} sx={{ color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                         <div className="df fdc aic jcc">
                             <CircularProgress color="inherit" sx={{ mt: 3, mb: 1 }}/>
-                            <Typography color="inherit">{confirmUpdate ? "Đang cập nhật bệnh án..." : "Đang xử lý thông tin bệnh án..."}</Typography>
+                            <Typography color="inherit">
+                                {confirmUpdate && "Đang cập nhật bệnh án..."}
+                                {transfering && "Đang chuyển khoa..."}
+                                {updating && "Đang xử lý thông tin bệnh án..."}
+                            </Typography>
                         </div>
                     </Backdrop>
                 </>

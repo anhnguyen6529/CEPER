@@ -29,7 +29,8 @@ const headCells = [
     { id: 'thoiGianBatDau', align: 'center', label: 'Bắt đầu', unit: '', width: '10%', minWidth: 170 },
     { id: 'thoiGianKetThuc', align: 'center', label: 'Kết thúc', unit: '', width: '10%', minWidth: 170 },
     { id: 'BSChiDinh', align: 'left', label: 'Bác sĩ chỉ định', unit: '', width: '15%', minWidth: 170 },
-    { id: 'DDThucHien', align: 'left', label: 'Điều dưỡng thực hiện', unit: '', width: '15%', minWidth: 170 }
+    { id: 'DDThucHien', align: 'left', label: 'Điều dưỡng thực hiện', unit: '', width: '15%', minWidth: 170 },
+    { id: 'khoa', label: 'Khoa', width: '15%', minWidth: 115 }
 ];
 
 const setTimetoDate = (date, time) => {
@@ -43,7 +44,7 @@ const setTimetoDate = (date, time) => {
 const FPhieuTDTruyenDich = () => {
     const content = useSelector((state) => state.HSBA.phieuTDTruyenDich);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
+    const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
@@ -105,6 +106,7 @@ const FPhieuTDTruyenDich = () => {
         ) {
             setRows([...rows, {
                 ngayThang: format(new Date(newNgayThang), "yyyy-MM-dd"),
+                khoa: khoa,
                 values: newValues.map((newValue) => {
                     return {
                         ...newValue, 
@@ -230,7 +232,8 @@ const FPhieuTDTruyenDich = () => {
                                             <TableCell className="tableBodyBorderRight" align="center">{format(new Date(row.values[0].thoiGianBatDau), "dd/MM/yyyy HH:mm")}</TableCell>
                                             <TableCell className="tableBodyBorderRight" align="center">{format(new Date(row.values[0].thoiGianKetThuc), "dd/MM/yyyy HH:mm")}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.values[0].BSChiDinh}</TableCell>
-                                            <TableCell>{row.values[0].DDThucHien}</TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.values[0].DDThucHien}</TableCell>
+                                            <TableCell rowSpan={row.values.length}>{row.khoa}</TableCell>
                                         </TableRow>
                                         {row.values.slice(1).map((value, idx) => (
                                             <TableRow hover key={idx + 1} sx={{ bgcolor: index % 2 === 0 ? 'rgba(0, 0, 0, 0.04)' : 'white' }}>
@@ -478,7 +481,8 @@ const FPhieuTDTruyenDich = () => {
                                                 getOptionDisabled={(option) => newValues[0].BSChiDinh === option}
                                             />
                                         </TableCell>
-                                        <TableCell>{`${id} - ${name}`}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{`${id} - ${name}`}</TableCell>
+                                        <TableCell rowSpan={newValues.length}>{khoa}</TableCell>
                                     </TableRow>
 
                                     {newValues.slice(1).map((newValue, idx) => (

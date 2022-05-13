@@ -20,18 +20,19 @@ const SECTION_FIELD = "phieuTDChucNangSong";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', unit: '', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', unit: '', width: '5%', minWidth: 80 },
-    { id: 'mach', label: 'MẠCH', unit: 'lần/phút', width: '12%', minWidth: 120 },
-    { id: 'nhietDo', label: 'NHIỆT ĐỘ', unit: '°C', width: '12%', minWidth: 120 },
-    { id: 'huyetAp', label: 'HUYẾT ÁP', unit: 'mmHg', width: '17%', minWidth: 190 },
-    { id: 'nhipTho', label: 'NHỊP THỞ', unit: 'lần/phút', width: '12%', minWidth: 120 },
-    { id: 'canNang', label: 'CÂN NẶNG', unit: 'kg', width: '14%', minWidth: 130 },
-    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '18%', minWidth: 170 }
+    { id: 'khoa', label: 'Khoa', width: '15%', minWidth: 115 },
+    { id: 'mach', label: 'MẠCH', unit: 'lần/phút', width: '10%', minWidth: 0 },
+    { id: 'nhietDo', label: 'NHIỆT ĐỘ', unit: '°C', width: '10%', minWidth: 0 },
+    { id: 'huyetAp', label: 'HUYẾT ÁP', unit: 'mmHg', width: '17%', minWidth: 0 },
+    { id: 'nhipTho', label: 'NHỊP THỞ', unit: 'lần/phút', width: '9%', minWidth: 0 },
+    { id: 'canNang', label: 'CÂN NẶNG', unit: 'kg', width: '10%', minWidth: 0 },
+    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '14%', minWidth: 0 }
 ];
 
 const FPhieuTDChucNangSong = () => {
     const content = useSelector((state) => state.HSBA.phieuTDChucNangSong);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
+    const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { appearTime } = useContext(UserContext);
@@ -89,6 +90,7 @@ const FPhieuTDChucNangSong = () => {
             const now = new Date().toISOString();
             setRows([...rows, {
                 ngayGio: now, 
+                khoa: khoa,
                 mach: newMach, 
                 nhietDo: newNhietDo, 
                 huyetAp: String(newHuyetAp[0]).concat('/').concat(String(newHuyetAp[1])), 
@@ -164,6 +166,7 @@ const FPhieuTDChucNangSong = () => {
                                     <StyledTableRow hover key={index}>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.khoa}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.mach}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.nhietDo}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.huyetAp}</TableCell>
@@ -178,6 +181,7 @@ const FPhieuTDChucNangSong = () => {
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{khoa}</TableCell>
                                     <TableCell className="tableBodyBorderRight">
                                         <TextField
                                             type="number"

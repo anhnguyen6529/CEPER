@@ -33,6 +33,22 @@ const HSBAThunk = {
                 return rejectWithValue(error.response.data.msg);
             }
         }
+    ),
+    transferFaculty: createAsyncThunk(
+        'HSBA/transferFaculty',
+        async (apiData, { rejectWithValue }) => {
+            try {
+                const apiResponse = await HSBAApi.transferFaculty(apiData);
+
+                if (apiResponse.status !== 200) {
+                    throw new Error(apiResponse.statusText);
+                }
+
+                return apiData;
+            } catch (error) {
+                return rejectWithValue(error.response.data.msg);
+            }
+        }
     )
 }
 

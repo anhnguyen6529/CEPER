@@ -20,16 +20,17 @@ const SECTION_FIELD = "phieuChamSoc";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', width: '5%', minWidth: 85 },
+    { id: 'khoa', label: 'Khoa', width: '10%', minWidth: 115 },
     { id: 'theoDoiDienBien', label: 'THEO DÕI DIỄN BIẾN', width: '25%', minWidth: 250 },
     { id: 'thucHienYLenh', label: 'THỰC HIỆN Y LỆNH', width: '30%', minWidth: 250 },
-    { id: 'xacNhan', label: 'Xác nhận', width: '15%', minWidth: 160 },
-    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', width: '15%', minWidth: 170 }
+    { id: 'xacNhan', label: 'Xác nhận', width: '10%', minWidth: 160 },
+    { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', width: '10%', minWidth: 170 }
 ];
 
 const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { updating, confirmUpdate, danhSachYLenh } = useSelector((state) => state.HSBA);
+    const { updating, confirmUpdate, danhSachYLenh, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { appearTime } = useContext(UserContext);
@@ -86,6 +87,7 @@ const FPhieuChamSoc = () => {
             const now = new Date().toISOString();
             setRows([...rows, {
                 ngayGio: now, 
+                khoa: khoa, 
                 theoDoiDienBien: newTheoDoiDienBien, 
                 thucHienYLenh: newThucHienYLenh.map(thyl => thyl.yLenh),
                 xacNhan: newThucHienYLenh.map(thyl => thyl.xacNhan),
@@ -170,6 +172,7 @@ const FPhieuChamSoc = () => {
                                             <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
                                                 {format(new Date(row.ngayGio), 'HH:mm')}
                                             </TableCell>
+                                            <TableCell className="tableBodyBorderRight">{row.khoa}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[0]}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.thucHienYLenh[0]}</TableCell> 
                                             <TableCell className="tableBodyBorderRight">
@@ -210,6 +213,7 @@ const FPhieuChamSoc = () => {
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{khoa}</TableCell>
                                         <TableCell className="tableBodyBorderRight">
                                             <TextField
                                                 multiline

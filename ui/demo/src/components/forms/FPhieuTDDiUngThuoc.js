@@ -19,19 +19,20 @@ const SECTION_FIELD = "phieuTDDiUngThuoc";
 const headCells = [
     { id: 'ngayGioDungThuoc', align: 'left', label: 'Ngày', width: '10%', minWidth: 115 },
     { id: 'gioDungThuoc', align: 'left', label: 'Giờ', width: '5%', minWidth: 85 },
-    { id: 'thuocDiUng', align: 'left', label: 'THUỐC DỊ ỨNG', width: '25%', minWidth: 200 },
+    { id: 'khoa', label: 'Khoa', width: '10%', minWidth: 115 },
+    { id: 'thuocDiUng', align: 'left', label: 'THUỐC DỊ ỨNG', width: '20%', minWidth: 200 },
     { id: 'nghiNgo', align: 'center', label: 'Nghi ngờ', width: '5%', minWidth: 0 },
     { id: 'chacChan', align: 'center', label: 'Chắc chắn', width: '5%', minWidth: 0 },
     { id: 'bieuHienLamSang', align: 'left', label: 'Biểu hiện lâm sàng', width: '20%', minWidth: 250 },
-    { id: 'bacSiXacNhan', align: 'left', label: 'Bác sĩ xác nhận chẩn đoán', width: '15%', minWidth: 170 },
-    { id: 'ghiChu', align: 'left', label: 'Ghi chú', width: '15%', minWidth: 150 }
+    { id: 'bacSiXacNhan', align: 'left', label: 'Bác sĩ xác nhận chẩn đoán', width: '10%', minWidth: 170 },
+    { id: 'ghiChu', align: 'left', label: 'Ghi chú', width: '15%', minWidth: 120 }
 ];
 
 const FPhieuTDDiUngThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuTDDiUngThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
-    const { role, name, id, position } = useSelector((state) => state.auth.user);
+    const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
+    const { role, name, id } = useSelector((state) => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -86,6 +87,7 @@ const FPhieuTDDiUngThuoc = () => {
             const now = new Date().toISOString();
             setRows([...rows, {
                 ngayGioDungThuoc: now,
+                khoa: khoa,
                 thuocDiUng: newThuocDiUng,
                 kieuDiUng: newKieuDiUng,
                 bieuHienLamSang: newBieuHienLamSang,
@@ -162,6 +164,7 @@ const FPhieuTDDiUngThuoc = () => {
                                     <StyledTableRow hover key={index}>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{format(new Date(row.ngayGioDungThuoc), 'HH:mm')}</TableCell>
+                                        <TableCell className="tableBodyBorderRight">{row.khoa}</TableCell>
                                         <TableCell className="tableBodyBorderRight">{row.thuocDiUng.join('\n')}</TableCell>
                                         <TableCell className="tableBodyBorderRight" align="center">
                                             {row.kieuDiUng === "Nghi ngờ" ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
@@ -176,10 +179,11 @@ const FPhieuTDDiUngThuoc = () => {
                                 );
                             })}
 
-                            {(role === "BS" && position === "Bác sĩ điều trị" && !ngayRaVien) ?
+                            {(role === "BS" && !ngayRaVien) ?
                                 <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'HH:mm')}</TableCell>
+                                    <TableCell className="tableBodyBorderRight">{khoa}</TableCell>
                                     <TableCell className="tableBodyBorderRight" sx={{ pb: 0.5 }}>
                                         {newThuocDiUng.map((thuocDiUng, id) => (
                                             <Box className="df aic" sx={{ mb: 1.5 }} key={id}>
