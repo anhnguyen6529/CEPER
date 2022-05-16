@@ -163,7 +163,7 @@ const FPhieuTDChucNangSong = () => {
                         <TableBody>
                             {rows.length === 0 && role !== "DD" ? (
                                 <StyledTableRow>
-                                    <TableCell colSpan={8} align="center">(<i>trống</i>)</TableCell>
+                                    <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
                             ) : (rowsPerPage > 0
                                 ? UtilsTable.stableSort(rows, UtilsTable.getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

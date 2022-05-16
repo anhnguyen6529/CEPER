@@ -38,7 +38,7 @@ const danhSachHSBASlice = createSlice({
                 ...state,
                 creatingHSBA: false,
                 creatingHSBAError: '',
-                hienTai: [action.payload, ...state.hienTai],
+                hienTai: [{ ...action.payload, tuoi: UtilsDateTime.getAge(action.payload.ngaySinh) }, ...state.hienTai],
                 creatingMode: false
             }
         })
