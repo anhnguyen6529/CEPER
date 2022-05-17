@@ -69,6 +69,7 @@ const FToDieuTri = () => {
             const newDanhSachYLenh = [];
             rows.slice(content.data.length).forEach((row) => {
                 newDanhSachYLenh.push({
+                    khoa: khoa,
                     yLenh: format(new Date(row.ngayGio), 'dd/MM/yyyy HH:mm') + ' - ' + row.yLenh.join('; ') + ' - BS: ' + name,
                     xacNhan: 'Chưa thực hiện'
                 });

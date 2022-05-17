@@ -117,7 +117,7 @@ export const initialHSBAState = {
         ngayThang: [],
         data: [] //[{ tenThuoc: '', donVi: '', ngayThang: [''], tongSo: 0, donGia: 0, thanhTien: 0, ghiChu: '' }],
     },
-    danhSachYLenh: []
+    danhSachYLenh: [] //[{ khoa: '', yLenh: '', xacNhan: '' }]
 }
 
 const initialState = {

@@ -20,10 +20,10 @@ const SECTION_FIELD = "phieuTDChucNangSong";
 const headCells = [
     { id: 'ngayGio', label: 'Ngày', unit: '', width: '10%', minWidth: 115 },
     { id: 'gio', label: 'Giờ', unit: '', width: '5%', minWidth: 80 },
-    { id: 'khoa', label: 'Khoa', width: '15%', minWidth: 115 },
+    { id: 'khoa', label: 'Khoa', width: '12%', minWidth: 115 },
     { id: 'mach', label: 'MẠCH', unit: 'lần/phút', width: '10%', minWidth: 0 },
     { id: 'nhietDo', label: 'NHIỆT ĐỘ', unit: '°C', width: '10%', minWidth: 0 },
-    { id: 'huyetAp', label: 'HUYẾT ÁP', unit: 'mmHg', width: '17%', minWidth: 0 },
+    { id: 'huyetAp', label: 'HUYẾT ÁP', unit: 'mmHg', width: '20%', minWidth: 0 },
     { id: 'nhipTho', label: 'NHỊP THỞ', unit: 'lần/phút', width: '9%', minWidth: 0 },
     { id: 'canNang', label: 'CÂN NẶNG', unit: 'kg', width: '10%', minWidth: 0 },
     { id: 'dieuDuongGhi', label: 'Điều dưỡng ghi', unit: '', width: '14%', minWidth: 0 }

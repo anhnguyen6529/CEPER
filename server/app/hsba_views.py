@@ -197,13 +197,14 @@ def getOneHSBAByPID(pid):
         result["phieuCongKhaiThuoc"]["data"].append(dt)
 
     cursor.execute(
-        "SELECT Y_Lenh, Xac_Nhan FROM DANH_SACH_Y_LENH WHERE PID = " + pid + " ;")
+        "SELECT Khoa, Y_Lenh, Xac_Nhan FROM DANH_SACH_Y_LENH WHERE PID = " + pid + " ;")
     conn.commit()
     result["danhSachYLenh"] = []
     for d in cursor.fetchall():
         dt = dict()
-        dt["yLenh"] = d[0]
-        dt["xacNhan"] = d[1]
+        dt["khoa"] = d[0]
+        dt["yLenh"] = d[1]
+        dt["xacNhan"] = d[2]
         result["danhSachYLenh"].append(dt)
 
     cursor.close()
@@ -294,12 +295,12 @@ def updateHSBA(pid):
 
     dsyl = data["danhSachYLenh"]
     for yl in dsyl:
-        cursor.execute("UPDATE DANH_SACH_Y_LENH SET Xac_Nhan = %s WHERE PID = %s AND Y_Lenh = %s;",
-                       (yl["xacNhan"], pid, yl["yLenh"]))
+        cursor.execute("UPDATE DANH_SACH_Y_LENH SET Xac_Nhan = %s WHERE PID = %s AND Khoa = %s AND Y_Lenh = %s;",
+                       (yl["xacNhan"], pid, yl["khoa"], yl["yLenh"]))
         conn.commit()
 
-        cursor.execute("INSERT INTO DANH_SACH_Y_LENH (PID, Y_Lenh, Xac_Nhan) SELECT %s, %s, %s WHERE NOT EXISTS (SELECT 1 FROM DANH_SACH_Y_LENH WHERE PID = %s AND Y_Lenh = %s);",
-                       (pid, yl["yLenh"], yl["xacNhan"], pid, yl["yLenh"]))
+        cursor.execute("INSERT INTO DANH_SACH_Y_LENH (PID, Khoa, Y_Lenh, Xac_Nhan) SELECT %s, %s, %s, %s WHERE NOT EXISTS (SELECT 1 FROM DANH_SACH_Y_LENH WHERE PID = %s AND Khoa = %s AND Y_Lenh = %s);",
+                       (pid, yl["khoa"], yl["yLenh"], yl["xacNhan"], pid, yl["khoa"], yl["yLenh"]))
         conn.commit()
 
     cursor.close()
@@ -318,6 +319,21 @@ def transferFaculty(pid):
     cursor.execute("UPDATE HO_SO_BENH_AN SET Khoa = %s, Phong = %s, Giuong = %s WHERE PID = %s;",
                    (data["khoa"], data["phong"], data["giuong"], pid))
     conn.commit()
+
+    cursor.execute(
+        "UPDATE DANH_SACH_Y_LENH SET Xac_Nhan = 'Thực hiện xong (chuyển khoa)' WHERE PID = %s AND Khoa = %s AND Xac_Nhan <> 'Thực hiện xong';", (pid, data["prevKhoa"]))
+    conn.commit()
+    dsyl = data["danhSachYLenh"]
+    for yl in dsyl:
+        cursor.execute("INSERT INTO DANH_SACH_Y_LENH (PID, Khoa, Y_Lenh, Xac_Nhan) VALUES (%s, %s, %s, %s);",
+                       (pid, data["khoa"], yl["yLenh"], yl["xacNhan"]))
+        conn.commit()
+
+    pcs = data["phieuChamSoc"]["data"]
+    for row in pcs:
+        cursor.execute("UPDATE PHIEU_CHAM_SOC SET Thuc_Hien_Y_Lenh = JSON_ARRAY(" + str(row["thucHienYLenh"])[1:-1] + "), Xac_Nhan = JSON_ARRAY(" + str(
+            row["xacNhan"])[1:-1] + ") WHERE PID = '" + pid + "' AND Khoa = '" + row["khoa"] + "' AND Ngay_Gio = '" + row["ngayGio"] + "';")
+        conn.commit()
 
     cursor.close()
     conn.close()

@@ -3,9 +3,11 @@ import { Autocomplete, Box, Paper, TextField, Typography } from "@mui/material";
 import "../../../styles/index.css";
 import TaoHSBAContext from "../../../contexts/TaoHSBAContext";
 import doctorList from "../../../constants/doctor_list.json";
+import { useSelector } from "react-redux";
 
 const FHoSo = () => {
     const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
+    const { department } = useSelector((state) => state.auth.user);
     
     return (
         <Paper sx={{ px: 3, py: 2 }}>
@@ -32,7 +34,7 @@ const FHoSo = () => {
                             helperText={submitted ? errors.bacSiPhuTrach : ""}
                         />
                     }
-                    options={[{ id: "", name: "" }, ...doctorList.map(doctor => ({ id: doctor.id, name: doctor.ho_ten }))]}
+                    options={[{ id: "", name: "" }, ...doctorList.filter(doctor => doctor.khoa_cong_tac === department).map(doctor => ({ id: doctor.id, name: doctor.ho_ten }))]}
                     getOptionLabel={(option) => !option.id ? "-- Chọn --" : option.id + " - " + option.name} 
                     disableClearable
                     getOptionDisabled={(option) => !option.id || values.bacSiPhuTrach.id === option.id}

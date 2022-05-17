@@ -14,12 +14,12 @@ import { format } from "date-fns";
 import { useSnackbar } from "notistack";
 
 const DanhSachHSBA = () => {
-    const { role, name, id } = useSelector(state => state.auth.user);
+    const { role, name, id, department } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
-        dispatch(danhSachHSBAThunk.getDanhSachHSBA({ role: role, doctorID: role === "BS" ? id : "" }))
+        dispatch(danhSachHSBAThunk.getDanhSachHSBA({ doctorID: role === "BS" ? id : "", department }));
         // eslint-disable-next-line 
     }, []);
 

@@ -5,7 +5,7 @@ const danhSachHSBAApi = {
         ceperApi.get(`/user/danh-sach-hsba/new-pid`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} }),
     getDanhSachHSBA: async (apiData) => 
         ceperApi.get(`/user/danh-sach-hsba`, { 
-            params: { doctorID: apiData.doctorID }, 
+            params: { doctorID: apiData.doctorID, department: apiData.department }, 
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}`}
         }),
     createNewHSBA: async (apiData) => 

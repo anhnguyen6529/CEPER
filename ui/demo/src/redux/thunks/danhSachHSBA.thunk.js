@@ -5,9 +5,9 @@ import { initialHSBAState } from "../slices/HSBA.slice";
 const danhSachHSBAThunk = {
     getDanhSachHSBA: createAsyncThunk(
         'danhSachHSBA/getDanhSachHSBA', 
-        async ({ role, doctorID }, { rejectWithValue }) => {
+        async ({ doctorID, department }, { rejectWithValue }) => {
             try {
-                const apiResponse = await danhSachHSBAApi.getDanhSachHSBA({ doctorID });
+                const apiResponse = await danhSachHSBAApi.getDanhSachHSBA({ doctorID, department });
 
                 if (apiResponse.status !== 200) {
                     throw new Error(apiResponse.statusText);

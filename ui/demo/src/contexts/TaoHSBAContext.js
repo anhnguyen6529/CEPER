@@ -48,7 +48,7 @@ export const initialErrors = {
     pid: "",
     avatar: "",
     ngayVaoVien: "Vui lòng nhập Ngày vào viện",
-    khoa: "Vui lòng nhập Khoa",
+    khoa: "",
     phong: "Vui lòng nhập Phòng",
     giuong: "Vui lòng nhập Giường",
     mach: "Vui lòng nhập Mạch",

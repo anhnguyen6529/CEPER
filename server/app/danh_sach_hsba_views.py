@@ -21,6 +21,7 @@ def getNewPID():
 @jwt_required()
 def getDanhSachHSBA():
     doctor_id = request.args.get('doctorID')
+    department = request.args.get('department')
     conn = mysql.connect()
     cursor = conn.cursor()
     result = dict()
@@ -34,14 +35,14 @@ def getDanhSachHSBA():
     ra_vien_query = ""
 
     if not doctor_id:
-        hien_tai_query = "SELECT _hsba.PID, Avatar, Trang_Thai, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Khoa, Phong, Giuong, Chan_Doan, Ngay_Vao_Vien, Bac_Si_Lam_Benh_An FROM (SELECT * FROM HO_SO_BENH_AN NATURAL JOIN HANH_CHINH NATURAL JOIN BENH_AN NATURAL JOIN TONG_KET_BENH_AN WHERE Trang_Thai <> 'Đã ra viện') AS _hsba LEFT JOIN (SELECT _tdt.PID, Chan_Doan FROM TO_DIEU_TRI _tdt, (SELECT PID, MAX(Ngay_Gio) AS Ngay_Gio FROM TO_DIEU_TRI GROUP BY PID) AS mx WHERE _tdt.PID = mx.PID && _tdt.Ngay_Gio = mx.Ngay_Gio) AS tdt ON _hsba.PID = tdt.PID ORDER BY Trang_Thai, _hsba.PID DESC;"
-        ra_vien_query = "SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Ngay_Vao_Vien, Ngay_Ra_Vien, Chan_Doan_Khi_Ra_Vien, Tinh_Trang_Ra_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = hc.PID && hsba.PID = ba.PID && hsba.PID = tkba.PID && hsba.Trang_Thai = 'Đã ra viện' ORDER BY hsba.PID DESC;"
+        hien_tai_query = "SELECT _hsba.PID, Avatar, Trang_Thai, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Khoa, Phong, Giuong, Chan_Doan, Ngay_Vao_Vien, Bac_Si_Lam_Benh_An FROM (SELECT * FROM HO_SO_BENH_AN NATURAL JOIN HANH_CHINH NATURAL JOIN BENH_AN NATURAL JOIN TONG_KET_BENH_AN WHERE Trang_Thai <> 'Đã ra viện' AND Khoa = %s) AS _hsba LEFT JOIN (SELECT _tdt.PID, Chan_Doan FROM TO_DIEU_TRI _tdt, (SELECT PID, MAX(Ngay_Gio) AS Ngay_Gio FROM TO_DIEU_TRI GROUP BY PID) AS mx WHERE _tdt.PID = mx.PID && _tdt.Ngay_Gio = mx.Ngay_Gio) AS tdt ON _hsba.PID = tdt.PID ORDER BY Trang_Thai, _hsba.PID DESC;"
+        ra_vien_query = "SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Ngay_Vao_Vien, Ngay_Ra_Vien, Chan_Doan_Khi_Ra_Vien, Tinh_Trang_Ra_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = hc.PID && hsba.PID = ba.PID && hsba.PID = tkba.PID && hsba.Trang_Thai = 'Đã ra viện' && hsba.Khoa = %s ORDER BY hsba.PID DESC;"
     else:
-        hien_tai_query = "SELECT _hsba.PID, Avatar, Trang_Thai, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Khoa, Phong, Giuong, Chan_Doan, Ngay_Vao_Vien, Bac_Si_Lam_Benh_An FROM (SELECT * FROM HO_SO_BENH_AN NATURAL JOIN HANH_CHINH NATURAL JOIN BENH_AN NATURAL JOIN TONG_KET_BENH_AN WHERE Trang_Thai = 'Đang điều trị' OR (Trang_Thai = 'Chờ khám' AND Bac_Si_Lam_Benh_An->>'$.id' = \'" + \
-            doctor_id + "')) AS _hsba LEFT JOIN (SELECT _tdt.PID, Chan_Doan FROM TO_DIEU_TRI _tdt, (SELECT PID, MAX(Ngay_Gio) AS Ngay_Gio FROM TO_DIEU_TRI GROUP BY PID) AS mx WHERE _tdt.PID = mx.PID && _tdt.Ngay_Gio = mx.Ngay_Gio) AS tdt ON _hsba.PID = tdt.PID ORDER BY Trang_Thai, _hsba.PID DESC;"
-        ra_vien_query = "SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Ngay_Vao_Vien, Ngay_Ra_Vien, Chan_Doan_Khi_Ra_Vien, Tinh_Trang_Ra_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = hc.PID && hsba.PID = ba.PID && hsba.PID = tkba.PID && hsba.Trang_Thai = 'Đã ra viện' ORDER BY hsba.PID DESC;"
+        hien_tai_query = "SELECT _hsba.PID, Avatar, Trang_Thai, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Khoa, Phong, Giuong, Chan_Doan, Ngay_Vao_Vien, Bac_Si_Lam_Benh_An FROM (SELECT * FROM HO_SO_BENH_AN NATURAL JOIN HANH_CHINH NATURAL JOIN BENH_AN NATURAL JOIN TONG_KET_BENH_AN WHERE Khoa = %s AND (Trang_Thai = 'Đang điều trị' OR (Trang_Thai = 'Chờ khám' AND Bac_Si_Lam_Benh_An->>'$.id' = \'" + \
+            doctor_id + "'))) AS _hsba LEFT JOIN (SELECT _tdt.PID, Chan_Doan FROM TO_DIEU_TRI _tdt, (SELECT PID, MAX(Ngay_Gio) AS Ngay_Gio FROM TO_DIEU_TRI GROUP BY PID) AS mx WHERE _tdt.PID = mx.PID && _tdt.Ngay_Gio = mx.Ngay_Gio) AS tdt ON _hsba.PID = tdt.PID ORDER BY Trang_Thai, _hsba.PID DESC;"
+        ra_vien_query = "SELECT hsba.PID, Avatar, Trang_Thai, Khoa, Ho_Ten, Ngay_Sinh, Gioi_Tinh, Ngay_Vao_Vien, Ngay_Ra_Vien, Chan_Doan_Khi_Ra_Vien, Tinh_Trang_Ra_Vien, Bac_Si_Lam_Benh_An, Bac_Si_Dieu_Tri FROM HO_SO_BENH_AN hsba, HANH_CHINH hc, BENH_AN ba, TONG_KET_BENH_AN tkba WHERE hsba.PID = hc.PID && hsba.PID = ba.PID && hsba.PID = tkba.PID && hsba.Trang_Thai = 'Đã ra viện' && hsba.Khoa = %s ORDER BY hsba.PID DESC;"
 
-    cursor.execute(hien_tai_query)
+    cursor.execute(hien_tai_query, (department))
     conn.commit()
     for dt in cursor.fetchall():
         data = dict()
@@ -49,7 +50,7 @@ def getDanhSachHSBA():
             data[hien_tai_key[i]] = dt[i]
         result["hienTai"].append(data)
 
-    cursor.execute(ra_vien_query)
+    cursor.execute(ra_vien_query, (department))
     conn.commit()
     for dt in cursor.fetchall():
         data = dict()

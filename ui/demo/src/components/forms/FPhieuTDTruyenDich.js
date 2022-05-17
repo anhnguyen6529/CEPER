@@ -45,7 +45,7 @@ const FPhieuTDTruyenDich = () => {
     const content = useSelector((state) => state.HSBA.phieuTDTruyenDich);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
-    const { role, name, id } = useSelector(state => state.auth.user);
+    const { role, name, id, department } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
 
@@ -476,7 +476,7 @@ const FPhieuTDTruyenDich = () => {
                                                     }
                                                 }}
                                                 renderInput={(params) => <TextField {...params} multiline  placeholder="Bác sĩ" inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }} />}
-                                                options={doctorList.map(doctor => doctor.id + " - " + doctor.ho_ten)}
+                                                options={doctorList.filter(doctor => doctor.khoa_cong_tac === department).map(doctor => doctor.id + " - " + doctor.ho_ten)}
                                                 disableClearable
                                                 getOptionDisabled={(option) => newValues[0].BSChiDinh === option}
                                             />
@@ -705,7 +705,7 @@ const FPhieuTDTruyenDich = () => {
                                                         }
                                                     }}
                                                     renderInput={(params) => <TextField {...params} multiline placeholder="Bác sĩ" inputProps={{ ...params.inputProps, style: { paddingTop: 3, paddingBottom: 3 } }} />}
-                                                    options={doctorList.map(doctor => doctor.id + " - " + doctor.ho_ten)}
+                                                    options={doctorList.filter(doctor => doctor.khoa_cong_tac === department).map(doctor => doctor.id + " - " + doctor.ho_ten)}
                                                     disableClearable
                                                     getOptionDisabled={(option) => newValue.BSChiDinh === option}
                                                 />

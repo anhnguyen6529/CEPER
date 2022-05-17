@@ -16,6 +16,7 @@ const initialState = {
         phone: '',
         email: '',
         speciality: '',
+        department: '',
         position: '', // Trưởng khoa, Phó khoa, Bác sĩ điều trị, Điều dưỡng
         medicalLicenseNo: '',
         signature: '',

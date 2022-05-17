@@ -43,7 +43,7 @@ const FPhieuChamSoc = () => {
 
     const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
     const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState(['']);
-    const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ yLenh: '', xacNhan: '' }]);
+    const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ khoa, yLenh: '', xacNhan: '' }]);
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
 
@@ -96,7 +96,7 @@ const FPhieuChamSoc = () => {
             setNewNgayGio(now);
            
             newThucHienYLenh.forEach((thyl) => {
-                const findIdx = newDanhSachYLenh.findIndex(dsyl => dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...newDanhSachYLenh];
+                const findIdx = newDanhSachYLenh.findIndex(dsyl => dsyl.khoa === thyl.khoa && dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...newDanhSachYLenh];
                 if (findIdx !== -1) {
                     tFilterDSYL[findIdx] = { ...tFilterDSYL[findIdx], xacNhan: thyl.xacNhan };
                     setNewDanhSachYLenh(tFilterDSYL);
@@ -116,7 +116,7 @@ const FPhieuChamSoc = () => {
 
     const handleAddClick = () => {
         setNewTheoDoiDienBien([...newTheoDoiDienBien, '']);
-        setNewThucHienYLenh([...newThucHienYLenh, { yLenh: '', xacNhan: '' }]);
+        setNewThucHienYLenh([...newThucHienYLenh, { khoa, yLenh: '', xacNhan: '' }]);
     }
     
     return (
@@ -251,12 +251,13 @@ const FPhieuChamSoc = () => {
                                                         }
                                                     }}
                                                     existValue={newThucHienYLenh}
-                                                    danhSachYLenh={newDanhSachYLenh}
+                                                    danhSachYLenh={newDanhSachYLenh.filter(dsyl => dsyl.khoa === khoa)}
                                                 />
 
                                                 {newThucHienYLenh.length === 1
-                                                    && newDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
-                                                    ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
+                                                    && newDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 
+                                                    && dsyl.khoa === khoa && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                        ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
                                                     : null}
                                             </Box>         
                                         </TableCell>

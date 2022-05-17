@@ -1,77 +1,242 @@
 [
     {
-        "id": "000001",
+        "id": "101001",
         "ho_ten": "Phạm Hoàng Vũ",
-        "chuyen_khoa": "Khám bệnh đa khoa và điều trị ngoại trú"
+        "khoa_cong_tac": "Khám bệnh đa khoa và điều trị ngoại trú"
     },
     {
-        "id": "000002",
+        "id": "101002",
+        "ho_ten": "Cao Minh Hưng",
+        "khoa_cong_tac": "Khám bệnh đa khoa và điều trị ngoại trú"
+    },
+    {
+        "id": "101003",
+        "ho_ten": "Đan Trúc Lan",
+        "khoa_cong_tac": "Khám bệnh đa khoa và điều trị ngoại trú"
+    },
+    {
+        "id": "102001",
         "ho_ten": "Trần Quốc Anh",
-        "chuyen_khoa": "Nội"
+        "khoa_cong_tac": "Nội"
     },
     {
-        "id": "000003",
-        "ho_ten": "Vũ Thu Tiên",
-        "chuyen_khoa": "Phụ sản"
+        "id": "102002",
+        "ho_ten": "Khúc Thanh Nguyên",
+        "khoa_cong_tac": "Nội"
     },
     {
-        "id": "000004",
+        "id": "102003",
+        "ho_ten": "Võ Đức Bình",
+        "khoa_cong_tac": "Nội"
+    },
+    {
+        "id": "103001",
         "ho_ten": "Nguyễn Duy",
-        "chuyen_khoa": "Ngoại"
+        "khoa_cong_tac": "Ngoại"
     },
     {
-        "id": "000005",
-        "ho_ten": "Nguyễn Văn An",
-        "chuyen_khoa": "Phẫu thuật - gây mê hồi sức"
+        "id": "103002",
+        "ho_ten": "Trịnh Quang Thịnh",
+        "khoa_cong_tac": "Ngoại"
     },
     {
-        "id": "000006",
+        "id": "103003",
+        "ho_ten": "Bùi Xuân Hân",
+        "khoa_cong_tac": "Ngoại"
+    },
+    {
+        "id": "104001",
+        "ho_ten": "Vũ Thu Tiên",
+        "khoa_cong_tac": "Phụ sản"
+    },
+    {
+        "id": "104002",
+        "ho_ten": "Giang Trí Dũng",
+        "khoa_cong_tac": "Phụ sản"
+    },
+    {
+        "id": "104003",
+        "ho_ten": "Bùi Anh Tú",
+        "khoa_cong_tac": "Phụ sản"
+    },
+    {
+        "id": "105001",
         "ho_ten": "Nguyễn Quang Hiệu",
-        "chuyen_khoa": "Nhi"
+        "khoa_cong_tac": "Nhi"
     },
     {
-        "id": "000007",
-        "ho_ten": "Lương Xuân Thu",
-        "chuyen_khoa": "Nội soi"
+        "id": "105002",
+        "ho_ten": "Phùng Thanh Vy",
+        "khoa_cong_tac": "Nhi"
     },
     {
-        "id": "000008",
-        "ho_ten": "Phan Văn Dương",
-        "chuyen_khoa": "Giải phẫu bệnh"
+        "id": "105003",
+        "ho_ten": "Đoàn Hoàng Minh",
+        "khoa_cong_tac": "Nhi"
     },
     {
-        "id": "000009",
-        "ho_ten": "Đinh Thị Quỳnh Phương",
-        "chuyen_khoa": "Vật lý trị liệu - phục hồi chức năng"
-    },
-    {
-        "id": "000010",
-        "ho_ten": "Dương Phương Thanh Quý",
-        "chuyen_khoa": "Thăm dò chức năng"
-    },
-    {
-        "id": "000011",
+        "id": "106001",
         "ho_ten": "Trang Hoài Nam",
-        "chuyen_khoa": "Truyền nhiễm"
+        "khoa_cong_tac": "Truyền nhiễm"
     },
     {
-        "id": "000012",
+        "id": "106002",
+        "ho_ten": "Đặng Quang Lộc",
+        "khoa_cong_tac": "Truyền nhiễm"
+    },
+    {
+        "id": "106003",
+        "ho_ten": "Chu Gia Linh",
+        "khoa_cong_tac": "Truyền nhiễm"
+    },
+    {
+        "id": "107001",
         "ho_ten": "Lê Phương Dung",
-        "chuyen_khoa": "Cấp cứu"
+        "khoa_cong_tac": "Cấp cứu"
     },
     {
-        "id": "000013",
+        "id": "107002",
+        "ho_ten": "Phan Huy Thông",
+        "khoa_cong_tac": "Cấp cứu"
+    },
+    {
+        "id": "107003",
+        "ho_ten": "Bùi Tuấn Khải",
+        "khoa_cong_tac": "Cấp cứu"
+    },
+    {
+        "id": "108001",
         "ho_ten": "Bùi Duy Phú",
-        "chuyen_khoa": "Hồi sức tích cực và chống độc"
+        "khoa_cong_tac": "Hồi sức tích cực và chống độc"
     },
     {
-        "id": "000014",
+        "id": "108002",
+        "ho_ten": "Danh Phương Trang",
+        "khoa_cong_tac": "Hồi sức tích cực và chống độc"
+    },
+    {
+        "id": "108003",
+        "ho_ten": "Trần Mạnh Cương",
+        "khoa_cong_tac": "Hồi sức tích cực và chống độc"
+    },
+    {
+        "id": "109001",
         "ho_ten": "Nguyễn Thanh Huyền",
-        "chuyen_khoa": "Y học cổ truyền"
+        "khoa_cong_tac": "Y học cổ truyền"
     },
     {
-        "id": "000015",
+        "id": "109002",
+        "ho_ten": "Nguyễn Tùng Quang",
+        "khoa_cong_tac": "Y học cổ truyền"
+    },
+    {
+        "id": "109003",
+        "ho_ten": "Trần Ngọc Tuấn",
+        "khoa_cong_tac": "Y học cổ truyền"
+    },
+    {
+        "id": "110001",
+        "ho_ten": "Đinh Thị Quỳnh Phương",
+        "khoa_cong_tac": "Vật lý trị liệu - phục hồi chức năng"
+    },
+    {
+        "id": "110002",
+        "ho_ten": "Trịnh Duy Luận",
+        "khoa_cong_tac": "Vật lý trị liệu - phục hồi chức năng"
+    },
+    {
+        "id": "110003",
+        "ho_ten": "Võ Minh Trung",
+        "khoa_cong_tac": "Vật lý trị liệu - phục hồi chức năng"
+    },
+    {
+        "id": "111001",
         "ho_ten": "Ngô Tiểu Ân",
-        "chuyen_khoa": "Ung bướu"
+        "khoa_cong_tac": "Ung bướu"
+    },
+    {
+        "id": "111002",
+        "ho_ten": "Vũ Gia Phong",
+        "khoa_cong_tac": "Ung bướu"
+    },
+    {
+        "id": "111003",
+        "ho_ten": "Lâm Diễm Phương",
+        "khoa_cong_tac": "Ung bướu"
+    },
+    {
+        "id": "112001",
+        "ho_ten": "Nguyễn Văn An",
+        "khoa_cong_tac": "Phẫu thuật - gây mê hồi sức"
+    },
+    {
+        "id": "112002",
+        "ho_ten": "Mai Vân Khanh",
+        "khoa_cong_tac": "Phẫu thuật - gây mê hồi sức"
+    },
+    {
+        "id": "112003",
+        "ho_ten": "Trần Lê Quốc Toàn",
+        "khoa_cong_tac": "Phẫu thuật - gây mê hồi sức"
+    },
+    {
+        "id": "113001",
+        "ho_ten": "Đào Thục Trang",
+        "khoa_cong_tac": "Chẩn đoán hình ảnh"
+    },
+    {
+        "id": "113002",
+        "ho_ten": "Phạm Đình Phúc Khang",
+        "khoa_cong_tac": "Chẩn đoán hình ảnh"
+    },
+    {
+        "id": "113003",
+        "ho_ten": "Lâm Thái Huy",
+        "khoa_cong_tac": "Chẩn đoán hình ảnh"
+    },
+    {
+        "id": "114001",
+        "ho_ten": "Lương Xuân Thu",
+        "khoa_cong_tac": "Nội soi"
+    },
+    {
+        "id": "114002",
+        "ho_ten": "Tạ Công Nam",
+        "khoa_cong_tac": "Nội soi"
+    },
+    {
+        "id": "114003",
+        "ho_ten": "Ngô Vĩnh Tâm",
+        "khoa_cong_tac": "Nội soi"
+    },
+    {
+        "id": "115001",
+        "ho_ten": "Phan Văn Dương",
+        "khoa_cong_tac": "Giải phẫu bệnh"
+    },
+    {
+        "id": "115002",
+        "ho_ten": "Tô Trí Hữu",
+        "khoa_cong_tac": "Giải phẫu bệnh"
+    },
+    {
+        "id": "115003",
+        "ho_ten": "Phan Huyền Ngọc",
+        "khoa_cong_tac": "Giải phẫu bệnh"
+    },
+    {
+        "id": "116001",
+        "ho_ten": "Dương Phương Thanh Quý",
+        "khoa_cong_tac": "Thăm dò chức năng"
+    },
+    {
+        "id": "116002",
+        "ho_ten": "Thiều Bảo Anh",
+        "khoa_cong_tac": "Thăm dò chức năng"
+    },
+    {
+        "id": "116003",
+        "ho_ten": "Cao Bảo Định",
+        "khoa_cong_tac": "Thăm dò chức năng"
     }
 ]

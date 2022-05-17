@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { 
     Box, FormControl, FormHelperText, Grid, 
-    MenuItem, Paper, Select, TextField, Typography 
+    MenuItem, Paper, Select, TextField, Tooltip, Typography 
 } from "@mui/material";
 import { DateTimePicker } from "@mui/lab";
 import "../../../styles/index.css";
@@ -16,6 +16,7 @@ const FHoSo = () => {
     const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
     const { handleLogout } = useContext(UserContext);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
+    const { department } = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const now = new Date();
 
@@ -24,7 +25,7 @@ const FHoSo = () => {
             if (response.token) {
                 localStorage.setItem('token', response.token);
             }
-            setValues({ ...values, pid: response.newPID })
+            setValues({ ...values, pid: response.newPID, khoa: department })
         }).catch((error) => {
             if (error === "Token has expired") {
                 handleLogout();
@@ -82,33 +83,14 @@ const FHoSo = () => {
                 </Grid>
                 <Grid item xs={12} md={6} lg={2.4}>
                     <Typography fontWeight="bold">Khoa</Typography>
-                    <FormControl sx={{ width: "100%" }}>
-                        <Select
+                    <Tooltip title={values.khoa} placement="top" sx={{ fontSize: 16 }}>
+                        <TextField 
                             fullWidth
-                            sx={{ mt: 1 }}
+                            margin="dense"
                             value={values.khoa}
-                            onChange={({ target: { value } }) => {
-                                setValues({ ...values, khoa: value, phong: "", giuong: "" });
-                                if (!!value) {
-                                    if (!hasChangedNew) {
-                                        setHasChangedNew(true);
-                                    }
-                                    setErrors({ ...errors, khoa: "" });
-                                } else {
-                                    setErrors({ ...errors, khoa: "Vui lòng nhập Khoa" });
-                                }
-                            }}
-                            error={submitted && !!errors.khoa}
-                            displayEmpty
-                            renderValue={(select) => !select ? "-- Chọn --" : select}
-                        >
-                            <MenuItem value="" disabled>-- Chọn --</MenuItem>
-                            {Object.keys(CDepartment).sort().map((dept, id) => (
-                                <MenuItem value={dept} key={id}>{dept}</MenuItem>
-                            ))}
-                        </Select>
-                        <FormHelperText error>{submitted ? errors.khoa : ""}</FormHelperText>
-                    </FormControl>
+                            disabled
+                        />
+                    </Tooltip>
                 </Grid>
                 <Grid item xs={12} md={6} lg={2.4}>
                     <Typography fontWeight="bold">Phòng</Typography>

@@ -14,7 +14,7 @@ def login():
         "SELECT * FROM USERS WHERE Username = %s AND Role = %s;", (params["username"], params["role"]))
     conn.commit()
     user_key = ["id", "username", "", "avatar", "role", "name", "dateOfBirth", "gender",
-                "address", "email", "speciality", "medicalLicenseNo", "signature", "position"]
+                "address", "email", "phone", "speciality", "department", "medicalLicenseNo", "signature", "position"]
     data = list(cursor.fetchall())
     if len(data) > 0 and params["password"] == data[0][2]:
         access_token = create_access_token(identity=data[0][0])

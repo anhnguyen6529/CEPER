@@ -224,7 +224,7 @@ const User = () => {
                                                     Tạo bệnh án mới
                                                 </Button>
                                             : null}
-                                            {typeof(pid) !== 'undefined' && user.role === "DD" ? 
+                                            {typeof(pid) !== 'undefined' && user.role === "BS" && selectedHSBA.trangThai !== "Đã ra viện" ? 
                                                 <Button
                                                     variant="primary-dark"
                                                     startIcon={<MoveDown />}
