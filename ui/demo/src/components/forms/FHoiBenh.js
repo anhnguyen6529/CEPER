@@ -130,11 +130,11 @@ const FHoiBenh = () => {
                     <Typography fontWeight="bold">Quá trình bệnh lý</Typography>
                 </Grid>
                 <Grid item xs={10}>
-                    {(updating && !!result[0]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+                    {(updating && !!result[0] && result[0].correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                     <TextField 
                         multiline
                         fullWidth
-                        margin={(updating && !!result[0]) ? "dense" : "none"}
+                        margin={(updating && !!result[0] && result[0].correction.length > 0) ? "dense" : "none"}
                         value={quaTrinhBenhLy}
                         onChange={({ target: { value } }) => {
                             setQuaTrinhBenhLy(value);
@@ -161,36 +161,38 @@ const FHoiBenh = () => {
                     />
 
                     {!!result[0] && !spellingErrorQuaTrinhBenhLy.loading ? 
-                        <BoxLoiChinhTa
-                            result={result[0]}
-                            replaced={replaced[0]}
-                            setReplaced={(newReplaced) => {
-                                const tReplaced = [...replaced];
-                                tReplaced[0] = newReplaced;
-                                setReplaced(tReplaced);
-                            }}
-                            useResult={useResult[0]}
-                            handleChangeCheckbox={(checked) => {
-                                const tUseResult = [...useResult];
-                                tUseResult[0] = checked;
-                                setUseResult(tUseResult);
-                                if (checked) {
-                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
-                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
-                                } else {
+                        result[0].correction.length > 0 ?
+                            <BoxLoiChinhTa
+                                result={result[0]}
+                                replaced={replaced[0]}
+                                setReplaced={(newReplaced) => {
+                                    const tReplaced = [...replaced];
+                                    tReplaced[0] = newReplaced;
+                                    setReplaced(tReplaced);
+                                }}
+                                useResult={useResult[0]}
+                                handleChangeCheckbox={(checked) => {
+                                    const tUseResult = [...useResult];
+                                    tUseResult[0] = checked;
+                                    setUseResult(tUseResult);
+                                    if (checked) {
+                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: quaTrinhBenhLy }));
+                                    } else {
+                                        dispatch(HSBAActions.updateSection({
+                                            section: SECTION_FIELD,
+                                            data: { ...hoiBenh, quaTrinhBenhLy }
+                                        }));
+                                    }
+                                }}
+                                handleUpdateSection={(newReplaced) => {
                                     dispatch(HSBAActions.updateSection({
                                         section: SECTION_FIELD,
-                                        data: { ...hoiBenh, quaTrinhBenhLy }
+                                        data: { ...hoiBenh, quaTrinhBenhLy: UtilsText.replaceMaskWord(spellingErrorQuaTrinhBenhLy.detection, newReplaced) } 
                                     }));
-                                }
-                            }}
-                            handleUpdateSection={(newReplaced) => {
-                                dispatch(HSBAActions.updateSection({
-                                    section: SECTION_FIELD,
-                                    data: { ...hoiBenh, quaTrinhBenhLy: UtilsText.replaceMaskWord(spellingErrorQuaTrinhBenhLy.detection, newReplaced) } 
-                                }));
-                            }}
-                        />
+                                }}
+                            />
+                        : null
                     : ( 
                         updating && spellingErrorQuaTrinhBenhLy.changed ? 
                             <div className="df fdc aic jcc">
@@ -215,11 +217,11 @@ const FHoiBenh = () => {
                                     <Typography fontWeight="bold">Bản thân</Typography>
                                 </Grid>
                                 <Grid item xs={11}>
-                                    {(updating && !!result[1]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+                                    {(updating && !!result[1] && result[1].correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                                     <TextField 
                                         multiline
                                         fullWidth
-                                        margin={(updating && !!result[1]) ? "dense" : "none"}
+                                        margin={(updating && !!result[1] && result[1].correction.length > 0) ? "dense" : "none"}
                                         value={banThan}
                                         onChange={({ target: { value } }) => {
                                             setBanThan(value);
@@ -249,36 +251,38 @@ const FHoiBenh = () => {
                                     />
 
                                     {!!result[1] && !spellingErrorBanThan.loading ? 
-                                        <BoxLoiChinhTa
-                                            result={result[1]}
-                                            replaced={replaced[1]}
-                                            setReplaced={(newReplaced) => {
-                                                const tReplaced = [...replaced];
-                                                tReplaced[1] = newReplaced;
-                                                setReplaced(tReplaced);
-                                            }}
-                                            useResult={useResult[1]}
-                                            handleChangeCheckbox={(checked) => {
-                                                const tUseResult = [...useResult];
-                                                tUseResult[1] = checked;
-                                                setUseResult(tUseResult);
-                                                if (checked) {
-                                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
-                                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
-                                                } else {
+                                        result[1].correction.length > 0 ?
+                                            <BoxLoiChinhTa
+                                                result={result[1]}
+                                                replaced={replaced[1]}
+                                                setReplaced={(newReplaced) => {
+                                                    const tReplaced = [...replaced];
+                                                    tReplaced[1] = newReplaced;
+                                                    setReplaced(tReplaced);
+                                                }}
+                                                useResult={useResult[1]}
+                                                handleChangeCheckbox={(checked) => {
+                                                    const tUseResult = [...useResult];
+                                                    tUseResult[1] = checked;
+                                                    setUseResult(tUseResult);
+                                                    if (checked) {
+                                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
+                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: banThan }));
+                                                    } else {
+                                                        dispatch(HSBAActions.updateSection({
+                                                            section: SECTION_FIELD,
+                                                            data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan } }
+                                                        }));
+                                                    }
+                                                }}
+                                                handleUpdateSection={(newReplaced) => {
                                                     dispatch(HSBAActions.updateSection({
                                                         section: SECTION_FIELD,
-                                                        data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan } }
+                                                        data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: UtilsText.replaceMaskWord(spellingErrorBanThan.detection, newReplaced) } }
                                                     }));
-                                                }
-                                            }}
-                                            handleUpdateSection={(newReplaced) => {
-                                                dispatch(HSBAActions.updateSection({
-                                                    section: SECTION_FIELD,
-                                                    data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, banThan: UtilsText.replaceMaskWord(spellingErrorBanThan.detection, newReplaced) } }
-                                                }));
-                                            }}
-                                        />
+                                                }}
+                                            />
+                                        : null
                                     : ( 
                                         updating && spellingErrorBanThan.changed ? 
                                             <div className="df fdc aic jcc">
@@ -328,11 +332,11 @@ const FHoiBenh = () => {
                                     <Typography fontWeight="bold">Gia đình</Typography>
                                 </Grid>
                                 <Grid item xs={11}>
-                                    {(updating && !!result[2]) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+                                    {(updating && !!result[2] && result[2].correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                                     <TextField 
                                         multiline
                                         fullWidth
-                                        margin={(updating && !!result[2]) ? "dense" : "none"}
+                                        margin={(updating && !!result[2] && result[2].correction.length > 0) ? "dense" : "none"}
                                         value={giaDinh}
                                         onChange={({ target: { value } }) => {
                                             setGiaDinh(value);
@@ -361,37 +365,39 @@ const FHoiBenh = () => {
                                         disabled={updating && (useResult[2] || !spellingErrorGiaDinh.changed)}
                                     />
 
-                                    {!!result[2] && !spellingErrorGiaDinh.loading ? 
-                                        <BoxLoiChinhTa
-                                            result={result[2]}
-                                            replaced={replaced[2]}
-                                            setReplaced={(newReplaced) => {
-                                                const tReplaced = [...replaced];
-                                                tReplaced[2] = newReplaced;
-                                                setReplaced(tReplaced);
-                                            }}
-                                            useResult={useResult[2]}
-                                            handleChangeCheckbox={(checked) => {
-                                                const tUseResult = [...useResult];
-                                                tUseResult[2] = checked;
-                                                setUseResult(tUseResult);
-                                                if (checked) {
-                                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2] }));
-                                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
-                                                } else {
+                                    {!!result[2] && !spellingErrorGiaDinh.loading ?
+                                        result[2].correction.length > 0 ? 
+                                            <BoxLoiChinhTa
+                                                result={result[2]}
+                                                replaced={replaced[2]}
+                                                setReplaced={(newReplaced) => {
+                                                    const tReplaced = [...replaced];
+                                                    tReplaced[2] = newReplaced;
+                                                    setReplaced(tReplaced);
+                                                }}
+                                                useResult={useResult[2]}
+                                                handleChangeCheckbox={(checked) => {
+                                                    const tUseResult = [...useResult];
+                                                    tUseResult[2] = checked;
+                                                    setUseResult(tUseResult);
+                                                    if (checked) {
+                                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2] }));
+                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[2], text: giaDinh }));
+                                                    } else {
+                                                        dispatch(HSBAActions.updateSection({
+                                                            section: SECTION_FIELD,
+                                                            data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh } }
+                                                        }));
+                                                    }
+                                                }}
+                                                handleUpdateSection={(newReplaced) => {
                                                     dispatch(HSBAActions.updateSection({
                                                         section: SECTION_FIELD,
-                                                        data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh } }
+                                                        data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh: UtilsText.replaceMaskWord(spellingErrorGiaDinh.detection, newReplaced) } }
                                                     }));
-                                                }
-                                            }}
-                                            handleUpdateSection={(newReplaced) => {
-                                                dispatch(HSBAActions.updateSection({
-                                                    section: SECTION_FIELD,
-                                                    data: { ...hoiBenh, tienSu: { ...hoiBenh.tienSu, giaDinh: UtilsText.replaceMaskWord(spellingErrorGiaDinh.detection, newReplaced) } }
-                                                }));
-                                            }}
-                                        />
+                                                }}
+                                            />
+                                        : null
                                     : ( 
                                         updating && spellingErrorGiaDinh.changed ? 
                                             <div className="df fdc aic jcc">

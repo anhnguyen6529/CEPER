@@ -7,7 +7,7 @@ const EMPTY_SPELLING = {
     changed: false, 
     error: '',
     detection: '',
-    correction: ''
+    correction: []
 }
 
 export const sectionState = [...mdSections["clinicalSection"], ...mdSections["attached"]].reduce((prev, key) => {

@@ -69,11 +69,11 @@ const FChanDoanKhiRaVien = () => {
 
     return (
         <Box component="form" noValidate>
-            {(updating && !!result) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+            {(updating && !!result && result.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
             <TextField 
                 multiline
                 fullWidth
-                margin={(updating && !!result) ? "dense" : "none"}
+                margin={(updating && !!result && result.correction.length > 0) ? "dense" : "none"}
                 value={chanDoan}
                 onChange={({ target: { value } }) => {
                     setChanDoan(value);
@@ -99,33 +99,35 @@ const FChanDoanKhiRaVien = () => {
             />
 
             {!!result && !spellingError[CLINICAL_SUBSECTION].loading ? 
-                <BoxLoiChinhTa
-                    result={result}
-                    replaced={replaced}
-                    setReplaced={setReplaced}
-                    useResult={useResult}
-                    handleChangeCheckbox={(checked) => {
-                        setUseResult(checked);
-                        if (checked) {
-                            dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION }));
-                            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
-                        } else {
-                            dispatch(HSBAActions.updateSection({ 
-                                section: SECTION_FIELD, 
-                                data: { ...chanDoanKhiRaVien, chanDoan } 
-                            }));
-                        }
-                    }}
-                    handleUpdateSection={(newReplaced) => {
-                        dispatch(HSBAActions.updateSection({
-                            section: SECTION_FIELD,
-                            data: {
-                                ...chanDoanKhiRaVien,
-                                chanDoan: UtilsText.replaceMaskWord(spellingError[CLINICAL_SUBSECTION].detection, newReplaced)
+                result.correction.length > 0 ?
+                    <BoxLoiChinhTa
+                        result={result}
+                        replaced={replaced}
+                        setReplaced={setReplaced}
+                        useResult={useResult}
+                        handleChangeCheckbox={(checked) => {
+                            setUseResult(checked);
+                            if (checked) {
+                                dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION }));
+                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION, text: chanDoan }));
+                            } else {
+                                dispatch(HSBAActions.updateSection({ 
+                                    section: SECTION_FIELD, 
+                                    data: { ...chanDoanKhiRaVien, chanDoan } 
+                                }));
                             }
-                        }));
-                    }}
-                />
+                        }}
+                        handleUpdateSection={(newReplaced) => {
+                            dispatch(HSBAActions.updateSection({
+                                section: SECTION_FIELD,
+                                data: {
+                                    ...chanDoanKhiRaVien,
+                                    chanDoan: UtilsText.replaceMaskWord(spellingError[CLINICAL_SUBSECTION].detection, newReplaced)
+                                }
+                            }));
+                        }}
+                    />
+                : null
             : ( 
                 updating && spellingError[CLINICAL_SUBSECTION].changed ? 
                     <div className="df fdc aic jcc">

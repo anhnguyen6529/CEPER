@@ -92,13 +92,13 @@ const FLyDoVaoVien = () => {
 
     return (
         <Box component="form" noValidate>
-            {(updating && !!resultLyDo) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+            {(updating && !!resultLyDo && resultLyDo.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
             <Grid container>
                 <Grid item xs={9}>
                     <TextField 
                         multiline
                         fullWidth
-                        margin={(updating && !!resultLyDo) ? "dense" : "none"}
+                        margin={(updating && !!resultLyDo && resultLyDo.correction.length > 0) ? "dense" : "none"}
                         value={lyDo}
                         onChange={({ target: { value } }) => {
                             setLyDo(value);
@@ -151,30 +151,32 @@ const FLyDoVaoVien = () => {
 
                 <Grid item xs={12}>
                     {!!resultLyDo && !spellingErrorLyDo.loading ? 
-                        <BoxLoiChinhTa
-                            result={resultLyDo}
-                            replaced={replacedLyDo}
-                            setReplaced={setReplacedLyDo}
-                            useResult={useResultLyDo}
-                            handleChangeCheckbox={(checked) => {
-                                setUseResultLyDo(checked);
-                                if (checked) {
-                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
-                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
-                                } else {
+                        resultLyDo.correction.length > 0 ?
+                            <BoxLoiChinhTa
+                                result={resultLyDo}
+                                replaced={replacedLyDo}
+                                setReplaced={setReplacedLyDo}
+                                useResult={useResultLyDo}
+                                handleChangeCheckbox={(checked) => {
+                                    setUseResultLyDo(checked);
+                                    if (checked) {
+                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0] }));
+                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], text: lyDo }));
+                                    } else {
+                                        dispatch(HSBAActions.updateSection({
+                                            section: SECTION_FIELD,
+                                            data: { ...lyDoVaoVien, lyDo }
+                                        }));
+                                    }
+                                }}
+                                handleUpdateSection={(newReplaced) => {
                                     dispatch(HSBAActions.updateSection({
                                         section: SECTION_FIELD,
-                                        data: { ...lyDoVaoVien, lyDo }
+                                        data: { ...lyDoVaoVien, lyDo: UtilsText.replaceMaskWord(spellingErrorLyDo.detection, newReplaced) }
                                     }));
-                                }
-                            }}
-                            handleUpdateSection={(newReplaced) => {
-                                dispatch(HSBAActions.updateSection({
-                                    section: SECTION_FIELD,
-                                    data: { ...lyDoVaoVien, lyDo: UtilsText.replaceMaskWord(spellingErrorLyDo.detection, newReplaced) }
-                                }));
-                            }}
-                        />
+                                }}
+                            />
+                        : null
                     : ( 
                         updating && spellingErrorLyDo.changed ? 
                             <div className="df fdc aic jcc">
@@ -210,11 +212,11 @@ const FLyDoVaoVien = () => {
                 </Grid>
                 <Grid item container xs={9}>
                     <Grid item xs={9}>
-                        {(updating && !!resultChanDoan) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+                        {(updating && !!resultChanDoan && resultChanDoan.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
                         <TextField 
                             multiline
                             fullWidth
-                            margin={(updating && !!resultChanDoan) ? "dense" : "none"}
+                            margin={(updating && !!resultChanDoan && resultChanDoan.correction.length > 0) ? "dense" : "none"}
                             sx={{ width: '90%' }}
                             value={chanDoanNoiGioiThieu}
                             onChange={({ target: { value } }) => {
@@ -263,30 +265,32 @@ const FLyDoVaoVien = () => {
                     </Grid>
                     <Grid item xs={12}>
                         {!!resultChanDoan && !spellingErrorChanDoan.loading ? 
-                            <BoxLoiChinhTa
-                                result={resultChanDoan}
-                                replaced={replacedChanDoan}
-                                setReplaced={setReplacedChanDoan}
-                                useResult={useResultChanDoan}
-                                handleChangeCheckbox={(checked) => {
-                                    setUseResultChanDoan(checked);
-                                    if (checked) {
-                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
-                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
-                                    } else {
+                            resultChanDoan.correction.length > 0 ? 
+                                <BoxLoiChinhTa
+                                    result={resultChanDoan}
+                                    replaced={replacedChanDoan}
+                                    setReplaced={setReplacedChanDoan}
+                                    useResult={useResultChanDoan}
+                                    handleChangeCheckbox={(checked) => {
+                                        setUseResultChanDoan(checked);
+                                        if (checked) {
+                                            dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1] }));
+                                            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], text: chanDoanNoiGioiThieu }));
+                                        } else {
+                                            dispatch(HSBAActions.updateSection({
+                                                section: SECTION_FIELD,
+                                                data: { ...lyDoVaoVien, chanDoanNoiGioiThieu }
+                                            }));
+                                        }
+                                    }}
+                                    handleUpdateSection={(newReplaced) => {
                                         dispatch(HSBAActions.updateSection({
                                             section: SECTION_FIELD,
-                                            data: { ...lyDoVaoVien, chanDoanNoiGioiThieu }
+                                            data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: UtilsText.replaceMaskWord(spellingErrorChanDoan.detection, newReplaced) }
                                         }));
-                                    }
-                                }}
-                                handleUpdateSection={(newReplaced) => {
-                                    dispatch(HSBAActions.updateSection({
-                                        section: SECTION_FIELD,
-                                        data: { ...lyDoVaoVien, chanDoanNoiGioiThieu: UtilsText.replaceMaskWord(spellingErrorChanDoan.detection, newReplaced) }
-                                    }));
-                                }}
-                            />
+                                    }}
+                                />
+                            : null
                         : ( 
                             updating && spellingErrorChanDoan.changed ? 
                                 <div className="df fdc aic jcc">

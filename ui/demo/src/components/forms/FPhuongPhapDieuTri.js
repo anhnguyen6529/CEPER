@@ -58,11 +58,11 @@ const FPhuongPhapDieuTri = () => {
 
     return (
         <Box component="form" noValidate>       
-            {(updating && !!result) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
+            {(updating && !!result && result.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
             <TextField 
                 multiline
                 fullWidth
-                margin={(updating && !!result) ? "dense" : "none"}
+                margin={(updating && !!result && result.correction.length > 0) ? "dense" : "none"}
                 value={newPhuongPhapDieuTri}
                 onChange={({ target: { value } }) => {
                     setNewPhuongPhapDieuTri(value);
@@ -82,30 +82,32 @@ const FPhuongPhapDieuTri = () => {
             />
 
             {(!!result && !spellingError.loading) ? 
-                <BoxLoiChinhTa
-                    result={result}
-                    replaced={replaced}
-                    setReplaced={setReplaced}
-                    useResult={useResult}
-                    handleChangeCheckbox={(checked) => {
-                        setUseResult(checked);
-                        if (checked) {
-                            dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
-                            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newPhuongPhapDieuTri }));
-                        } else {
+                result.correction.length > 0 ?
+                    <BoxLoiChinhTa
+                        result={result}
+                        replaced={replaced}
+                        setReplaced={setReplaced}
+                        useResult={useResult}
+                        handleChangeCheckbox={(checked) => {
+                            setUseResult(checked);
+                            if (checked) {
+                                dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
+                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newPhuongPhapDieuTri }));
+                            } else {
+                                dispatch(HSBAActions.updateSection({
+                                    section: SECTION_FIELD,
+                                    data: newPhuongPhapDieuTri
+                                }));
+                            }
+                        }}
+                        handleUpdateSection={(newReplaced) => {
                             dispatch(HSBAActions.updateSection({
                                 section: SECTION_FIELD,
-                                data: newPhuongPhapDieuTri
+                                data: UtilsText.replaceMaskWord(spellingError.detection, newReplaced)
                             }));
-                        }
-                    }}
-                    handleUpdateSection={(newReplaced) => {
-                        dispatch(HSBAActions.updateSection({
-                            section: SECTION_FIELD,
-                            data: UtilsText.replaceMaskWord(spellingError.detection, newReplaced)
-                        }));
-                    }}
-                />
+                        }}
+                    />
+                : null
             : ( 
                 updating && spellingError.changed ? 
                     <div className="df fdc aic jcc">

@@ -55,7 +55,14 @@ const HSBA = () => {
     useEffect(() => {
         if (updating && Object.keys(sectionState).some(key => spellingError[key].changed)) {
             if (!spellingError.loading && !spellingError.loadingError) {
-                if (autoUpdateWithProcessResult) {
+                if (autoUpdateWithProcessResult || Object.keys(sectionState).filter(key => mdSections["clinical"].includes(key)).filter((key) =>
+                ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+                && mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].correction.length > 0))) 
+                || (key === "Tờ điều trị" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                && spellingError[key][subKey].correction.length > 0)) || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
+                !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => 
+                subKeyValue.correction.length > 0))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc"].includes(key) 
+                && spellingError[key].changed && spellingError[key].correction.length > 0)).length === 0) {
                     setTimeout(() => {
                         dispatch(HSBAActions.confirmUpdate());
                         setOpenBackdrop(true);

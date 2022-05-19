@@ -162,19 +162,22 @@ const FToDieuTri = () => {
     };
 
     useEffect(() => {
-        const tResult = [...result], tReplaced = [...replaced];
+        const tResult = [...result], tReplaced = [...replaced], tRows = [...rows];
         rows.slice(content.data.length).forEach((row, id) => {
             if (typeof (spellingError[row.ngayGio]) !== "undefined") {    
                 if (!spellingError[row.ngayGio].loading && !spellingError[row.ngayGio].error) {
                     tResult[id] = spellingError[row.ngayGio];
                     tReplaced[id] = spellingError[row.ngayGio].correction.map(res => ({ type: "correct", repText: res[1] }));
+                    if (spellingError[row.ngayGio].correction.length === 0) {
+                        tRows[content.data.length + id] = { ...tRows[content.data.length + id], chanDoan: spellingError[row.ngayGio].detection }; 
+                    }
                 } else if (spellingError[row.ngayGio].loading) {
                     tResult[id] = ""; 
                     tReplaced[id] = []; 
                 }
             }
         });
-        setResult(tResult); setReplaced(tReplaced);
+        setResult(tResult); setReplaced(tReplaced); setRows(tRows);
         // eslint-disable-next-line
     }, [spellingError.loading]);
 
@@ -342,7 +345,8 @@ const FToDieuTri = () => {
                 </Grid>
             }
 
-            {updating ? 
+            {updating && Object.keys(spellingError).some(subKey => !["changed", "loading"].includes(subKey) 
+            && spellingError[subKey].correction.length > 0) ? 
                 <Card sx={{ mt: 2 }}>
                     <CardHeader 
                         title={`${SECTION_NAME} (CHẨN ĐOÁN) - Xử lý lỗi`} 
@@ -350,56 +354,58 @@ const FToDieuTri = () => {
                     />
                     <CardContent sx={{ py: 0 }}>
                         {rows.slice(content.data.length).map((row, index) => (
-                            <Card key={index} sx={{ mb: 2 }}>
-                                <CardHeader 
-                                    title={`Ngày giờ: ${format(new Date(row.ngayGio), "dd/MM/yyyy HH:mm")}`} 
-                                    sx={{ bgcolor: `${accentColor}.light` }} 
-                                    titleTypographyProps={{ fontSize: 16, fontWeight: "bold" }} 
-                                />
-                                <CardContent>
-                                    <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
-                                    <TextField 
-                                        fullWidth
-                                        multiline
-                                        margin="dense"
-                                        value={text[index]}
-                                        onChange={({ target: { value } }) => {
-                                            const tText = [...text];
-                                            tText[index] = value;
-                                            setText(tText);
-                                        }}
-                                        disabled={useResult[index]}
+                            spellingError[row.ngayGio].correction.length > 0 ?
+                                <Card key={index} sx={{ mb: 2 }}>
+                                    <CardHeader 
+                                        title={`Ngày giờ: ${format(new Date(row.ngayGio), "dd/MM/yyyy HH:mm")}`} 
+                                        sx={{ bgcolor: `${accentColor}.light` }} 
+                                        titleTypographyProps={{ fontSize: 16, fontWeight: "bold" }} 
                                     />
-
-                                    {!!result[index] && !spellingError[row.ngayGio].loading ? 
-                                        <BoxLoiChinhTa
-                                            result={result[index]}
-                                            replaced={replaced[index]}
-                                            setReplaced={(newReplaced) => {
-                                                const tReplaced = [...replaced];
-                                                tReplaced[index] = newReplaced;
-                                                setReplaced(tReplaced);
+                                    <CardContent>
+                                        <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
+                                        <TextField 
+                                            fullWidth
+                                            multiline
+                                            margin="dense"
+                                            value={text[index]}
+                                            onChange={({ target: { value } }) => {
+                                                const tText = [...text];
+                                                tText[index] = value;
+                                                setText(tText);
                                             }}
-                                            useResult={useResult[index]}
-                                            handleChangeCheckbox={(checked) => {
-                                                const tUseResult = [...useResult];
-                                                tUseResult[index] = checked;
-                                                setUseResult(tUseResult);
-                                                if (checked) {
-                                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: row.ngayGio }));
-                                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.ngayGio, text: text[index] }));
-                                                }
-                                            }}
-                                            handleUpdateSection={(newReplaced) => {}}
+                                            disabled={useResult[index]}
                                         />
-                                    : ( 
-                                        <div className="df fdc aic jcc">
-                                            <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                                            <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
-                                        </div> 
-                                    )}
-                                </CardContent>
-                            </Card>
+
+                                        {!!result[index] && !spellingError[row.ngayGio].loading ? 
+                                            <BoxLoiChinhTa
+                                                result={result[index]}
+                                                replaced={replaced[index]}
+                                                setReplaced={(newReplaced) => {
+                                                    const tReplaced = [...replaced];
+                                                    tReplaced[index] = newReplaced;
+                                                    setReplaced(tReplaced);
+                                                }}
+                                                useResult={useResult[index]}
+                                                handleChangeCheckbox={(checked) => {
+                                                    const tUseResult = [...useResult];
+                                                    tUseResult[index] = checked;
+                                                    setUseResult(tUseResult);
+                                                    if (checked) {
+                                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: row.ngayGio }));
+                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.ngayGio, text: text[index] }));
+                                                    }
+                                                }}
+                                                handleUpdateSection={(newReplaced) => {}}
+                                            />
+                                        : ( 
+                                            <div className="df fdc aic jcc">
+                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                            </div> 
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            : null
                         ))}
                     </CardContent>
                 </Card>

@@ -58,11 +58,11 @@ const FChanDoanBanDau = () => {
 
     return (
         <Box component="form" noValidate>   
-            {(updating && !!result) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}    
+            {(updating && !!result && result.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}    
             <TextField 
                 multiline
                 fullWidth
-                margin={(updating && !!result) ? "dense" : "none"}
+                margin={(updating && !!result && result.correction.length > 0) ? "dense" : "none"}
                 value={newChanDoanBanDau}
                 onChange={({ target: { value } }) => {
                     setNewChanDoanBanDau(value);
@@ -82,27 +82,29 @@ const FChanDoanBanDau = () => {
             />
 
             {!!result && !spellingError.loading ? 
-                <BoxLoiChinhTa
-                    result={result}
-                    replaced={replaced}
-                    setReplaced={setReplaced}
-                    useResult={useResult}
-                    handleChangeCheckbox={(checked) => {
-                        setUseResult(checked);
-                        if (checked) {
-                            dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
-                            dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newChanDoanBanDau }));
-                        } else {
-                            dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: newChanDoanBanDau }));
-                        }
-                    }}
-                    handleUpdateSection={(newReplaced) => {
-                        dispatch(HSBAActions.updateSection({
-                            section: SECTION_FIELD,
-                            data: UtilsText.replaceMaskWord(spellingError.detection, newReplaced)
-                        }));
-                    }}
-                />
+                result.correction.length > 0 ?
+                    <BoxLoiChinhTa
+                        result={result}
+                        replaced={replaced}
+                        setReplaced={setReplaced}
+                        useResult={useResult}
+                        handleChangeCheckbox={(checked) => {
+                            setUseResult(checked);
+                            if (checked) {
+                                dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: "" }));
+                                dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: "", text: newChanDoanBanDau }));
+                            } else {
+                                dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: newChanDoanBanDau }));
+                            }
+                        }}
+                        handleUpdateSection={(newReplaced) => {
+                            dispatch(HSBAActions.updateSection({
+                                section: SECTION_FIELD,
+                                data: UtilsText.replaceMaskWord(spellingError.detection, newReplaced)
+                            }));
+                        }}
+                    />
+                : null
             : ( 
                 updating && spellingError.changed ? 
                     <div className="df fdc aic jcc">
