@@ -87,7 +87,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                         {(content.role !== "BN" && updating) ?
                             <>
                                 <List subheader={<ListSubheader sx={{ lineHeight: '32px', mt: 1, position: 'inherit' }} component="div">Danh sách mục - Xử lý lỗi</ListSubheader>}>
-                                    {Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key) && key !== "Tóm tắt bệnh án").map((key, id) =>
+                                    {Object.keys(sectionState).filter(key => mdSections["clinical"].includes(key)).map((key, id) =>
                                         ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => spellingError[key][subKey].changed))) 
                                         || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && spellingError[key].changed) ?
                                             <ListItem 

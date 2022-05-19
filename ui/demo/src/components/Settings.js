@@ -118,7 +118,7 @@ const Settings = () => {
                     </Box>
                 </Box>
 
-                {user.role === "BS" ?
+                {user.role !== "BN" ?
                     <Box sx={{ mt: 3, mb: 2 }}>
                         <Grid container alignItems="center">
                             <Grid item xs={10}>

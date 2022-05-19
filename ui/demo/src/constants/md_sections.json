@@ -71,17 +71,24 @@
         "Phiếu TD dị ứng thuốc", 
         "Phiếu công khai thuốc"
     ],
-    "canEdit": {
-        "BN": [0],
-        "BS": [1, 2, 3, 4, 5, 6, 7, 8, 12],
-        "DD": [9, 10, 11, 13]
-    },
     "appearFirst": {
         "BN": ["Hành chính", "Phiếu TD chức năng sống", "Phiếu công khai thuốc"],
         "BS": ["Bệnh án", "Tờ điều trị", "Hành chính"],
         "DD": ["Phiếu chăm sóc", "Phiếu TD chức năng sống", "Hành chính"],
         "": []
     },
+    "clinical": [
+        "Lý do vào viện",
+        "Hỏi bệnh",
+        "Khám bệnh",
+        "Chẩn đoán ban đầu",
+        "Phương pháp điều trị",
+        "Chẩn đoán khi ra viện",
+        "Tình trạng người bệnh ra viện",
+        "Hướng điều trị và các chế độ tiếp theo",
+        "Tờ điều trị",
+        "Phiếu chăm sóc"
+    ],
     "clinicalSection": [
         "Bệnh án",
         "Tổng kết bệnh án"

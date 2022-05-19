@@ -177,6 +177,13 @@ const theme = createTheme({
             minWidth: 300
           }
         }
+      },
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            whiteSpace: 'pre-wrap'
+          }
+        }
       }
     }
 })

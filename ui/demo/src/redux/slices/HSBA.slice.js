@@ -143,10 +143,13 @@ const HSBASlice = createSlice({
                 [action.payload.section]: action.payload.data
             }
         },
+        openClinicalAttachedSection: (state, action) => {
+            state[action.payload.section] = { ...state[action.payload.section], updated: false };
+        },
         updateAttachedSection: (state, action) => {
             state[action.payload.section] = { ...state[action.payload.section], ...action.payload.value, data: action.payload.newData, updated: true };
             if (ATTACHED_FIELDS.filter(field => field !== action.payload.section).every(section => 
-                typeof state[section].updated === 'undefined' || state[section].updated)) {
+            typeof state[section].updated === 'undefined' || state[section].updated)) {
                 state.attachedSecUpdated = true;
             }
         },

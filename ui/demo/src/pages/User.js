@@ -85,7 +85,7 @@ const User = () => {
     }, []);
 
     const handleUpdate = () => {
-        if (Object.keys(sectionState).filter(key => !mdSections["attached"].includes(key) && key !== "Tóm tắt bệnh án").some(key => 
+        if (Object.keys(sectionState).filter(key => mdSections["clinical"].includes(key)).some(key => 
         ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => 
         spellingError[key][subKey].changed))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
         && spellingError[key].changed))) {

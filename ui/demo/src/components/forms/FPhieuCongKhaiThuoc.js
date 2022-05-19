@@ -184,9 +184,9 @@ const FPhieuCongKhaiThuoc = () => {
                                                 align="center" 
                                                 colSpan={ngayThang.length <= maxLastRows || expandAllRows 
                                                     ? (expandAllRows 
-                                                        ? (role === "DD" && !ngayRaVien ? (ngayThang.length + 1) + 1 : ngayThang.length + 1)
-                                                        : (role === "DD" && !ngayRaVien ? ngayThang.length + 1 : ngayThang.length)
-                                                    ) : (role === "DD" && !ngayRaVien ? (1 + maxLastRows) + 1 : 1 + maxLastRows)
+                                                        ? (role === "DD" && !ngayRaVien && !updating ? (ngayThang.length + 1) + 1 : ngayThang.length + 1)
+                                                        : (role === "DD" && !ngayRaVien && !updating ? ngayThang.length + 1 : ngayThang.length)
+                                                    ) : (role === "DD" && !ngayRaVien && !updating ? (1 + maxLastRows) + 1 : 1 + maxLastRows)
                                                 }
                                                 className="tableHeadBorderRight"
                                                 sx={{ px: 1, zIndex: 0 }}
@@ -258,7 +258,7 @@ const FPhieuCongKhaiThuoc = () => {
                                     )
                                 }
                                 
-                                {(role === "DD" && !ngayRaVien) ? 
+                                {(role === "DD" && !ngayRaVien && !updating) ? 
                                     <TableCell className="tableHeadBorderRight" sx={{ minWidth: 170 }}>
                                         <DatePicker 
                                             value={newNgay.ngay}
@@ -285,7 +285,7 @@ const FPhieuCongKhaiThuoc = () => {
                         </TableHead>
                         
                         <TableBody>                     
-                            {rows.length === 0 && role !== "DD" ? (
+                            {rows.length === 0 && (role !== "DD" || updating) ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -318,7 +318,7 @@ const FPhieuCongKhaiThuoc = () => {
                                             </>
                                         )}
 
-                                        {(role === "DD" && !ngayRaVien) ? 
+                                        {(role === "DD" && !ngayRaVien && !updating) ? 
                                             <TableCell className="tableBodyBorderRight">
                                                 <TextField 
                                                     type="number"
@@ -353,7 +353,7 @@ const FPhieuCongKhaiThuoc = () => {
                                 );
                             })}
 
-                            {(role === "DD" && !ngayRaVien) ? 
+                            {(role === "DD" && !ngayRaVien && !updating) ? 
                                 newDataList.map((newData, idx) => (
                                     <TableRow key={idx}>
                                         <TableCell className="tableBodyBorderRight" align="center">{(rows.length + 1) + idx}</TableCell>
@@ -475,7 +475,7 @@ const FPhieuCongKhaiThuoc = () => {
                                             ))}
                                         </>
                                     )}
-                                    {(role === "DD" && !ngayRaVien) ? <TableCell className="tableBodyBorderRight" /> : null}
+                                    {(role === "DD" && !ngayRaVien && !updating) ? <TableCell className="tableBodyBorderRight" /> : null}
                                     <TableCell className="tableBodyBorderRight" />
                                     <TableCell className="tableBodyBorderRight" />
                                     <TableCell className="tableBodyBorderRight" align="center">

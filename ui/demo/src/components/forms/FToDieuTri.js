@@ -1,6 +1,6 @@
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography
+    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Card, CardHeader, CardContent, CircularProgress
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
@@ -13,6 +13,9 @@ import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
 import { Add, CancelOutlined } from "@mui/icons-material";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
+import { BoxLoiChinhTa } from "../boxes";
+import { UtilsText } from "../../utils";
 
 const SECTION_NAME = "Tờ điều trị";
 const SECTION_FIELD = "toDieuTri";
@@ -44,6 +47,8 @@ const removeHashAndSpaces = (arrStr) => {
 const FToDieuTri = () => {
     const content = useSelector((state) => state.HSBA.toDieuTri);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { loadingError } = useSelector((state) => state.spellingError);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { updating, confirmUpdate, danhSachYLenh, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
@@ -63,9 +68,13 @@ const FToDieuTri = () => {
     const [hasChanged, setHasChanged] = useState(false);
 
     const [rows, setRows] = useState(content.data);
+    const [text, setText] = useState([]);
+    const [result, setResult] = useState([]);
+    const [replaced, setReplaced] = useState([]);
+    const [useResult, setUseResult] = useState([]);
 
     useEffect(() => {
-        if (updating || confirmUpdate) {
+        if (updating) {
             const newDanhSachYLenh = [];
             rows.slice(content.data.length).forEach((row) => {
                 newDanhSachYLenh.push({
@@ -78,14 +87,32 @@ const FToDieuTri = () => {
                 section: 'danhSachYLenh',
                 data: [...danhSachYLenh, ...newDanhSachYLenh]
             }));
+        
+            rows.slice(content.data.length).forEach((row) => {
+                if (!loadingError) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.ngayGio, text: row.chanDoan }));
+                }
+            });
+        }
+        // eslint-disable-next-line
+    }, [updating]);
+
+    useEffect(() => {
+        if (confirmUpdate) {
+            var tRows = [...rows];
+            tRows.slice(content.data.length).forEach((row, id) => {
+                row.chanDoan = useResult[id] 
+                    ? UtilsText.replaceMaskWord(spellingError[row.ngayGio].detection, replaced[id])
+                    : text[id];
+            });
             dispatch(HSBAActions.updateAttachedSection({ 
                 section: SECTION_FIELD, 
                 value: { newDataLength: rows.length - content.data.length }, 
-                newData: rows 
+                newData: tRows 
             }));
         }
         // eslint-disable-next-line
-    }, [updating, confirmUpdate]);
+    }, [confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -117,9 +144,13 @@ const FToDieuTri = () => {
                 bacSiGhi: `${id} - ${name}`
             }]);
             setNewNgayGio(now);
+            setText([...text, newChanDoan]);
+            setResult([...result, ""]);
+            setReplaced([...replaced, []]);
+            setUseResult([...useResult, true]);
         
             clearData();
-            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true, newKey: now }));
             setHasChanged(false);
         } else {
             let errs = [];
@@ -129,6 +160,23 @@ const FToDieuTri = () => {
             setErrors(errs);
         }
     };
+
+    useEffect(() => {
+        const tResult = [...result], tReplaced = [...replaced];
+        rows.slice(content.data.length).forEach((row, id) => {
+            if (typeof (spellingError[row.ngayGio]) !== "undefined") {    
+                if (!spellingError[row.ngayGio].loading && !spellingError[row.ngayGio].error) {
+                    tResult[id] = spellingError[row.ngayGio];
+                    tReplaced[id] = spellingError[row.ngayGio].correction.map(res => ({ type: "correct", repText: res[1] }));
+                } else if (spellingError[row.ngayGio].loading) {
+                    tResult[id] = ""; 
+                    tReplaced[id] = []; 
+                }
+            }
+        });
+        setResult(tResult); setReplaced(tReplaced);
+        // eslint-disable-next-line
+    }, [spellingError.loading]);
 
     return (
         <>
@@ -165,7 +213,7 @@ const FToDieuTri = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.length === 0 && role !== "BS" ? (
+                            {rows.length === 0 && (role !== "BS" || updating) ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -196,7 +244,7 @@ const FToDieuTri = () => {
                                 );
                             })}
 
-                            {(role === "BS" && !ngayRaVien) ?
+                            {(role === "BS" && !ngayRaVien && !updating) ?
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
@@ -266,6 +314,7 @@ const FToDieuTri = () => {
                 </TableContainer>
 
                 <TablePagination 
+                    id={SECTION_NAME}
                     length={rows.length}
                     rowsPerPage={rowsPerPage}
                     setRowsPerPage={setRowsPerPage}
@@ -292,6 +341,69 @@ const FToDieuTri = () => {
                     </Grid>
                 </Grid>
             }
+
+            {updating ? 
+                <Card sx={{ mt: 2 }}>
+                    <CardHeader 
+                        title={`${SECTION_NAME} (CHẨN ĐOÁN) - Xử lý lỗi`} 
+                        titleTypographyProps={{ fontSize: 16, fontWeight: "bold", color: `${accentColor}.dark` }} 
+                    />
+                    <CardContent sx={{ py: 0 }}>
+                        {rows.slice(content.data.length).map((row, index) => (
+                            <Card key={index} sx={{ mb: 2 }}>
+                                <CardHeader 
+                                    title={`Ngày giờ: ${format(new Date(row.ngayGio), "dd/MM/yyyy HH:mm")}`} 
+                                    sx={{ bgcolor: `${accentColor}.light` }} 
+                                    titleTypographyProps={{ fontSize: 16, fontWeight: "bold" }} 
+                                />
+                                <CardContent>
+                                    <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
+                                    <TextField 
+                                        fullWidth
+                                        multiline
+                                        margin="dense"
+                                        value={text[index]}
+                                        onChange={({ target: { value } }) => {
+                                            const tText = [...text];
+                                            tText[index] = value;
+                                            setText(tText);
+                                        }}
+                                        disabled={useResult[index]}
+                                    />
+
+                                    {!!result[index] && !spellingError[row.ngayGio].loading ? 
+                                        <BoxLoiChinhTa
+                                            result={result[index]}
+                                            replaced={replaced[index]}
+                                            setReplaced={(newReplaced) => {
+                                                const tReplaced = [...replaced];
+                                                tReplaced[index] = newReplaced;
+                                                setReplaced(tReplaced);
+                                            }}
+                                            useResult={useResult[index]}
+                                            handleChangeCheckbox={(checked) => {
+                                                const tUseResult = [...useResult];
+                                                tUseResult[index] = checked;
+                                                setUseResult(tUseResult);
+                                                if (checked) {
+                                                    dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: row.ngayGio }));
+                                                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.ngayGio, text: text[index] }));
+                                                }
+                                            }}
+                                            handleUpdateSection={(newReplaced) => {}}
+                                        />
+                                    : ( 
+                                        <div className="df fdc aic jcc">
+                                            <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                            <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                        </div> 
+                                    )}
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </CardContent>
+                </Card>
+            : null}
         </>
     )
 }

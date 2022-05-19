@@ -161,7 +161,7 @@ const FPhieuTDChucNangSong = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.length === 0 && role !== "DD" ? (
+                            {rows.length === 0 && (role !== "DD" || updating) ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -184,7 +184,7 @@ const FPhieuTDChucNangSong = () => {
                                 );
                             })}
 
-                            {(role === "DD" && !ngayRaVien) ? 
+                            {(role === "DD" && !ngayRaVien && !updating) ? 
                                 <TableRow sx={{ position: 'sticky', bottom: 0, bgcolor: 'white', '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGio), 'HH:mm')}</TableCell>

@@ -15,17 +15,22 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
     const [hoverCorrection, setHoverCorrection] = useState(new Array(result.correction.length).fill(false));
 
     const markDetection = () => {
-        const detected = result.detection.split(' ');
-        let lst = [], count = 0;
-        detected.forEach((word) => {
-            if (word.includes("<mask>")) {
-                lst.push({ id: count, replace: true, string: word.replace("<mask>", replaced[count].repText)});
-                count++;
-            } else {
-                lst.push({ replace: false, string: word });
-            }
+        const detected = result.detection.split('\n');
+        let lst = [], list = [], count = 0;
+        detected.forEach((line) => {
+            const dt = line.split(' ');
+            lst = [];
+            dt.forEach((word) => {
+                if (word.includes("<mask>")) {
+                    lst.push({ id: count, replace: true, string: word.replace("<mask>", replaced[count].repText)});
+                    count++;
+                } else {
+                    lst.push({ replace: false, string: word });
+                }
+            });
+            list.push(lst);
         })
-        return lst;
+        return list;
     }
 
     return (
@@ -42,36 +47,40 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                     {!useResult ? "Đánh dấu vào ô để kiểm tra văn bản!" : ""}
                 </Typography>
             </Typography>
-            <Typography sx={{ mt: 0.5 }}>{markDetection().map((mark, id) => mark.replace
-                ? (
-                    <Typography key={id} component="span">
-                        <Typography 
-                            component="span"
-                            color={`${accentColor}.main`}
-                            sx={{ cursor: "pointer" }}
-                            fontWeight={hoverDetection[mark.id] ? "bold" : "regular"}
-                            onClick={() => {
-                                if (mark.id < page * rowsPerPage || mark.id >= page * rowsPerPage + rowsPerPage) {
-                                    setPage(Math.trunc(mark.id / rowsPerPage * 1.0));
-                                }
-                            }}
-                            onMouseEnter={() => {
-                                const tHoverDetection = [...hoverDetection], tHoverCorrection = [...hoverCorrection];
-                                tHoverDetection[mark.id] = true; tHoverCorrection[mark.id] = true;
-                                setHoverDetection(tHoverDetection); setHoverCorrection(tHoverCorrection);
-                            }}
-                            onMouseLeave={() => {
-                                const tHoverDetection = [...hoverDetection], tHoverCorrection = [...hoverCorrection];
-                                tHoverDetection[mark.id] = false; tHoverCorrection[mark.id] = false;
-                                setHoverDetection(tHoverDetection); setHoverCorrection(tHoverCorrection);
-                            }}
-                        >
-                            {mark.string}<sup>{mark.id + 1}</sup>
-                        </Typography>
-                        {" "}
+            <Box sx={{ mt: 0.5 }}>
+                {markDetection().map((markLine, idx) => 
+                    <Typography key={idx}>{markLine.map((mark, id) => mark.replace
+                        ? (
+                            <Typography key={id} component="span">
+                                <Typography 
+                                    component="span"
+                                    color={`${accentColor}.main`}
+                                    sx={{ cursor: "pointer" }}
+                                    fontWeight={hoverDetection[mark.id] ? "bold" : "regular"}
+                                    onClick={() => {
+                                        if (mark.id < page * rowsPerPage || mark.id >= page * rowsPerPage + rowsPerPage) {
+                                            setPage(Math.trunc(mark.id / rowsPerPage * 1.0));
+                                        }
+                                    }}
+                                    onMouseEnter={() => {
+                                        const tHoverDetection = [...hoverDetection], tHoverCorrection = [...hoverCorrection];
+                                        tHoverDetection[mark.id] = true; tHoverCorrection[mark.id] = true;
+                                        setHoverDetection(tHoverDetection); setHoverCorrection(tHoverCorrection);
+                                    }}
+                                    onMouseLeave={() => {
+                                        const tHoverDetection = [...hoverDetection], tHoverCorrection = [...hoverCorrection];
+                                        tHoverDetection[mark.id] = false; tHoverCorrection[mark.id] = false;
+                                        setHoverDetection(tHoverDetection); setHoverCorrection(tHoverCorrection);
+                                    }}
+                                >
+                                    {mark.string}<sup>{mark.id + 1}</sup>
+                                </Typography>
+                                {" "}
+                            </Typography>
+                        ) : mark.string.concat(" "))}
                     </Typography>
-                ) : mark.string.concat(" "))}
-            </Typography>
+                )}
+            </Box>
             {result.correction.length > 0 ? 
                 <>
                     <Typography fontWeight="bold" fontStyle="italic" sx={{ mt: 1.5, mb: 0.5 }}>Nhận diện và sửa lỗi</Typography>

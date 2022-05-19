@@ -211,7 +211,7 @@ const FPhieuTDTruyenDich = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.length === 0 && role !== "DD" ? (
+                            {rows.length === 0 && (role !== "DD" || updating) ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -251,7 +251,7 @@ const FPhieuTDTruyenDich = () => {
                                 );
                             })}
 
-                            {(role === "DD" && !ngayRaVien) ? 
+                            {(role === "DD" && !ngayRaVien && !updating) ? 
                                 <Fragment>
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newValues.length}>

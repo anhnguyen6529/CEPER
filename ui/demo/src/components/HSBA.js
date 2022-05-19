@@ -120,6 +120,17 @@ const HSBA = () => {
         }
     }
 
+    useEffect(() => {
+        if (!loading && !loadingError) {
+            if (role === "BS") {
+                dispatch(HSBAActions.openClinicalAttachedSection({ section: "toDieuTri" }));
+            } else if (role === "DD") {
+                dispatch(HSBAActions.openClinicalAttachedSection({ section: "phieuChamSoc" }));
+            }
+        }
+        // eslint-disable-next-line
+    }, [loading, loadingError]);
+
     return (
         <Container sx={{ mt: 3 }} maxWidth={false}>
             {!loading && !loadingError ? 

@@ -50,7 +50,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
         const timer = setInterval(() => {
             if (!getting && !danhSachHSBA.loading && !danhSachHSBA.creatingHSBA && (!loading || typeof(pid) === "undefined") && !changing
             && !functionality.changing && !setting && !transfering && (!updating || (updating && !spellingError.loading && Object.keys(sectionState).filter(key =>
-            !mdSections["attached"].includes(key) && key !== "Tóm tắt bệnh án").every(key => (typeof(spellingError[key].loading) === "undefined" 
+            mdSections["clinical"].includes(key)).every(key => (typeof(spellingError[key].loading) === "undefined" 
             && !mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].loading)) ||
             (typeof(spellingError[key].loading) !== "undefined" && !(spellingError[key].changed && spellingError[key].loading)))))) {
                 if (!errorNoti) { 

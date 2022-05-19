@@ -1,8 +1,9 @@
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, Select, MenuItem
+    TableHead, TableCell, TableSortLabel, Paper, TextField, Grid, Typography, 
+    Select, MenuItem, Card, CardHeader, CardContent, CircularProgress
 } from "@mui/material";
-import { Add, CancelOutlined, DoneAll, Loop } from "@mui/icons-material";
+import { Add, ArrowRight, CancelOutlined, DoneAll, Loop } from "@mui/icons-material";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { visuallyHidden } from "@mui/utils";
 import UtilsTable from "../../utils/table";
@@ -13,6 +14,9 @@ import { TablePagination, Button, SelectYLenh, StyledTableRow } from "../common"
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
+import { BoxLoiChinhTa } from "../boxes";
+import { UtilsText } from "../../utils";
 
 const SECTION_NAME = "Phiếu chăm sóc";
 const SECTION_FIELD = "phieuChamSoc";
@@ -30,6 +34,8 @@ const headCells = [
 const FPhieuChamSoc = () => {
     const content = useSelector((state) => state.HSBA.phieuChamSoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { loadingError } = useSelector((state) => state.spellingError);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { updating, confirmUpdate, danhSachYLenh, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
     const { accentColor } = useSelector((state) => state.auth.settings.appearance);
@@ -43,27 +49,54 @@ const FPhieuChamSoc = () => {
 
     const [newNgayGio, setNewNgayGio] = useState(appearTime[SECTION_NAME]);
     const [newTheoDoiDienBien, setNewTheoDoiDienBien] = useState(['']);
-    const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ khoa, yLenh: '', xacNhan: '' }]);
+    const [newThucHienYLenh, setNewThucHienYLenh] = useState([{ yLenh: '', xacNhan: '' }]);
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
 
     const [newDanhSachYLenh, setNewDanhSachYLenh] = useState(danhSachYLenh);
     const [rows, setRows] = useState(content.data);
+    const [text, setText] = useState([]);
+    const [result, setResult] = useState([]);
+    const [replaced, setReplaced] = useState([]);
+    const [useResult, setUseResult] = useState([]);
 
     useEffect(() => {
-        if (updating || confirmUpdate) {
+        if (updating) {
             dispatch(HSBAActions.updateSection({
                 section: 'danhSachYLenh',
                 data: newDanhSachYLenh
             }));
+            rows.slice(content.data.length).forEach((row) => {
+                row.theoDoiDienBien.forEach((tddb, index) => {
+                    if (!loadingError) {
+                        dispatch(SpellingErrorThunk.getProcessResult({ 
+                            section: SECTION_NAME, subSection: row.ngayGio, subSecIndex: index, text: tddb 
+                        }));
+                    }
+                });
+            });
+        }
+        // eslint-disable-next-line
+    }, [updating]);
+
+    useEffect(() => {
+        if (confirmUpdate) {
+            var tRows = [...rows];
+            tRows.slice(content.data.length).forEach((row, id) => {
+                row.theoDoiDienBien.forEach((_, i) => {
+                    row.theoDoiDienBien[i] = useResult[id][i]
+                        ? UtilsText.replaceMaskWord(spellingError[row.ngayGio][i].detection, replaced[id][i])
+                        : text[id][i];
+                });                
+            });
             dispatch(HSBAActions.updateAttachedSection({ 
                 section: SECTION_FIELD, 
                 value: { newDataLength: rows.length - content.data.length }, 
-                newData: rows 
+                newData: tRows 
             }));
         }
         // eslint-disable-next-line
-    }, [updating, confirmUpdate]);
+    }, [confirmUpdate]);
 
     const createSortHandler = (property) => (event) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -94,6 +127,10 @@ const FPhieuChamSoc = () => {
                 dieuDuongGhi: `${id} - ${name}`
             }]);
             setNewNgayGio(now);
+            setText([...text, newTheoDoiDienBien]);
+            setResult([...result, new Array(newTheoDoiDienBien.length).fill("")]);
+            setReplaced([...replaced, new Array(newTheoDoiDienBien.length).fill([])]);
+            setUseResult([...useResult, new Array(newTheoDoiDienBien.length).fill(true)]);
            
             newThucHienYLenh.forEach((thyl) => {
                 const findIdx = newDanhSachYLenh.findIndex(dsyl => dsyl.khoa === thyl.khoa && dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...newDanhSachYLenh];
@@ -103,7 +140,7 @@ const FPhieuChamSoc = () => {
                 }
             })
             clearData();
-            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true, newKey: now, newKeyLength: newTheoDoiDienBien.length }));
             setHasChanged(false);
         } else {
             let errs = [];
@@ -116,8 +153,27 @@ const FPhieuChamSoc = () => {
 
     const handleAddClick = () => {
         setNewTheoDoiDienBien([...newTheoDoiDienBien, '']);
-        setNewThucHienYLenh([...newThucHienYLenh, { khoa, yLenh: '', xacNhan: '' }]);
+        setNewThucHienYLenh([...newThucHienYLenh, { yLenh: '', xacNhan: '' }]);
     }
+
+    useEffect(() => {
+        const tResult = [...result], tReplaced = [...replaced];
+        rows.slice(content.data.length).forEach((row, id) => {
+            if (typeof (spellingError[row.ngayGio]) !== "undefined") {    
+                row.theoDoiDienBien.forEach((_, i) => {
+                    if (!spellingError[row.ngayGio][i].loading && !spellingError[row.ngayGio][i].error) {
+                        tResult[id][i] = spellingError[row.ngayGio][i];
+                        tReplaced[id][i] = spellingError[row.ngayGio][i].correction.map(res => ({ type: "correct", repText: res[1] }));
+                    } else if (spellingError[row.ngayGio][i].loading) {
+                        tResult[id][i] = ""; 
+                        tReplaced[id][i] = []; 
+                    }
+                });
+            }
+        });
+        setResult(tResult); setReplaced(tReplaced);
+        // eslint-disable-next-line
+    }, [spellingError.loading]);
     
     return (
         <>
@@ -155,7 +211,7 @@ const FPhieuChamSoc = () => {
                         </TableHead>
 
                         <TableBody>
-                            {rows.length === 0 && role !== "DD" ? (
+                            {rows.length === 0 && (role !== "DD" || updating) ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -172,7 +228,9 @@ const FPhieuChamSoc = () => {
                                             <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
                                                 {format(new Date(row.ngayGio), 'HH:mm')}
                                             </TableCell>
-                                            <TableCell className="tableBodyBorderRight">{row.khoa}</TableCell>
+                                            <TableCell className="tableBodyBorderRight" rowSpan={row.thucHienYLenh.length}>
+                                                {row.khoa}
+                                            </TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.theoDoiDienBien[0]}</TableCell>
                                             <TableCell className="tableBodyBorderRight">{row.thucHienYLenh[0]}</TableCell> 
                                             <TableCell className="tableBodyBorderRight">
@@ -208,12 +266,12 @@ const FPhieuChamSoc = () => {
                                 );
                             })}
 
-                            {(role === "DD" && !ngayRaVien) ? 
+                            {(role === "DD" && !ngayRaVien && !updating) ? 
                                 <Fragment>
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{format(new Date(newNgayGio), 'dd/MM/yyyy')}</TableCell>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{format(new Date(newNgayGio), 'HH:mm')}</TableCell>
-                                        <TableCell className="tableBodyBorderRight">{khoa}</TableCell>
+                                        <TableCell className="tableBodyBorderRight" rowSpan={newThucHienYLenh.length}>{khoa}</TableCell>
                                         <TableCell className="tableBodyBorderRight">
                                             <TextField
                                                 multiline
@@ -357,6 +415,7 @@ const FPhieuChamSoc = () => {
                 </TableContainer>
 
                 <TablePagination 
+                    id={SECTION_NAME}
                     length={rows.length}
                     rowsPerPage={rowsPerPage}
                     setRowsPerPage={setRowsPerPage}
@@ -383,6 +442,78 @@ const FPhieuChamSoc = () => {
                     </Grid>
                 </Grid>
             }
+
+            {updating ? 
+                <Card sx={{ mt: 2 }}>
+                    <CardHeader
+                        title={`${SECTION_NAME} (THEO DÕI DIẾN BIẾN) - Xử lý lỗi`} 
+                        titleTypographyProps={{ fontSize: 16, fontWeight: "bold", color: `${accentColor}.dark` }} 
+                    />
+                    <CardContent sx={{ py: 0 }}>
+                        {rows.slice(content.data.length).map((row, index) => (
+                            <Card key={index} sx={{ mb: 2 }}>
+                                <CardHeader 
+                                    title={`Ngày giờ: ${format(new Date(row.ngayGio), "dd/MM/yyyy HH:mm")}`} 
+                                    sx={{ bgcolor: `${accentColor}.light` }} 
+                                    titleTypographyProps={{ fontSize: 16, fontWeight: "bold" }} 
+                                />
+                                <CardContent sx={{ pl: 1 }}>
+                                    {row.theoDoiDienBien.map((_, idx) => (
+                                        <Box key={idx} className="df" sx={{ mb: idx < row.theoDoiDienBien.length - 1 ? 3 : 0 }}>
+                                            <ArrowRight sx={{ mr: 1 }} color={accentColor} />
+                                            <Box sx={{ width: "100%" }}>
+                                                <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
+                                                <TextField 
+                                                    fullWidth
+                                                    multiline
+                                                    margin="dense"
+                                                    value={text[index][idx]}
+                                                    onChange={({ target: { value } }) => {
+                                                        const tText = [...text];
+                                                        tText[index][idx] = value;
+                                                        setText(tText);
+                                                    }}
+                                                    disabled={useResult[index][idx]}
+                                                />
+
+                                                {!!result[index][idx] && !spellingError[row.ngayGio][idx].loading ? 
+                                                    <BoxLoiChinhTa
+                                                        result={result[index][idx]}
+                                                        replaced={replaced[index][idx]}
+                                                        setReplaced={(newReplaced) => {
+                                                            const tReplaced = [...replaced];
+                                                            tReplaced[index][idx] = newReplaced;
+                                                            setReplaced(tReplaced);
+                                                        }}
+                                                        useResult={useResult[index][idx]}
+                                                        handleChangeCheckbox={(checked) => {
+                                                            const tUseResult = [...useResult];
+                                                            tUseResult[index][idx] = checked;
+                                                            setUseResult(tUseResult);
+                                                            if (checked) {
+                                                                dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: row.ngayGio, subSecIndex: idx }));
+                                                                dispatch(SpellingErrorThunk.getProcessResult({ 
+                                                                    section: SECTION_NAME, subSection: row.ngayGio, subSecIndex: idx, text: text[index][idx]
+                                                                }));
+                                                            }
+                                                        }}
+                                                        handleUpdateSection={(newReplaced) => {}}
+                                                    />
+                                                : ( 
+                                                    <div className="df fdc aic jcc">
+                                                        <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
+                                                        <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                                    </div> 
+                                                )}
+                                            </Box>
+                                        </Box>
+                                    ))}
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </CardContent>
+                </Card>
+            : null}
         </>
         
     )

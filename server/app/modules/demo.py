@@ -414,7 +414,7 @@ class AutoCorrection:
         final_sentence = ""
         for i in range(len(sentence_correct)):
             pharse_sentence = sentence_correct[i].strip()
-            if pharse_sentence in ["!", ",", ".", "/", ":", ";", "?", "_", "|"]:
+            if pharse_sentence in ["!", ",", ".", "/", ":", ";", "?", "_", "|"] or i == 0:
                 final_sentence += pharse_sentence
             else:
                 final_sentence += " " + pharse_sentence
@@ -431,25 +431,34 @@ class AutoCorrection:
         final_detection = ""
         final_listReplace = []
 
-        for input in sent_tokenize(text):
-            if len(input) > 0:
-                preprocess_inputSentence, phrases_str, phrases_all, index_sent_dict, list_number, list_date = self.extract_phrases(
-                    input)
-                outputDetection = self.inputText(preprocess_inputSentence)
-                outputCorrection, listReplace = self.compareCorrection(
-                    outputDetection)
-                final_listReplace.extend(listReplace)
-                sentence_1 = outputDetection[0].split(" ")
-                sentence_2 = outputCorrection.split(" ")
-                tmp = sentence_1
+        linebreak_input = text.split("\n")
+        for index in range(0, len(linebreak_input)):
+            line_detection = ""
+            line_listReplace = []
+            for input in sent_tokenize(linebreak_input[index]):
+                if len(input) > 0:
+                    preprocess_inputSentence, phrases_str, phrases_all, index_sent_dict, list_number, list_date = self.extract_phrases(
+                        input)
+                    outputDetection = self.inputText(preprocess_inputSentence)
+                    outputCorrection, listReplace = self.compareCorrection(
+                        outputDetection)
+                    line_listReplace.extend(listReplace)
+                    sentence_1 = outputDetection[0].split(" ")
+                    sentence_2 = outputCorrection.split(" ")
+                    tmp = sentence_1
 
-                for i in range(len(sentence_1)):
-                    if sentence_2[i] != sentence_1[i]:
-                        tmp[i] = "<mask>"
-                resultCorrection = " ".join(tmp)
-                resultDetection = self.decode_phrases(
-                    phrases_str, resultCorrection, phrases_all, index_sent_dict, list_number, list_date)
-                final_detection += " " + resultDetection
+                    for i in range(len(sentence_1)):
+                        if sentence_2[i] != sentence_1[i]:
+                            tmp[i] = "<mask>"
+                    resultCorrection = " ".join(tmp)
+                    resultDetection = self.decode_phrases(
+                        phrases_str, resultCorrection, phrases_all, index_sent_dict, list_number, list_date)
+                    line_detection += resultDetection + " "
+            if index < len(linebreak_input) - 1:
+                final_detection += line_detection + "\n"
+            else:
+                final_detection += line_detection
+            final_listReplace.extend(line_listReplace)
         return final_detection, final_listReplace
 
 
