@@ -133,7 +133,7 @@ const FPhieuChamSoc = () => {
             setUseResult([...useResult, new Array(newTheoDoiDienBien.length).fill(true)]);
            
             newThucHienYLenh.forEach((thyl) => {
-                const findIdx = newDanhSachYLenh.findIndex(dsyl => dsyl.khoa === thyl.khoa && dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...newDanhSachYLenh];
+                const findIdx = newDanhSachYLenh.findIndex(dsyl => dsyl.khoa === khoa && dsyl.yLenh === thyl.yLenh), tFilterDSYL = [...newDanhSachYLenh];
                 if (findIdx !== -1) {
                     tFilterDSYL[findIdx] = { ...tFilterDSYL[findIdx], xacNhan: thyl.xacNhan };
                     setNewDanhSachYLenh(tFilterDSYL);
@@ -379,11 +379,12 @@ const FPhieuChamSoc = () => {
                                                             }
                                                         }}
                                                         existValue={newThucHienYLenh}
-                                                        danhSachYLenh={newDanhSachYLenh}
+                                                        danhSachYLenh={newDanhSachYLenh.filter(dsyl => dsyl.khoa === khoa)}
                                                     />
 
-                                                    {idx + 1 === newThucHienYLenh.length - 1 
-                                                        && newDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 && dsyl.xacNhan !== "Thực hiện xong").length > 0 
+                                                    {idx + 1 === newThucHienYLenh.length - 1
+                                                        && newDanhSachYLenh.filter(dsyl => newThucHienYLenh.findIndex(thyl => thyl.yLenh === dsyl.yLenh) === -1 
+                                                        && dsyl.khoa === khoa && dsyl.xacNhan !== "Thực hiện xong").length > 0 
                                                         ? <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={handleAddClick} />
                                                         : null}
                                                 </Box>         

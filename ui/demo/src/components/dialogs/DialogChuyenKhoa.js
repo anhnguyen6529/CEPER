@@ -38,17 +38,23 @@ const DialogChuyenKhoa = ({ open, setOpen }) => {
         }
         if (!!khoa) {
             const danhSachYLenh = HSBA.danhSachYLenh.filter((dsyl) => dsyl.khoa === HSBA.khoa && dsyl.xacNhan !== "Thực hiện xong");
-            const phieuChamSoc = { data: [] }, prevData = [...HSBA.phieuChamSoc.data].reverse();
+            const phieuChamSoc = { data: [] };
+            var prevData = [...HSBA.phieuChamSoc.data].reverse(), rowsChanged = [];
             danhSachYLenh.forEach((dsyl) => {
                 if (dsyl.xacNhan === "Đang thực hiện") {
-                    var row = prevData.find(element => element.thucHienYLenh.includes(dsyl.yLenh));
-                    if (typeof row !== "undefined") {
-                        const index = row.thucHienYLenh.findIndex(thyl => thyl === dsyl.yLenh), tXacNhan = [...row.xacNhan];
+                    var rowIndex = prevData.findIndex(element => element.thucHienYLenh.includes(dsyl.yLenh));
+                    if (rowIndex !== -1) {
+                        const index = prevData[rowIndex].thucHienYLenh.findIndex(thyl => thyl === dsyl.yLenh), tXacNhan = [...prevData[rowIndex].xacNhan];
                         tXacNhan[index] = "Thực hiện xong (chuyển khoa)";
-                        row = { ...row, xacNhan: tXacNhan };
-                        phieuChamSoc.data.push(row);
+                        prevData[rowIndex] = { ...prevData[rowIndex], xacNhan: tXacNhan };
+                        if (!rowsChanged.includes(rowIndex)) {
+                            rowsChanged.push(rowIndex);
+                        }
                     }
                 }
+            });
+            rowsChanged.forEach((rowChanged) => {
+                phieuChamSoc.data.push(prevData[rowChanged]);
             });
             dispatch(HSBAThunk.transferFaculty({ 
                 pid: HSBA.pid, 
