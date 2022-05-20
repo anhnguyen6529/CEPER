@@ -4,6 +4,7 @@ import authThunk from "../thunks/auth.thunk";
 const initialState = {
     user: {
         getting: false,
+        saving: false,
         error: '',
         username: '',
         avatar: '',
@@ -164,6 +165,20 @@ const authSlice = createSlice({
         .addCase(authThunk.toggleAutoUpdateWithProcessResult.rejected, (state, action) => {
             state.settings.functionality.changing = false;
             state.settings.functionality.changingError = action.payload;
+        })
+        .addCase(authThunk.updateUserInfo.fulfilled, (state, action) => {
+            state.user.saving = false;
+            state.user.error = '';
+            state.user.email = action.payload.email;
+            state.user.phone = action.payload.phone;
+            state.user.address = action.payload.address;
+        })
+        .addCase(authThunk.updateUserInfo.pending, (state) => {
+            state.user.saving = true;
+        })
+        .addCase(authThunk.updateUserInfo.rejected, (state, action) => {
+            state.user.saving = false;
+            state.user.error = action.payload;
         })
     }
 })

@@ -6,9 +6,9 @@ import { recommendPrimary } from "../App";
 import UserContext from "../contexts/UserContext";
 import authThunk from "../redux/thunks/auth.thunk";
 import "../styles/index.css";
-import { BoxAccount } from "./boxes";
 import { Button } from "./common";
 import { SketchPicker } from "react-color";
+import { FAccount } from "./forms";
 
 const ButtonColor = ({ accentColor, color, handleClick, ...others }) => {
     return (
@@ -31,17 +31,19 @@ const Settings = () => {
     const { user, settings } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     
+    const [hasSavedAccount, setHasSavedAccount] = useState(false);
     const [hasChangedAppearance, setHasChangedAppearance] = useState(false);
     const [hasChangedFunctionality, setHasChangedFunctionality] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null); 
     const openColor = Boolean(anchorEl);
 
     useEffect(() => {
-        if (settings.appearance.changingError === "Token has expired" || settings.functionality.changingError === "Token has expired") {
+        if (settings.appearance.changingError === "Token has expired" || settings.functionality.changingError === "Token has expired"
+        || user.error === "Token has expired") {
             handleLogout();
         }
         // eslint-disable-next-line
-    }, [settings.appearance.changingError, settings.functionality.changingError]);
+    }, [settings.appearance.changingError, settings.functionality.changingError, user.error]);
 
     const handleReset = () => {
         setHasChangedAppearance(true);
@@ -78,10 +80,18 @@ const Settings = () => {
                         titleTypographyProps={{ fontWeight: "bold", color: "black" }}
                         subheader="Thông tin tài khoản người dùng và thông tin cá nhân"
                         subheaderTypographyProps={{ color: "black" }}
-                        sx={{ bgcolor: "primary.light" }} 
+                        sx={{ bgcolor: "primary.light", '.MuiCardHeader-action': { alignSelf: "center", m: 0 } }} 
+                        action={hasSavedAccount && user.saving
+                            ? <CircularProgress size={18} color="primary" />
+                            : (hasSavedAccount ? 
+                                <Box className="df">
+                                    <Check color="success" sx={{ mr: 1 }} />
+                                    <Typography color="success.main">Đã lưu!</Typography>
+                                </Box> : null)
+                        }
                     />
                     <CardContent>
-                        <BoxAccount />
+                        <FAccount setHasSaved={setHasSavedAccount} />
                     </CardContent>
                 </Card>
 
@@ -94,7 +104,11 @@ const Settings = () => {
                         sx={{ bgcolor: "primary.light", '.MuiCardHeader-action': { alignSelf: "center", m: 0 } }} 
                         action={hasChangedAppearance && settings.appearance.changing
                             ? <CircularProgress size={18} color="primary" />
-                            : (hasChangedAppearance ? <Check color="success" /> : null)
+                            : (hasChangedAppearance ? 
+                                <Box className="df">
+                                    <Check color="success" sx={{ mr: 1 }} />
+                                    <Typography color="success.main">Đã thay đổi!</Typography>
+                                </Box> : null)
                         }
                     />
                     <CardContent>
@@ -108,8 +122,22 @@ const Settings = () => {
                                     handleClick={() => handleClickRecommendColor(color)}
                                 />
                             )}
-                            <IconButton sx={{ p: 0.5, border: (theme) => `2px solid ${theme.palette.action.active}` }} onClick={handleClickColor}>
-                                <Colorize />
+                            <IconButton 
+                                sx={{ 
+                                    ...(Object.keys(recommendPrimary).includes(settings.appearance.accentColor)
+                                        ? { p: 0.5, border: (theme) => `2px solid ${theme.palette.action.active}` }
+                                        : { p: 0.25, border: `2px solid ${settings.appearance.accentColor}` }) 
+                                }} 
+                                onClick={handleClickColor}
+                            >
+                                <Colorize 
+                                    sx={{ 
+                                        ...(!Object.keys(recommendPrimary).includes(settings.appearance.accentColor)
+                                            && { bgcolor: settings.appearance.accentColor, p: 0.5 }),
+                                        borderRadius: '50%'
+                                    }} 
+                                    fontSize={!Object.keys(recommendPrimary).includes(settings.appearance.accentColor) ? "large" : "medium"} 
+                                />
                             </IconButton>
                             <Popover
                                 open={openColor}
@@ -142,7 +170,11 @@ const Settings = () => {
                             sx={{ bgcolor: "primary.light", '.MuiCardHeader-action': { alignSelf: "center", m: 0 } }} 
                             action={hasChangedFunctionality && settings.functionality.changing
                                 ? <CircularProgress size={18} color="primary" />
-                                : (hasChangedFunctionality ? <Check color="success" /> : null)
+                                : (hasChangedFunctionality ? 
+                                    <Box className="df">
+                                        <Check color="success" sx={{ mr: 1 }} />
+                                        <Typography color="success.main">Đã thay đổi!</Typography>
+                                    </Box> : null)
                             }
                         />
                         <CardContent>

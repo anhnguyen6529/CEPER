@@ -7,19 +7,23 @@ const authApi = {
     logout: async () =>
         axios.get(`${DOMAIN_URL}/logout`),
     getNotifications: async (apiData) => 
-        ceperApi.get(`/user/${apiData.userID}/notifications`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} }),
+        ceperApi.get(`/user/${apiData.userID}/notifications`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }),
     markNotificationSeen: async (apiData) => 
         ceperApi.get(`/user/${apiData.userID}/notifications/${apiData.notificationID}`, { 
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
         }),
     changeAccentColor: async (apiData) => 
         ceperApi.get(`/user/${apiData.userID}/settings/appearance/accent-color`, {
             params: { color: apiData.color },
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
         }),
     toggleAutoUpdateWithProcessResult: async (apiData) => 
         ceperApi.get(`/user/${apiData.userID}/settings/functionality/auto-update-with-process-result`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } 
+        }),
+    updateUserInfo: async (apiData) => 
+        ceperApi.post(`/user/${apiData.userID}`, apiData, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
 }
 

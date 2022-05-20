@@ -82,6 +82,22 @@ const authThunk = {
             }
         }
     ),
+    updateUserInfo: createAsyncThunk(
+        'auth/updateUserInfo',
+        async (apiData, { rejectWithValue }) => {
+            try {
+                const apiResponse = await authApi.updateUserInfo(apiData);
+
+                if (apiResponse.status !== 200) {
+                    throw new Error(apiResponse.statusText);
+                }
+
+                return apiData;
+            } catch (error) {
+                return rejectWithValue(error.response.data.msg);
+            }
+        }
+    ),
 }
 
 export default authThunk;

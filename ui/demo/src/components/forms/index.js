@@ -27,3 +27,6 @@ export { default as FHuongDieuTri } from './FHuongDieuTri';
 export { default as FPhieuTDTruyenDich } from './FPhieuTDTruyenDich';
 
 export { default as FPhieuCongKhaiThuoc } from './FPhieuCongKhaiThuoc';
+
+export * from './creating';
+export * from './settings';

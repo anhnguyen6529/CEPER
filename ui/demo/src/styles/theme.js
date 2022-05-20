@@ -28,6 +28,11 @@ export const options = {
           '&.Mui-disabled': {
             backgroundColor: 'rgba(0, 0, 0, 0.06)'
           }
+        },
+        input: {
+          '&.Mui-disabled': {
+            WebkitTextFillColor: 'black'
+          }
         }
       }
     },

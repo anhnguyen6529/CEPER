@@ -120,3 +120,19 @@ def toggleAutoUpdateWithProcessResult(uid):
     cursor.close()
     conn.close()
     return response
+
+
+@app.route('/user/<uid>', methods=['POST'])
+@jwt_required()
+def updateUserInfo(uid):
+    data = request.json
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE USERS SET Email = %s, Phone = %s, Address = %s WHERE ID = %s;",
+                   (data["email"], data["phone"], data["address"], uid))
+    conn.commit()
+    response = jsonify(
+        {"msg": "Update user information succesfully!"})
+    cursor.close()
+    conn.close()
+    return response
