@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserInjured, faUserMd, faUserNurse } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import authApi from "../apis/auth";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authActions } from "../redux/slices/auth.slice";
 import useToken from "../hooks/useToken";
 
@@ -41,7 +41,6 @@ const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const classes = useStyles();
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     const { token, setToken } = useToken();
     const [clickedId, setClickedId] = useState(-1);
@@ -110,7 +109,7 @@ const Login = () => {
         <div className={classes.root}>
             <NavBar>
                 <Link href="/" underline="none" color="inherit">
-                    <Typography fontWeight="bold" color={`${accentColor}.dark`}>Trang chủ</Typography>
+                    <Typography fontWeight="bold" color={(theme) => theme.palette.primary.dark}>Trang chủ</Typography>
                 </Link>     
             </NavBar>
             <Container>
@@ -129,16 +128,16 @@ const Login = () => {
                                         setLogin({ ...login, role: role[2] });
                                     }}
                                     sx={{
-                                        color: (theme) => i === clickedId ? 'white' : theme.palette[accentColor].dark,
-                                        bgcolor: (theme) => i === clickedId ? theme.palette[accentColor].dark : 'white',
+                                        color: (theme) => i === clickedId ? 'white' : theme.palette.primary.dark,
+                                        bgcolor: (theme) => i === clickedId ? theme.palette.primary.dark : 'white',
                                         '&:hover': {
-                                            color: (theme) => i === clickedId ? 'white' : theme.palette[accentColor].dark,
-                                            bgcolor: (theme) => i === clickedId ? theme.palette[accentColor].dark : 'white',
+                                            color: (theme) => i === clickedId ? 'white' : theme.palette.primary.dark,
+                                            bgcolor: (theme) => i === clickedId ? theme.palette.primary.dark : 'white',
                                         },
                                         textTransform: 'none',
                                         width: '25%',
                                         height: 40,
-                                        border: (theme) => i === clickedId ? 'none' : `1px solid ${theme.palette[accentColor].dark}`,
+                                        border: (theme) => i === clickedId ? 'none' : `1px solid ${theme.palette.primary.dark}`,
                                         mr: 2,
                                         boxShadow: '0px 4px 4px 0px rgb(0, 0, 0, 0.25)'
                                     }}
@@ -186,7 +185,7 @@ const Login = () => {
 
                             <Link 
                                 href="#" 
-                                sx={{ color: (theme) => theme.palette[accentColor].main, textDecoration: 'none' }}
+                                sx={{ color: (theme) => theme.palette.primary.main, textDecoration: 'none' }}
                             >
                                 <Typography variant="subtitle2" textAlign="right" mt={1} mb={2}>Quên mật khẩu</Typography>
                             </Link>
@@ -195,7 +194,7 @@ const Login = () => {
 
                             {submitting ?
                                 <Box className="df fdc aic">
-                                    <CircularProgress color={accentColor} size={28}/>
+                                    <CircularProgress color="primary" size={28}/>
                                 </Box> 
                             : null}
 
@@ -203,7 +202,7 @@ const Login = () => {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                color={accentColor}
+                                color="primary"
                                 sx={{ height: 42, fontWeight: 'bold', mt: 2 }}
                                 onClick={handleSubmit}
                                 disabled={submitting}

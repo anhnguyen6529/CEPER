@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Box, Typography, Grid, Checkbox, Button as ButtonWord, Card, TextField } from "@mui/material";
 import "../../styles/index.css";
 import { TablePagination } from "../common";
-import { useSelector } from "react-redux";
 
 const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeCheckbox, handleUpdateSection }) => {
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const text = result.correction.map(correct => correct[0]);
@@ -41,9 +39,9 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                     sx={{ pt: 0, pb: 0.25 }} 
                     checked={useResult} 
                     onChange={({ target: { checked } }) => handleChangeCheckbox(checked)}
-                    color={accentColor}
+                    color="primary"
                 />
-                <Typography fontStyle="normal" component="span" color={`${accentColor}.main`}>
+                <Typography fontStyle="normal" component="span" color="primary">
                     {!useResult ? "Đánh dấu vào ô để kiểm tra văn bản!" : ""}
                 </Typography>
             </Typography>
@@ -54,7 +52,7 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                             <Typography key={id} component="span">
                                 <Typography 
                                     component="span"
-                                    color={`${accentColor}.main`}
+                                    color="primary"
                                     sx={{ cursor: "pointer" }}
                                     fontWeight={hoverDetection[mark.id] ? "bold" : "regular"}
                                     onClick={() => {

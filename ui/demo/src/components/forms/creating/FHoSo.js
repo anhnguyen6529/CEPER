@@ -15,7 +15,6 @@ import UserContext from "../../../contexts/UserContext";
 const FHoSo = () => {
     const { values, setValues, errors, setErrors, hasChangedNew, setHasChangedNew, submitted } = useContext(TaoHSBAContext);
     const { handleLogout } = useContext(UserContext);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { department } = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
     const now = new Date();
@@ -36,7 +35,7 @@ const FHoSo = () => {
     
     return (
         <Paper sx={{ px: 3, pt: 1.5, pb: 2, mb: 2 }}>
-            <Typography fontWeight="bold" color={`${accentColor}.main`} sx={{ mb: 2 }}>
+            <Typography fontWeight="bold" color="primary" sx={{ mb: 2 }}>
                 Thông tin hồ sơ{' '}
                 <Typography component="span" color="error" fontWeight="bold">*</Typography>
             </Typography>

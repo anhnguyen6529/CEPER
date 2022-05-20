@@ -30,7 +30,6 @@ const User = () => {
     const { creatingMode } = useSelector(state => state.danhSachHSBA);
     const { spellingError } = useSelector(state => state);
     const { token, removeToken } = useToken();
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     
     useEffect(() => {
         if (!token) {
@@ -198,11 +197,11 @@ const User = () => {
                 
                     {location.pathname.includes('HSBA') && user.role !== "BN" ?
                         <>
-                            <Divider sx={{ mt: 3, bgcolor: (theme) => theme.palette[accentColor].dark }} />
+                            <Divider sx={{ mt: 3, bgcolor: (theme) => theme.palette.primary.dark }} />
                             <Container maxWidth={false}>
                                 <Grid container alignItems="center">
                                     <Grid item xs={9}>
-                                        <Breadcrumbs sx={{ my: 1.5, color: (theme) => theme.palette[accentColor].dark }} separator={<NavigateNext fontSize="small" />}>
+                                        <Breadcrumbs sx={{ my: 1.5, color: (theme) => theme.palette.primary.dark }} separator={<NavigateNext fontSize="small" />}>
                                             <Link underline="none" key="1" color="inherit" href="/user/HSBA">
                                                 Danh sách bệnh án
                                             </Link>
@@ -236,7 +235,7 @@ const User = () => {
                                     </Grid>
                                 </Grid>
                             </Container>
-                            <Divider sx={{ bgcolor: (theme) => theme.palette[accentColor].dark }} />
+                            <Divider sx={{ bgcolor: (theme) => theme.palette.primary.dark }} />
                         </>
                     : null}
                         
@@ -245,7 +244,7 @@ const User = () => {
                     {location.pathname.includes('HSBA') && user.role !== "BN" ? 
                         <Container maxWidth={false}>
                             {(typeof(pid) !== 'undefined' || creatingMode) ?
-                                <Breadcrumbs sx={{ mt: 3, color: (theme) => theme.palette[accentColor].dark }} separator={<NavigateNext fontSize="small" />}>
+                                <Breadcrumbs sx={{ mt: 3, color: (theme) => theme.palette.primary.dark }} separator={<NavigateNext fontSize="small" />}>
                                     <Link underline="none" key="1" color="inherit" href="/user/HSBA">
                                         Danh sách bệnh án
                                     </Link>

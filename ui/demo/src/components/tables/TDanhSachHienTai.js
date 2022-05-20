@@ -28,7 +28,7 @@ const headCells = [
     { id: 'benhDieuTri', label: 'Bệnh điều trị', width: 200, show: true }
 ];
 
-const colorTrangThai = { 'Chờ khám': 'warning', 'Đang điều trị': 'primary' };
+const colorTrangThai = { 'Chờ khám': 'warning', 'Đang điều trị': 'info' };
 
 const TDanhSachHienTai = ({ data }) => {
     const navigate = useNavigate();

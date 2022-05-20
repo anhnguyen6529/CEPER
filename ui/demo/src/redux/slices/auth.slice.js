@@ -28,7 +28,7 @@ const initialState = {
         appearance: {
             changing: false,
             changingError: '',
-            accentColor: "primary"
+            accentColor: "#009ABB"
         },
         functionality: {
             changing: false,

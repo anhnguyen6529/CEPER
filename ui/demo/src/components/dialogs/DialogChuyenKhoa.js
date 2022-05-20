@@ -13,7 +13,6 @@ import { useNavigate } from "react-router";
 
 const DialogChuyenKhoa = ({ open, setOpen }) => {
     const { HSBA } = useSelector((state) => state);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { setOpenBackdrop, handleLogout } = useContext(UserContext); 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -90,7 +89,7 @@ const DialogChuyenKhoa = ({ open, setOpen }) => {
                 Nhập thông tin chuyển khoa
                 <Typography variant="subtitle1">
                     Bệnh nhân{' '}
-                    <Typography fontWeight="bold" component="span" color={`${accentColor}.main`}>{HSBA.hanhChinh.hoTen}</Typography> 
+                    <Typography fontWeight="bold" component="span" color="primary">{HSBA.hanhChinh.hoTen}</Typography> 
                     {' '}<b>(Mã BN: {HSBA.pid})</b>
                 </Typography>
             </DialogTitle>

@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './styles/theme';
 import App from './App';
@@ -25,9 +24,7 @@ ReactDOM.render(
         <LocalizationProvider dateAdapter={CustomAdapterMoment}>
           <Provider store={store}>
             <PersistGate persistor={persistor}>
-              <Router>
-                <App />
-              </Router>  
+              <App />
             </PersistGate>
           </Provider>
         </LocalizationProvider>

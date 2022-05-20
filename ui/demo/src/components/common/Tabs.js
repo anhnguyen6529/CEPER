@@ -1,12 +1,10 @@
 import React from "react";
 import { Tab, Tabs as MuiTabs } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { useSelector } from "react-redux";
 import styled from "@emotion/styled";
 
 const Tabs = (props) => {
     const { value, setValue, tabs, ...other } = props;
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     const handleCloseTab = (index) => {
         setValue(index - 1);
@@ -15,14 +13,14 @@ const Tabs = (props) => {
 
     const StyledTabs = styled(MuiTabs)(({ theme }) => ({
         '& .MuiTabs-indicator': {
-          backgroundColor: theme.palette[accentColor].main,
+          backgroundColor: theme.palette.primary.main,
         },
     }));
     
     const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
         ({ theme }) => ({
           '&.Mui-selected': {
-            color: theme.palette[accentColor].main,
+            color: theme.palette.primary.main,
           }
         }),
       );

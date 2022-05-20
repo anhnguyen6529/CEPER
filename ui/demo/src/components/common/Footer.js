@@ -1,15 +1,12 @@
 import React from "react";
 import { Container, Box, Typography, Grid, Link } from "@mui/material";
 import logo from '../../images/logo_white.svg';
-import { useSelector } from "react-redux";
 
 const Footer = () => {
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
-
     return (
         <Box
             component="footer"
-            sx={{ py: 2, mt: 'auto', bgcolor: (theme) => theme.palette[accentColor].main, color: 'white' }}
+            sx={{ py: 2, mt: 'auto', bgcolor: (theme) => theme.palette.primary.main, color: 'white' }}
         >
             <Container maxWidth="md">
                 <Grid container sx={{ my: 2 }}>

@@ -18,7 +18,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
     const { notifications, id, errorNoti, getting } = useSelector((state) => state.auth.user);
     const { updating, setting, loading, transfering } = useSelector((state) => state.HSBA);
     const { spellingError, danhSachHSBA } = useSelector((state) => state);
-    const { accentColor, changing } = useSelector((state) => state.auth.settings.appearance);
+    const { changing } = useSelector((state) => state.auth.settings.appearance);
     const { functionality } = useSelector((state) => state.auth.settings);
     const { today, handleLogout } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -77,7 +77,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
 
     return (
         <AppBar position="fixed" open={open}>
-            <Toolbar sx={{ pr: 24, bgcolor: (theme) => theme.palette[accentColor].dark }}>
+            <Toolbar sx={{ pr: 24, bgcolor: (theme) => theme.palette.primary.dark }}>
                 <IconButton 
                     edge="start"
                     sx={{
@@ -95,7 +95,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                 </Typography>
 
                 <IconButton onClick={onClickNoti} sx={{ background: 'white', ml: 4, '&:hover': { background: 'white' } }}>
-                    <Badge badgeContent={notifications.length} color={accentColor} >
+                    <Badge badgeContent={notifications.length} color="primary" >
                         <Notifications />
                     </Badge>
                 </IconButton>
@@ -117,7 +117,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                                     </Typography>
                                     <Typography>
                                         Vào viện lúc{' '}
-                                        <Typography component="span" color={`${accentColor}.main`}>
+                                        <Typography component="span" color="primary">
                                             {format(new Date(notification.timeCreated), 'dd/MM/yyyy hh:mm')}
                                         </Typography>
                                         <Typography component="span" color="text.secondary">

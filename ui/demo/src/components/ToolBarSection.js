@@ -14,7 +14,6 @@ import { useSelector } from "react-redux";
 const ToolBarSection = ({ id, sectionId, sectionName }) => {
     const { appearSec, setAppearSec, openSec, setOpenSec, setOpenDialog } = useContext(UserContext);
     const { spellingError } = useSelector(state => state);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     return (
         <>
@@ -24,7 +23,7 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
                         sx={{ 
                             cursor: 'pointer', 
                             mx: 0.75, 
-                            color: (theme) => id === 0 ? theme.palette.action.disabled : theme.palette[accentColor].dark 
+                            color: (theme) => id === 0 ? theme.palette.action.disabled : theme.palette.primary.dark 
                         }}
                         fontSize="small"
                         onClick={() => {
@@ -41,7 +40,7 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
                         sx={{ 
                             cursor: 'pointer',
                             mx: 0.75,
-                            color: (theme) => id === appearSec.length - 1 ? theme.palette.action.disabled : theme.palette[accentColor].dark
+                            color: (theme) => id === appearSec.length - 1 ? theme.palette.action.disabled : theme.palette.primary.dark
                         }}
                         fontSize="small"
                         onClick={() => {
@@ -55,7 +54,7 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
             <Tooltip title="Ẩn mục" placement="top">
                 <span>
                     <VisibilityOff 
-                        sx={{ cursor: 'pointer', mx: 0.75, color: (theme) => theme.palette[accentColor].dark }}
+                        sx={{ cursor: 'pointer', mx: 0.75, color: (theme) => theme.palette.primary.dark }}
                         fontSize="small"
                         onClick={() => {
                             var temp = [...appearSec];
@@ -85,7 +84,7 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
                         sx={{ 
                             cursor: 'pointer', 
                             mx: 0.75,
-                            color: (theme) => !openSec[sectionId] ? theme.palette.action.disabled : theme.palette[accentColor].dark
+                            color: (theme) => !openSec[sectionId] ? theme.palette.action.disabled : theme.palette.primary.dark
                         }}
                         fontSize="small"
                         onClick={() => {
@@ -103,7 +102,7 @@ const ToolBarSection = ({ id, sectionId, sectionName }) => {
                         sx={{ 
                             cursor: 'pointer', 
                             mx: 0.75,
-                            color: (theme) => openSec[sectionId] ? theme.palette.action.disabled : theme.palette[accentColor].dark
+                            color: (theme) => openSec[sectionId] ? theme.palette.action.disabled : theme.palette.primary.dark
                         }}
                         onClick={() => {
                             var temp = [...openSec];

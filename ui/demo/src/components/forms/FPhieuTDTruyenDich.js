@@ -46,7 +46,6 @@ const FPhieuTDTruyenDich = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id, department } = useSelector(state => state.auth.user);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
 
     const [order, setOrder] = useState('asc');
@@ -181,7 +180,7 @@ const FPhieuTDTruyenDich = () => {
             <Paper>
                 <TableContainer>
                     <Table stickyHeader> 
-                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette[accentColor].light } }}>
+                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette.primary.light } }}>
                             <TableRow>
                                 {headCells.map((headCell, id) => (
                                     id < 5 || id > 6 

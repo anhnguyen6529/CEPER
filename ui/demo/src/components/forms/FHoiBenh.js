@@ -42,7 +42,6 @@ const FHoiBenh = () => {
     const spellingErrorQuaTrinhBenhLy = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[0]]);
     const spellingErrorBanThan = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[1]]);
     const spellingErrorGiaDinh = useSelector((state) => state.spellingError[SECTION_NAME][CLINICAL_SUBSECTION[2]]);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const dispatch = useDispatch();
 
     const [quaTrinhBenhLy, setQuaTrinhBenhLy] = useState(hoiBenh.quaTrinhBenhLy);
@@ -196,8 +195,8 @@ const FHoiBenh = () => {
                     : ( 
                         updating && spellingErrorQuaTrinhBenhLy.changed ? 
                             <div className="df fdc aic jcc">
-                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                <Typography color="primary">Đang xử lý...</Typography>
                             </div> 
                         : null
                     )}
@@ -286,8 +285,8 @@ const FHoiBenh = () => {
                                     : ( 
                                         updating && spellingErrorBanThan.changed ? 
                                             <div className="df fdc aic jcc">
-                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                                <Typography color="primary">Đang xử lý...</Typography>
                                             </div> 
                                         : null
                                     )}
@@ -401,8 +400,8 @@ const FHoiBenh = () => {
                                     : ( 
                                         updating && spellingErrorGiaDinh.changed ? 
                                             <div className="df fdc aic jcc">
-                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                                <Typography color="primary">Đang xử lý...</Typography>
                                             </div> 
                                         : null
                                     )}

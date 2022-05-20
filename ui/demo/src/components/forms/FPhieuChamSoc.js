@@ -38,7 +38,6 @@ const FPhieuChamSoc = () => {
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { updating, confirmUpdate, danhSachYLenh, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector(state => state.auth.user);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
 
@@ -185,7 +184,7 @@ const FPhieuChamSoc = () => {
             <Paper>
                 <TableContainer>
                     <Table stickyHeader> 
-                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette[accentColor].light } }}>
+                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette.primary.light } }}>
                             <TableRow>
                                 {headCells.map((headCell, id) => (
                                     <TableCell
@@ -454,7 +453,7 @@ const FPhieuChamSoc = () => {
                 <Card sx={{ mt: 2 }}>
                     <CardHeader
                         title={`${SECTION_NAME} (THEO DÕI DIẾN BIẾN) - Xử lý lỗi`} 
-                        titleTypographyProps={{ fontSize: 16, fontWeight: "bold", color: `${accentColor}.dark` }} 
+                        titleTypographyProps={{ fontWeight: "bold", color: "primary.dark" }} 
                     />
                     <CardContent sx={{ py: 0 }}>
                         {rows.slice(content.data.length).map((row, index) => (
@@ -462,14 +461,14 @@ const FPhieuChamSoc = () => {
                                 <Card key={index} sx={{ mb: 2 }}>
                                     <CardHeader 
                                         title={`Ngày giờ: ${format(new Date(row.ngayGio), "dd/MM/yyyy HH:mm")}`} 
-                                        sx={{ bgcolor: `${accentColor}.light` }} 
-                                        titleTypographyProps={{ fontSize: 16, fontWeight: "bold" }} 
+                                        sx={{ bgcolor: "primary.light" }} 
+                                        titleTypographyProps={{ fontWeight: "bold" }} 
                                     />
                                     <CardContent sx={{ pl: 1 }}>
                                         {row.theoDoiDienBien.map((_, idx) => (
                                             spellingError[row.ngayGio][idx].correction.length > 0 ?
                                                 <Box key={idx} className="df" sx={{ mb: idx < row.theoDoiDienBien.length - 1 ? 3 : 0 }}>
-                                                    <ArrowRight sx={{ mr: 1 }} color={accentColor} />
+                                                    <ArrowRight sx={{ mr: 1 }} color="primary" />
                                                     <Box sx={{ width: "100%" }}>
                                                         <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
                                                         <TextField 
@@ -510,8 +509,8 @@ const FPhieuChamSoc = () => {
                                                             />
                                                         : ( 
                                                             <div className="df fdc aic jcc">
-                                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                                                                <Typography color={`${accentColor}.main`}>Đang xử lý...</Typography>
+                                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                                                <Typography color="primary">Đang xử lý...</Typography>
                                                             </div> 
                                                         )}
                                                     </Box>

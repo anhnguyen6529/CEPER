@@ -1,6 +1,5 @@
 import React from "react";
 import { Button as MuiButton, darken } from "@mui/material";
-import { useSelector } from "react-redux";
 
 const ROOT = {
     minWidth: 120,
@@ -9,14 +8,12 @@ const ROOT = {
 }
 
 const Button = ({ children, variant, sx, ...other }) => {
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
-
     return (
         <>
         {variant === "primary" &&
             <MuiButton
                 variant="contained"
-                color={accentColor}
+                color="primary"
                 sx={{ 
                     ...ROOT,
                     ...sx
@@ -30,10 +27,10 @@ const Button = ({ children, variant, sx, ...other }) => {
             <MuiButton
                 sx={{ 
                     ...ROOT,
-                    bgcolor: (theme) => theme.palette[accentColor].dark, 
+                    bgcolor: (theme) => theme.palette.primary.dark, 
                     color: 'white',
                     '&:hover': {
-                        bgcolor: (theme) => theme.palette[accentColor].darker, 
+                        bgcolor: (theme) => theme.palette.primary.darker, 
                     },
                     ...sx
                 }} 
@@ -46,10 +43,10 @@ const Button = ({ children, variant, sx, ...other }) => {
             <MuiButton
                 sx={{ 
                     ...ROOT,
-                    bgcolor: (theme) => theme.palette[accentColor].light, 
-                    color: (theme) => theme.palette[accentColor].main,
+                    bgcolor: (theme) => theme.palette.primary.light, 
+                    color: (theme) => theme.palette.primary.main,
                     '&:hover': {
-                        bgcolor: (theme) => darken(theme.palette[accentColor].light, 0.05)
+                        bgcolor: (theme) => darken(theme.palette.primary.light, 0.05)
                     },
                     ...sx
                 }} 
@@ -61,7 +58,7 @@ const Button = ({ children, variant, sx, ...other }) => {
         {variant === "outlined" &&
             <MuiButton
                 variant="outlined"
-                color={accentColor}
+                color="primary"
                 sx={{ ...ROOT, bgcolor: 'white', '&:hover': { bgcolor: darken('#FFF', 0.05) },  ...sx }} 
                 {...other}
             >

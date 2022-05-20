@@ -30,7 +30,6 @@ const Drawer = ({ open, toggleDrawer, content }) => {
     const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
     const dispatch = useDispatch();
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     const handleClickUser = () => {
         if (role === "BN") {
@@ -69,7 +68,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                     <Grid item xs={4} align="right">
                         <Avatar 
                             src="/images/avatar_default.png" 
-                            sx={{ width: 48, height: 48, border: (theme) => `3px solid ${theme.palette[accentColor].main}` }} />
+                            sx={{ width: 48, height: 48, border: (theme) => `3px solid ${theme.palette.primary.main}` }} />
                     </Grid>
                     <Grid item xs={8}>
                         <div sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -103,7 +102,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                                 onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth" })}
                                             >
                                                 <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
-                                                    <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette[accentColor].main, mt: 0.5 }} />
+                                                    <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
                                                 </ListItemIcon>
                                                 <ListItemText primary={key} />
                                             </ListItem>
@@ -176,10 +175,10 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                             setAppearSec(tAppearSec);
                                         }}
                                     >
-                                        <ListItemIcon sx={{ minWidth: 32, color: (theme) => theme.palette[accentColor].main }}>
+                                        <ListItemIcon sx={{ minWidth: 32, color: (theme) => theme.palette.primary.main }}>
                                             <FontAwesomeIcon color="inherit" icon={faFileMedicalAlt} />
                                         </ListItemIcon>
-                                        <ListItemText sx={{ color: (theme) => appearSec.indexOf(id) === -1 ? 'black' : theme.palette[accentColor].main }}>
+                                        <ListItemText sx={{ color: (theme) => appearSec.indexOf(id) === -1 ? 'black' : theme.palette.primary.main }}>
                                             {section}
                                         </ListItemText>
                                     </ListItem>

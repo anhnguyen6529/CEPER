@@ -16,7 +16,7 @@ import { sectionState } from "../redux/slices/spellingError.slice";
 import { useSnackbar } from "notistack";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
 
-const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "primary", "Đã ra viện": "default" };
+const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "info", "Đã ra viện": "default" };
 
 const HSBA = () => {
     const dispatch = useDispatch();
@@ -41,7 +41,6 @@ const HSBA = () => {
     }, []);
 
     const { spellingError } = useSelector((state) => state);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const benhNhan = useSelector(state => state.HSBA);
     const { loading, loadingError, updating, confirmUpdate, transfering } = benhNhan;
 
@@ -150,7 +149,7 @@ const HSBA = () => {
                                         <Avatar src="/images/avatar_default.png" sx={{ width: 100, height: 100 }} />
                                     </Grid>
                                     <Grid item xs={10}>
-                                        <Typography variant="h5" color={`${accentColor}.main`} fontWeight="bold" sx={{ mb: 0.5 }}>{benhNhan.hanhChinh.hoTen}</Typography>
+                                        <Typography variant="h5" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>{benhNhan.hanhChinh.hoTen}</Typography>
                                         <Grid container columnSpacing={3}>
                                             <Grid item xs={3}>
                                                 <Typography fontWeight="bold">Mã BN</Typography>
@@ -211,45 +210,45 @@ const HSBA = () => {
                         <Grid item xs={3}>
                             <Paper sx={{ height: '100%', width: '100%', px: 3, py: 2 }}>
                                 <Grid container direction="column" sx={{ height: '100%' }}>
-                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette[accentColor].light}` }}>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette.primary.light}` }}>
                                         <Grid item xs={6}>
                                             <Typography fontWeight="bold">Mạch</Typography>
                                         </Grid>
                                         <Grid item xs={6} align="right">
-                                            <Typography variant="h6" color={`${accentColor}.main`}>
+                                            <Typography variant="h6" color="primary">
                                                 {mach}{' '}
                                                 <Typography color="#000" component="span">lần/phút</Typography>
                                             </Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette[accentColor].light}` }}>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette.primary.light}` }}>
                                         <Grid item xs={6}>
                                             <Typography fontWeight="bold">Nhiệt độ</Typography>
                                         </Grid>
                                         <Grid item xs={6} align="right">
-                                            <Typography variant="h6" color={`${accentColor}.main`}>
+                                            <Typography variant="h6" color="primary">
                                                 {nhietDo}{' '}
                                                 <Typography color="#000" component="span">°C</Typography>
                                             </Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette[accentColor].light}` }}>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette.primary.light}` }}>
                                         <Grid item xs={6}>
                                             <Typography fontWeight="bold">Huyết áp</Typography>
                                         </Grid>
                                         <Grid item xs={6} align="right">
-                                            <Typography variant="h6" color={`${accentColor}.main`}>
+                                            <Typography variant="h6" color="primary">
                                                 {huyetAp}{' '}
                                                 <Typography color="#000" component="span">mmHg</Typography>
                                             </Typography>
                                         </Grid>
                                     </Grid>
-                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette[accentColor].light}` }}>
+                                    <Grid container item xs={2.4} alignItems="center" sx={{ borderBottom: (theme) => `2px solid ${theme.palette.primary.light}` }}>
                                         <Grid item xs={6}>
                                             <Typography fontWeight="bold">Nhịp thở</Typography>
                                         </Grid>
                                         <Grid item xs={6} align="right">
-                                            <Typography variant="h6" color={`${accentColor}.main`}>
+                                            <Typography variant="h6" color="primary">
                                                 {nhipTho}{' '}
                                                 <Typography color="#000" component="span">lần/phút</Typography>
                                             </Typography>
@@ -260,7 +259,7 @@ const HSBA = () => {
                                             <Typography fontWeight="bold">Cân nặng</Typography>
                                         </Grid>
                                         <Grid item xs={6} align="right">
-                                            <Typography variant="h6" color={`${accentColor}.main`}>
+                                            <Typography variant="h6" color="primary">
                                                 {canNang}{' '}
                                                 <Typography color="#000" component="span">kg</Typography>
                                             </Typography>
@@ -278,7 +277,7 @@ const HSBA = () => {
                         >  
                             <Grid container>
                                 <Grid item xs={9}> 
-                                    <Typography fontWeight="bold" color={openSec[sectionId] ? `${accentColor}.main` : "inherit"} >
+                                    <Typography fontWeight="bold" color={openSec[sectionId] ? "primary" : "inherit"} >
                                         {mdSections["sortOrder"][role][sectionId]}
                                     </Typography>
                                 </Grid>
@@ -329,8 +328,8 @@ const HSBA = () => {
                 </>
             : (
                 <div className="df fdc aic jcc">
-                    <CircularProgress sx={{ mt: 3, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                    <Typography color={`${accentColor}.main`}>Đang tải...</Typography>
+                    <CircularProgress sx={{ mt: 3, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                    <Typography color="primary">Đang tải...</Typography>
                 </div>
             )}
         </Container>

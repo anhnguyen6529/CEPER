@@ -33,7 +33,6 @@ const FPhieuTDDiUngThuoc = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector((state) => state.auth.user);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
 
@@ -120,7 +119,7 @@ const FPhieuTDDiUngThuoc = () => {
             <Paper>
                 <TableContainer>
                     <Table stickyHeader> 
-                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette[accentColor].light } }}>
+                        <TableHead sx={{ '.MuiTableCell-root': { bgcolor: (theme) => theme.palette.primary.light } }}>
                             <TableRow>
                                 {headCells.map((headCell, id) => (
                                     <TableCell

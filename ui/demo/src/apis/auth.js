@@ -13,7 +13,8 @@ const authApi = {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
         }),
     changeAccentColor: async (apiData) => 
-        ceperApi.get(`/user/${apiData.userID}/settings/appearance/accent-color/${apiData.color}`, {
+        ceperApi.get(`/user/${apiData.userID}/settings/appearance/accent-color`, {
+            params: { color: apiData.color },
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
         }),
     toggleAutoUpdateWithProcessResult: async (apiData) => 

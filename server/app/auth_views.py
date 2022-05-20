@@ -92,9 +92,10 @@ def markNotificationSeen(uid, nid):
     return response
 
 
-@app.route('/user/<uid>/settings/appearance/accent-color/<color>')
+@app.route('/user/<uid>/settings/appearance/accent-color')
 @jwt_required()
-def changeAccentColor(uid, color):
+def changeAccentColor(uid):
+    color = request.args.get('color')
     conn = mysql.connect()
     cursor = conn.cursor()
     cursor.execute(

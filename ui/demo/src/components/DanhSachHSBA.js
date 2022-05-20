@@ -25,7 +25,6 @@ const DanhSachHSBA = () => {
 
     const { danhSachHSBATab, setDanhSachHSBATab, handleLogout } = useContext(UserContext);
     const { hienTai, raVien, creatingMode, loading, loadingError, creatingHSBA, creatingHSBAError } = useSelector(state => state.danhSachHSBA);
-    const { accentColor } = useSelector((state) => state.auth.settings.appearance);
 
     const [values, setValues] = useState(initialValues);
     const [errors, setErrors] = useState(initialErrors);
@@ -170,8 +169,8 @@ const DanhSachHSBA = () => {
                 </Container>
             : (
                 <div className="df fdc aic jcc">
-                    <CircularProgress sx={{ mt: 3, mb: 1, color: (theme) => theme.palette[accentColor].main }} />
-                    <Typography color={`${accentColor}.main`}>Đang tải...</Typography>
+                    <CircularProgress sx={{ mt: 3, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                    <Typography color="primary">Đang tải...</Typography>
                 </div>
             )}
         </TaoHSBAProvider>
