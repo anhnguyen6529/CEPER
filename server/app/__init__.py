@@ -12,7 +12,8 @@ load_dotenv(dotenv_path)
 
 mysql = MySQL()
 app = Flask(__name__)
-CORS(app, resources={r'/*': {'origins': 'http://localhost:3000'}})
+CORS(app, resources={r'/*': {'origins': ['https://localhost:3000',
+     'https://3542-2001-ee0-5206-4260-f5bb-4f0c-6934-dba.ap.ngrok.io']}})
 
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'anhnguyen6529'
