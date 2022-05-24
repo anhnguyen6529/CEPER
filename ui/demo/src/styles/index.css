@@ -88,3 +88,9 @@ html {
 .tableHeadBorderRight {
 	border-right: 0.5px solid rgba(200, 200, 224, 1);
 }
+
+.img {
+	aspect-ratio: attr(width) / attr(height);
+	height: auto;
+	width: 100%;
+}

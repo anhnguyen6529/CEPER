@@ -46,6 +46,7 @@ const FTomTatBenhAn = () => {
                     }
                 }}
                 disabled={updating}
+                inputProps={{ 'aria-label': 'tom tat benh an' }}
             />
 
             <Box sx={{ width: '100%', textAlign: 'right' }}>

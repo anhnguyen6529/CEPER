@@ -120,6 +120,7 @@ const TDanhSachRaVien = ({ data }) => {
                                                 </InputAdornment>,
                                                 sx: { pl: 1, '& .MuiInputBase-input': { pr: 1 } }
                                             }}
+                                            inputProps={{ "aria-label": "checkbox sign"}}
                                         />
                                     }
                                 </TableCell>

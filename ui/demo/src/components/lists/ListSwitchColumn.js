@@ -17,7 +17,7 @@ const ListSwitchColumn = ({ columns, columnsChecked, onClickItem, onClickShowAll
                     onClick={() => onClickItem(id)}
                 >
                     <ListItemText>{columns[id]}</ListItemText>
-                    <Switch edge="end" size="small" color="primary" checked={columnsChecked[id]} />
+                    <Switch edge="end" size="small" color="primary" checked={columnsChecked[id]} inputProps={{ 'aria-label': 'Switch show/hide column' }} />
                 </ListItem>
             ))}
 

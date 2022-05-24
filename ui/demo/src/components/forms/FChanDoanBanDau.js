@@ -78,6 +78,7 @@ const FChanDoanBanDau = () => {
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
+                inputProps={{ 'aria-label': 'chan doan ban dau' }}
             />
 
             {!!result && !spellingError.loading ? 

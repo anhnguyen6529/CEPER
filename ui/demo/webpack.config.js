@@ -1,18 +1,54 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+
 module.exports = {
     mode: 'development',
-    entry: './src/index.js', // file jsx của entry point 
+    entry: './src/index.js', 
     output: {
-      filename: 'bundle.js' // file sẽ xuất ra
+      path: path.join(__dirname, "/build"),
+      filename: '[name].[contenthash].js',
+      clean: true,
     },
     module: {
-      loaders: [{
-        test: /\.js?$/, // đuôi mở rộng là js
-        exclude: /node_modules/, // loại trừ bên dưới thư mục node_modules
-        loader: 'babel-loader', // sử dụng babel-loader 
-      }]
+      rules: [
+        {
+          test: /\.js$/, 
+          exclude: /node_modules/, 
+          use: ["babel-loader"]
+        },
+        {
+          test: /\.css$/, 
+          use: ["style-loader", "css-loader"]
+        },
+        {
+          test: /\.svg$/,
+          use: [
+            {
+              loader: 'svg-url-loader',
+              options: {
+                limit: 10000,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(png|jpg|gif)$/i,
+          use: [
+            {
+              loader: 'file-loader',
+            },
+          ],
+        },
+      ]
     },
     resolve: {
       modules: ['src', 'node_modules'], // folder đối tượng
       extensions: ['.js', '.json'] // file đối tượng
     },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: 'Caching',
+        template: "./public/index.html"
+      }),
+    ],
   }

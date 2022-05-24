@@ -95,6 +95,7 @@ const FChanDoanKhiRaVien = () => {
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
+                inputProps={{ 'aria-label': 'chan doan khi ra vien' }}
             />
 
             {!!result && !spellingError[CLINICAL_SUBSECTION].loading ? 
@@ -157,7 +158,7 @@ const FChanDoanKhiRaVien = () => {
                                 }
                             }
                         }}
-                        renderInput={(params) => <TextField {...params}/>}
+                        renderInput={(params) => <TextField {...params} inputProps={{ 'aria-label': 'ngay ra vien' }} />}
                         inputFormat="DD/MM/yyyy HH:mm"
                         ampm={false}
                         leftArrowButtonText=""

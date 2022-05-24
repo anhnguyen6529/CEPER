@@ -78,6 +78,7 @@ const FPhuongPhapDieuTri = () => {
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
+                inputProps={{ 'aria-label': 'phuong phap dieu tri' }}
             />
 
             {(!!result && !spellingError.loading) ? 

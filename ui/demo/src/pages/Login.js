@@ -10,6 +10,7 @@ import authApi from "../apis/auth";
 import { useDispatch } from "react-redux";
 import { authActions } from "../redux/slices/auth.slice";
 import useToken from "../hooks/useToken";
+import Lazyload from "react-lazyload";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -213,7 +214,9 @@ const Login = () => {
                     </Grid>
 
                     <Grid item xs={6} align="center">
-                        <img src={loginImg} alt="" className={classes.loginImg}/>
+                        <Lazyload height={335}>
+                            <img src={loginImg} alt="" className={classes.loginImg} height="auto" width="auto" />
+                        </Lazyload>
                     </Grid>
                 </Grid>
             </Container>

@@ -41,6 +41,7 @@ const BoxDacDiemLienQuanBenh = ({ dacDiemLienQuan }) => {
                                 <Checkbox 
                                     checked={data[idx].kyHieu} 
                                     disabled
+                                    inputProps={{ "aria-label": "checkbox sign"}}
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight">
@@ -65,6 +66,7 @@ const BoxDacDiemLienQuanBenh = ({ dacDiemLienQuan }) => {
                                 <Checkbox 
                                     checked={data[idx + 3].kyHieu} 
                                     disabled
+                                    inputProps={{ "aria-label": "checkbox sign"}}
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight" sx={{ verticalAlign: "top" }}>

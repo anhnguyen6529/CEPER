@@ -157,6 +157,7 @@ const FHoiBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[0] || !spellingErrorQuaTrinhBenhLy.changed)}
+                        inputProps={{ 'aria-label': 'qua trinh benh ly' }}
                     />
 
                     {!!result[0] && !spellingErrorQuaTrinhBenhLy.loading ? 
@@ -247,6 +248,7 @@ const FHoiBenh = () => {
                                             }
                                         }}
                                         disabled={updating && (useResult[1] || !spellingErrorBanThan.changed)}
+                                        inputProps={{ 'aria-label': 'tien su ban than' }}
                                     />
 
                                     {!!result[1] && !spellingErrorBanThan.loading ? 
@@ -362,6 +364,7 @@ const FHoiBenh = () => {
                                             }
                                         }}
                                         disabled={updating && (useResult[2] || !spellingErrorGiaDinh.changed)}
+                                        inputProps={{ 'aria-label': 'tien su gia dinh' }}
                                     />
 
                                     {!!result[2] && !spellingErrorGiaDinh.loading ?

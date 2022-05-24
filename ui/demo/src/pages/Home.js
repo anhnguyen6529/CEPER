@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileMedical, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import useToken from '../hooks/useToken';
 import { useSelector } from 'react-redux';
+import Lazyload from 'react-lazyload';
+import "../styles/index.css";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -101,7 +103,9 @@ const Home = () => {
                     </Grid>
                     
                     <Grid item xs={4}>
-                        <img src={landingImg} alt="" className={classes.landingImg}/>
+                        <Lazyload height={320}>      
+                            <img src={landingImg} alt="" className={classes.landingImg} width="370" height="320" />
+                        </Lazyload>
                     </Grid>
                 </Grid>
 

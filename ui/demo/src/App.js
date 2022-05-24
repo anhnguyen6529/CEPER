@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, lazy, Suspense } from "react";
 import { Routes, Route, Navigate, BrowserRouter as Router } from "react-router-dom";
 import { createTheme, darken, ThemeProvider } from '@mui/material/styles';
-
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import User from "./pages/User";
 import { useSelector } from "react-redux";
 import { options } from "./styles/theme";
+
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const User = lazy(() => import("./pages/User"));
 
 export const recommendPrimary = { 
     "#009ABB": { light: "#D9EFFE", dark: "#09425A", darker: "#062E3E",contrastText: "#FFF" },
@@ -39,15 +39,17 @@ const App = () => {
     return (
         <ThemeProvider theme={customTheme}>
             <Router>
-                <Routes>     
-                    <Route exact path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/user/HSBA" element={<User />} />
-                    <Route path="/user/HSBA/:pid" element={<User />} />
-                    <Route path="/user/settings" element={<User />} />
-                    
-                    <Route exact path="*" element={<Navigate to="/" />}/>    
-                </Routes>
+                <Suspense fallback={<div style={{ padding: 10 }}>Đang tải trang...</div>}>
+                    <Routes>     
+                        <Route exact path="/" element={<Home />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/user/HSBA" element={<User />} />
+                        <Route path="/user/HSBA/:pid" element={<User />} />
+                        <Route path="/user/settings" element={<User />} />
+                        
+                        <Route exact path="*" element={<Navigate to="/" />}/>    
+                    </Routes>
+                </Suspense>
             </Router>
         </ThemeProvider>
     );

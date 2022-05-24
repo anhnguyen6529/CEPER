@@ -256,6 +256,7 @@ const FPhieuTDDiUngThuoc = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'bieu hien lam sang' }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">{`${id} - ${name}`}</TableCell>
@@ -276,6 +277,7 @@ const FPhieuTDDiUngThuoc = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'ghi chu' }}
                                         />
                                     </TableCell>
                                 </TableRow>

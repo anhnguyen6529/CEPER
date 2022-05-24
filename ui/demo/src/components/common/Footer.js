@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Box, Typography, Grid, Link } from "@mui/material";
 import logo from '../../images/logo_white.svg';
+import "../../styles/index.css";
 
 const Footer = () => {
     return (
@@ -13,7 +14,7 @@ const Footer = () => {
                     <Grid item xs={7}>
                         <Box className="df fdc jcc" sx={{ height: '100%' }}>
                             <Link href="/">
-                                <img src={logo} alt="" style={{ maxWidth: 180 }}/>
+                                <img src={logo} alt="Logo" style={{ maxWidth: 180 }} width="180" height="45" />
                             </Link>
                             <Typography variant="body2" sx={{ mt: 1 }}>
                                 Copyright © 2021 CEPER. All Rights Reserved.

@@ -78,6 +78,7 @@ const FHuongDieuTri = () => {
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
+                inputProps={{ 'aria-label': 'huong dieu tri' }}
             />
 
             {!!result && !spellingError.loading ? 

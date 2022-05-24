@@ -56,9 +56,9 @@ const Drawer = ({ open, toggleDrawer, content }) => {
         >
             <DrawerHeader>
                 <Link href="/">
-                    <img src={logo} alt="logo" style={{ maxWidth: 150 }} />
+                    <img src={logo} alt="logo" style={{ maxWidth: 150 }} width="150" height="35" />
                 </Link>
-                <IconButton onClick={toggleDrawer}>
+                <IconButton onClick={toggleDrawer} aria-label="hide drawer">
                     <ChevronLeft />
                 </IconButton>      
             </DrawerHeader>              

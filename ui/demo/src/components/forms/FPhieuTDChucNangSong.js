@@ -207,6 +207,7 @@ const FPhieuTDChucNangSong = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'mach' }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -228,6 +229,7 @@ const FPhieuTDChucNangSong = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'nhiet do' }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -250,6 +252,7 @@ const FPhieuTDChucNangSong = () => {
                                                         }
                                                     }
                                                 }}
+                                                inputProps={{ 'aria-label': 'huyet ap 0' }}
                                             />
                                             <Typography sx={{ mx: 1 }}>/</Typography>
                                             <TextField
@@ -270,6 +273,7 @@ const FPhieuTDChucNangSong = () => {
                                                         }
                                                     }
                                                 }}
+                                                inputProps={{ 'aria-label': 'huyet ap 1' }}
                                             />
                                         </Box>
                                         
@@ -293,6 +297,7 @@ const FPhieuTDChucNangSong = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'nhip tho' }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -314,6 +319,7 @@ const FPhieuTDChucNangSong = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'can nang' }}
                                         />
                                     </TableCell>
                                     <TableCell>{`${id} - ${name}`}</TableCell>

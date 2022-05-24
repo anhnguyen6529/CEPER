@@ -1,6 +1,7 @@
 import React from "react";
 import { AppBar, Toolbar, Container, Grid, Link } from "@mui/material";
 import logo from "../../images/logo.svg";
+import "../../styles/index.css";
 
 const NavBar = ({ children }) => {
     return (
@@ -14,7 +15,7 @@ const NavBar = ({ children }) => {
                     <Grid container spacing={0} alignItems="center">
                         <Grid item xs={8}>
                             <Link href="/">
-                                <img src={logo} alt="logo" style={{ maxWidth: 150 }}/>
+                                <img src={logo} alt="logo" style={{ maxWidth: 150 }} width="150" height="35" />
                             </Link>
                         </Grid>
                         <Grid item xs={4} align="right">

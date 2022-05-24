@@ -274,7 +274,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                     }
                                                 }
                                             }}
-                                            renderInput={(params) => <TextField fullWidth {...params} sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }} />}
+                                            renderInput={(params) => <TextField fullWidth {...params} sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }} inputProps={{ 'aria-label': 'input ngay' }} />}
                                             disablePast
                                             OpenPickerButtonProps={{ size: "small", sx: { px: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
                                         />
@@ -341,6 +341,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                         }
                                                     }}
                                                     sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }}
+                                                    inputProps={{ 'aria-label': 'input so luong' }}
                                                 />
                                             </TableCell>
                                         : null}
@@ -418,6 +419,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                         }
                                                     }
                                                 }}
+                                                inputProps={{ 'aria-label': 'input so luong' }}
                                             />
                                         </TableCell>
                                         <TableCell className="tableBodyBorderRight" />
@@ -445,6 +447,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                         }
                                                     }
                                                 }}
+                                                inputProps={{ 'aria-label': 'input ghi chu' }}
                                             />  
                                         </TableCell>
                                     </TableRow>

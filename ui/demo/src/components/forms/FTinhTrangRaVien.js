@@ -78,6 +78,7 @@ const FTinhTrangRaVien = () => {
                     }
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
+                inputProps={{ 'aria-label': 'tinh trang ra vien' }}
             />
 
             {!!result && !spellingError.loading ? 

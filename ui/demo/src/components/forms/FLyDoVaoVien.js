@@ -120,6 +120,7 @@ const FLyDoVaoVien = () => {
                             }
                         }}
                         disabled={updating && (useResultLyDo || !spellingErrorLyDo.changed)}
+                        inputProps={{ 'aria-label': 'ly do vao vien' }}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -143,6 +144,7 @@ const FLyDoVaoVien = () => {
                                 }
                             }}
                             disabled={updating}
+                            inputProps={{ 'aria-label': 'vao ngay thu' }}
                         />
                         <Typography>của bệnh</Typography>
                     </Box>           
@@ -196,7 +198,7 @@ const FLyDoVaoVien = () => {
                     <DateTimePicker
                         value={lyDoVaoVien.ngayVaoVien}
                         onChange={(_) => {}}
-                        renderInput={(params) => <TextField {...params}/>}
+                        renderInput={(params) => <TextField {...params} />}
                         inputFormat="DD/MM/yyyy HH:mm"
                         ampm={false}
                         leftArrowButtonText=""
@@ -239,11 +241,13 @@ const FLyDoVaoVien = () => {
                                 }
                             }}
                             disabled={updating && (useResultChanDoan || !spellingErrorChanDoan.changed)}
+                            inputProps={{ 'aria-label': 'chan doan noi gioi thieu' }}
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <RadioGroup 
                             row 
+                            aria-labelledby="radio buttons group"
                             value={noiGioiThieu}
                             onChange={({ target: { value } }) => {
                                 setNoiGioiThieu(value); 

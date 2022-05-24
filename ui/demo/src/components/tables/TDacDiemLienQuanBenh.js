@@ -90,6 +90,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                     onChange={({ target: { checked }}) => handleChangeCheckbox(checked, idx)} 
                                     disabled={updating} 
                                     color="primary"
+                                    inputProps={{ "aria-label": "checkbox sign"}}
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight">
@@ -110,6 +111,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                 sx={{ width: "65%" }}
                                                 disabled={updating || (!updating && !data[idx].kyHieu)}
                                                 placeholder="Dị nguyên"
+                                                inputProps={{ 'aria-label': 'input di nguyen' }}
                                             /> 
                                             <Typography sx={{ mx: 1 }}>-</Typography>
                                             <TextField 
@@ -126,6 +128,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                     handleChange(tData);
                                                 }}
                                                 disabled={updating || (!updating && !data[idx].kyHieu)}
+                                                inputProps={{ 'aria-label': 'input thoi gian' }}
                                             />  
                                             
                                             {id === data[idx].diNguyen.length - 1 && data[idx].kyHieu ? 
@@ -142,6 +145,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                         value={data[idx].thoiGian}
                                         onChange={({ target: { value } }) => handleChangeTextField(value, idx)}
                                         disabled={updating || (!updating && !data[idx].kyHieu)}
+                                        inputProps={{ 'aria-label': 'input thoi gian' }}
                                     /> 
                                 )}
                             </TableCell>
@@ -165,6 +169,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                         handleChange(tData);
                                                     }}
                                                     placeholder="Khác"
+                                                    inputProps={{ 'aria-label': 'input benh khac' }}
                                                 />
                                                 {id === data[idx + 3].benh.length - 1 ? 
                                                     <Add sx={{ ml: 0.5, cursor: "pointer", color: "#999" }} onClick={() => handleAddBenhClick(idx + 3)} />
@@ -181,6 +186,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                     onChange={({ target: { checked }}) => handleChangeCheckbox(checked, idx + 3)} 
                                     disabled={updating} 
                                     color="primary"
+                                    inputProps={{ "aria-label": "checkbox sign"}}
                                 />
                             </TableCell>
                             <TableCell className="tableBodyBorderRight" sx={{ verticalAlign: data[idx + 3].tt === "06" ? "top" : "middle" }}>
@@ -201,6 +207,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                                 handleChange(tData);
                                             }}
                                             disabled={updating || (!updating && !data[idx + 3].kyHieu)}
+                                            inputProps={{ 'aria-label': 'input thoi gian' }}
                                         /> 
                                     ))
                                  : (
@@ -212,6 +219,7 @@ const TDacDiemLienQuanBenh = ({ dacDiemLienQuan, setDacDiemLienQuan, handleChang
                                         value={data[idx + 3].thoiGian}
                                         onChange={({ target: { value } }) => handleChangeTextField(value, idx + 3)}
                                         disabled={updating || (!updating && !data[idx + 3].kyHieu)}
+                                        inputProps={{ 'aria-label': 'input thoi gian' }}
                                     /> 
                                 )}
                             </TableCell>

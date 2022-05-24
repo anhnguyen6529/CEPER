@@ -144,6 +144,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[0] || !spellingError[CLINICAL_SUBSECTION[0]].changed)}
+                        inputProps={{ 'aria-label': 'kham toan than' }}
                     />
 
                     {!!result[0] && !spellingError[CLINICAL_SUBSECTION[0]].loading ? 
@@ -223,6 +224,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[1] || !spellingError[CLINICAL_SUBSECTION[1]].changed)}
+                        inputProps={{ 'aria-label': 'tuan hoan' }}
                     />
 
                     {!!result[1] && !spellingError[CLINICAL_SUBSECTION[1]].loading ? 
@@ -302,6 +304,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[2] || !spellingError[CLINICAL_SUBSECTION[2]].changed)}
+                        inputProps={{ 'aria-label': 'ho hap' }}
                     />
 
                     {!!result[2] && !spellingError[CLINICAL_SUBSECTION[2]].loading ? 
@@ -381,6 +384,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[3] || !spellingError[CLINICAL_SUBSECTION[3]].changed)}
+                        inputProps={{ 'aria-label': 'tieu hoa' }}
                     />
 
                     {!!result[3] && !spellingError[CLINICAL_SUBSECTION[3]].loading ? 
@@ -460,6 +464,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[4] || !spellingError[CLINICAL_SUBSECTION[4]].changed)}
+                        inputProps={{ 'aria-label': 'than' }}
                     />
 
                     {!!result[4] && !spellingError[CLINICAL_SUBSECTION[4]].loading ? 
@@ -539,6 +544,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[5] || !spellingError[CLINICAL_SUBSECTION[5]].changed)}
+                        inputProps={{ 'aria-label': 'than kinh' }}
                     />
                     
                     {!!result[5] && !spellingError[CLINICAL_SUBSECTION[5]].loading ? 
@@ -618,6 +624,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[6] || !spellingError[CLINICAL_SUBSECTION[6]].changed)}
+                        inputProps={{ 'aria-label': 'co xuong khop' }}
                     />
 
                     {!!result[6] && !spellingError[CLINICAL_SUBSECTION[6]].loading ? 
@@ -697,6 +704,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[7] || !spellingError[CLINICAL_SUBSECTION[7]].changed)}
+                        inputProps={{ 'aria-label': 'tai mui hong' }}
                     />
 
                     {!!result[7] && !spellingError[CLINICAL_SUBSECTION[7]].loading ? 
@@ -776,6 +784,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[8] || !spellingError[CLINICAL_SUBSECTION[8]].changed)}
+                        inputProps={{ 'aria-label': 'rang ham mat' }}
                     />
 
                     {!!result[8] && !spellingError[CLINICAL_SUBSECTION[8]].loading ? 
@@ -855,6 +864,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[9] || !spellingError[CLINICAL_SUBSECTION[9]].changed)}
+                        inputProps={{ 'aria-label': 'mat' }}
                     />
 
                     {!!result[9] && !spellingError[CLINICAL_SUBSECTION[9]].loading ? 
@@ -934,6 +944,7 @@ const FKhamBenh = () => {
                             }
                         }}
                         disabled={updating && (useResult[10] || !spellingError[CLINICAL_SUBSECTION[10]].changed)}
+                        inputProps={{ 'aria-label': 'noi tiet' }}
                     />
 
                     {!!result[10] && !spellingError[CLINICAL_SUBSECTION[10]].loading ? 

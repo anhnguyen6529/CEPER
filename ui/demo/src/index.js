@@ -17,7 +17,7 @@ moment.updateLocale('vi', {
   weekdays: 'Chủ nhật_Thứ hai_Thứ ba_Thứ tư_Thứ năm_Thứ sáu_Thứ bảy'.split('_'),
 })
 
-ReactDOM.render(
+ReactDOM.hydrate(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={3} style={{ fontSize: 16 }}>

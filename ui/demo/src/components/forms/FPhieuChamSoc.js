@@ -296,6 +296,7 @@ const FPhieuChamSoc = () => {
                                                         }
                                                     }
                                                 }}
+                                                inputProps={{ 'aria-label': 'theo doi dien bien' }}
                                             />
                                         </TableCell>
                                         <TableCell className="tableBodyBorderRight">
@@ -366,6 +367,7 @@ const FPhieuChamSoc = () => {
                                                             }
                                                         }
                                                     }}
+                                                    inputProps={{ 'aria-label': 'theo doi dien bien' }}
                                                 />
                                             </TableCell>
                                             <TableCell className="tableBodyBorderRight">
@@ -482,6 +484,7 @@ const FPhieuChamSoc = () => {
                                                                 setText(tText);
                                                             }}
                                                             disabled={useResult[index][idx]}
+                                                            inputProps={{ 'aria-label': 'original text' }}
                                                         />
 
                                                         {!!result[index][idx] && !spellingError[row.ngayGio][idx].loading ? 

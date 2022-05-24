@@ -268,6 +268,7 @@ const FToDieuTri = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'chan doan' }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -287,6 +288,7 @@ const FToDieuTri = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'dien bien benh' }}
                                         />
                                     </TableCell>
                                     <TableCell className="tableBodyBorderRight">
@@ -306,6 +308,7 @@ const FToDieuTri = () => {
                                                     }
                                                 }
                                             }}
+                                            inputProps={{ 'aria-label': 'y lenh' }}
                                         />
                                     </TableCell>
                                     <TableCell>{`${id} - ${name}`}</TableCell>
@@ -373,6 +376,7 @@ const FToDieuTri = () => {
                                                 setText(tText);
                                             }}
                                             disabled={useResult[index]}
+                                            inputProps={{ 'aria-label': 'original text' }}
                                         />
 
                                         {!!result[index] && !spellingError[row.ngayGio].loading ? 

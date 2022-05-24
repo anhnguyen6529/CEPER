@@ -79,6 +79,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
         <AppBar position="fixed" open={open}>
             <Toolbar sx={{ pr: 24, bgcolor: (theme) => theme.palette.primary.dark }}>
                 <IconButton 
+                    aria-label="menu"
                     edge="start"
                     sx={{
                         marginRight: 36,
@@ -133,7 +134,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                     : <MenuItem sx={{ color: "#999" }}>Không có thông báo</MenuItem>}
                 </Menu>
 
-                <IconButton onClick={onClickMenu} sx={{ background: 'white', ml: 2, '&:hover': { background: 'white' } }}>
+                <IconButton aria-label="dropdown menu" onClick={onClickMenu} sx={{ background: 'white', ml: 2, '&:hover': { background: 'white' } }}>
                     <ArrowDropDown />
                 </IconButton>
                 <DropDownMenu anchorEl={anchorElMenu} open={openMenu} onClose={onCloseMenu} />
