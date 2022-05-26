@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useSelector } from "react-redux";
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { format } from "date-fns";
 import "../../styles/index.css";
 import Accordion, { AccordionDetails, AccordionSummary } from "../common/Accordion";
 import { FChanDoanBanDau, FHoiBenh, FKhamBenh, FLyDoVaoVien, FTomTatBenhAn } from "../forms";
 import mdSections from "../../constants/md_sections.json";
 import { BoxLyDoVaoVien, BoxHoiBenh, BoxKhamBenh } from "../boxes";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const GroupBenhAn = () => {
     const { benhAn, tomTatBenhAn, chanDoanBanDau } = useSelector(state => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
+    const { errors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Bệnh án"][sectionId]) {
@@ -34,7 +36,19 @@ const GroupBenhAn = () => {
             {mdSections["Bệnh án"].map((section, id) => (
                 <Accordion key={`accordionSec${id}`} id={section} sx={{ scrollMarginTop: 72 }}>
                     <AccordionSummary>
-                        <Typography>{section}</Typography>
+                        <Grid container>
+                            <Grid item xs={9}>
+                                <Typography>{section}</Typography>
+                            </Grid>
+                            <Grid item xs={3} align="right">
+                                <Typography color="error" fontStyle="italic" fontWeight="bold">
+                                    {hasClickedUpdate && benhAnChanged && (((section === "Lý do vào viện" || section === "Hỏi bệnh") 
+                                    && Object.values(errors[section]).some(value => value)) || (section === "Chẩn đoán ban đầu" && errors[section]))
+                                        ? "Vui lòng nhập đầy đủ thông tin!" : ""
+                                    }
+                                </Typography>
+                            </Grid>
+                        </Grid>
                     </AccordionSummary>
                     <AccordionDetails>
                         {renderSwitch(id)}

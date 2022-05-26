@@ -1,5 +1,5 @@
 import { Box, Typography, TextField, Grid, Divider, RadioGroup, FormControlLabel, Radio, CircularProgress } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
@@ -11,12 +11,14 @@ import { BoxLoiChinhTa } from "../boxes";
 import { Button } from "../common";
 import mdSections from "../../constants/md_sections.json";
 import { CancelOutlined } from "@mui/icons-material";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const SECTION_NAME = "Lý do vào viện";
 const SECTION_FIELD = "lyDoVaoVien";
 const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const FLyDoVaoVien = () => {
+    const { errors, setErrors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
     const { updating, lyDoVaoVien } = useSelector((state) => state.HSBA);
     const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
@@ -107,6 +109,7 @@ const FLyDoVaoVien = () => {
                                     if (vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], lyDo: true } });
                                 } else {
                                     if (!spellingErrorLyDo.changed) {
                                         dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: true }));
@@ -114,6 +117,7 @@ const FLyDoVaoVien = () => {
                                     if (!spellingError.changed) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], lyDo: false } });
                                 }
                             } else {
                                 dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...lyDoVaoVien, lyDo: value } }));
@@ -121,6 +125,7 @@ const FLyDoVaoVien = () => {
                         }}
                         disabled={updating && (useResultLyDo || !spellingErrorLyDo.changed)}
                         inputProps={{ 'aria-label': 'ly do vao vien' }}
+                        error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].lyDo}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -129,7 +134,7 @@ const FLyDoVaoVien = () => {
                         <TextField 
                             type="number"
                             sx={{ width: 60, mx: 1 }}
-                            InputProps={{ inputProps: { min: 0 } }}
+                            InputProps={{ inputProps: { min: 1 } }}
                             value={vaoNgayThu}
                             onChange={({ target: { value } }) => {
                                 setVaoNgayThu(value);
@@ -137,14 +142,17 @@ const FLyDoVaoVien = () => {
                                     if (!spellingError.changed) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], vaoNgayThu: false } });
                                 } else {
                                     if (lyDo === lyDoVaoVien.lyDo && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu && noiGioiThieu === lyDoVaoVien.noiGioiThieu) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], vaoNgayThu: true } });
                                 }
                             }}
                             disabled={updating}
                             inputProps={{ 'aria-label': 'vao ngay thu' }}
+                            error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].vaoNgayThu}
                         />
                         <Typography>của bệnh</Typography>
                     </Box>           
@@ -255,15 +263,29 @@ const FLyDoVaoVien = () => {
                                     if (!spellingError.changed) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], noiGioiThieu: false } });
                                 } else {
                                     if (lyDo === lyDoVaoVien.lyDo && vaoNgayThu === lyDoVaoVien.vaoNgayThu && chanDoanNoiGioiThieu === lyDoVaoVien.chanDoanNoiGioiThieu) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], noiGioiThieu: true } });
                                 }
                             }}
                         >
-                            <FormControlLabel disabled={updating} value="Y tế" control={<Radio />} label="Y tế" />
-                            <FormControlLabel disabled={updating} value="Tự đến" control={<Radio />} label="Tự đến" />
+                            <FormControlLabel 
+                                disabled={updating} 
+                                value="Y tế" 
+                                control={<Radio sx={{ color: (theme) => hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].noiGioiThieu 
+                                    ? theme.palette.error.main : (noiGioiThieu === "Y tế" ? theme.palette.primary.main : theme.palette.text.secondary) }} />} 
+                                label="Y tế" 
+                            />
+                            <FormControlLabel 
+                                disabled={updating} 
+                                value="Tự đến" 
+                                control={<Radio sx={{ color: (theme) => hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].noiGioiThieu 
+                                    ? theme.palette.error.main : (noiGioiThieu === "Tự đến" ? theme.palette.primary.main : theme.palette.text.secondary) }} />} 
+                                label="Tự đến" 
+                            />
                         </RadioGroup>
                     </Grid>
                     <Grid item xs={12}>

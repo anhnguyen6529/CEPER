@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, Divider, Typography } from "@mui/material";
+import React, { useContext } from "react";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import { format } from "date-fns";
 import "../../styles/index.css";
 import Accordion, { AccordionDetails, AccordionSummary } from "../common/Accordion";
@@ -7,10 +7,12 @@ import { FChanDoanKhiRaVien, FHuongDieuTri, FPhuongPhapDieuTri, FTinhTrangRaVien
 import mdSections from "../../constants/md_sections.json";
 import { useSelector } from "react-redux";
 import { BoxChanDoanKhiRaVien } from "../boxes";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const GroupTongKetBA = () => {
     const { tongKetBenhAn, phuongPhapDieuTri, tinhTrangRaVien, huongDieuTri } = useSelector(state => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
+    const { errors, hasClickedUpdate, tongKetBAChanged } = useContext(HSBAContext);
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Tổng kết bệnh án"][sectionId]) {
@@ -38,7 +40,20 @@ const GroupTongKetBA = () => {
             {mdSections["Tổng kết bệnh án"].map((section, id) => (
                 <Accordion key={`accordionSec${id}`} id={section} sx={{ scrollMarginTop: 72 }}>
                     <AccordionSummary>
-                        <Typography>{section}</Typography>
+                        <Grid container>
+                            <Grid item xs={9}>
+                                <Typography>{section}</Typography>
+                            </Grid>
+                            <Grid item xs={3} align="right">
+                                <Typography color="error" fontStyle="italic" fontWeight="bold">
+                                    {hasClickedUpdate && tongKetBAChanged
+                                    && ((section === "Chẩn đoán khi ra viện" && Object.values(errors[section]).some(value => value)) 
+                                    || ((section === "Phương pháp điều trị" || section === "Tình trạng người bệnh ra viện") && errors[section]))
+                                        ? "Vui lòng nhập đầy đủ thông tin!" : ""
+                                    }
+                                </Typography>
+                            </Grid>
+                        </Grid>
                     </AccordionSummary>
                     <AccordionDetails>
                         {renderSwitch(id)}

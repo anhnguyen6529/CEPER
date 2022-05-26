@@ -1,5 +1,5 @@
 import { Box, Typography, TextField, Grid, List, ListItem, ListItemIcon, ListItemText, CircularProgress } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
@@ -11,6 +11,7 @@ import { TDacDiemLienQuanBenh } from "../tables";
 import mdSections from "../../constants/md_sections.json";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { UtilsText } from "../../utils";
+import HSBAContext from "../../contexts/HSBAContext";
 
 const SECTION_NAME = "Hỏi bệnh";
 const SECTION_FIELD = "hoiBenh";
@@ -36,6 +37,7 @@ const equalsTo = (arr1, arr2) => {
 }
 
 const FHoiBenh = () => {
+    const { errors, setErrors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
     const { updating, hoiBenh } = useSelector((state) => state.HSBA);
     const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
@@ -144,6 +146,7 @@ const FHoiBenh = () => {
                                         && giaDinh === hoiBenh.tienSu.giaDinh) {
                                             dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], quaTrinhBenhLy: true } });
                                 } else {
                                     if (!spellingErrorQuaTrinhBenhLy.changed) {
                                         dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: true }));
@@ -151,6 +154,7 @@ const FHoiBenh = () => {
                                     if (!spellingError.changed) {
                                         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                                     }
+                                    setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], quaTrinhBenhLy: false } });
                                 }
                             } else {
                                 dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: { ...hoiBenh, quaTrinhBenhLy: value } }));
@@ -158,6 +162,7 @@ const FHoiBenh = () => {
                         }}
                         disabled={updating && (useResult[0] || !spellingErrorQuaTrinhBenhLy.changed)}
                         inputProps={{ 'aria-label': 'qua trinh benh ly' }}
+                        error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].quaTrinhBenhLy}
                     />
 
                     {!!result[0] && !spellingErrorQuaTrinhBenhLy.loading ? 

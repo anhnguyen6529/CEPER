@@ -1,7 +1,8 @@
 import { CancelOutlined } from "@mui/icons-material";
 import { Box, CircularProgress, TextField, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import HSBAContext from "../../contexts/HSBAContext";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
@@ -14,6 +15,7 @@ const SECTION_NAME = "Chẩn đoán ban đầu";
 const SECTION_FIELD = "chanDoanBanDau";
 
 const FChanDoanBanDau = () => {
+    const { errors, setErrors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
     const { updating, chanDoanBanDau } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { loadingError } = useSelector((state) => state.spellingError);
@@ -68,10 +70,12 @@ const FChanDoanBanDau = () => {
                     if (!updating) {
                         if (value === chanDoanBanDau) {
                             dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
+                            setErrors({ ...errors, [SECTION_NAME]: true });
                         } else {
                             if (!spellingError.changed) {
                                 dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
                             }
+                            setErrors({ ...errors, [SECTION_NAME]: false });
                         }
                     } else {
                         dispatch(HSBAActions.updateSection({ section: SECTION_FIELD, data: value }));
@@ -79,6 +83,7 @@ const FChanDoanBanDau = () => {
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
                 inputProps={{ 'aria-label': 'chan doan ban dau' }}
+                error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME]}
             />
 
             {!!result && !spellingError.loading ? 
