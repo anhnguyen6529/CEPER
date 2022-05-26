@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { 
     Box, Table, TableRow, TableContainer, TableBody,
-    TableHead, TableCell, Paper, Grid, Typography, TextField, Tooltip
+    TableHead, TableCell, Paper, Grid, Typography, TextField, Tooltip, Card, CardHeader, CardContent, CircularProgress
 } from "@mui/material";
 import { Add, ArrowLeft, ArrowRight, CancelOutlined } from "@mui/icons-material";
-import { UtilsTable } from "../../utils";
+import { UtilsTable, UtilsText } from "../../utils";
 import { useSelector, useDispatch } from "react-redux";
 import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow, SelectThuoc } from "../common";
@@ -13,6 +13,9 @@ import drugList from "../../constants/drug_list.json";
 import { DatePicker } from "@mui/lab";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
+import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
+import { BoxLoiChinhTa } from "../boxes";
+import moment from "moment";
 
 const SECTION_NAME = "Phiếu công khai thuốc";
 const SECTION_FIELD = "phieuCongKhaiThuoc";
@@ -31,6 +34,8 @@ const headCells = [
 const FPhieuCongKhaiThuoc = () => {
     const content = useSelector((state) => state.HSBA.phieuCongKhaiThuoc);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
+    const { loadingError } = useSelector((state) => state.spellingError);
+    const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
@@ -48,17 +53,40 @@ const FPhieuCongKhaiThuoc = () => {
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
 
+    const [text, setText] = useState([]);
+    const [result, setResult] = useState([]);
+    const [replaced, setReplaced] = useState([]);
+    const [useResult, setUseResult] = useState([]);
+
     useEffect(() => {
-        if (updating || confirmUpdate) {
+        if (updating) {
+            rows.slice(content.data.length).forEach((row) => {
+                if (!loadingError) {
+                    dispatch(SpellingErrorThunk.getProcessResult({ 
+                        section: SECTION_NAME, subSection: row.tenThuoc, text: row.ghiChu 
+                    }));
+                }
+            });
+        }
+        // eslint-disable-next-line
+    }, [updating]);
+
+    useEffect(() => {
+        if (confirmUpdate) {
+            var tRows = [...rows];
+            tRows.slice(content.data.length).forEach((row, id) => {
+                row.ghiChu = useResult[id] 
+                    ? UtilsText.replaceMaskWord(spellingError[row.tenThuoc].detection, replaced[id])
+                    : text[id];
+            });
             dispatch(HSBAActions.updateAttachedSection({ 
                 section: SECTION_FIELD, 
                 value: { ngayThang }, 
-                newData: rows 
+                newData: tRows 
             }));
         }
         // eslint-disable-next-line
-    }, [updating, confirmUpdate]);
-
+    }, [confirmUpdate]);
 
     const clearData = (soLuongLength) => {
         setNewNgay({ ngay: null, soLuong: new Array(soLuongLength).fill(0) });
@@ -85,7 +113,7 @@ const FPhieuCongKhaiThuoc = () => {
                     ngayThang: [...new Array(newNgayThang.length - 1).fill(0), newData.soLuong],
                     tongSo: newData.soLuong,
                     donGia: newData.donGia,
-                    thanhTien: newData.donGia * newData.soLuong,
+                    thanhTien: parseInt(newData.donGia) * parseInt(newData.soLuong),
                     ghiChu: newData.ghiChu
                 }));
             }
@@ -94,15 +122,19 @@ const FPhieuCongKhaiThuoc = () => {
                 tRows[id] = { 
                     ...tRows[id], 
                     ngayThang: [...new Array(newNgayThang.length - 1).fill(0), sl].map((nth, i) => i < tRows[id].ngayThang.length ? nth + tRows[id].ngayThang[i] : nth),
-                    tongSo: sl + tRows[id].tongSo,
-                    thanhTien: sl * tRows[id].donGia + tRows[id].thanhTien
+                    tongSo: parseInt(sl) + parseInt(tRows[id].tongSo),
+                    thanhTien: parseInt(sl) * parseInt(tRows[id].donGia) + parseInt(tRows[id].thanhTien)
                 };
             });
             setNgayThang(newNgayThang);
             setRows([...tRows, ...newRow]);
+            setText([...text, ...newDataList.map(newData => newData.ghiChu)]);
+            setResult([...result, ...new Array(newDataList.length).fill("")]);
+            setReplaced([...replaced, ...new Array(newDataList.length).fill([])]);
+            setUseResult([...useResult, ...new Array(newDataList.length).fill(true)]);
 
             clearData(tRows.length + newRow.length);
-            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true }));
+            dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true, newKeys: newRow.map(row => row.tenThuoc) }));
             setHasChanged(false);
         } else {
             let errs = [], dateErrs = [], drugErrs = [];
@@ -152,6 +184,26 @@ const FPhieuCongKhaiThuoc = () => {
             setHasChanged(true);
         }
     }
+
+    useEffect(() => {
+        const tResult = [...result], tReplaced = [...replaced], tRows = [...rows];
+        rows.slice(content.data.length).forEach((row, id) => {
+            if (typeof (spellingError[row.tenThuoc]) !== "undefined") {    
+                if (!spellingError[row.tenThuoc].loading && !spellingError[row.tenThuoc].error) {
+                    tResult[id] = spellingError[row.tenThuoc];
+                    tReplaced[id] = spellingError[row.tenThuoc].correction.map(res => ({ type: "correct", repText: res[1] }));
+                    if (spellingError[row.tenThuoc].correction.length === 0) {
+                        tRows[content.data.length + id] = { ...tRows[content.data.length + id], ghiChu: spellingError[row.tenThuoc].detection }; 
+                    }
+                } else if (spellingError[row.tenThuoc].loading) {
+                    tResult[id] = ""; 
+                    tReplaced[id] = []; 
+                }
+            }
+        });
+        setResult(tResult); setReplaced(tReplaced); setRows(tRows);
+        // eslint-disable-next-line
+    }, [spellingError.loading]);
 
     return (
         <>
@@ -274,8 +326,8 @@ const FPhieuCongKhaiThuoc = () => {
                                                     }
                                                 }
                                             }}
-                                            renderInput={(params) => <TextField fullWidth {...params} sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }} inputProps={{ 'aria-label': 'input ngay' }} />}
-                                            disablePast
+                                            renderInput={(params) => <TextField fullWidth {...params} sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }} inputProps={{ ...params.inputProps, 'aria-label': 'input ngay' }} />}
+                                            minDate={moment(new Date(ngayThang[ngayThang.length - 1]))}
                                             OpenPickerButtonProps={{ size: "small", sx: { px: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
                                         />
                                     </TableCell>
@@ -491,6 +543,7 @@ const FPhieuCongKhaiThuoc = () => {
                 </TableContainer>
 
                 <TablePagination 
+                    id={`${SECTION_NAME}/SE`}
                     length={rows.length}
                     rowsPerPage={rowsPerPage}
                     setRowsPerPage={setRowsPerPage}
@@ -530,6 +583,73 @@ const FPhieuCongKhaiThuoc = () => {
                     </Grid>
                 </Grid>
             }
+
+            {updating && Object.keys(spellingError).some(subKey => !["changed", "loading"].includes(subKey) 
+            && spellingError[subKey].correction.length > 0) ? 
+                <Card sx={{ mt: 2 }}>
+                    <CardHeader 
+                        title={`${SECTION_NAME} (Ghi chú) - Xử lý lỗi`} 
+                        titleTypographyProps={{ fontWeight: "bold", color: "primary.dark" }} 
+                    />
+                    <CardContent sx={{ py: 0 }}>
+                        {rows.slice(content.data.length).map((row, index) => (
+                            spellingError[row.tenThuoc].correction.length > 0 ?
+                                <Card key={index} sx={{ mb: 2 }}>
+                                    <CardHeader 
+                                        title={`TÊN THUỐC, HÀM LƯỢNG: ${row.tenThuoc}`} 
+                                        sx={{ bgcolor: "primary.light" }} 
+                                        titleTypographyProps={{ fontWeight: "bold" }} 
+                                    />
+                                    <CardContent>
+                                        <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
+                                        <TextField 
+                                            fullWidth
+                                            multiline
+                                            margin="dense"
+                                            value={text[index]}
+                                            onChange={({ target: { value } }) => {
+                                                const tText = [...text];
+                                                tText[index] = value;
+                                                setText(tText);
+                                            }}
+                                            disabled={useResult[index]}
+                                            inputProps={{ 'aria-label': 'original text' }}
+                                        />
+
+                                        {!!result[index] && !spellingError[row.tenThuoc].loading ? 
+                                            <BoxLoiChinhTa
+                                                result={result[index]}
+                                                replaced={replaced[index]}
+                                                setReplaced={(newReplaced) => {
+                                                    const tReplaced = [...replaced];
+                                                    tReplaced[index] = newReplaced;
+                                                    setReplaced(tReplaced);
+                                                }}
+                                                useResult={useResult[index]}
+                                                handleChangeCheckbox={(checked) => {
+                                                    const tUseResult = [...useResult];
+                                                    tUseResult[index] = checked;
+                                                    setUseResult(tUseResult);
+                                                    if (checked) {
+                                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: row.tenThuoc }));
+                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.tenThuoc, text: text[index] }));
+                                                    }
+                                                }}
+                                                handleUpdateSection={(newReplaced) => {}}
+                                            />
+                                        : ( 
+                                            <div className="df fdc aic jcc">
+                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                                <Typography color="primary">Đang xử lý...</Typography>
+                                            </div> 
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            : null
+                        ))}
+                    </CardContent>
+                </Card>
+            : null}
         </>
     )
 }

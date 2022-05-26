@@ -204,7 +204,7 @@ const Settings = () => {
                 : null}
 
                 <Button sx={{ mt: 2 }} onClick={handleReset}>
-                    Đặt lại các tùy chọn cài đặt
+                    Khôi phục cài đặt gốc
                 </Button>
             </Paper>
         </Container>

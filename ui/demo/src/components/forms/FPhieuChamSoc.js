@@ -126,7 +126,7 @@ const FPhieuChamSoc = () => {
                 dieuDuongGhi: `${id} - ${name}`
             }]);
             setNewNgayGio(now);
-            setText([...text, newTheoDoiDienBien]);
+            setText([...text, [...newTheoDoiDienBien]]);
             setResult([...result, new Array(newTheoDoiDienBien.length).fill("")]);
             setReplaced([...replaced, new Array(newTheoDoiDienBien.length).fill([])]);
             setUseResult([...useResult, new Array(newTheoDoiDienBien.length).fill(true)]);
@@ -175,7 +175,7 @@ const FPhieuChamSoc = () => {
                 });
             }
         });
-        setResult(tResult); setReplaced(tReplaced);
+        setResult(tResult); setReplaced(tReplaced); setRows(tRows);
         // eslint-disable-next-line
     }, [spellingError.loading]);
     
@@ -422,7 +422,7 @@ const FPhieuChamSoc = () => {
                 </TableContainer>
 
                 <TablePagination 
-                    id={SECTION_NAME}
+                    id={`${SECTION_NAME}/SE`}
                     length={rows.length}
                     rowsPerPage={rowsPerPage}
                     setRowsPerPage={setRowsPerPage}

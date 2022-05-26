@@ -101,8 +101,15 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                 setReplaced(tReplaced);
                                                 handleUpdateSection(tReplaced);
                                             }}
-                                            sx={{ cursor: text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
-                                                && replaced[page * rowsPerPage + id].type === "text" ? "help" : "pointer" }}
+                                            sx={{ 
+                                                cursor: text[page * rowsPerPage + id] === replaced[page * rowsPerPage + id].repText 
+                                                    && replaced[page * rowsPerPage + id].type === "text" ? "help" : "pointer",
+                                                '&.Mui-disabled': {
+                                                    color: "rgba(0, 0, 0, 0.64)",
+                                                    bgcolor: "white",
+                                                    border: "1px solid rgba(0, 0, 0, 0.56)"
+                                                } 
+                                            }}
                                             onMouseEnter={() => {
                                                 const tHoverDetection = [...hoverDetection];
                                                 tHoverDetection[page * rowsPerPage + id] = true;
@@ -113,6 +120,7 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                 tHoverDetection[page * rowsPerPage + id] = false;
                                                 setHoverDetection(tHoverDetection);
                                             }}
+                                            disabled={!useResult}
                                         >
                                             {text[page * rowsPerPage + id]}
                                         </ButtonWord>
@@ -133,7 +141,12 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                         sx={{ 
                                                             mr: 1, 
                                                             cursor: correct === replaced[page * rowsPerPage + id].repText 
-                                                                && replaced[page * rowsPerPage + id].type === "correct" ? "help" : "pointer"
+                                                                && replaced[page * rowsPerPage + id].type === "correct" ? "help" : "pointer",
+                                                            '&.Mui-disabled': {
+                                                                color: "rgba(0, 0, 0, 0.64)",
+                                                                bgcolor: "white",
+                                                                border: "1px solid rgba(0, 0, 0, 0.56)"
+                                                            }
                                                         }}
                                                         onClick={() => {
                                                             const tReplaced = [...replaced];
@@ -151,6 +164,7 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                             tHoverDetection[page * rowsPerPage + id] = false;
                                                             setHoverDetection(tHoverDetection);
                                                         }}
+                                                        disabled={!useResult}
                                                     >
                                                         {correct}
                                                     </ButtonWord>
@@ -163,10 +177,12 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                             <TextField 
                                                 value={enter[id]}
                                                 sx={{ 
-                                                    '.MuiOutlinedInput-root': { 
-                                                        bgcolor: (theme) => replaced[page * rowsPerPage + id].type === "enter" ? theme.palette.success.main : "white",
-                                                        color: replaced[page * rowsPerPage + id].type === "enter" ? "white" : "black"
-                                                    } 
+                                                    ...(useResult && {
+                                                        '.MuiOutlinedInput-root': { 
+                                                            bgcolor: (theme) => replaced[page * rowsPerPage + id].type === "enter" ? theme.palette.success.main : "white",
+                                                            color: replaced[page * rowsPerPage + id].type === "enter" ? "white" : "black"
+                                                        }
+                                                    })
                                                 }}
                                                 onChange={({ target: { value }}) => {
                                                     const tEnter = [...enter], tReplaced = [...replaced];
@@ -188,6 +204,7 @@ const BoxLoiChinhTa = ({ result, replaced, setReplaced, useResult, handleChangeC
                                                         handleUpdateSection(tReplaced);
                                                     }
                                                 }}
+                                                disabled={!useResult}
                                             />
                                         </Box>
                                     </Box>

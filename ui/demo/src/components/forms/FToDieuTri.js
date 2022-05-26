@@ -11,7 +11,7 @@ import "../../styles/index.css";
 import { TablePagination, Button, StyledTableRow } from "../common";
 import { SpellingErrorActions } from "../../redux/slices/spellingError.slice";
 import UserContext from "../../contexts/UserContext";
-import { Add, CancelOutlined } from "@mui/icons-material";
+import { Add, ArrowRight, CancelOutlined } from "@mui/icons-material";
 import { HSBAActions } from "../../redux/slices/HSBA.slice";
 import SpellingErrorThunk from "../../redux/thunks/spellingError.thunk";
 import { BoxLoiChinhTa } from "../boxes";
@@ -89,7 +89,18 @@ const FToDieuTri = () => {
         
             rows.slice(content.data.length).forEach((row) => {
                 if (!loadingError) {
-                    dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.ngayGio, text: row.chanDoan }));
+                    dispatch(SpellingErrorThunk.getProcessResult({ 
+                        section: SECTION_NAME, 
+                        subSection: row.ngayGio,
+                        subSubSection: "Chẩn đoán", 
+                        text: row.chanDoan 
+                    }));
+                    dispatch(SpellingErrorThunk.getProcessResult({ 
+                        section: SECTION_NAME, 
+                        subSection: row.ngayGio,
+                        subSubSection: "Diễn biến bệnh", 
+                        text: row.dienBienBenh.join('\n') 
+                    }));
                 }
             });
         }
@@ -100,9 +111,13 @@ const FToDieuTri = () => {
         if (confirmUpdate) {
             var tRows = [...rows];
             tRows.slice(content.data.length).forEach((row, id) => {
-                row.chanDoan = useResult[id] 
-                    ? UtilsText.replaceMaskWord(spellingError[row.ngayGio].detection, replaced[id])
-                    : text[id];
+                row.chanDoan = useResult[id].chanDoan 
+                    ? UtilsText.replaceMaskWord(spellingError[row.ngayGio]["Chẩn đoán"].detection, replaced[id].chanDoan)
+                    : text[id].chanDoan;
+                row.dienBienBenh = useResult[id].dienBienBenh 
+                    ? removeHashAndSpaces(UtilsText.replaceMaskWord(spellingError[row.ngayGio]["Diễn biến bệnh"].detection, 
+                        replaced[id].dienBienBenh).trim().split('\n'))
+                    : removeHashAndSpaces(text[id].dienBienBenh.trim().split('\n'));
             });
             dispatch(HSBAActions.updateAttachedSection({ 
                 section: SECTION_FIELD, 
@@ -133,20 +148,21 @@ const FToDieuTri = () => {
 
     const handleAdd = () => {
         if (!!newChanDoan && !!newDienBienBenh && !!newYLenh) {
-            const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n')), now = new Date().toISOString();
+            const tYLenh = removeHashAndSpaces(newYLenh.trim().split('\n')), tDienBienBenh = removeHashAndSpaces(newDienBienBenh.trim().split('\n'));
+            const now = new Date().toISOString();
             setRows([...rows, {
                 ngayGio: now,
                 khoaDieuTri: khoa,
                 chanDoan: newChanDoan,
-                dienBienBenh: removeHashAndSpaces(newDienBienBenh.trim().split('\n')), 
+                dienBienBenh: tDienBienBenh, 
                 yLenh: tYLenh,
                 bacSiGhi: `${id} - ${name}`
             }]);
             setNewNgayGio(now);
-            setText([...text, newChanDoan]);
-            setResult([...result, ""]);
-            setReplaced([...replaced, []]);
-            setUseResult([...useResult, true]);
+            setText([...text, { chanDoan: newChanDoan, dienBienBenh: tDienBienBenh.join('\n') }]);
+            setResult([...result, { chanDoan: "", dienBienBenh: "" }]);
+            setReplaced([...replaced, { chanDoan: [], dienBienBenh: [] }]);
+            setUseResult([...useResult, { chanDoan: true, dienBienBenh: true }]);
         
             clearData();
             dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: true, newKey: now }));
@@ -164,16 +180,29 @@ const FToDieuTri = () => {
         const tResult = [...result], tReplaced = [...replaced], tRows = [...rows];
         rows.slice(content.data.length).forEach((row, id) => {
             if (typeof (spellingError[row.ngayGio]) !== "undefined") {    
-                if (!spellingError[row.ngayGio].loading && !spellingError[row.ngayGio].error) {
-                    tResult[id] = spellingError[row.ngayGio];
-                    tReplaced[id] = spellingError[row.ngayGio].correction.map(res => ({ type: "correct", repText: res[1] }));
-                    if (spellingError[row.ngayGio].correction.length === 0) {
-                        tRows[content.data.length + id] = { ...tRows[content.data.length + id], chanDoan: spellingError[row.ngayGio].detection }; 
+                if (!spellingError[row.ngayGio]["Chẩn đoán"].loading && !spellingError[row.ngayGio]["Chẩn đoán"].error) {
+                    tResult[id].chanDoan = spellingError[row.ngayGio]["Chẩn đoán"];
+                    tReplaced[id].chanDoan = spellingError[row.ngayGio]["Chẩn đoán"].correction.map(res => ({ type: "correct", repText: res[1] }));
+                    if (spellingError[row.ngayGio]["Chẩn đoán"].correction.length === 0) {
+                        tRows[content.data.length + id] = { ...tRows[content.data.length + id], chanDoan: spellingError[row.ngayGio]["Chẩn đoán"].detection }; 
                     }
-                } else if (spellingError[row.ngayGio].loading) {
-                    tResult[id] = ""; 
-                    tReplaced[id] = []; 
+                } else if (spellingError[row.ngayGio]["Chẩn đoán"].loading) {
+                    tResult[id].chanDoan = ""; 
+                    tReplaced[id].chanDoan = []; 
                 }
+                if (!spellingError[row.ngayGio]["Diễn biến bệnh"].loading && !spellingError[row.ngayGio]["Diễn biến bệnh"].error) {
+                    tResult[id].dienBienBenh = spellingError[row.ngayGio]["Diễn biến bệnh"];
+                    tReplaced[id].dienBienBenh = spellingError[row.ngayGio]["Diễn biến bệnh"].correction.map(res => ({ type: "correct", repText: res[1] }));
+                    if (spellingError[row.ngayGio]["Diễn biến bệnh"].correction.length === 0) {
+                        tRows[content.data.length + id] = { 
+                            ...tRows[content.data.length + id], 
+                            dienBienBenh: removeHashAndSpaces(spellingError[row.ngayGio]["Diễn biến bệnh"].detection.trim().split('\n'))
+                        }; 
+                    }
+                } else if (spellingError[row.ngayGio]["Diễn biến bệnh"].loading) {
+                    tResult[id].dienBienBenh = ""; 
+                    tReplaced[id].dienBienBenh = []; 
+                } 
             }
         });
         setResult(tResult); setReplaced(tReplaced); setRows(tRows);
@@ -319,7 +348,7 @@ const FToDieuTri = () => {
                 </TableContainer>
 
                 <TablePagination 
-                    id={SECTION_NAME}
+                    id={`${SECTION_NAME}/SE`}
                     length={rows.length}
                     rowsPerPage={rowsPerPage}
                     setRowsPerPage={setRowsPerPage}
@@ -348,64 +377,139 @@ const FToDieuTri = () => {
             }
 
             {updating && Object.keys(spellingError).some(subKey => !["changed", "loading"].includes(subKey) 
-            && spellingError[subKey].correction.length > 0) ? 
+            && (spellingError[subKey]["Chẩn đoán"].correction.length > 0 || spellingError[subKey]["Diễn biến bệnh"].correction.length > 0)) ? 
                 <Card sx={{ mt: 2 }}>
                     <CardHeader 
-                        title={`${SECTION_NAME} (CHẨN ĐOÁN) - Xử lý lỗi`} 
+                        title={`${SECTION_NAME} (CHẨN ĐOÁN, DIỄN BIẾN BỆNH) - Xử lý lỗi`} 
                         titleTypographyProps={{ fontWeight: "bold", color: "primary.dark" }} 
                     />
                     <CardContent sx={{ py: 0 }}>
                         {rows.slice(content.data.length).map((row, index) => (
-                            spellingError[row.ngayGio].correction.length > 0 ?
+                            spellingError[row.ngayGio]["Chẩn đoán"].correction.length > 0 || spellingError[row.ngayGio]["Diễn biến bệnh"].correction.length > 0 ?
                                 <Card key={index} sx={{ mb: 2 }}>
                                     <CardHeader 
                                         title={`Ngày giờ: ${format(new Date(row.ngayGio), "dd/MM/yyyy HH:mm")}`} 
                                         sx={{ bgcolor: "primary.light" }} 
                                         titleTypographyProps={{ fontWeight: "bold" }} 
                                     />
-                                    <CardContent>
-                                        <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
-                                        <TextField 
-                                            fullWidth
-                                            multiline
-                                            margin="dense"
-                                            value={text[index]}
-                                            onChange={({ target: { value } }) => {
-                                                const tText = [...text];
-                                                tText[index] = value;
-                                                setText(tText);
-                                            }}
-                                            disabled={useResult[index]}
-                                            inputProps={{ 'aria-label': 'original text' }}
-                                        />
+                                    <CardContent sx={{ pl: 1 }}>
+                                        {spellingError[row.ngayGio]["Chẩn đoán"].correction.length > 0 ? 
+                                            <Box>
+                                                <Box className="df">
+                                                    <ArrowRight sx={{ mr: 1 }} color="primary" />
+                                                    <Box sx={{ width: "100%" }}>
+                                                        <Typography fontWeight="bold" color="primary" sx={{ mb: 1 }}>CHẨN ĐOÁN</Typography>
+                                                        
+                                                        <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
+                                                        <TextField 
+                                                            fullWidth
+                                                            multiline
+                                                            margin="dense"
+                                                            value={text[index].chanDoan}
+                                                            onChange={({ target: { value } }) => {
+                                                                const tText = [...text];
+                                                                tText[index].chanDoan = value;
+                                                                setText(tText);
+                                                            }}
+                                                            disabled={useResult[index].chanDoan}
+                                                            inputProps={{ 'aria-label': 'original text' }}
+                                                        />
 
-                                        {!!result[index] && !spellingError[row.ngayGio].loading ? 
-                                            <BoxLoiChinhTa
-                                                result={result[index]}
-                                                replaced={replaced[index]}
-                                                setReplaced={(newReplaced) => {
-                                                    const tReplaced = [...replaced];
-                                                    tReplaced[index] = newReplaced;
-                                                    setReplaced(tReplaced);
-                                                }}
-                                                useResult={useResult[index]}
-                                                handleChangeCheckbox={(checked) => {
-                                                    const tUseResult = [...useResult];
-                                                    tUseResult[index] = checked;
-                                                    setUseResult(tUseResult);
-                                                    if (checked) {
-                                                        dispatch(SpellingErrorActions.resetLoading({ section: SECTION_NAME, subSection: row.ngayGio }));
-                                                        dispatch(SpellingErrorThunk.getProcessResult({ section: SECTION_NAME, subSection: row.ngayGio, text: text[index] }));
-                                                    }
-                                                }}
-                                                handleUpdateSection={(newReplaced) => {}}
-                                            />
-                                        : ( 
-                                            <div className="df fdc aic jcc">
-                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
-                                                <Typography color="primary">Đang xử lý...</Typography>
-                                            </div> 
-                                        )}
+                                                        {!!result[index].chanDoan && !spellingError[row.ngayGio]["Chẩn đoán"].loading ? 
+                                                            <BoxLoiChinhTa
+                                                                result={result[index].chanDoan}
+                                                                replaced={replaced[index].chanDoan}
+                                                                setReplaced={(newReplaced) => {
+                                                                    const tReplaced = [...replaced];
+                                                                    tReplaced[index].chanDoan = newReplaced;
+                                                                    setReplaced(tReplaced);
+                                                                }}
+                                                                useResult={useResult[index].chanDoan}
+                                                                handleChangeCheckbox={(checked) => {
+                                                                    const tUseResult = [...useResult];
+                                                                    tUseResult[index].chanDoan = checked;
+                                                                    setUseResult(tUseResult);
+                                                                    if (checked) {
+                                                                        dispatch(SpellingErrorActions.resetLoading({ 
+                                                                            section: SECTION_NAME, subSection: row.ngayGio, subSubSection: "Chẩn đoán" 
+                                                                        }));
+                                                                        dispatch(SpellingErrorThunk.getProcessResult({ 
+                                                                            section: SECTION_NAME, subSection: row.ngayGio, 
+                                                                            subSubSection: "Chẩn đoán", text: text[index].chanDoan
+                                                                        }));
+                                                                    }
+                                                                }}
+                                                                handleUpdateSection={(newReplaced) => {}}
+                                                            />
+                                                        : ( 
+                                                            <div className="df fdc aic jcc">
+                                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                                                <Typography color="primary">Đang xử lý...</Typography>
+                                                            </div> 
+                                                        )}
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                        : null}
+
+                                        {spellingError[row.ngayGio]["Diễn biến bệnh"].correction.length > 0 ?
+                                            <Box sx={{ mt: spellingError[row.ngayGio]["Chẩn đoán"].correction.length > 0 ? 3 : 0 }}>
+                                                <Box className="df">
+                                                    <ArrowRight sx={{ mr: 1 }} color="primary" />
+                                                    <Box sx={{ width: "100%" }}>
+                                                        <Typography fontWeight="bold" color="primary" sx={{ mb: 1 }}>DIỄN BIẾN BỆNH</Typography>
+                                                    
+                                                        <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography>
+                                                        <TextField 
+                                                            fullWidth
+                                                            multiline
+                                                            margin="dense"
+                                                            value={text[index].dienBienBenh}
+                                                            onChange={({ target: { value } }) => {
+                                                                const tText = [...text];
+                                                                tText[index].dienBienBenh = value;
+                                                                setText(tText);
+                                                            }}
+                                                            disabled={useResult[index].dienBienBenh}
+                                                            inputProps={{ 'aria-label': 'original text' }}
+                                                        />
+
+                                                        {!!result[index].dienBienBenh && !spellingError[row.ngayGio]["Diễn biến bệnh"].loading ? 
+                                                            <BoxLoiChinhTa
+                                                                result={result[index].dienBienBenh}
+                                                                replaced={replaced[index].dienBienBenh}
+                                                                setReplaced={(newReplaced) => {
+                                                                    const tReplaced = [...replaced];
+                                                                    tReplaced[index].dienBienBenh = newReplaced;
+                                                                    setReplaced(tReplaced);
+                                                                }}
+                                                                useResult={useResult[index].dienBienBenh}
+                                                                handleChangeCheckbox={(checked) => {
+                                                                    const tUseResult = [...useResult];
+                                                                    tUseResult[index].dienBienBenh = checked;
+                                                                    setUseResult(tUseResult);
+                                                                    if (checked) {
+                                                                        dispatch(SpellingErrorActions.resetLoading({ 
+                                                                            section: SECTION_NAME, subSection: row.ngayGio, subSubSection: "Diễn biến bệnh" 
+                                                                        }));
+                                                                        dispatch(SpellingErrorThunk.getProcessResult({ 
+                                                                            section: SECTION_NAME, subSection: row.ngayGio, 
+                                                                            subSubSection: "Diễn biến bệnh", text: text[index].dienBienBenh 
+                                                                        }));
+                                                                    }
+                                                                }}
+                                                                handleUpdateSection={(newReplaced) => {}}
+                                                            />
+                                                        : ( 
+                                                            <div className="df fdc aic jcc">
+                                                                <CircularProgress size={20} sx={{ mt: 2, mb: 1, color: (theme) => theme.palette.primary.main }} />
+                                                                <Typography color="primary">Đang xử lý...</Typography>
+                                                            </div> 
+                                                        )}
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                        : null}
                                     </CardContent>
                                 </Card>
                             : null

@@ -58,9 +58,14 @@ const HSBA = () => {
                 ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
                 && mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].correction.length > 0))) 
                 || (key === "Tờ điều trị" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
-                && spellingError[key][subKey].correction.length > 0)) || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
-                !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => 
-                subKeyValue.correction.length > 0))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc"].includes(key) 
+                && (spellingError[key][subKey]["Chẩn đoán"].correction.length > 0 || spellingError[key][subKey]["Diễn biến bệnh"].correction.length > 0))) 
+                || (key === "Phiếu TD dị ứng thuốc" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                && (spellingError[key][subKey]["Biểu hiện lâm sàng"].correction.length > 0 || spellingError[key][subKey]["Ghi chú"].correction.length > 0))) 
+                || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
+                !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => subKeyValue.correction.length > 0))) 
+                || (key === "Phiếu công khai thuốc" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                && spellingError[key][subKey].correction.length > 0)) 
+                || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc", "Phiếu TD dị ứng thuốc", "Phiếu công khai thuốc"].includes(key) 
                 && spellingError[key].changed && spellingError[key].correction.length > 0)).length === 0) {
                     setTimeout(() => {
                         dispatch(HSBAActions.confirmUpdate());
@@ -72,7 +77,10 @@ const HSBA = () => {
                         variant: "success",
                         style: { whiteSpace: "pre-line" }
                     });
-                    const firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
+                    var firstKey = Object.keys(sectionState).find(key => !!spellingError[key].changed);
+                    if (mdSections["attached"].includes(firstKey)) {
+                        firstKey = firstKey.concat("/SE");
+                    }
                     document.getElementById(firstKey).scrollIntoView({ behavior: "smooth" });
                 }
             } else {
@@ -272,8 +280,9 @@ const HSBA = () => {
 
                     {appearSec.map((sectionId, id) => (
                         <Paper 
+                            id={mdSections["sortOrder"][role][sectionId]}
                             key={mdSections["sortOrder"][role][sectionId]}
-                            sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1 }} 
+                            sx={{ width: '100%', mt: 2, px: 3, pt: 1.5, pb: 1, scrollMarginTop: 72 }} 
                         >  
                             <Grid container>
                                 <Grid item xs={9}> 

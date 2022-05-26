@@ -86,7 +86,9 @@ const User = () => {
     const handleUpdate = () => {
         if (Object.keys(sectionState).filter(key => mdSections["clinical"].includes(key)).some(key => 
         ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) && mdSections[key].some(subKey => 
-        spellingError[key][subKey].changed))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
+        spellingError[key][subKey].changed))) || (key === "Phiếu công khai thuốc" && spellingError[key].changed &&
+        Object.keys(spellingError[key]).filter(subKey => !["loading", "changed"].includes(subKey)).length > 0) 
+        || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Phiếu công khai thuốc"].includes(key) 
         && spellingError[key].changed))) {
             dispatch(HSBAActions.update());
         } else {

@@ -87,7 +87,9 @@
         "Tình trạng người bệnh ra viện",
         "Hướng điều trị và các chế độ tiếp theo",
         "Tờ điều trị",
-        "Phiếu chăm sóc"
+        "Phiếu chăm sóc",
+        "Phiếu TD dị ứng thuốc",
+        "Phiếu công khai thuốc"
     ],
     "clinicalSection": [
         "Bệnh án",

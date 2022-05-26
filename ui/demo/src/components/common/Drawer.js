@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { 
     Drawer as MuiDrawer, IconButton, Box, List, Divider,
     ListItem, ListItemIcon, ListItemText, Typography, Grid, Avatar, ListSubheader, Link
@@ -30,6 +30,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
     const { creatingMode } = useSelector((state) => state.danhSachHSBA);
     const { spellingError } = useSelector((state) => state);
     const dispatch = useDispatch();
+    const [showSection, setShowSection] = useState(false);
 
     const handleClickUser = () => {
         if (role === "BN") {
@@ -38,6 +39,17 @@ const Drawer = ({ open, toggleDrawer, content }) => {
             navigate('/user/HSBA');
         }
     }
+
+    useEffect(() => {
+        if (showSection) {
+            const sectionEle = document.getElementById(mdSections["sortOrder"][role][appearSec[0]]);
+            if (sectionEle !== null) {
+                sectionEle.scrollIntoView({ behavior: "smooth" });
+            }
+            setShowSection(false);
+        }
+        // eslint-disable-next-line
+    }, [appearSec, showSection]);
         
     return (
         <MuiDrawer 
@@ -90,16 +102,28 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                     ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
                                     && mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].correction.length > 0))) 
                                     || (key === "Tờ điều trị" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
-                                    && spellingError[key][subKey].correction.length > 0)) || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
-                                    !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => 
-                                    subKeyValue.correction.length > 0))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc"].includes(key) 
+                                    && (spellingError[key][subKey]["Chẩn đoán"].correction.length > 0 || spellingError[key][subKey]["Diễn biến bệnh"].correction.length > 0))) 
+                                    || (key === "Phiếu TD dị ứng thuốc" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                                    && (spellingError[key][subKey]["Biểu hiện lâm sàng"].correction.length > 0 || spellingError[key][subKey]["Ghi chú"].correction.length > 0))) 
+                                    || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
+                                    !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => subKeyValue.correction.length > 0))) 
+                                    || (key === "Phiếu công khai thuốc" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                                    && spellingError[key][subKey].correction.length > 0))
+                                    || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc", "Phiếu TD dị ứng thuốc", "Phiếu công khai thuốc"].includes(key) 
                                     && spellingError[key].changed && spellingError[key].correction.length > 0) ?
                                             <ListItem 
                                                 key={id}
                                                 sx={{ py: 0.5 }}
                                                 alignItems="flex-start"
                                                 button
-                                                onClick={() => document.getElementById(key).scrollIntoView({ behavior: "smooth" })}
+                                                onClick={() => {
+                                                    var sectionEle = mdSections["attached"].includes(key)
+                                                        ? document.getElementById(key)
+                                                        : document.getElementById(key.concat("/SE"));
+                                                    if (sectionEle !== null) {
+                                                        sectionEle.scrollIntoView({ behavior: "smooth" });
+                                                    }
+                                                }}
                                             >
                                                 <ListItemIcon sx={{ minWidth: 32, mt: 0.5 }}>
                                                     <EditLocationOutlined fontSize="small" sx={{ color: (theme) => theme.palette.primary.main, mt: 0.5 }} />
@@ -112,9 +136,14 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                     ((["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện"].includes(key) 
                                     && mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].correction.length > 0))) 
                                     || (key === "Tờ điều trị" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
-                                    && spellingError[key][subKey].correction.length > 0)) || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
-                                    !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => 
-                                    subKeyValue.correction.length > 0))) || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc"].includes(key) 
+                                    && (spellingError[key][subKey]["Chẩn đoán"].correction.length > 0 || spellingError[key][subKey]["Diễn biến bệnh"].correction.length > 0))) 
+                                    || (key === "Phiếu TD dị ứng thuốc" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                                    && (spellingError[key][subKey]["Biểu hiện lâm sàng"].correction.length > 0 || spellingError[key][subKey]["Ghi chú"].correction.length > 0))) 
+                                    || (key === "Phiếu chăm sóc" && Object.keys(spellingError[key]).some(subKey =>
+                                    !["changed", "loading"].includes(subKey) && spellingError[key][subKey].some(subKeyValue => subKeyValue.correction.length > 0))) 
+                                    || (key === "Phiếu công khai thuốc" && Object.keys(spellingError[key]).some(subKey => !["changed", "loading"].includes(subKey) 
+                                    && spellingError[key][subKey].correction.length > 0))
+                                    || (!["Lý do vào viện", "Hỏi bệnh", "Khám bệnh", "Chẩn đoán khi ra viện", "Tờ điều trị", "Phiếu chăm sóc", "Phiếu TD dị ứng thuốc", "Phiếu công khai thuốc"].includes(key) 
                                     && spellingError[key].changed && spellingError[key].correction.length > 0)).length === 0 ? 
                                         <ListItem sx={{ pt: 0 }}>
                                             <ListItemText primaryTypographyProps={{ color: "text.secondary" }} primary="Không có mục nào." />
@@ -149,6 +178,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                                 tAppearSec.unshift(id);
                                                 tOpenSec[id] = true;
                                                 setAppearTime({ ...appearTime, [section]: new Date().toISOString() });
+                                                setShowSection(true);
                                             } else {
                                                 if (mdSections["attached"].includes(section)) {
                                                     if (spellingError[section].changed) {
