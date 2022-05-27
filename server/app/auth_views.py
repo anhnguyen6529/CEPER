@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from app import app, mysql
+from app import app, mysql, bcrypt
 from flask import request, jsonify
 from flask_jwt_extended import create_access_token, unset_jwt_cookies, jwt_required
 
@@ -16,7 +16,7 @@ def login():
     user_key = ["id", "username", "", "avatar", "role", "name", "dateOfBirth", "gender",
                 "address", "email", "phone", "speciality", "department", "medicalLicenseNo", "signature", "position"]
     data = list(cursor.fetchall())
-    if len(data) > 0 and params["password"] == data[0][2]:
+    if len(data) > 0 and bcrypt.check_password_hash(data[0][2].encode("UTF-8"), params["password"]):
         access_token = create_access_token(identity=data[0][0])
         result = dict()
         result["token"] = access_token
