@@ -8,6 +8,10 @@ const HSBAApi = {
     transferFaculty: async (apiData) => 
         ceperApi.post(`/user/hsba/${apiData.pid}/transfer-faculty`, apiData, { 
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
+        }),
+    updateSickRoomBed: async (apiData) => 
+        ceperApi.post(`/user/hsba/${apiData.pid}/update-sick-room-bed`, apiData, { 
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`} 
         })
 }
 

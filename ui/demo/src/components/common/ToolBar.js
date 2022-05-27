@@ -16,7 +16,7 @@ import mdSections from "../../constants/md_sections.json";
 
 const ToolBar = ({ open, toggleDrawer }) => {
     const { notifications, id, errorNoti, getting, saving } = useSelector((state) => state.auth.user);
-    const { updating, setting, loading, transfering } = useSelector((state) => state.HSBA);
+    const { updating, setting, loading, transfering, updatingRoomBed } = useSelector((state) => state.HSBA);
     const { spellingError, danhSachHSBA } = useSelector((state) => state);
     const { changing } = useSelector((state) => state.auth.settings.appearance);
     const { functionality } = useSelector((state) => state.auth.settings);
@@ -49,7 +49,8 @@ const ToolBar = ({ open, toggleDrawer }) => {
     useEffect(() => {
         const timer = setInterval(() => {
             if (!getting && !saving && !danhSachHSBA.loading && !danhSachHSBA.creatingHSBA && (!loading || typeof(pid) === "undefined") && !changing
-            && !functionality.changing && !setting && !transfering && (!updating || (updating && !spellingError.loading && Object.keys(sectionState).filter(key =>
+            && !functionality.changing && !setting && !transfering && !updatingRoomBed && 
+            (!updating || (updating && !spellingError.loading && Object.keys(sectionState).filter(key =>
             mdSections["clinical"].includes(key)).every(key => (typeof(spellingError[key].loading) === "undefined" 
             && !mdSections[key].some(subKey => spellingError[key][subKey].changed && spellingError[key][subKey].loading)) ||
             (typeof(spellingError[key].loading) !== "undefined" && !(spellingError[key].changed && spellingError[key].loading)))))) {

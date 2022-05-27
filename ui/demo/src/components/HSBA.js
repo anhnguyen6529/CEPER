@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Typography, Avatar, Grid, Container, Paper, CircularProgress, Collapse, Box, Backdrop, Chip } from "@mui/material";
+import { Typography, Grid, Container, Paper, CircularProgress, Collapse, Box, Backdrop } from "@mui/material";
 import mdSections from "../constants/md_sections.json";
 import '../styles/index.css';
-import { format } from "date-fns";
 import UserContext from "../contexts/UserContext";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
@@ -11,13 +10,11 @@ import { Button } from "./common";
 import { FToDieuTri, FPhieuTDDiUngThuoc, FPhieuChamSoc, FPhieuTDChucNangSong, FPhieuTDTruyenDich, FPhieuCongKhaiThuoc } from "./forms";
 import ToolBarSection from "./ToolBarSection";
 import { GroupBenhAn, GroupTongKetBA } from "./groupSections";
-import { BoxHanhChinh } from "./boxes";
+import { BoxHanhChinh, BoxHoSo } from "./boxes";
 import { sectionState } from "../redux/slices/spellingError.slice";
 import { useSnackbar } from "notistack";
 import { HSBAActions } from "../redux/slices/HSBA.slice";
 import { HSBAProvider, initialErrors } from "../contexts/HSBAContext";
-
-const colorTrangThai = { "Chờ khám": "warning", "Đang điều trị": "info", "Đã ra viện": "default" };
 
 const checkErrors = (errors, section) => {
     return Object.keys(errors).filter(key => mdSections[section].includes(key)).every(key => 
@@ -34,7 +31,7 @@ const HSBA = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { pid } = useParams();
-    const { open, today, appearSec, appearTime, setAppearTime, openSec, handleUpdate, 
+    const { open, appearSec, appearTime, setAppearTime, openSec, handleUpdate, 
         openBackdrop, setOpenBackdrop, handleLogout } = useContext(UserContext); 
     const { role, id } = useSelector(state => state.auth.user);
     const { autoUpdateWithProcessResult } = useSelector(state => state.auth.settings.functionality);
@@ -168,69 +165,7 @@ const HSBA = () => {
                     <>
                         <Grid container spacing={5} sx={{ mb: 3 }}>
                             <Grid item xs={9}>
-                                <Paper sx={{ width: '100%', p: 3, pt: 2.5 }}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xs={2}>
-                                            <Avatar src="/images/avatar_default.png" sx={{ width: 100, height: 100 }} />
-                                        </Grid>
-                                        <Grid item xs={10}>
-                                            <Typography variant="h5" color="primary" fontWeight="bold" sx={{ mb: 0.5 }}>{benhNhan.hanhChinh.hoTen}</Typography>
-                                            <Grid container columnSpacing={3}>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Mã BN</Typography>
-                                                    <Typography>{benhNhan.pid}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Ngày vào viện</Typography>
-                                                    <Typography>{benhNhan.lyDoVaoVien.ngayVaoVien ? format(new Date(benhNhan.lyDoVaoVien.ngayVaoVien), 'dd/MM/yyyy HH:mm') : benhNhan.lyDoVaoVien.ngayVaoVien}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Ngày điều trị thứ</Typography>
-                                                    <Typography>{Math.ceil((today - new Date(String(benhNhan.lyDoVaoVien.ngayVaoVien))) / (1000 * 60 * 60 * 24))}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Trạng thái</Typography>
-                                                    <Chip size="small" label={benhNhan.trangThai} color={colorTrangThai[benhNhan.trangThai]} />
-                                                </Grid>
-                                            </Grid>
-                                            <Grid container columnSpacing={3}>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Khoa</Typography>
-                                                    <Typography>{benhNhan.khoa}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Phòng</Typography>
-                                                    <Typography>{benhNhan.phong}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Giường</Typography>
-                                                    <Typography>{benhNhan.giuong}</Typography>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <Typography fontWeight="bold">Ngày ra viện</Typography>
-                                                    <Typography>
-                                                        {benhNhan.chanDoanKhiRaVien.ngayRaVien 
-                                                            ? format(new Date(benhNhan.chanDoanKhiRaVien.ngayRaVien), 'dd/MM/yyyy HH:mm') 
-                                                            : <Typography component="span">(<i>trống</i>)</Typography>
-                                                        }
-                                                    </Typography>
-                                                </Grid>
-                                                
-                                            </Grid>
-                                            <Grid container columnSpacing={3}>
-                                                <Grid item xs={12}>
-                                                    <Typography fontWeight="bold">Bệnh điều trị</Typography>
-                                                    <Typography>
-                                                        {!!benhNhan.toDieuTri.data.length > 0 
-                                                            ? benhNhan.toDieuTri.data[benhNhan.toDieuTri.data.length - 1].chanDoan
-                                                            : <Typography component="span">(<i>trống</i>)</Typography>
-                                                        }
-                                                    </Typography>
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
+                                <BoxHoSo />
                             </Grid>
                             <Grid item xs={3}>
                                 <Paper sx={{ height: '100%', width: '100%', px: 3, py: 2 }}>

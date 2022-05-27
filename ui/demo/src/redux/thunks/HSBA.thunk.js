@@ -49,6 +49,22 @@ const HSBAThunk = {
                 return rejectWithValue(error.response.data.msg);
             }
         }
+    ),
+    updateSickRoomBed: createAsyncThunk(
+        'HSBA/updateSickRoomBed',
+        async (apiData, { rejectWithValue }) => {
+            try {
+                const apiResponse = await HSBAApi.updateSickRoomBed(apiData);
+
+                if (apiResponse.status !== 200) {
+                    throw new Error(apiResponse.statusText);
+                }
+
+                return apiData;
+            } catch (error) {
+                return rejectWithValue(error.response.data.msg);
+            }
+        }
     )
 }
 

@@ -130,6 +130,8 @@ const initialState = {
     settingError: '',
     transfering: false,
     transferingError: '',
+    updatingRoomBed: false,
+    updatingRoomBedError: false,
     ...initialHSBAState
 }
 
@@ -245,6 +247,29 @@ const HSBASlice = createSlice({
                 ...state,
                 transfering: false,
                 transferingError: action.payload
+            }
+        })
+        .addCase(HSBAThunk.updateSickRoomBed.pending, (state) => {
+            return {
+                ...state,
+                updatingRoomBed: true
+            }
+        })
+        .addCase(HSBAThunk.updateSickRoomBed.fulfilled, (state, action) => {
+            const { phong, giuong } = action.payload
+            return {
+                ...state,
+                updatingRoomBed: false,
+                updatingRoomBedError: '',
+                phong: phong,
+                giuong: giuong
+            }
+        })
+        .addCase(HSBAThunk.updateSickRoomBed.rejected, (state, action) => {
+            return {
+                ...state,
+                updatingRoomBed: false,
+                updatingRoomBedError: action.payload
             }
         })
     }

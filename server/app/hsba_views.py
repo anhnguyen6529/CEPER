@@ -339,3 +339,21 @@ def transferFaculty(pid):
     conn.close()
     response = jsonify({"msg": "Transfer faculty successfully"})
     return response
+
+
+@app.route('/user/hsba/<pid>/update-sick-room-bed', methods=['POST'])
+@jwt_required()
+def updateSickRoomBed(pid):
+    data = request.json
+    print(data)
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE HO_SO_BENH_AN SET Phong = %s, Giuong = %s WHERE PID = %s;",
+                   (data["phong"], data["giuong"], pid))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+    response = jsonify({"msg": "Update sick room bed successfully"})
+    return response

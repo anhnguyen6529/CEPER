@@ -65,6 +65,26 @@ const Button = ({ children, variant, sx, ...other }) => {
                 {children}
             </MuiButton>
         }
+        {variant === "outlined-dark" &&
+            <MuiButton
+                variant="outlined"
+                sx={{ 
+                    ...ROOT, 
+                    color: (theme) => theme.palette.primary.dark,
+                    borderColor: (theme) => theme.palette.primary.dark,
+                    bgcolor: 'white', 
+                    '&:hover': { 
+                        color: (theme) => theme.palette.primary.dark,
+                        bgcolor: darken('#FFF', 0.05),
+                        borderColor: (theme) => theme.palette.primary.dark,
+                    },  
+                    ...sx 
+                }} 
+                {...other}
+            >
+                {children}
+            </MuiButton>
+        }
         {variant === "text" && 
             <MuiButton
                 sx={{ ...ROOT, ...sx }} 
