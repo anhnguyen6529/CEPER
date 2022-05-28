@@ -181,13 +181,13 @@ const SpellingErrorSlice = createSlice({
                 }
 
                 if (action.payload.section === "Tờ điều trị") {
-                    if (Object.keys(state[action.payload.section]).filter(subKey => !["loading", "changed", action.payload.subSection].includes(subKey)).every(subKey => 
+                    if (Object.keys(state[action.payload.section]).filter(subKey => !["loading", "changed"].includes(subKey)).every(subKey => 
                     !state[action.payload.section][subKey]["Chẩn đoán"].loading && !state[action.payload.section][subKey]["Chẩn đoán"].error
                     && !state[action.payload.section][subKey]["Diễn biến bệnh"].loading && !state[action.payload.section][subKey]["Diễn biến bệnh"].error)) {
                         state[action.payload.section].loading = false;
                     }
                 } else if (action.payload.section === "Phiếu TD dị ứng thuốc") {
-                    if (Object.keys(state[action.payload.section]).filter(subKey => !["loading", "changed", action.payload.subSection].includes(subKey)).every(subKey => 
+                    if (Object.keys(state[action.payload.section]).filter(subKey => !["loading", "changed"].includes(subKey)).every(subKey => 
                     !state[action.payload.section][subKey]["Biểu hiện lâm sàng"].loading && !state[action.payload.section][subKey]["Biểu hiện lâm sàng"].error
                     && !state[action.payload.section][subKey]["Ghi chú"].loading && !state[action.payload.section][subKey]["Ghi chú"].error)) {
                         state[action.payload.section].loading = false;
@@ -198,7 +198,7 @@ const SpellingErrorSlice = createSlice({
                         state[action.payload.section].loading = false;
                     }
                 } else if (action.payload.section === "Phiếu công khai thuốc") {
-                    if (Object.keys(state[action.payload.section]).filter(subKey => !["loading", "changed", action.payload.subSection].includes(subKey)).every(subKey => 
+                    if (Object.keys(state[action.payload.section]).filter(subKey => !["loading", "changed"].includes(subKey)).every(subKey => 
                     !state[action.payload.section][subKey].loading && !state[action.payload.section][subKey].error)) {
                         state[action.payload.section].loading = false;
                     }
