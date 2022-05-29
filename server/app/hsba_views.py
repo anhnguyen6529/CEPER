@@ -281,6 +281,9 @@ def updateHSBA(pid):
 
     ngay_thang = data["phieuCongKhaiThuoc"]["ngayThang"]
     pckt = data["phieuCongKhaiThuoc"]["data"]
+    cursor.execute("INSERT INTO PCKT_NGAY_THANG (PID, Ngay_Thang) SELECT \'" + pid + "', JSON_ARRAY(" +
+                   str(ngay_thang)[1:-1] + ") WHERE NOT EXISTS (SELECT 1 FROM PCKT_NGAY_THANG WHERE PID = '" + pid + "');")
+    conn.commit()
     cursor.execute("UPDATE PCKT_NGAY_THANG SET Ngay_Thang = JSON_ARRAY(" +
                    str(ngay_thang)[1:-1] + ") WHERE PID = \'" + pid + "';")
     conn.commit()

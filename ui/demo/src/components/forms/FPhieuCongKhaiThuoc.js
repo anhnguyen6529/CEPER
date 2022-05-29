@@ -52,6 +52,7 @@ const FPhieuCongKhaiThuoc = () => {
     const [newDataList, setNewDataList] = useState([EMPTY_NEW_DATA]);
     const [errors, setErrors] = useState([]);
     const [hasChanged, setHasChanged] = useState(false);
+    const now = new Date();
 
     const [text, setText] = useState([]);
     const [result, setResult] = useState([]);
@@ -103,7 +104,7 @@ const FPhieuCongKhaiThuoc = () => {
         if (!!newNgay.ngay && ((newDataList.length === 1 && ((!!newDataList[0].tenThuoc && newDataList[0].soLuong > 0) 
             || (!newDataList[0].tenThuoc && newDataList[0].soLuong === 0 && !newDataList[0].ghiChu && newNgay.soLuong.some(sl => sl > 0)))) 
             || (newDataList.length > 1 && newDataList.every(newData => !!newData.tenThuoc && newData.soLuong > 0)))) {
-            const newNgayThang = format(new Date(newNgay.ngay), "yyyy-MM-dd") === ngayThang[ngayThang.length - 1]
+            const newNgayThang = ngayThang.length > 0 && format(new Date(newNgay.ngay), "yyyy-MM-dd") === ngayThang[ngayThang.length - 1]
                 ? [...ngayThang] : [...ngayThang, format(new Date(newNgay.ngay), "yyyy-MM-dd")];      
             let newRow = [];
             if ((newDataList.length === 1 && !!newDataList[0].tenThuoc && newDataList[0].soLuong > 0) || newDataList.length > 1) {
@@ -318,7 +319,7 @@ const FPhieuCongKhaiThuoc = () => {
                                                 if (!newDate) {
                                                     if (newNgay.soLuong.every(sl => sl === 0) && newDataList.every(newData => !newData.tenThuoc
                                                         && !newData.donVi && newData.soLuong === 0 && newData.donGia === 0 && !newData.ghiChu)) {
-                                                        setHasChanged(true);
+                                                        setHasChanged(false);
                                                     }
                                                 } else {
                                                     if (!hasChanged) {
@@ -327,7 +328,8 @@ const FPhieuCongKhaiThuoc = () => {
                                                 }
                                             }}
                                             renderInput={(params) => <TextField fullWidth {...params} sx={{ '.MuiOutlinedInput-root': { bgcolor: "white" } }} inputProps={{ ...params.inputProps, 'aria-label': 'input ngay' }} />}
-                                            minDate={moment(new Date(ngayThang[ngayThang.length - 1]))}
+                                            minDate={moment(ngayThang.length > 0 && new Date(ngayThang[ngayThang.length - 1]) > now 
+                                                ? new Date(ngayThang[ngayThang.length - 1]) : now)}
                                             OpenPickerButtonProps={{ size: "small", sx: { px: 0, '.MuiSvgIcon-root': { fontSize: 20 } } }}
                                         />
                                     </TableCell>
