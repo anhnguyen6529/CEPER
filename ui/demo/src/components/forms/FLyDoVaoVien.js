@@ -18,7 +18,7 @@ const SECTION_FIELD = "lyDoVaoVien";
 const CLINICAL_SUBSECTION = mdSections[SECTION_NAME];
 
 const FLyDoVaoVien = () => {
-    const { errors, setErrors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
+    const { errors, setErrors, hasClickedUpdate } = useContext(HSBAContext);
     const { updating, lyDoVaoVien } = useSelector((state) => state.HSBA);
     const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
@@ -86,13 +86,29 @@ const FLyDoVaoVien = () => {
         setVaoNgayThu(lyDoVaoVien.vaoNgayThu);
         setChanDoanNoiGioiThieu(lyDoVaoVien.chanDoanNoiGioiThieu);
         setNoiGioiThieu(lyDoVaoVien.noiGioiThieu);
+        setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], lyDo: true, vaoNgayThu: true, noiGioiThieu: true } });
         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
         dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[0], changed: false }));
         dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection: CLINICAL_SUBSECTION[1], changed: false }));
     }
 
     return (
-        <Box component="form" noValidate>
+        <Box 
+            component="form" 
+            noValidate 
+            sx={{ 
+                ...(!hasClickedUpdate && {
+                    '.MuiOutlinedInput-root.Mui-error': { 
+                        '& fieldset': {
+                            borderColor: (theme) => theme.palette.warning.light,
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: (theme) => theme.palette.warning.light,
+                        },
+                    }
+                })
+            }}
+        >
             {(updating && !!resultLyDo && resultLyDo.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}
             <Grid container>
                 <Grid item xs={9}>
@@ -125,7 +141,7 @@ const FLyDoVaoVien = () => {
                         }}
                         disabled={updating && (useResultLyDo || !spellingErrorLyDo.changed)}
                         inputProps={{ 'aria-label': 'ly do vao vien' }}
-                        error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].lyDo}
+                        error={errors[SECTION_NAME].lyDo}
                     />
                 </Grid>
                 <Grid item xs={3}>
@@ -152,7 +168,7 @@ const FLyDoVaoVien = () => {
                             }}
                             disabled={updating}
                             inputProps={{ 'aria-label': 'vao ngay thu' }}
-                            error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].vaoNgayThu}
+                            error={errors[SECTION_NAME].vaoNgayThu}
                         />
                         <Typography>của bệnh</Typography>
                     </Box>           
@@ -275,15 +291,17 @@ const FLyDoVaoVien = () => {
                             <FormControlLabel 
                                 disabled={updating} 
                                 value="Y tế" 
-                                control={<Radio sx={{ color: (theme) => hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].noiGioiThieu 
-                                    ? theme.palette.error.main : (noiGioiThieu === "Y tế" ? theme.palette.primary.main : theme.palette.text.secondary) }} />} 
+                                control={<Radio sx={{ color: (theme) => errors[SECTION_NAME].noiGioiThieu 
+                                    ? (hasClickedUpdate ? theme.palette.error.main : theme.palette.warning.light) 
+                                    : (noiGioiThieu === "Y tế" ? theme.palette.primary.main : theme.palette.text.secondary) }} />} 
                                 label="Y tế" 
                             />
                             <FormControlLabel 
                                 disabled={updating} 
                                 value="Tự đến" 
-                                control={<Radio sx={{ color: (theme) => hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].noiGioiThieu 
-                                    ? theme.palette.error.main : (noiGioiThieu === "Tự đến" ? theme.palette.primary.main : theme.palette.text.secondary) }} />} 
+                                control={<Radio sx={{ color: (theme) => errors[SECTION_NAME].noiGioiThieu 
+                                    ? (hasClickedUpdate ? theme.palette.error.main : theme.palette.warning.light)
+                                    : (noiGioiThieu === "Tự đến" ? theme.palette.primary.main : theme.palette.text.secondary) }} />} 
                                 label="Tự đến" 
                             />
                         </RadioGroup>

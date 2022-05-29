@@ -35,7 +35,7 @@ const FPhieuTDDiUngThuoc = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
+    const { updating, confirmUpdate, khoa, trangThai } = useSelector((state) => state.HSBA);
     const { role, name, id } = useSelector((state) => state.auth.user);
     const { appearTime } = useContext(UserContext);
     const dispatch = useDispatch();
@@ -224,7 +224,7 @@ const FPhieuTDDiUngThuoc = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.length === 0 && (role !== "BS" || updating) ? (
+                            {rows.length === 0 && (role !== "BS" || updating || trangThai !== "Đang điều trị") ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -251,7 +251,7 @@ const FPhieuTDDiUngThuoc = () => {
                                 );
                             })}
 
-                            {(role === "BS" && !ngayRaVien && !updating) ?
+                            {(role === "BS" && !ngayRaVien && !updating && trangThai === "Đang điều trị") ?
                                 <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'dd/MM/yyyy')}</TableCell>
                                     <TableCell className="tableBodyBorderRight">{format(new Date(newNgayGioDungThuoc), 'HH:mm')}</TableCell>

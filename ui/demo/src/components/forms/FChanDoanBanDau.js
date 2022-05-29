@@ -15,7 +15,7 @@ const SECTION_NAME = "Chẩn đoán ban đầu";
 const SECTION_FIELD = "chanDoanBanDau";
 
 const FChanDoanBanDau = () => {
-    const { errors, setErrors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
+    const { errors, setErrors, hasClickedUpdate } = useContext(HSBAContext);
     const { updating, chanDoanBanDau } = useSelector((state) => state.HSBA);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
     const { loadingError } = useSelector((state) => state.spellingError);
@@ -54,11 +54,27 @@ const FChanDoanBanDau = () => {
 
     const handleReset = () => {
         setNewChanDoanBanDau(chanDoanBanDau);
+        setErrors({ ...errors, [SECTION_NAME]: true });
         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
     }
 
     return (
-        <Box component="form" noValidate>   
+        <Box 
+            component="form" 
+            noValidate
+            sx={{ 
+                ...(!hasClickedUpdate && {
+                    '.MuiOutlinedInput-root.Mui-error': { 
+                        '& fieldset': {
+                            borderColor: (theme) => theme.palette.warning.light,
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: (theme) => theme.palette.warning.light,
+                        },
+                    }
+                })
+            }}
+        >   
             {(updating && !!result && result.correction.length > 0) ? <Typography fontWeight="bold" fontStyle="italic">Văn bản gốc</Typography> : null}    
             <TextField 
                 multiline
@@ -83,7 +99,7 @@ const FChanDoanBanDau = () => {
                 }}
                 disabled={updating && (useResult || !spellingError.changed)}
                 inputProps={{ 'aria-label': 'chan doan ban dau' }}
-                error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME]}
+                error={errors[SECTION_NAME]}
             />
 
             {!!result && !spellingError.loading ? 

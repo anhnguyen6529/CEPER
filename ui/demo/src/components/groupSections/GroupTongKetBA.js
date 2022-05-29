@@ -10,24 +10,24 @@ import { BoxChanDoanKhiRaVien } from "../boxes";
 import HSBAContext from "../../contexts/HSBAContext";
 
 const GroupTongKetBA = () => {
-    const { tongKetBenhAn, phuongPhapDieuTri, tinhTrangRaVien, huongDieuTri } = useSelector(state => state.HSBA);
+    const { tongKetBenhAn, phuongPhapDieuTri, tinhTrangRaVien, huongDieuTri, trangThai } = useSelector(state => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
     const { errors, hasClickedUpdate, tongKetBAChanged } = useContext(HSBAContext);
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Tổng kết bệnh án"][sectionId]) {
             case "Phương pháp điều trị": 
-                return !tongKetBenhAn.thoiGian && role === "BS" 
+                return !tongKetBenhAn.thoiGian && role === "BS" && trangThai === "Đang điều trị"
                     ? <FPhuongPhapDieuTri />
                     : <Typography>{!!phuongPhapDieuTri ? phuongPhapDieuTri : <i>(trống)</i>}</Typography>
             case "Chẩn đoán khi ra viện":
-                return !tongKetBenhAn.thoiGian && role === "BS" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
+                return !tongKetBenhAn.thoiGian && role === "BS" && trangThai === "Đang điều trị" ? <FChanDoanKhiRaVien /> : <BoxChanDoanKhiRaVien />
             case "Tình trạng người bệnh ra viện":
-                return !tongKetBenhAn.thoiGian && role === "BS"  
+                return !tongKetBenhAn.thoiGian && role === "BS" && trangThai === "Đang điều trị" 
                     ? <FTinhTrangRaVien /> 
                     : <Typography>{!!tinhTrangRaVien ? tinhTrangRaVien : <i>(trống)</i>}</Typography>
             case "Hướng điều trị và các chế độ tiếp theo":
-                return !tongKetBenhAn.thoiGian && role === "BS" 
+                return !tongKetBenhAn.thoiGian && role === "BS" && trangThai === "Đang điều trị"
                     ? <FHuongDieuTri /> 
                     : <Typography>{!!huongDieuTri ? huongDieuTri : <i>(trống)</i>}</Typography>
             default: 
@@ -45,13 +45,15 @@ const GroupTongKetBA = () => {
                                 <Typography>{section}</Typography>
                             </Grid>
                             <Grid item xs={3} align="right">
-                                <Typography color="error" fontStyle="italic" fontWeight="bold">
-                                    {hasClickedUpdate && tongKetBAChanged
-                                    && ((section === "Chẩn đoán khi ra viện" && Object.values(errors[section]).some(value => value)) 
-                                    || ((section === "Phương pháp điều trị" || section === "Tình trạng người bệnh ra viện") && errors[section]))
-                                        ? "Vui lòng nhập đầy đủ thông tin!" : ""
-                                    }
-                                </Typography>
+                                {role === "BS" ?
+                                    <Typography color="error" fontStyle="italic" fontWeight="bold">
+                                        {hasClickedUpdate && tongKetBAChanged
+                                        && ((section === "Chẩn đoán khi ra viện" && Object.values(errors[section]).some(value => value)) 
+                                        || ((section === "Phương pháp điều trị" || section === "Tình trạng người bệnh ra viện") && errors[section]))
+                                            ? "Vui lòng nhập đầy đủ thông tin!" : ""
+                                        }
+                                    </Typography>
+                                : null}
                             </Grid>
                         </Grid>
                     </AccordionSummary>

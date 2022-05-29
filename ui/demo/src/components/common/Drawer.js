@@ -117,7 +117,7 @@ const Drawer = ({ open, toggleDrawer, content }) => {
                                                 alignItems="flex-start"
                                                 button
                                                 onClick={() => {
-                                                    var sectionEle = mdSections["attached"].includes(key)
+                                                    var sectionEle = !mdSections["attached"].includes(key)
                                                         ? document.getElementById(key)
                                                         : document.getElementById(key.concat("/SE"));
                                                     if (sectionEle !== null) {

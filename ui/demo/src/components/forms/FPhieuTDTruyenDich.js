@@ -44,7 +44,7 @@ const setTimetoDate = (date, time) => {
 const FPhieuTDTruyenDich = () => {
     const content = useSelector((state) => state.HSBA.phieuTDTruyenDich);
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
-    const { updating, confirmUpdate, khoa } = useSelector((state) => state.HSBA);
+    const { updating, confirmUpdate, khoa, trangThai } = useSelector((state) => state.HSBA);
     const { role, name, id, department } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
 
@@ -210,7 +210,7 @@ const FPhieuTDTruyenDich = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.length === 0 && (role !== "DD" || updating) ? (
+                            {rows.length === 0 && (role !== "DD" || updating || trangThai !== "Đang điều trị") ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -250,7 +250,7 @@ const FPhieuTDTruyenDich = () => {
                                 );
                             })}
 
-                            {(role === "DD" && !ngayRaVien && !updating) ? 
+                            {(role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị") ? 
                                 <Fragment>
                                     <TableRow sx={{ '.MuiTableCell-root': { borderTop: '0.5px solid rgba(224, 224, 224, 1)' } }}>
                                         <TableCell className="tableBodyBorderRight" rowSpan={newValues.length}>

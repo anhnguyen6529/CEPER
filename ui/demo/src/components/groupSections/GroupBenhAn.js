@@ -12,7 +12,7 @@ import HSBAContext from "../../contexts/HSBAContext";
 const GroupBenhAn = () => {
     const { benhAn, tomTatBenhAn, chanDoanBanDau } = useSelector(state => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
-    const { errors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
+    const { errors, hasClickedUpdate } = useContext(HSBAContext);
 
     const renderSwitch = (sectionId) => {
         switch (mdSections["Bệnh án"][sectionId]) {
@@ -41,12 +41,14 @@ const GroupBenhAn = () => {
                                 <Typography>{section}</Typography>
                             </Grid>
                             <Grid item xs={3} align="right">
-                                <Typography color="error" fontStyle="italic" fontWeight="bold">
-                                    {hasClickedUpdate && benhAnChanged && (((section === "Lý do vào viện" || section === "Hỏi bệnh") 
-                                    && Object.values(errors[section]).some(value => value)) || (section === "Chẩn đoán ban đầu" && errors[section]))
-                                        ? "Vui lòng nhập đầy đủ thông tin!" : ""
-                                    }
-                                </Typography>
+                                {role === "BS" ?
+                                    <Typography color={hasClickedUpdate ? "error" : "warning.main"} fontStyle="italic" fontWeight="bold">
+                                        {((section === "Lý do vào viện" || section === "Hỏi bệnh") 
+                                        && Object.values(errors[section]).some(value => value)) || (section === "Chẩn đoán ban đầu" && errors[section])
+                                            ? "Vui lòng nhập đầy đủ thông tin!" : ""
+                                        }
+                                    </Typography>
+                                : null}
                             </Grid>
                         </Grid>
                     </AccordionSummary>

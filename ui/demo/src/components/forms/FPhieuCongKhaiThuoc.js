@@ -36,7 +36,7 @@ const FPhieuCongKhaiThuoc = () => {
     const { ngayRaVien } = useSelector((state) => state.HSBA.chanDoanKhiRaVien);
     const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
-    const { updating, confirmUpdate } = useSelector((state) => state.HSBA);
+    const { updating, confirmUpdate, trangThai } = useSelector((state) => state.HSBA);
     const { role } = useSelector(state => state.auth.user);
     const dispatch = useDispatch();
 
@@ -236,9 +236,12 @@ const FPhieuCongKhaiThuoc = () => {
                                                 align="center" 
                                                 colSpan={ngayThang.length <= maxLastRows || expandAllRows 
                                                     ? (expandAllRows 
-                                                        ? (role === "DD" && !ngayRaVien && !updating ? (ngayThang.length + 1) + 1 : ngayThang.length + 1)
-                                                        : (role === "DD" && !ngayRaVien && !updating ? ngayThang.length + 1 : ngayThang.length)
-                                                    ) : (role === "DD" && !ngayRaVien && !updating ? (1 + maxLastRows) + 1 : 1 + maxLastRows)
+                                                        ? (role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị" 
+                                                            ? (ngayThang.length + 1) + 1 : ngayThang.length + 1)
+                                                        : (role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị" 
+                                                            ? ngayThang.length + 1 : ngayThang.length)
+                                                    ) : (role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị" 
+                                                        ? (1 + maxLastRows) + 1 : 1 + maxLastRows)
                                                 }
                                                 className="tableHeadBorderRight"
                                                 sx={{ px: 1, zIndex: 0 }}
@@ -310,7 +313,7 @@ const FPhieuCongKhaiThuoc = () => {
                                     )
                                 }
                                 
-                                {(role === "DD" && !ngayRaVien && !updating) ? 
+                                {(role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị") ? 
                                     <TableCell className="tableHeadBorderRight" sx={{ minWidth: 170 }}>
                                         <DatePicker 
                                             value={newNgay.ngay}
@@ -338,7 +341,7 @@ const FPhieuCongKhaiThuoc = () => {
                         </TableHead>
                         
                         <TableBody>                     
-                            {rows.length === 0 && (role !== "DD" || updating) ? (
+                            {rows.length === 0 && (role !== "DD" || updating || trangThai !== "Đang điều trị") ? (
                                 <StyledTableRow>
                                     <TableCell colSpan={headCells.length} align="center">(<i>trống</i>)</TableCell>
                                 </StyledTableRow>
@@ -371,7 +374,7 @@ const FPhieuCongKhaiThuoc = () => {
                                             </>
                                         )}
 
-                                        {(role === "DD" && !ngayRaVien && !updating) ? 
+                                        {(role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị") ? 
                                             <TableCell className="tableBodyBorderRight">
                                                 <TextField 
                                                     type="number"
@@ -407,7 +410,7 @@ const FPhieuCongKhaiThuoc = () => {
                                 );
                             })}
 
-                            {(role === "DD" && !ngayRaVien && !updating) ? 
+                            {(role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị") ? 
                                 newDataList.map((newData, idx) => (
                                     <TableRow key={idx}>
                                         <TableCell className="tableBodyBorderRight" align="center">{(rows.length + 1) + idx}</TableCell>
@@ -531,7 +534,7 @@ const FPhieuCongKhaiThuoc = () => {
                                             ))}
                                         </>
                                     )}
-                                    {(role === "DD" && !ngayRaVien && !updating) ? <TableCell className="tableBodyBorderRight" /> : null}
+                                    {(role === "DD" && !ngayRaVien && !updating && trangThai === "Đang điều trị") ? <TableCell className="tableBodyBorderRight" /> : null}
                                     <TableCell className="tableBodyBorderRight" />
                                     <TableCell className="tableBodyBorderRight" />
                                     <TableCell className="tableBodyBorderRight" align="center">

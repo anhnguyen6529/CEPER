@@ -37,7 +37,7 @@ const equalsTo = (arr1, arr2) => {
 }
 
 const FHoiBenh = () => {
-    const { errors, setErrors, hasClickedUpdate, benhAnChanged } = useContext(HSBAContext);
+    const { errors, setErrors, hasClickedUpdate } = useContext(HSBAContext);
     const { updating, hoiBenh } = useSelector((state) => state.HSBA);
     const { loadingError } = useSelector((state) => state.spellingError);
     const spellingError = useSelector((state) => state.spellingError[SECTION_NAME]);
@@ -120,12 +120,28 @@ const FHoiBenh = () => {
         setBanThan(hoiBenh.tienSu.banThan);
         setDacDiemLienQuan(hoiBenh.tienSu.dacDiemLienQuanBenh);
         setGiaDinh(hoiBenh.tienSu.giaDinh);
+        setErrors({ ...errors, [SECTION_NAME]: { ...errors[SECTION_NAME], quaTrinhBenhLy: true } });
         dispatch(SpellingErrorActions.updateSectionChanged({ section: SECTION_NAME, changed: false }));
         CLINICAL_SUBSECTION.forEach(subSection => dispatch(SpellingErrorActions.updateSubSectionChanged({ section: SECTION_NAME, subSection, changed: false })));
     }
 
     return (
-        <Box component="form" noValidate>
+        <Box 
+            component="form" 
+            noValidate
+            sx={{ 
+                ...(!hasClickedUpdate && {
+                    '.MuiOutlinedInput-root.Mui-error': { 
+                        '& fieldset': {
+                            borderColor: (theme) => theme.palette.warning.light,
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: (theme) => theme.palette.warning.light,
+                        },
+                    }
+                })
+            }}
+        >
             <Grid container>
                 <Grid item xs={2}>
                     <Typography fontWeight="bold">Quá trình bệnh lý</Typography>
@@ -162,7 +178,7 @@ const FHoiBenh = () => {
                         }}
                         disabled={updating && (useResult[0] || !spellingErrorQuaTrinhBenhLy.changed)}
                         inputProps={{ 'aria-label': 'qua trinh benh ly' }}
-                        error={hasClickedUpdate && benhAnChanged && errors[SECTION_NAME].quaTrinhBenhLy}
+                        error={errors[SECTION_NAME].quaTrinhBenhLy}
                     />
 
                     {!!result[0] && !spellingErrorQuaTrinhBenhLy.loading ? 
