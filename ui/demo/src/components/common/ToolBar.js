@@ -96,7 +96,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                     {format(today, "HH:mm")} | {dayOfWeek[today.getDay().toString()]}, {format(today, "dd/MM/yyyy")}
                 </Typography>
 
-                <IconButton onClick={onClickNoti} sx={{ background: 'white', ml: 4, '&:hover': { background: 'white' } }}>
+                <IconButton disableRipple onClick={onClickNoti} sx={{ background: 'white', ml: 4, '&:hover': { background: 'white' } }}>
                     <Badge badgeContent={notifications.length} color="primary" >
                         <Notifications />
                     </Badge>
@@ -135,7 +135,7 @@ const ToolBar = ({ open, toggleDrawer }) => {
                     : <MenuItem sx={{ color: "#999" }}>Không có thông báo</MenuItem>}
                 </Menu>
 
-                <IconButton aria-label="dropdown menu" onClick={onClickMenu} sx={{ background: 'white', ml: 2, '&:hover': { background: 'white' } }}>
+                <IconButton disableRipple aria-label="dropdown menu" onClick={onClickMenu} sx={{ background: 'white', ml: 2, '&:hover': { background: 'white' } }}>
                     <ArrowDropDown />
                 </IconButton>
                 <DropDownMenu anchorEl={anchorElMenu} open={openMenu} onClose={onCloseMenu} />
