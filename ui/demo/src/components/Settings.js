@@ -54,6 +54,18 @@ const Settings = () => {
         }
     }
 
+    const handleResetAppearance = () => {
+        setHasChangedAppearance(true);
+        dispatch(authThunk.changeAccentColor({ userID: user.id, color: "#009ABB" }));
+    }
+
+    const handleResetFunctionality = () => {
+        setHasChangedFunctionality(true);
+        if (settings.functionality.autoUpdateWithProcessResult) {
+            dispatch(authThunk.toggleAutoUpdateWithProcessResult({ userID: user.id }));
+        }
+    }
+
     const handleClickRecommendColor = (color) => {
         if (!hasChangedAppearance) {
             setHasChangedAppearance(true);
@@ -102,13 +114,10 @@ const Settings = () => {
                         subheader="Thay đổi màu sắc giao diện hệ thống"
                         subheaderTypographyProps={{ color: "black" }}
                         sx={{ bgcolor: "primary.light", '.MuiCardHeader-action': { alignSelf: "center", m: 0 } }} 
-                        action={hasChangedAppearance && settings.appearance.changing
-                            ? <CircularProgress size={18} color="primary" />
-                            : (hasChangedAppearance ? 
-                                <Box className="df">
-                                    <Check color="success" sx={{ mr: 1 }} />
-                                    <Typography color="success.main">Đã thay đổi!</Typography>
-                                </Box> : null)
+                        action={
+                            <Button onClick={handleResetAppearance} disabled={settings.appearance.changing}>
+                                Khôi phục cài đặt giao diện
+                            </Button>
                         }
                     />
                     <CardContent>
@@ -168,13 +177,10 @@ const Settings = () => {
                             subheader="Thay đổi một số cài đặt cho các tính năng của hệ thống"
                             subheaderTypographyProps={{ color: "black" }}
                             sx={{ bgcolor: "primary.light", '.MuiCardHeader-action': { alignSelf: "center", m: 0 } }} 
-                            action={hasChangedFunctionality && settings.functionality.changing
-                                ? <CircularProgress size={18} color="primary" />
-                                : (hasChangedFunctionality ? 
-                                    <Box className="df">
-                                        <Check color="success" sx={{ mr: 1 }} />
-                                        <Typography color="success.main">Đã thay đổi!</Typography>
-                                    </Box> : null)
+                            action={
+                                <Button onClick={handleResetFunctionality} disabled={settings.functionality.changing}>
+                                    Khôi phục cài đặt tính năng
+                                </Button>
                             }
                         />
                         <CardContent>
@@ -203,7 +209,12 @@ const Settings = () => {
                     </Card>
                 : null}
 
-                <Button sx={{ mt: 2 }} onClick={handleReset}>
+                <Button 
+                    sx={{ mt: 2 }} 
+                    onClick={handleReset} 
+                    variant="primary-dark" 
+                    disabled={settings.appearance.changing || settings.functionality.changing}
+                >
                     Khôi phục cài đặt gốc
                 </Button>
             </Paper>

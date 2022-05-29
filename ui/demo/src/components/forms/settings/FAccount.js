@@ -165,7 +165,7 @@ const FAccount = ({ setHasSaved }) => {
             </Grid>
 
             {hasChanged ? 
-                <Box sx={{ width: '100%', textAlign: 'right' }}>
+                <Box sx={{ width: '100%', textAlign: 'right', mt: 2 }}>
                     <Button startIcon={<CancelOutlined />} variant="outlined" sx={{ mr: 2 }} onClick={handleCancel}>
                         Hủy
                     </Button>

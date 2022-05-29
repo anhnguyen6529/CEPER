@@ -25,6 +25,7 @@ const Button = ({ children, variant, sx, ...other }) => {
         }
         {variant === "primary-dark" &&
             <MuiButton
+                variant="contained"
                 sx={{ 
                     ...ROOT,
                     bgcolor: (theme) => theme.palette.primary.dark, 
@@ -41,6 +42,7 @@ const Button = ({ children, variant, sx, ...other }) => {
         }
         {variant === "secondary" &&
             <MuiButton
+                variant="contained"
                 sx={{ 
                     ...ROOT,
                     bgcolor: (theme) => theme.palette.primary.light, 
